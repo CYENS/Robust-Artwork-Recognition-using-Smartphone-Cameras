@@ -11,6 +11,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final firstCamera = (await availableCameras()).first;
   runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
     theme: ThemeData.dark(),
     home: TakePictureScreen(camera: firstCamera),
   ));
