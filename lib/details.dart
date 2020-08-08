@@ -20,7 +20,7 @@ class DetailsScreen extends StatelessWidget {
           Align(
             child: AspectRatio(
               aspectRatio: 1 / 0.9,
-              child: Image.asset("Mona_Lisa.jpg"),
+              child: Image.asset("mona_lisa.jpg"),
             ),
           ),
           Text(
