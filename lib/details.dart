@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_lorem/flutter_lorem.dart';
 
 class DetailsScreen extends StatelessWidget {
   final String imagePath;
@@ -21,6 +22,11 @@ class DetailsScreen extends StatelessWidget {
             child: Image.asset("Mona_Lisa.jpg"),
           ),
         ),
+        Text(
+          "Description",
+          style: TextStyle(fontSize: 25),
+        ),
+        Text(lorem()),
       ]),
     );
   }
