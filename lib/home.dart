@@ -10,7 +10,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Kratiki Pinakothiki"),
+        title: Text("Modern Art App"),
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
@@ -19,8 +19,14 @@ class HomePage extends StatelessWidget {
           )
         ],
       ),
-      body: Center(
-        child: Text("Welcome to Kratiki Pinakothiki"),
+      body: Column(
+        children: [
+          Image.asset("pinakothiki_building.jpg"),
+          Text(
+            "Κρατική Πινακοθήκη Σύγχρονης Κυπριακής Τέχνης",
+            style: TextStyle(fontSize: 25),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.camera_alt),
