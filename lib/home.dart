@@ -1,5 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:modern_art_app/camera.dart';
 
 class HomePage extends StatelessWidget {
   final CameraDescription camera;
@@ -30,7 +31,14 @@ class HomePage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.camera_alt),
-        onPressed: null,
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => TakePictureScreen(camera: camera),
+            ),
+          );
+        },
       ),
     );
   }
