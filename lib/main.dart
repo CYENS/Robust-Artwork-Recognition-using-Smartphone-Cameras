@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -17,22 +16,6 @@ Future<void> main() async {
     home: HomePage(camera: firstCamera),
   ));
 }
-
-//void main() => runApp(MyApp());
-//
-//class MyApp extends StatelessWidget {
-//  @override
-//  Widget build(BuildContext context) {
-//    return MaterialApp(
-//      title: 'Flutter Demo',
-//      theme: ThemeData(
-//        primarySwatch: Colors.cyan,
-//        visualDensity: VisualDensity.adaptivePlatformDensity,
-//      ),
-//      home: Container(),
-//    );
-//  }
-//}
 
 class TakePictureScreen extends StatefulWidget {
   final CameraDescription camera;
@@ -121,20 +104,6 @@ class TakePictureScreenState extends State<TakePictureScreen> {
           }
         },
       ),
-    );
-  }
-}
-
-class DisplayPictureScreen extends StatelessWidget {
-  final String imagePath;
-
-  const DisplayPictureScreen({Key key, this.imagePath}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Display the picture")),
-      body: Image.file(File(imagePath)),
     );
   }
 }
