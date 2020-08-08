@@ -33,6 +33,8 @@ dependencies:
   path_provider:
   path:
 
+  flutter_lorem: ^1.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
