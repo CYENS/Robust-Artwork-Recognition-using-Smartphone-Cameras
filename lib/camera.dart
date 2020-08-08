@@ -42,14 +42,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Take a picture"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.list),
-            tooltip: "Changelog",
-            onPressed: () {},
-          ),
-        ],
+        title: Text("Point the camera to a painting"),
       ),
       body: FutureBuilder<void>(
         future: _initializeControllerFuture,
