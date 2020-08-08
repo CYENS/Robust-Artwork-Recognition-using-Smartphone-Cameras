@@ -2,9 +2,9 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
-  final List<CameraDescription> cameras;
+  final CameraDescription camera;
 
-  const HomePage({Key key, this.cameras}) : super(key: key);
+  const HomePage({Key key, @required this.camera}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
