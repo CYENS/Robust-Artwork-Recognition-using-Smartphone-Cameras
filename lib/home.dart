@@ -2,10 +2,10 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:modern_art_app/camera.dart';
 
-class HomePage extends StatelessWidget {
+class HomePageMain extends StatelessWidget {
   final CameraDescription camera;
 
-  const HomePage({Key key, @required this.camera}) : super(key: key);
+  const HomePageMain({Key key, @required this.camera}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
