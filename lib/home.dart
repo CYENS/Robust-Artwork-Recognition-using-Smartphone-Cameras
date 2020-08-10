@@ -44,8 +44,9 @@ class HomePageMain extends StatelessWidget {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.camera_alt),
+      floatingActionButton: FloatingActionButton.extended(
+        label: Text("Αναγνώριση Πίνακα"),
+        icon: Icon(Icons.camera_alt),
         onPressed: () {
           Navigator.push(
             context,
