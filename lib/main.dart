@@ -4,13 +4,13 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:modern_art_app/home.dart';
 
-CameraDescription camera;
+List<CameraDescription> cameras;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
     // get back camera
-    camera = (await availableCameras()).first;
+    cameras = await availableCameras();
   } on CameraException catch (e) {
     print("Error ${e.code}\nError msg: ${e.description}");
   }
@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(),
-      home: HomePage(camera: camera),
+      home: HomePageMain(cameras: cameras),
     );
   }
 }
