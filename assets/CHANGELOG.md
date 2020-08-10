@@ -1,3 +1,7 @@
+## Version 0.0.3
+### 2010-08-10
+- Added Tensorflow integration and demo widget showing its use
+
 ## Version 0.0.2
 ### 2010-08-10
 - Added painting details screen
