@@ -74,7 +74,7 @@ class BBox extends StatelessWidget {
     List<Widget> _renderStrings() {
       double offset = -10;
       return results.map((re) {
-        offset = offset + 14;
+        offset = offset + 30;
         return Positioned(
           left: 10,
           top: offset,
@@ -83,8 +83,8 @@ class BBox extends StatelessWidget {
           child: Text(
             "${re["label"]} ${(re["confidence"] * 100).toStringAsFixed(0)}%",
             style: TextStyle(
-              color: Color.fromRGBO(37, 213, 253, 1.0),
-              fontSize: 14.0,
+              color: Color.fromRGBO(255, 255, 255, 1.0),
+              fontSize: 20.0,
               fontWeight: FontWeight.bold,
             ),
           ),
