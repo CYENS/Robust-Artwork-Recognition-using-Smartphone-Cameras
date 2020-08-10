@@ -12,15 +12,8 @@ class BBox extends StatelessWidget {
   final double screenWidth;
   final String model;
 
-  const BBox(
-      {Key key,
-      this.results,
-      this.previewHeight,
-      this.previewWidth,
-      this.screenHeight,
-      this.screenWidth,
-      this.model})
-      : super(key: key);
+  const BBox(this.results, this.previewHeight, this.previewWidth,
+      this.screenHeight, this.screenWidth, this.model);
 
   @override
   Widget build(BuildContext context) {
