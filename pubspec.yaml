@@ -37,6 +37,8 @@ dependencies:
 
   tflite: 1.1.1
 
+  flutter_markdown: ^0.4.3
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
