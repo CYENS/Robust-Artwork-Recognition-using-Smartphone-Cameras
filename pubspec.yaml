@@ -35,7 +35,7 @@ dependencies:
 
   flutter_lorem: ^1.1.0
 
-  tflite: 1.0.4
+  tflite: 1.1.1
 
 dev_dependencies:
   flutter_test:
