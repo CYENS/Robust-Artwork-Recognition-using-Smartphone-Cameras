@@ -21,6 +21,7 @@ class HomePageMain extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
+            // todo add changelog
             tooltip: "Settings",
             onPressed: () {},
           ),
@@ -43,8 +44,9 @@ class HomePageMain extends StatelessWidget {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.camera_alt),
+      floatingActionButton: FloatingActionButton.extended(
+        label: Text("Αναγνώριση Πίνακα"),
+        icon: Icon(Icons.camera_alt),
         onPressed: () {
           Navigator.push(
             context,
