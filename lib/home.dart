@@ -21,6 +21,7 @@ class HomePageMain extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.settings),
+            // todo add changelog
             tooltip: "Settings",
             onPressed: () {},
           ),

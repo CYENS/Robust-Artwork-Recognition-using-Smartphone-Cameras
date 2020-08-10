@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lorem/flutter_lorem.dart';
+import 'package:photo_view/photo_view.dart';
 
 class DetailsScreen extends StatelessWidget {
   final String imagePath;
@@ -20,7 +21,8 @@ class DetailsScreen extends StatelessWidget {
           Align(
             child: AspectRatio(
               aspectRatio: 1 / 0.9,
-              child: Image.asset("mona_lisa.jpg"),
+              child:
+                  PhotoView(imageProvider: AssetImage("assets/mona_lisa.jpg")),
             ),
           ),
           Text(
