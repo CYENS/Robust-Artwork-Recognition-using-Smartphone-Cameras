@@ -23,6 +23,14 @@ class HomePageMain extends StatelessWidget {
             icon: const Icon(Icons.settings),
             tooltip: "Settings",
             onPressed: () {},
+          ),
+          IconButton(
+            icon: const Icon(Icons.camera),
+            tooltip: "Tensorflow",
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => HomePage(cameras)));
+            },
           )
         ],
       ),
