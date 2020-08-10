@@ -9,9 +9,9 @@ import 'bbox.dart';
 import 'models.dart';
 
 class HomePageMain extends StatelessWidget {
-  final CameraDescription camera;
+  final List<CameraDescription> cameras;
 
-  const HomePageMain({Key key, @required this.camera}) : super(key: key);
+  const HomePageMain({Key key, @required this.cameras}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -41,8 +41,7 @@ class HomePageMain extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => TakePictureScreen(camera: camera),
-            ),
+                builder: (context) => TakePictureScreen(cameras: cameras)),
           );
         },
       ),

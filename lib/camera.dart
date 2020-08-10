@@ -12,9 +12,9 @@ import 'package:tflite/tflite.dart';
 typedef void Callback(List<dynamic> list, int h, int w);
 
 class TakePictureScreen extends StatefulWidget {
-  final CameraDescription camera;
+  final List<CameraDescription> cameras;
 
-  const TakePictureScreen({Key key, @required this.camera}) : super(key: key);
+  const TakePictureScreen({Key key, @required this.cameras}) : super(key: key);
 
   @override
   TakePictureScreenState createState() => TakePictureScreenState();
@@ -29,7 +29,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
     super.initState();
     // create CameraController
     _controller = CameraController(
-      widget.camera,
+      widget.cameras.first,
       ResolutionPreset.high,
     );
     // initialize controller
@@ -100,10 +100,10 @@ class Camera extends StatefulWidget {
   final Callback setRecognitions;
   final String model;
 
-  const Camera(this.cameras, this.setRecognitions, this.model);
+  Camera(this.cameras, this.setRecognitions, this.model);
 
   @override
-  _CameraState createState() => _CameraState();
+  _CameraState createState() => new _CameraState();
 }
 
 class _CameraState extends State<Camera> {
