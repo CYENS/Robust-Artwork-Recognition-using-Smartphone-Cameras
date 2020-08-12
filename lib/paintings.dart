@@ -26,13 +26,52 @@ class PaintingRow extends StatelessWidget {
       aspectRatio: 2 / 1,
       child: Padding(
         padding: EdgeInsets.all(8),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Image.asset("assets/paintings/mona_lisa.webp"),
-            Text(paintingName),
-          ],
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => PaintingDetailsPage(
+                        paintingName: paintingName,
+                      )),
+            );
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Hero(
+                  tag: paintingName,
+                  child: Image.asset("assets/paintings/mona_lisa.webp")),
+              Text(paintingName),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+}
+
+class PaintingDetailsPage extends StatelessWidget {
+  final String paintingName;
+
+  const PaintingDetailsPage({Key key, this.paintingName}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Painting details"),
+      ),
+      body: Column(
+        children: [
+          AspectRatio(
+            aspectRatio: 1 / 1,
+            child: Hero(
+                tag: paintingName,
+                child: Image.asset("assets/paintings/mona_lisa.webp")),
+          ),
+          Text(paintingName),
+        ],
       ),
     );
   }
