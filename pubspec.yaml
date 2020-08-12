@@ -35,11 +35,14 @@ dependencies:
   path:
   path_provider:
   photo_view: ^0.9.2
+  sqlite3_flutter_libs:
   tflite: 1.1.1
 
 dev_dependencies:
+  build_runner:
   flutter_test:
     sdk: flutter
+  moor_generator: ^3.1.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
