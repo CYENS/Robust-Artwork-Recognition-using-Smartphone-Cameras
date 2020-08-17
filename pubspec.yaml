@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 0.0.3+1
+version: 0.0.4+1
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -28,22 +28,21 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.3
 
-  # dependencies needed for camera access
   camera: ^0.5.7+4
-  path_provider:
-  path:
-
   flutter_lorem: ^1.1.0
-
+  flutter_markdown: ^0.4.3
+  moor_flutter: ^3.1.0
+  path:
+  path_provider:
+  photo_view: ^0.9.2
+  sqlite3_flutter_libs:
   tflite: 1.1.1
 
-  flutter_markdown: ^0.4.3
-
-  photo_view: ^0.9.2
-
 dev_dependencies:
+  build_runner:
   flutter_test:
     sdk: flutter
+  moor_generator: ^3.1.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -59,16 +58,9 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - pinakothiki_building.jpg
-    - assets/paintings/last_supper.webp
-    - assets/paintings/mona_lisa.webp
-    - assets/paintings/vitruvian_man.webp
-    - assets/tflite_models/mobilenet_v1_1.0_224.tflite
-    - assets/tflite_models/mobilenet_v1_1.0_224.txt
-    - assets/tflite_models/posenet_mv1_075_float_from_checkpoints.tflite
-    - assets/tflite_models/ssd_mobilenet.tflite
-    - assets/tflite_models/ssd_mobilenet.txt
-    - assets/tflite_models/yolov2_tiny.tflite
-    - assets/tflite_models/yolov2_tiny.txt
+    - assets/database/
+    - assets/paintings/
+    - assets/tflite_models/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

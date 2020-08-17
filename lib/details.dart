@@ -21,8 +21,8 @@ class DetailsScreen extends StatelessWidget {
           Align(
             child: AspectRatio(
               aspectRatio: 1 / 0.9,
-              child:
-                  PhotoView(imageProvider: AssetImage("assets/mona_lisa.jpg")),
+              child: PhotoView(
+                  imageProvider: AssetImage("assets/paintings/mona_lisa.webp")),
             ),
           ),
           Text(

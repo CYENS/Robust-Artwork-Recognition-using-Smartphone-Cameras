@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:modern_art_app/camera.dart';
+import 'package:modern_art_app/paintings.dart';
 import 'package:tflite/tflite.dart';
 
 import 'bbox.dart';
@@ -23,7 +24,10 @@ class HomePageMain extends StatelessWidget {
             icon: const Icon(Icons.settings),
             // todo add changelog
             tooltip: "Settings",
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => PaintingList()));
+            },
           ),
           IconButton(
             icon: const Icon(Icons.camera),
