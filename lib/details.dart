@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lorem/flutter_lorem.dart';
 import 'package:photo_view/photo_view.dart';
 
-class DetailsScreen extends StatelessWidget {
+class DetailsPage extends StatelessWidget {
   final String imagePath;
 
-  const DetailsScreen({Key key, this.imagePath}) : super(key: key);
+  const DetailsPage({Key key, this.imagePath}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

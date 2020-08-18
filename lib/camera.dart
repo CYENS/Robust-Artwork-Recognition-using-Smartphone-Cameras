@@ -82,7 +82,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => DetailsScreen(imagePath: path),
+                builder: (context) => DetailsPage(imagePath: path),
               ),
             );
           } catch (e) {
