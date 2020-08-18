@@ -21,11 +21,9 @@ class PaintingDetailsPage extends StatelessWidget {
           Align(
             child: AspectRatio(
               aspectRatio: 1 / 0.9,
-              child: Hero(
-                tag: paintingName,
-                child: PhotoView(
-                    imageProvider:
-                        AssetImage("assets/paintings/mona_lisa.webp")),
+              child: PhotoView(
+                imageProvider: AssetImage("assets/paintings/mona_lisa.webp"),
+                heroAttributes: PhotoViewHeroAttributes(tag: paintingName),
               ),
             ),
           ),
