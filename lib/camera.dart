@@ -83,7 +83,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
               context,
               MaterialPageRoute(
                 builder: (context) =>
-                    DetailsPage(paintingName: "The Mona Lisa"),
+                    PaintingDetailsPage(paintingName: "The Mona Lisa"),
               ),
             );
           } catch (e) {

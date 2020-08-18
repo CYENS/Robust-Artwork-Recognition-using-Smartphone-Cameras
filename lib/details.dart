@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lorem/flutter_lorem.dart';
 import 'package:photo_view/photo_view.dart';
 
-class DetailsPage extends StatelessWidget {
+class PaintingDetailsPage extends StatelessWidget {
   final String paintingName;
 
-  const DetailsPage({Key key, this.paintingName}) : super(key: key);
+  const PaintingDetailsPage({Key key, this.paintingName}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
