@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 
+import 'details.dart';
+
 class PaintingList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -31,7 +33,7 @@ class PaintingRow extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => PaintingDetailsPage(
+                  builder: (context) => DetailsPage(
                         paintingName: paintingName,
                       )),
             );
@@ -46,32 +48,6 @@ class PaintingRow extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class PaintingDetailsPage extends StatelessWidget {
-  final String paintingName;
-
-  const PaintingDetailsPage({Key key, this.paintingName}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Painting details"),
-      ),
-      body: Column(
-        children: [
-          AspectRatio(
-            aspectRatio: 1 / 1,
-            child: Hero(
-                tag: paintingName,
-                child: Image.asset("assets/paintings/mona_lisa.webp")),
-          ),
-          Text(paintingName),
-        ],
       ),
     );
   }
