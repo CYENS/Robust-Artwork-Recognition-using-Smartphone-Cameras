@@ -3,7 +3,7 @@ import 'dart:math' as math;
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:modern_art_app/camera.dart';
-import 'package:modern_art_app/paintings.dart';
+import 'package:modern_art_app/painting_list.dart';
 import 'package:tflite/tflite.dart';
 
 import 'bbox.dart';

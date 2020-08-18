@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 
-import 'details.dart';
+import 'painting_details_page.dart';
 
 class PaintingList extends StatelessWidget {
   @override
