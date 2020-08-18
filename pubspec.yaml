@@ -34,7 +34,7 @@ dependencies:
   moor_flutter: ^3.1.0
   path:
   path_provider:
-  photo_view: ^0.9.2
+  photo_view: ^0.10.0
   sqlite3_flutter_libs:
   tflite: 1.1.1
 
