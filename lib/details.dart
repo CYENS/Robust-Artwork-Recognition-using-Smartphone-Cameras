@@ -3,9 +3,9 @@ import 'package:flutter_lorem/flutter_lorem.dart';
 import 'package:photo_view/photo_view.dart';
 
 class DetailsPage extends StatelessWidget {
-  final String imagePath;
+  final String paintingName;
 
-  const DetailsPage({Key key, this.imagePath}) : super(key: key);
+  const DetailsPage({Key key, this.paintingName}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,15 +14,19 @@ class DetailsPage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(
-            "The Mona Lisa",
+            paintingName,
             style: TextStyle(fontSize: 30, fontStyle: FontStyle.italic),
           ),
           Text("by Leonardo da Vinci, 1503–1506"),
           Align(
             child: AspectRatio(
               aspectRatio: 1 / 0.9,
-              child: PhotoView(
-                  imageProvider: AssetImage("assets/paintings/mona_lisa.webp")),
+              child: Hero(
+                tag: paintingName,
+                child: PhotoView(
+                    imageProvider:
+                        AssetImage("assets/paintings/mona_lisa.webp")),
+              ),
             ),
           ),
           Text(

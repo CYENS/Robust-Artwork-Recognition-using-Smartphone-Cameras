@@ -82,7 +82,8 @@ class TakePictureScreenState extends State<TakePictureScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => DetailsPage(imagePath: path),
+                builder: (context) =>
+                    DetailsPage(paintingName: "The Mona Lisa"),
               ),
             );
           } catch (e) {
