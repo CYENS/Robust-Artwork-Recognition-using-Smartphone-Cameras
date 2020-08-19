@@ -53,6 +53,21 @@ class PaintingRow extends StatelessWidget {
   }
 }
 
+class PaintingListHorizontal extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 150,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemBuilder: (BuildContext context, int index) {
+          return PaintingTile(paintingName: "mona", tileSideLength: 150);
+        },
+      ),
+    );
+  }
+}
+
 class PaintingTile extends StatelessWidget {
   final String paintingName;
   final double tileSideLength;
