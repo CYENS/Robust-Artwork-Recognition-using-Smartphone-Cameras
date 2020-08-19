@@ -3,7 +3,7 @@ import 'dart:math' as math;
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:modern_art_app/camera.dart';
-import 'package:modern_art_app/paintings.dart';
+import 'package:modern_art_app/painting_list.dart';
 import 'package:tflite/tflite.dart';
 
 import 'bbox.dart';
@@ -25,8 +25,10 @@ class HomePageMain extends StatelessWidget {
             // todo add changelog
             tooltip: "Settings",
             onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => PaintingList()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => PaintingListVertical()));
             },
           ),
           IconButton(
@@ -40,12 +42,33 @@ class HomePageMain extends StatelessWidget {
         ],
       ),
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.asset("pinakothiki_building.jpg"),
-          Text(
-            "Κρατική Πινακοθήκη Σύγχρονης Κυπριακής Τέχνης",
-            style: TextStyle(fontSize: 25),
+          Stack(
+            children: [
+              Image.asset(
+                "pinakothiki_building.jpg",
+                //fit: BoxFit.fill,
+              ),
+              Container(
+                alignment: Alignment.bottomLeft,
+                decoration: BoxDecoration(),
+                child: Text(
+                  "Κρατική Πινακοθήκη Σύγχρονης Κυπριακής Τέχνης",
+                  style: TextStyle(fontSize: 25),
+                ),
+              ),
+            ],
           ),
+          Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Text(
+              "Paintings".toUpperCase(),
+              style:
+                  Typography.whiteMountainView.headline1.copyWith(fontSize: 20),
+            ),
+          ),
+          PaintingListHorizontal(),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(

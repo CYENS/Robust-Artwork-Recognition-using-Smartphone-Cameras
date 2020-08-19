@@ -3,8 +3,8 @@ import 'dart:math' as math;
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:modern_art_app/details.dart';
 import 'package:modern_art_app/models.dart';
+import 'package:modern_art_app/painting_details_page.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:tflite/tflite.dart';
@@ -82,7 +82,8 @@ class TakePictureScreenState extends State<TakePictureScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => DetailsScreen(imagePath: path),
+                builder: (context) =>
+                    PaintingDetailsPage(paintingName: "The Mona Lisa"),
               ),
             );
           } catch (e) {

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lorem/flutter_lorem.dart';
 import 'package:photo_view/photo_view.dart';
 
-class DetailsScreen extends StatelessWidget {
-  final String imagePath;
+class PaintingDetailsPage extends StatelessWidget {
+  final String paintingName;
 
-  const DetailsScreen({Key key, this.imagePath}) : super(key: key);
+  const PaintingDetailsPage({Key key, this.paintingName}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +14,7 @@ class DetailsScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text(
-            "The Mona Lisa",
+            paintingName,
             style: TextStyle(fontSize: 30, fontStyle: FontStyle.italic),
           ),
           Text("by Leonardo da Vinci, 1503–1506"),
@@ -22,7 +22,9 @@ class DetailsScreen extends StatelessWidget {
             child: AspectRatio(
               aspectRatio: 1 / 0.9,
               child: PhotoView(
-                  imageProvider: AssetImage("assets/paintings/mona_lisa.webp")),
+                imageProvider: AssetImage("assets/paintings/mona_lisa.webp"),
+                heroAttributes: PhotoViewHeroAttributes(tag: paintingName),
+              ),
             ),
           ),
           Text(

@@ -1,3 +1,8 @@
+## Version 0.0.5
+### 2010-08-19
+- Added widget with list of paintings on main screen
+- Bug fixes
+
 ## Version 0.0.4
 ### 2010-08-17
 - Added widget with list of paintings, as well as widget showing
