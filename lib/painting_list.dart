@@ -36,7 +36,7 @@ class PaintingRow extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                     builder: (context) => PaintingDetailsPage(
-                          paintingName: paintingName,
+                          name: paintingName,
                         )));
           },
           child: Row(
@@ -84,7 +84,7 @@ class PaintingTile extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) => PaintingDetailsPage(
-                      paintingName: paintingName,
+                      name: paintingName,
                     )));
       },
       child: Container(
