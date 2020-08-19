@@ -77,10 +77,12 @@ class PaintingListHorizontal extends StatelessWidget {
 
 class PaintingTile extends StatelessWidget {
   final String paintingName;
+  final String _path;
   final double tileSideLength;
 
-  const PaintingTile({Key key, this.paintingName, this.tileSideLength})
-      : super(key: key);
+  PaintingTile({Key key, this.paintingName, this.tileSideLength, path})
+      : _path = path ?? randomPainting(),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -91,6 +93,7 @@ class PaintingTile extends StatelessWidget {
             MaterialPageRoute(
                 builder: (context) => PaintingDetailsPage(
                       name: paintingName,
+                      path: _path,
                     )));
       },
       child: Container(
@@ -98,7 +101,7 @@ class PaintingTile extends StatelessWidget {
         height: tileSideLength,
         width: tileSideLength,
         child: Image.asset(
-          randomPainting(),
+          _path,
           fit: BoxFit.cover,
         ),
       ),
