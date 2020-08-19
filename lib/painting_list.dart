@@ -52,3 +52,24 @@ class PaintingRow extends StatelessWidget {
     );
   }
 }
+
+class PaintingTile extends StatelessWidget {
+  final String paintingName;
+  final double tileSideLength;
+
+  const PaintingTile({Key key, this.paintingName, this.tileSideLength})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.all(8),
+      height: tileSideLength,
+      width: tileSideLength,
+      child: Image.asset(
+        "assets/paintings/mona_lisa.webp",
+        fit: BoxFit.fitHeight,
+      ),
+    );
+  }
+}
