@@ -29,26 +29,31 @@ class PaintingRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 2 / 1,
-      child: Padding(
-        padding: EdgeInsets.all(8),
-        child: InkWell(
-          onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => PaintingDetailsPage(
-                          name: paintingName,
-                        )));
-          },
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Hero(tag: paintingName, child: Image.asset(_path)),
-              Text(paintingName),
-            ],
-          ),
+    return Padding(
+      padding: EdgeInsets.all(8),
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => PaintingDetailsPage(
+                        name: paintingName,
+                        path: _path,
+                      )));
+        },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Hero(
+                tag: paintingName,
+                child: Image.asset(
+                  _path,
+                  fit: BoxFit.fitHeight,
+                  height: 200,
+                  width: 200,
+                )),
+            Text(paintingName),
+          ],
         ),
       ),
     );
