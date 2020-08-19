@@ -33,12 +33,11 @@ class PaintingRow extends StatelessWidget {
         child: InkWell(
           onTap: () {
             Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => PaintingDetailsPage(
-                        paintingName: paintingName,
-                      )),
-            );
+                context,
+                MaterialPageRoute(
+                    builder: (context) => PaintingDetailsPage(
+                          paintingName: paintingName,
+                        )));
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -79,13 +78,23 @@ class PaintingTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.all(8),
-      height: tileSideLength,
-      width: tileSideLength,
-      child: Image.asset(
-        randomPainting(),
-        fit: BoxFit.cover,
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => PaintingDetailsPage(
+                      paintingName: paintingName,
+                    )));
+      },
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 8),
+        height: tileSideLength,
+        width: tileSideLength,
+        child: Image.asset(
+          randomPainting(),
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }
