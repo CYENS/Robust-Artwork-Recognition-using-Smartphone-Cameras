@@ -3,12 +3,16 @@ import 'package:flutter_lorem/flutter_lorem.dart';
 import 'package:photo_view/photo_view.dart';
 
 class PaintingDetailsPage extends StatelessWidget {
+  final String path;
   final String name;
   final String painter;
-  final String path;
 
-  const PaintingDetailsPage({Key key, this.name, this.painter, this.path})
-      : super(key: key);
+  const PaintingDetailsPage({
+    Key key,
+    this.path,
+    this.name = "Painting name",
+    this.painter = "Painter",
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
