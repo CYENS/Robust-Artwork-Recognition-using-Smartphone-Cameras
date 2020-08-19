@@ -21,8 +21,11 @@ class PaintingListVertical extends StatelessWidget {
 
 class PaintingRow extends StatelessWidget {
   final String paintingName;
+  final String _path;
 
-  const PaintingRow({Key key, this.paintingName}) : super(key: key);
+  PaintingRow({Key key, this.paintingName, path})
+      : _path = path ?? randomPainting(),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -42,9 +45,7 @@ class PaintingRow extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Hero(
-                  tag: paintingName,
-                  child: Image.asset("assets/paintings/mona_lisa.webp")),
+              Hero(tag: paintingName, child: Image.asset(_path)),
               Text(paintingName),
             ],
           ),
