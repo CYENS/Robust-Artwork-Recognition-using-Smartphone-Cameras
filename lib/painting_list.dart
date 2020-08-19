@@ -68,7 +68,7 @@ class PaintingListHorizontal extends StatelessWidget {
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemBuilder: (BuildContext context, int index) {
-          return PaintingTile(paintingName: "mona", tileSideLength: 150);
+          return PaintingTile(paintingName: "tile $index", tileSideLength: 150);
         },
       ),
     );
@@ -100,9 +100,12 @@ class PaintingTile extends StatelessWidget {
         margin: EdgeInsets.symmetric(horizontal: 8),
         height: tileSideLength,
         width: tileSideLength,
-        child: Image.asset(
-          _path,
-          fit: BoxFit.cover,
+        child: Hero(
+          tag: paintingName,
+          child: Image.asset(
+            _path,
+            fit: BoxFit.cover,
+          ),
         ),
       ),
     );
