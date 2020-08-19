@@ -3,7 +3,7 @@ import 'package:flutter/painting.dart';
 
 import 'painting_details_page.dart';
 
-class PaintingList extends StatelessWidget {
+class PaintingListVertical extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -26,7 +26,7 @@ class HomePageMain extends StatelessWidget {
             tooltip: "Settings",
             onPressed: () {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => PaintingList()));
+                  MaterialPageRoute(builder: (context) => PaintingListVertical()));
             },
           ),
           IconButton(
