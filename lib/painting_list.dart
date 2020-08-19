@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 
@@ -82,9 +84,17 @@ class PaintingTile extends StatelessWidget {
       height: tileSideLength,
       width: tileSideLength,
       child: Image.asset(
-        "assets/paintings/mona_lisa.webp",
-        fit: BoxFit.fitHeight,
+        randomPainting(),
+        fit: BoxFit.cover,
       ),
     );
   }
+}
+
+String randomPainting() {
+  return [
+    "assets/paintings/last_supper.webp",
+    "assets/paintings/mona_lisa.webp",
+    "assets/paintings/vitruvian_man.webp"
+  ][Random().nextInt(3)];
 }
