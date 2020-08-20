@@ -2,9 +2,9 @@ import 'dart:math' as math;
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:modern_art_app/tensorflow/tensorflow_camera.dart';
 import 'package:tflite/tflite.dart';
 
-import '../camera.dart';
 import 'bbox.dart';
 import 'models.dart';
 
@@ -102,7 +102,7 @@ class _ModelSelectionState extends State<ModelSelection> {
             )
           : Stack(
               children: [
-                Camera(
+                TensorFlowCamera(
                   widget.cameras,
                   setRecognitions,
                   _model,
