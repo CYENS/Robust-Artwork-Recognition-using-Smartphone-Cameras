@@ -11,6 +11,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         title: Text("Modern Art App"),
@@ -41,21 +42,45 @@ class HomePage extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Stack(
-            children: [
-              Image.asset(
-                "pinakothiki_building.jpg",
-                //fit: BoxFit.fill,
-              ),
-              Container(
-                alignment: Alignment.bottomLeft,
-                decoration: BoxDecoration(),
-                child: Text(
-                  "Κρατική Πινακοθήκη Σύγχρονης Κυπριακής Τέχνης",
-                  style: TextStyle(fontSize: 25),
+          Container(
+            height: size.height * 0.33,
+            width: size.width,
+            child: Stack(
+              children: [
+                Container(
+                  height: size.height * 0.33,
+                  width: size.width,
+                  child: Image.asset(
+                    "pinakothiki_building.jpg",
+                    fit: BoxFit.fitWidth,
+                  ),
                 ),
-              ),
-            ],
+                Container(
+                  // add gradient in front of building photo to make text in
+                  // front of it legible, based on the example provided here
+                  // https://api.flutter.dev/flutter/widgets/Stack-class.html
+                  alignment: Alignment.bottomLeft,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: <Color>[
+                        Colors.black.withAlpha(0),
+                        Colors.black12,
+                        Colors.black
+                      ],
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      "Κρατική Πινακοθήκη Σύγχρονης Κυπριακής Τέχνης",
+                      style: TextStyle(fontSize: 25),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
           headline("Paintings"),
           PaintingListHorizontal(listType: "Painting"),
