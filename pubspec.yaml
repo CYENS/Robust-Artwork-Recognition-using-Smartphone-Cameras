@@ -59,6 +59,7 @@ flutter:
   assets:
     - pinakothiki_building.jpg
     - assets/database/
+    - assets/painters/
     - assets/paintings/
     - assets/tflite_models/
 
