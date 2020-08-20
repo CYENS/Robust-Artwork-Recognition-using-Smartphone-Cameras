@@ -71,7 +71,7 @@ Widget listVerticalFuture() {
               int len = paintings.length;
               return PaintingRow(
                 paintingName: "Painting $index",
-                path: paintings[Random().nextInt(len)],
+                path: paintings[index % len],
               );
             });
       }
@@ -150,7 +150,7 @@ Widget listHorizontalFuture(String listType) {
               return PaintingTile(
                 paintingName: "$listType $index",
                 tileSideLength: size,
-                path: results[Random().nextInt(len)],
+                path: results[index % len],
               );
             });
       }
