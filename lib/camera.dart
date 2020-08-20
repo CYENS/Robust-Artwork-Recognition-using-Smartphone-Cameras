@@ -6,8 +6,6 @@ import 'package:modern_art_app/painting_details_page.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
-typedef void Callback(List<dynamic> list, int h, int w);
-
 class TakePictureScreen extends StatefulWidget {
   final List<CameraDescription> cameras;
 
