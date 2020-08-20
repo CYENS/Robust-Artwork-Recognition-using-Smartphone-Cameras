@@ -39,54 +39,58 @@ class HomePage extends StatelessWidget {
           )
         ],
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            height: size.height * 0.33,
-            width: size.width,
-            child: Stack(
-              children: [
-                Container(
-                  height: size.height * 0.33,
-                  width: size.width,
-                  child: Image.asset(
-                    "pinakothiki_building.jpg",
-                    fit: BoxFit.fitWidth,
-                  ),
-                ),
-                Container(
-                  // add gradient in front of building photo to make text in
-                  // front of it legible, based on the example provided here
-                  // https://api.flutter.dev/flutter/widgets/Stack-class.html
-                  alignment: Alignment.bottomLeft,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: <Color>[
-                        Colors.black.withAlpha(0),
-                        Colors.black12,
-                        Colors.black
-                      ],
+      body: Container(
+        color: Colors.black,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: size.height * 0.33,
+              width: size.width,
+              child: Stack(
+                children: [
+                  Container(
+                    height: size.height * 0.33,
+                    width: size.width,
+                    child: Image.asset(
+                      "pinakothiki_building.jpg",
+                      fit: BoxFit.fitWidth,
                     ),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      "Κρατική Πινακοθήκη Σύγχρονης Κυπριακής Τέχνης",
-                      style: TextStyle(fontSize: 25),
+                  Container(
+                    // add gradient in front of building photo to make text in
+                    // front of it legible, based on the example provided here
+                    // https://api.flutter.dev/flutter/widgets/Stack-class.html
+                    alignment: Alignment.bottomLeft,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: <Color>[
+                          Colors.black.withAlpha(0),
+                          Colors.black12,
+                          Colors.black12,
+                          Colors.black
+                        ],
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        "Κρατική Πινακοθήκη Σύγχρονης Κυπριακής Τέχνης",
+                        style: TextStyle(fontSize: 25),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          headline("Paintings"),
-          PaintingListHorizontal(listType: "Painting"),
-          headline("Painters"),
-          PaintingListHorizontal(listType: "Painter"),
-        ],
+            headline("Paintings"),
+            PaintingListHorizontal(listType: "Painting"),
+            headline("Painters"),
+            PaintingListHorizontal(listType: "Painter"),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         label: Text("Αναγνώριση Πίνακα"),
