@@ -148,9 +148,6 @@ String randomPainting() {
 Future<List<String>> loadAssets({String assetType = "assets"}) async {
   final assetManifest = await rootBundle.loadString("AssetManifest.json");
   final Map<String, dynamic> assetMap = json.decode(assetManifest);
-  assetMap.forEach((key, value) {
-    print("key $key");
-  });
-
+  await Future.delayed(Duration(seconds: 1));
   return assetMap.keys.where((String key) => key.contains(assetType)).toList();
 }
