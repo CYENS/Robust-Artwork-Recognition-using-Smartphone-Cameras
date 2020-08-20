@@ -2,7 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:modern_art_app/camera.dart';
 import 'package:modern_art_app/painting_list.dart';
-import 'package:modern_art_app/tensorflow/tensorflow_camera.dart';
+import 'package:modern_art_app/tensorflow/model_selection.dart';
 
 class HomePageMain extends StatelessWidget {
   final List<CameraDescription> cameras;
@@ -33,7 +33,7 @@ class HomePageMain extends StatelessWidget {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => TensorflowCamera(cameras)));
+                      builder: (context) => ModelSelection(cameras)));
             },
           )
         ],

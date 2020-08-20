@@ -8,16 +8,16 @@ import '../camera.dart';
 import 'bbox.dart';
 import 'models.dart';
 
-class TensorflowCamera extends StatefulWidget {
+class ModelSelection extends StatefulWidget {
   final List<CameraDescription> cameras;
 
-  TensorflowCamera(this.cameras);
+  ModelSelection(this.cameras);
 
   @override
-  _TensorflowCameraState createState() => new _TensorflowCameraState();
+  _ModelSelectionState createState() => new _ModelSelectionState();
 }
 
-class _TensorflowCameraState extends State<TensorflowCamera> {
+class _ModelSelectionState extends State<ModelSelection> {
   List<dynamic> _recognitions;
   int _imageHeight = 0;
   int _imageWidth = 0;
