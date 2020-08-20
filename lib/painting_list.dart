@@ -67,7 +67,12 @@ Widget listVerticalFuture() {
         return ListView.builder(
             padding: const EdgeInsets.all(8),
             itemBuilder: (BuildContext context, int index) {
-              return PaintingRow(paintingName: "row $index");
+              List<String> paintings = snapshot.data;
+              int len = paintings.length;
+              return PaintingRow(
+                paintingName: "Painting $index",
+                path: paintings[Random().nextInt(len)],
+              );
             });
       }
       return Center(child: CircularProgressIndicator());
@@ -86,13 +91,7 @@ class PaintingListHorizontal extends StatelessWidget {
     double size = MediaQuery.of(context).size.width * 0.28;
     return Container(
       height: size,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemBuilder: (BuildContext context, int index) {
-          return PaintingTile(
-              paintingName: "$listType $index", tileSideLength: size);
-        },
-      ),
+      child: listHorizontalFuture(listType),
     );
   }
 }
@@ -135,6 +134,29 @@ class PaintingTile extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget listHorizontalFuture(String listType) {
+  return FutureBuilder(
+    future: loadAssets(assetType: listType),
+    builder: (context, snapshot) {
+      double size = MediaQuery.of(context).size.width * 0.28;
+      if (snapshot.hasData) {
+        return ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (BuildContext context, int index) {
+              List<String> results = snapshot.data;
+              int len = results.length;
+              return PaintingTile(
+                paintingName: "$listType $index",
+                tileSideLength: size,
+                path: results[Random().nextInt(len)],
+              );
+            });
+      }
+      return Center(child: CircularProgressIndicator());
+    },
+  );
 }
 
 String randomPainting() {
