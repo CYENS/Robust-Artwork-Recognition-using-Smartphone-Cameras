@@ -12,11 +12,7 @@ class PaintingListVertical extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Paintings")),
-      body: ListView.builder(
-          padding: const EdgeInsets.all(8),
-          itemBuilder: (BuildContext context, int index) {
-            return PaintingRow(paintingName: "row $index");
-          }),
+      body: listVerticalFuture(),
     );
   }
 }
@@ -61,6 +57,22 @@ class PaintingRow extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget listVerticalFuture() {
+  return FutureBuilder(
+    future: loadAssets(assetType: "paintings"),
+    builder: (context, snapshot) {
+      if (snapshot.hasData) {
+        return ListView.builder(
+            padding: const EdgeInsets.all(8),
+            itemBuilder: (BuildContext context, int index) {
+              return PaintingRow(paintingName: "row $index");
+            });
+      }
+      return CircularProgressIndicator();
+    },
+  );
 }
 
 class PaintingListHorizontal extends StatelessWidget {
