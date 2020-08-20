@@ -62,6 +62,11 @@ class PaintingRow extends StatelessWidget {
 }
 
 class PaintingListHorizontal extends StatelessWidget {
+  final String listType;
+
+  const PaintingListHorizontal({Key key, @required this.listType})
+      : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     double size = MediaQuery.of(context).size.width * 0.26;
@@ -71,7 +76,7 @@ class PaintingListHorizontal extends StatelessWidget {
         scrollDirection: Axis.horizontal,
         itemBuilder: (BuildContext context, int index) {
           return PaintingTile(
-              paintingName: "tile $index", tileSideLength: size);
+              paintingName: "$listType $index", tileSideLength: size);
         },
       ),
     );

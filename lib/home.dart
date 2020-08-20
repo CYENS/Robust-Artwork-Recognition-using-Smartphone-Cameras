@@ -61,9 +61,9 @@ class HomePageMain extends StatelessWidget {
             ],
           ),
           headline("Paintings"),
-          PaintingListHorizontal(),
+          PaintingListHorizontal(listType: "Painting"),
           headline("Painters"),
-          PaintingListHorizontal(),
+          PaintingListHorizontal(listType: "Painter"),
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
