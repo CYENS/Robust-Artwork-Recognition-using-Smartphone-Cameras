@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter/services.dart';
 
 import 'painting_details_page.dart';
 
@@ -129,4 +131,14 @@ String randomPainting() {
     "assets/paintings/mona_lisa.webp",
     "assets/paintings/vitruvian_man.webp"
   ][Random().nextInt(3)];
+}
+
+Future<List<String>> loadAssets({String assetType = "assets"}) async {
+  final assetManifest = await rootBundle.loadString("AssetManifest.json");
+  final Map<String, dynamic> assetMap = json.decode(assetManifest);
+  assetMap.forEach((key, value) {
+    print("key $key");
+  });
+
+  return assetMap.keys.where((String key) => key.contains(assetType)).toList();
 }
