@@ -60,14 +60,9 @@ class HomePageMain extends StatelessWidget {
               ),
             ],
           ),
-          Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: Text(
-              "Paintings".toUpperCase(),
-              style:
-                  Typography.whiteMountainView.headline1.copyWith(fontSize: 20),
-            ),
-          ),
+          headline("Paintings"),
+          PaintingListHorizontal(),
+          headline("Painters"),
           PaintingListHorizontal(),
         ],
       ),
@@ -196,4 +191,14 @@ class _HomePageState extends State<HomePage> {
             ),
     );
   }
+}
+
+Widget headline(String text) {
+  return Padding(
+    padding: const EdgeInsets.all(8),
+    child: Text(
+      text.toUpperCase(),
+      style: Typography.whiteMountainView.headline1.copyWith(fontSize: 20),
+    ),
+  );
 }
