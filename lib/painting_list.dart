@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter/services.dart';
 
 import 'painting_details_page.dart';
 
@@ -9,72 +11,99 @@ class PaintingListVertical extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Painting List")),
-      body: ListView.builder(
-          padding: const EdgeInsets.all(8),
-          itemBuilder: (BuildContext context, int index) {
-            return PaintingRow(paintingName: "row $index");
-          }),
+      appBar: AppBar(title: Text("Paintings")),
+      body: listVerticalFuture(),
     );
   }
 }
 
 class PaintingRow extends StatelessWidget {
   final String paintingName;
+  final String _path;
 
-  const PaintingRow({Key key, this.paintingName}) : super(key: key);
+  PaintingRow({Key key, this.paintingName, path})
+      : _path = path ?? randomPainting(),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 2 / 1,
-      child: Padding(
-        padding: EdgeInsets.all(8),
-        child: InkWell(
-          onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => PaintingDetailsPage(
-                          paintingName: paintingName,
-                        )));
-          },
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Hero(
-                  tag: paintingName,
-                  child: Image.asset("assets/paintings/mona_lisa.webp")),
-              Text(paintingName),
-            ],
-          ),
+    double size = MediaQuery.of(context).size.width * 0.3;
+    return Padding(
+      padding: EdgeInsets.all(8),
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => PaintingDetailsPage(
+                        name: paintingName,
+                        path: _path,
+                      )));
+        },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Hero(
+                tag: paintingName,
+                child: Image.asset(
+                  _path,
+                  fit: BoxFit.cover,
+                  height: size,
+                  width: size,
+                )),
+            Text(paintingName),
+          ],
         ),
       ),
     );
   }
 }
 
+Widget listVerticalFuture() {
+  return FutureBuilder(
+    future: loadAssets(assetType: "paintings"),
+    builder: (context, snapshot) {
+      if (snapshot.hasData) {
+        return ListView.builder(
+            padding: const EdgeInsets.all(8),
+            itemBuilder: (BuildContext context, int index) {
+              List<String> paintings = snapshot.data;
+              int len = paintings.length;
+              return PaintingRow(
+                paintingName: "Painting $index",
+                path: paintings[index % len],
+              );
+            });
+      }
+      return Center(child: CircularProgressIndicator());
+    },
+  );
+}
+
 class PaintingListHorizontal extends StatelessWidget {
+  final String listType;
+
+  const PaintingListHorizontal({Key key, @required this.listType})
+      : super(key: key);
+
   @override
   Widget build(BuildContext context) {
+    double size = MediaQuery.of(context).size.width * 0.28;
     return Container(
-      height: 150,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemBuilder: (BuildContext context, int index) {
-          return PaintingTile(paintingName: "mona", tileSideLength: 150);
-        },
-      ),
+      height: size,
+      child: listHorizontalFuture(listType),
     );
   }
 }
 
 class PaintingTile extends StatelessWidget {
   final String paintingName;
+  final String _path;
   final double tileSideLength;
 
-  const PaintingTile({Key key, this.paintingName, this.tileSideLength})
-      : super(key: key);
+  PaintingTile({Key key, this.paintingName, this.tileSideLength, path})
+      : _path = path ?? randomPainting(),
+        super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -84,20 +113,50 @@ class PaintingTile extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) => PaintingDetailsPage(
-                      paintingName: paintingName,
+                      name: paintingName,
+                      path: _path,
                     )));
       },
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 8),
         height: tileSideLength,
         width: tileSideLength,
-        child: Image.asset(
-          randomPainting(),
-          fit: BoxFit.cover,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Hero(
+            tag: paintingName,
+            child: Image.asset(
+              _path,
+              fit: BoxFit.cover,
+            ),
+          ),
         ),
       ),
     );
   }
+}
+
+Widget listHorizontalFuture(String listType) {
+  return FutureBuilder(
+    future: loadAssets(assetType: listType),
+    builder: (context, snapshot) {
+      double size = MediaQuery.of(context).size.width * 0.28;
+      if (snapshot.hasData) {
+        return ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemBuilder: (BuildContext context, int index) {
+              List<String> results = snapshot.data;
+              int len = results.length;
+              return PaintingTile(
+                paintingName: "$listType $index",
+                tileSideLength: size,
+                path: results[index % len],
+              );
+            });
+      }
+      return Center(child: CircularProgressIndicator());
+    },
+  );
 }
 
 String randomPainting() {
@@ -106,4 +165,13 @@ String randomPainting() {
     "assets/paintings/mona_lisa.webp",
     "assets/paintings/vitruvian_man.webp"
   ][Random().nextInt(3)];
+}
+
+Future<List<String>> loadAssets({String assetType = "assets"}) async {
+  final assetManifest = await rootBundle.loadString("AssetManifest.json");
+  final Map<String, dynamic> assetMap = json.decode(assetManifest);
+  await Future.delayed(Duration(seconds: 1));
+  return assetMap.keys
+      .where((String key) => key.contains(assetType.toLowerCase()))
+      .toList();
 }

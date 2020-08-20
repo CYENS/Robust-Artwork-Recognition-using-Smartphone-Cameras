@@ -2,100 +2,22 @@ import 'dart:math' as math;
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:modern_art_app/camera.dart';
-import 'package:modern_art_app/painting_list.dart';
+import 'package:modern_art_app/tensorflow/tensorflow_camera.dart';
 import 'package:tflite/tflite.dart';
 
 import 'bbox.dart';
 import 'models.dart';
 
-class HomePageMain extends StatelessWidget {
+class ModelSelection extends StatefulWidget {
   final List<CameraDescription> cameras;
 
-  const HomePageMain({Key key, @required this.cameras}) : super(key: key);
+  ModelSelection(this.cameras);
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Modern Art App"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            // todo add changelog
-            tooltip: "Settings",
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => PaintingListVertical()));
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.camera),
-            tooltip: "Tensorflow",
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => HomePage(cameras)));
-            },
-          )
-        ],
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Stack(
-            children: [
-              Image.asset(
-                "pinakothiki_building.jpg",
-                //fit: BoxFit.fill,
-              ),
-              Container(
-                alignment: Alignment.bottomLeft,
-                decoration: BoxDecoration(),
-                child: Text(
-                  "Κρατική Πινακοθήκη Σύγχρονης Κυπριακής Τέχνης",
-                  style: TextStyle(fontSize: 25),
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: Text(
-              "Paintings".toUpperCase(),
-              style:
-                  Typography.whiteMountainView.headline1.copyWith(fontSize: 20),
-            ),
-          ),
-          PaintingListHorizontal(),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        label: Text("Αναγνώριση Πίνακα"),
-        icon: Icon(Icons.camera_alt),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => TakePictureScreen(cameras: cameras)),
-          );
-        },
-      ),
-    );
-  }
+  _ModelSelectionState createState() => new _ModelSelectionState();
 }
 
-class HomePage extends StatefulWidget {
-  final List<CameraDescription> cameras;
-
-  HomePage(this.cameras);
-
-  @override
-  _HomePageState createState() => new _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
+class _ModelSelectionState extends State<ModelSelection> {
   List<dynamic> _recognitions;
   int _imageHeight = 0;
   int _imageWidth = 0;
@@ -180,7 +102,7 @@ class _HomePageState extends State<HomePage> {
             )
           : Stack(
               children: [
-                Camera(
+                TensorFlowCamera(
                   widget.cameras,
                   setRecognitions,
                   _model,
