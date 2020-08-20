@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:modern_art_app/home.dart';
+import 'package:modern_art_app/home_page.dart';
 
 List<CameraDescription> cameras;
 
@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData.dark(),
-      home: HomePageMain(cameras: cameras),
+      home: HomePage(cameras: cameras),
     );
   }
 }

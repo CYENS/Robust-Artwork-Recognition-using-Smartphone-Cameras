@@ -4,10 +4,10 @@ import 'package:modern_art_app/camera.dart';
 import 'package:modern_art_app/painting_list.dart';
 import 'package:modern_art_app/tensorflow/model_selection.dart';
 
-class HomePageMain extends StatelessWidget {
+class HomePage extends StatelessWidget {
   final List<CameraDescription> cameras;
 
-  const HomePageMain({Key key, @required this.cameras}) : super(key: key);
+  const HomePage({Key key, @required this.cameras}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
