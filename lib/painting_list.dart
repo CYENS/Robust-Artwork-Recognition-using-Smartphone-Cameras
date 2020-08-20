@@ -108,11 +108,14 @@ class PaintingTile extends StatelessWidget {
         margin: EdgeInsets.symmetric(horizontal: 8),
         height: tileSideLength,
         width: tileSideLength,
-        child: Hero(
-          tag: paintingName,
-          child: Image.asset(
-            _path,
-            fit: BoxFit.cover,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Hero(
+            tag: paintingName,
+            child: Image.asset(
+              _path,
+              fit: BoxFit.cover,
+            ),
           ),
         ),
       ),
