@@ -69,7 +69,7 @@ class PaintingListHorizontal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double size = MediaQuery.of(context).size.width * 0.26;
+    double size = MediaQuery.of(context).size.width * 0.28;
     return Container(
       height: size,
       child: ListView.builder(
