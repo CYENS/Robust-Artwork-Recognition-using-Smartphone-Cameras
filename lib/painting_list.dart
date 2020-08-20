@@ -9,7 +9,7 @@ class PaintingListVertical extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Painting List")),
+      appBar: AppBar(title: Text("Paintings")),
       body: ListView.builder(
           padding: const EdgeInsets.all(8),
           itemBuilder: (BuildContext context, int index) {
@@ -29,6 +29,7 @@ class PaintingRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double size = MediaQuery.of(context).size.width * 0.3;
     return Padding(
       padding: EdgeInsets.all(8),
       child: InkWell(
@@ -48,9 +49,9 @@ class PaintingRow extends StatelessWidget {
                 tag: paintingName,
                 child: Image.asset(
                   _path,
-                  fit: BoxFit.fitHeight,
-                  height: 200,
-                  width: 200,
+                  fit: BoxFit.cover,
+                  height: size,
+                  width: size,
                 )),
             Text(paintingName),
           ],
@@ -63,12 +64,14 @@ class PaintingRow extends StatelessWidget {
 class PaintingListHorizontal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    double size = MediaQuery.of(context).size.width * 0.26;
     return Container(
-      height: 150,
+      height: size,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemBuilder: (BuildContext context, int index) {
-          return PaintingTile(paintingName: "tile $index", tileSideLength: 150);
+          return PaintingTile(
+              paintingName: "tile $index", tileSideLength: size);
         },
       ),
     );
