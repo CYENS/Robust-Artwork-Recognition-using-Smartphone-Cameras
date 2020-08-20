@@ -70,7 +70,7 @@ Widget listVerticalFuture() {
               return PaintingRow(paintingName: "row $index");
             });
       }
-      return CircularProgressIndicator();
+      return Center(child: CircularProgressIndicator());
     },
   );
 }
