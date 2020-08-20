@@ -6,8 +6,8 @@ import 'package:modern_art_app/camera.dart';
 import 'package:modern_art_app/painting_list.dart';
 import 'package:tflite/tflite.dart';
 
-import 'bbox.dart';
-import 'models.dart';
+import 'tensorflow/bbox.dart';
+import 'tensorflow/models.dart';
 
 class HomePageMain extends StatelessWidget {
   final List<CameraDescription> cameras;
