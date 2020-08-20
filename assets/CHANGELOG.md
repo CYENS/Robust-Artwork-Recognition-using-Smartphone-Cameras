@@ -1,3 +1,9 @@
+## Version 0.0.6
+### 2010-08-20
+- Added widget with list of painters on main screen
+- UI redesign
+- Major codebase restructuring
+
 ## Version 0.0.5
 ### 2010-08-19
 - Added widget with list of paintings on main screen
