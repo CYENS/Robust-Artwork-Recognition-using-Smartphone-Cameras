@@ -121,12 +121,10 @@ class HomePage extends StatelessWidget {
   }
 }
 
-Widget headline(String text) {
-  return Padding(
-    padding: const EdgeInsets.all(8),
-    child: Text(
-      text.toUpperCase(),
-      style: Typography.whiteMountainView.headline1.copyWith(fontSize: 20),
-    ),
-  );
-}
+Widget headline(String text) => Padding(
+      padding: const EdgeInsets.all(8),
+      child: Text(
+        text.toUpperCase(),
+        style: Typography.whiteMountainView.headline1.copyWith(fontSize: 20),
+      ),
+    );
