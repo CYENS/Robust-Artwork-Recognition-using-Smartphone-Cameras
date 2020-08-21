@@ -7,11 +7,16 @@ import 'package:flutter/services.dart';
 import 'painting_details_page.dart';
 
 class PaintingListVertical extends StatelessWidget {
+  final String listType;
+
+  const PaintingListVertical({Key key, @required this.listType})
+      : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Paintings")),
-      body: listVerticalFuture(),
+      appBar: AppBar(title: Text("${listType}s")),
+      body: listVerticalFuture(listType),
     );
   }
 }
@@ -58,9 +63,9 @@ class PaintingRow extends StatelessWidget {
   }
 }
 
-Widget listVerticalFuture() {
+Widget listVerticalFuture(String listType) {
   return FutureBuilder(
-    future: loadAssets(assetType: "paintings"),
+    future: loadAssets(assetType: listType),
     builder: (context, snapshot) {
       if (snapshot.hasData) {
         return ListView.builder(
@@ -69,7 +74,7 @@ Widget listVerticalFuture() {
               List<String> paintings = snapshot.data;
               int len = paintings.length;
               return PaintingRow(
-                paintingName: "Painting $index",
+                paintingName: "$listType $index",
                 path: paintings[index % len],
               );
             });
