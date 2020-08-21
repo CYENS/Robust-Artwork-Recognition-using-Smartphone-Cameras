@@ -85,7 +85,21 @@ class HomePage extends StatelessWidget {
                 ],
               ),
             ),
-            headline("Paintings"),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                headline("Paintings"),
+                Spacer(),
+                InkWell(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => PaintingListVertical()));
+                    },
+                    child: Text("more"))
+              ],
+            ),
             PaintingListHorizontal(listType: "Painting"),
             headline("Painters"),
             PaintingListHorizontal(listType: "Painter"),
