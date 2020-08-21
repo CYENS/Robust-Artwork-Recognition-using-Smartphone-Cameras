@@ -85,23 +85,9 @@ class HomePage extends StatelessWidget {
                 ],
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                headline("Paintings"),
-                Spacer(),
-                InkWell(
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => PaintingListVertical()));
-                    },
-                    child: Text("more"))
-              ],
-            ),
+            HeadlineAndMoreRow(listType: "Painting"),
             PaintingListHorizontal(listType: "Painting"),
-            headline("Painters"),
+            HeadlineAndMoreRow(listType: "Painter"),
             PaintingListHorizontal(listType: "Painter"),
           ],
         ),
@@ -119,6 +105,32 @@ class HomePage extends StatelessWidget {
       ),
     );
   }
+}
+
+class HeadlineAndMoreRow extends StatelessWidget {
+  final String listType;
+
+  const HeadlineAndMoreRow({Key key, @required this.listType})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) => Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          headline("${listType}s"),
+          Spacer(),
+          InkWell(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PaintingListVertical(
+                              listType: listType,
+                            )));
+              },
+              child: Text("more"))
+        ],
+      );
 }
 
 Widget headline(String text) => Padding(
