@@ -38,9 +38,7 @@ class HomePage extends StatelessWidget {
                 width: size.width,
                 child: Stack(
                   children: [
-                    Container(
-                      height: size.height * 0.5,
-                      width: size.width,
+                    Positioned.fill(
                       child: Image.asset(
                         "pinakothiki_building.jpg",
                         fit: BoxFit.fitHeight,
