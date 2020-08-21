@@ -106,29 +106,29 @@ class HeadlineAndMoreRow extends StatelessWidget {
       : super(key: key);
 
   @override
-  Widget build(BuildContext context) => Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          headline("${listType}s"),
-          Spacer(),
-          InkWell(
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => PaintingListVertical(
-                              listType: listType,
-                            )));
-              },
-              child: Text("more"))
-        ],
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.fromLTRB(8, 24, 8, 8),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            headline("${listType}s"),
+            Spacer(),
+            InkWell(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => PaintingListVertical(
+                                listType: listType,
+                              )));
+                },
+                child: Text("more"))
+          ],
+        ),
       );
 }
 
-Widget headline(String text) => Padding(
-      padding: const EdgeInsets.all(8),
-      child: Text(
-        text.toUpperCase(),
-        style: Typography.whiteMountainView.headline1.copyWith(fontSize: 20),
-      ),
+Widget headline(String text) => Text(
+      text.toUpperCase(),
+      style: Typography.whiteMountainView.headline1.copyWith(fontSize: 20),
     );
