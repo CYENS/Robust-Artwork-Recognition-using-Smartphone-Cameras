@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -22,7 +21,7 @@ class PaintingRow extends StatelessWidget {
   final String _path;
 
   PaintingRow({Key key, this.paintingName, path})
-      : _path = path ?? randomPainting(),
+      : _path = path ?? "assets/paintings/mona_lisa.webp",
         super(key: key);
 
   @override
@@ -102,7 +101,7 @@ class PaintingTile extends StatelessWidget {
   final double tileSideLength;
 
   PaintingTile({Key key, this.paintingName, this.tileSideLength, path})
-      : _path = path ?? randomPainting(),
+      : _path = path ?? "assets/paintings/mona_lisa.webp",
         super(key: key);
 
   @override
@@ -159,18 +158,10 @@ Widget listHorizontalFuture(String listType) {
   );
 }
 
-String randomPainting() {
-  return [
-    "assets/paintings/last_supper.webp",
-    "assets/paintings/mona_lisa.webp",
-    "assets/paintings/vitruvian_man.webp"
-  ][Random().nextInt(3)];
-}
-
 Future<List<String>> loadAssets({String assetType = "assets"}) async {
   final assetManifest = await rootBundle.loadString("AssetManifest.json");
   final Map<String, dynamic> assetMap = json.decode(assetManifest);
-  await Future.delayed(Duration(seconds: 1));
+//  await Future.delayed(Duration(seconds: 1));
   return assetMap.keys
       .where((String key) => key.contains(assetType.toLowerCase()))
       .toList();
