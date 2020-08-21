@@ -17,17 +17,6 @@ class HomePage extends StatelessWidget {
         title: Text("Modern Art App"),
         actions: [
           IconButton(
-            icon: const Icon(Icons.settings),
-            // todo add changelog
-            tooltip: "Settings",
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => PaintingListVertical()));
-            },
-          ),
-          IconButton(
             icon: const Icon(Icons.camera),
             tooltip: "Tensorflow",
             onPressed: () {
