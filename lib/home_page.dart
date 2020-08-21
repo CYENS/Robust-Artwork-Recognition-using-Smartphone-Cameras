@@ -2,7 +2,6 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:modern_art_app/camera.dart';
 import 'package:modern_art_app/painting_list.dart';
-import 'package:modern_art_app/tensorflow/model_selection.dart';
 
 class HomePage extends StatelessWidget {
   final List<CameraDescription> cameras;
@@ -13,44 +12,44 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Modern Art App"),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.camera),
-            tooltip: "Tensorflow",
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ModelSelection(cameras)));
-            },
-          )
-        ],
-      ),
+//      appBar: AppBar(
+//        title: Text("Modern Art App"),
+//        actions: [
+//          IconButton(
+//            icon: const Icon(Icons.camera),
+//            tooltip: "Tensorflow",
+//            onPressed: () {
+//              Navigator.push(
+//                  context,
+//                  MaterialPageRoute(
+//                      builder: (context) => ModelSelection(cameras)));
+//            },
+//          )
+//        ],
+//      ),
       body: Container(
         color: Colors.black,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              height: size.height * 0.33,
+              height: size.height * 0.5,
               width: size.width,
               child: Stack(
                 children: [
                   Container(
-                    height: size.height * 0.33,
+                    height: size.height * 0.5,
                     width: size.width,
                     child: Image.asset(
                       "pinakothiki_building.jpg",
-                      fit: BoxFit.fitWidth,
+                      fit: BoxFit.fitHeight,
                     ),
                   ),
                   Container(
                     // add gradient in front of building photo to make text in
                     // front of it legible, based on the example provided here
                     // https://api.flutter.dev/flutter/widgets/Stack-class.html
-                    alignment: Alignment.bottomLeft,
+                    alignment: Alignment.bottomRight,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
@@ -58,16 +57,18 @@ class HomePage extends StatelessWidget {
                         colors: <Color>[
                           Colors.black.withAlpha(0),
                           Colors.black12,
-                          Colors.black12,
+                          Colors.black38,
                           Colors.black
                         ],
                       ),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 20, horizontal: 8),
                       child: Text(
-                        "Κρατική Πινακοθήκη Σύγχρονης Κυπριακής Τέχνης",
-                        style: TextStyle(fontSize: 25),
+                        "Κρατική Πινακοθήκη\nΣύγχρονης Κυπριακής Τέχνης",
+                        style: TextStyle(fontSize: 30),
+                        textAlign: TextAlign.end,
                       ),
                     ),
                   ),
