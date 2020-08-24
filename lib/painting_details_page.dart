@@ -21,22 +21,25 @@ class PaintingDetailsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text("Painting details")),
       body: SingleChildScrollView(
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(name,
-              style: TextStyle(fontSize: 30, fontStyle: FontStyle.italic)),
-          Text(painter),
-          Align(
-            child: AspectRatio(
-              aspectRatio: 1 / 0.9,
-              child: PhotoView(
-                imageProvider: AssetImage(path),
-                heroAttributes: PhotoViewHeroAttributes(tag: name),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(name,
+                style: TextStyle(fontSize: 30, fontStyle: FontStyle.italic)),
+            Text(painter),
+            Align(
+              child: AspectRatio(
+                aspectRatio: 1 / 0.9,
+                child: PhotoView(
+                  imageProvider: AssetImage(path),
+                  heroAttributes: PhotoViewHeroAttributes(tag: name),
+                ),
               ),
             ),
-          ),
-          Text("Description", style: TextStyle(fontSize: 25)),
-          Text(lorem(paragraphs: 5, words: 300)),
-        ]),
+            Text("Description", style: TextStyle(fontSize: 25)),
+            Text(lorem(paragraphs: 5, words: 300)),
+          ],
+        ),
       ),
     );
   }
