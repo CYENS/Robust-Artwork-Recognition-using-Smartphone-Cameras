@@ -1,3 +1,8 @@
+## Version 0.0.7
+### 2010-08-24
+- Added Bottom Navigation Bar to Home page
+- Removed AppBar in Home page
+
 ## Version 0.0.6
 ### 2010-08-20
 - Added widget with list of painters on main screen

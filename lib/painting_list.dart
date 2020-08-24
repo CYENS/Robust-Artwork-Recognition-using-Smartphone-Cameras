@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -8,11 +7,16 @@ import 'package:flutter/services.dart';
 import 'painting_details_page.dart';
 
 class PaintingListVertical extends StatelessWidget {
+  final String listType;
+
+  const PaintingListVertical({Key key, @required this.listType})
+      : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Paintings")),
-      body: listVerticalFuture(),
+      appBar: AppBar(title: Text("${listType}s")),
+      body: listVerticalFuture(listType),
     );
   }
 }
@@ -22,7 +26,7 @@ class PaintingRow extends StatelessWidget {
   final String _path;
 
   PaintingRow({Key key, this.paintingName, path})
-      : _path = path ?? randomPainting(),
+      : _path = path ?? "assets/paintings/mona_lisa.webp",
         super(key: key);
 
   @override
@@ -59,9 +63,9 @@ class PaintingRow extends StatelessWidget {
   }
 }
 
-Widget listVerticalFuture() {
+Widget listVerticalFuture(String listType) {
   return FutureBuilder(
-    future: loadAssets(assetType: "paintings"),
+    future: loadAssets(assetType: listType),
     builder: (context, snapshot) {
       if (snapshot.hasData) {
         return ListView.builder(
@@ -70,7 +74,7 @@ Widget listVerticalFuture() {
               List<String> paintings = snapshot.data;
               int len = paintings.length;
               return PaintingRow(
-                paintingName: "Painting $index",
+                paintingName: "$listType $index",
                 path: paintings[index % len],
               );
             });
@@ -102,7 +106,7 @@ class PaintingTile extends StatelessWidget {
   final double tileSideLength;
 
   PaintingTile({Key key, this.paintingName, this.tileSideLength, path})
-      : _path = path ?? randomPainting(),
+      : _path = path ?? "assets/paintings/mona_lisa.webp",
         super(key: key);
 
   @override
@@ -159,18 +163,10 @@ Widget listHorizontalFuture(String listType) {
   );
 }
 
-String randomPainting() {
-  return [
-    "assets/paintings/last_supper.webp",
-    "assets/paintings/mona_lisa.webp",
-    "assets/paintings/vitruvian_man.webp"
-  ][Random().nextInt(3)];
-}
-
 Future<List<String>> loadAssets({String assetType = "assets"}) async {
   final assetManifest = await rootBundle.loadString("AssetManifest.json");
   final Map<String, dynamic> assetMap = json.decode(assetManifest);
-  await Future.delayed(Duration(seconds: 1));
+//  await Future.delayed(Duration(seconds: 1));
   return assetMap.keys
       .where((String key) => key.contains(assetType.toLowerCase()))
       .toList();
