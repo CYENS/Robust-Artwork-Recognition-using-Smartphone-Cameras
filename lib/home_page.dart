@@ -1,7 +1,6 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:modern_art_app/camera.dart';
-import 'package:modern_art_app/main.dart';
 import 'package:modern_art_app/painting_list.dart';
 import 'package:modern_art_app/tensorflow/model_selection.dart';
 
@@ -28,7 +27,7 @@ class _HomePageState extends State<HomePage> {
     List<Widget> _screens = [
       IntroPage(),
       TakePictureScreen(cameras: widget.cameras),
-      ModelSelection(cameras),
+      ModelSelection(widget.cameras),
     ];
     return Scaffold(
       body: _screens.elementAt(_selectedIndex),
