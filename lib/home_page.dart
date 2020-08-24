@@ -65,7 +65,7 @@ class IntroPage extends StatelessWidget {
                 children: [
                   Positioned.fill(
                     child: Image.asset(
-                      "pinakothiki_building.jpg",
+                      "assets/pinakothiki_building.jpg",
                       fit: BoxFit.fitHeight,
                     ),
                   ),
