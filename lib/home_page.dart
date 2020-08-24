@@ -41,6 +41,7 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
               icon: Icon(Icons.camera), title: Text("Tensorflow")),
         ],
+        currentIndex: _selectedIndex,
         onTap: _onItemTapped,
       ),
     );
