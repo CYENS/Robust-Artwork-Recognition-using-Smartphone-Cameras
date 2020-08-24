@@ -1,7 +1,9 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:modern_art_app/camera.dart';
+import 'package:modern_art_app/main.dart';
 import 'package:modern_art_app/painting_list.dart';
+import 'package:modern_art_app/tensorflow/model_selection.dart';
 
 class HomePage extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -25,24 +27,10 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     List<Widget> _screens = [
       IntroPage(),
-      TakePictureScreen(cameras: widget.cameras)
+      TakePictureScreen(cameras: widget.cameras),
+      ModelSelection(cameras),
     ];
     return Scaffold(
-//      appBar: AppBar(
-//        title: Text("Modern Art App"),
-//        actions: [
-//          IconButton(
-//            icon: const Icon(Icons.camera),
-//            tooltip: "Tensorflow",
-//            onPressed: () {
-//              Navigator.push(
-//                  context,
-//                  MaterialPageRoute(
-//                      builder: (context) => ModelSelection(cameras)));
-//            },
-//          )
-//        ],
-//      ),
       body: _screens.elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
         items: [
@@ -50,6 +38,8 @@ class _HomePageState extends State<HomePage> {
               icon: Icon(Icons.home), title: Text("Explore")),
           BottomNavigationBarItem(
               icon: Icon(Icons.camera), title: Text("Identify")),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.camera), title: Text("Tensorflow")),
         ],
         onTap: _onItemTapped,
       ),
