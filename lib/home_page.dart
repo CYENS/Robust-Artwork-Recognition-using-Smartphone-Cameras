@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
               icon: Icon(Icons.home), title: Text("Explore")),
           BottomNavigationBarItem(
-              icon: Icon(Icons.camera), title: Text("Identify")),
+              icon: Icon(Icons.camera_alt), title: Text("Identify painting")),
           BottomNavigationBarItem(
               icon: Icon(Icons.camera), title: Text("Tensorflow")),
         ],
