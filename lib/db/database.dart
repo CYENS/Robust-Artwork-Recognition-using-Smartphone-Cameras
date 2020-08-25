@@ -2,6 +2,11 @@ import 'package:moor/moor.dart';
 
 part 'database.g.dart';
 
+// to auto-generate necessary code, run the following in the terminal:
+// 'flutter packages pub run build_runner build'
+// or the following to continuously regenerate code when code changes
+// 'flutter packages pub run build_runner watch'
+
 // this will generate a table called "todos" for us. The rows of that table will
 // be represented by a class called "Todo".
 class Todos extends Table {
