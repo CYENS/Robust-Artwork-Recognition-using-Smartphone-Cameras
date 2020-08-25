@@ -58,6 +58,8 @@ class MyDatabase extends _$MyDatabase {
   // loads all todo entries
   Future<List<Todo>> get allTodoEntries => select(todos).get();
 
+  Stream<List<Todo>> get watchAllTodoEntries => select(todos).watch();
+
   // watches all todo entries in a given category. The stream will automatically
   // emit new items whenever the underlying data changes.
   Stream<List<Todo>> watchEntriesInCategory(Category c) {
