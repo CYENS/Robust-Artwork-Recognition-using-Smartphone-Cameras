@@ -1,3 +1,8 @@
+## Version 0.0.8
+### 2010-08-25
+- Incorporated database into app
+- More UI tweaks
+
 ## Version 0.0.7
 ### 2010-08-24
 - Added Bottom Navigation Bar to Home page
