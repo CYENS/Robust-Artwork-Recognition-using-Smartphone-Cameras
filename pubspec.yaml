@@ -30,6 +30,7 @@ dependencies:
   flutter_lorem: ^1.1.0
   flutter_markdown: ^0.4.3
   moor: ^3.3.1
+  moor_db_viewer: ^2.0.3
   path:
   path_provider:
   photo_view: ^0.10.0
