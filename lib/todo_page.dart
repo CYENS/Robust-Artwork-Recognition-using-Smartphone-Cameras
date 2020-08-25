@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:modern_art_app/db/database.dart';
 import 'package:modern_art_app/painting_list.dart';
 import 'package:moor/moor.dart';
+import 'package:moor_db_viewer/moor_db_viewer.dart';
 import 'package:provider/provider.dart';
 
 class TodoPage extends StatelessWidget {
@@ -12,6 +13,12 @@ class TodoPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text("Todos"),
+        actions: [
+          IconButton(
+              icon: Icon(Icons.list),
+              onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => MoorDbViewer(db))))
+        ],
       ),
       body: StreamBuilder<List<Todo>>(
         stream: db.watchAllTodoEntries,
@@ -25,8 +32,7 @@ class TodoPage extends StatelessWidget {
           return ListView.builder(
               itemCount: todos.length,
               itemBuilder: (context, index) => PaintingRow(
-                  paintingName:
-                      "painting ${todos[index].id} ${todos[index].content}"));
+                  paintingName: "${todos[index].id} ${todos[index].content}"));
         },
       ),
       floatingActionButton: FloatingActionButton(
