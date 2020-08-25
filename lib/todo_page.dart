@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:modern_art_app/db/database.dart';
 import 'package:modern_art_app/painting_list.dart';
@@ -23,10 +24,9 @@ class TodoPage extends StatelessWidget {
           final todos = snapshot.data;
           return ListView.builder(
               itemCount: todos.length,
-              itemBuilder: (context, index) => PaintingTile(
-                    paintingName: "painting ${todos[index].id}",
-                    tileSideLength: 200,
-                  ));
+              itemBuilder: (context, index) => PaintingRow(
+                  paintingName:
+                      "painting ${todos[index].id} ${todos[index].content}"));
         },
       ),
       floatingActionButton: FloatingActionButton(
