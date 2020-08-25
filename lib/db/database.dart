@@ -63,4 +63,9 @@ class MyDatabase extends _$MyDatabase {
   Stream<List<Todo>> watchEntriesInCategory(Category c) {
     return (select(todos)..where((t) => t.category.equals(c.id))).watch();
   }
+
+  // returns the generated id
+  Future<int> addTodo(TodosCompanion entry) {
+    return into(todos).insert(entry);
+  }
 }
