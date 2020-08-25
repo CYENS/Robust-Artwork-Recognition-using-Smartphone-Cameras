@@ -2,8 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:modern_art_app/camera.dart';
 import 'package:modern_art_app/painting_list.dart';
-
-import 'explore_page.dart';
+import 'package:modern_art_app/todo_page.dart';
 
 class HomePage extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -28,7 +27,7 @@ class _HomePageState extends State<HomePage> {
     List<Widget> _screens = [
       IntroPage(),
       TakePictureScreen(cameras: widget.cameras),
-      ExplorePage(),
+      TodoPage(),
     ];
     return Scaffold(
       body: _screens.elementAt(_selectedIndex),
