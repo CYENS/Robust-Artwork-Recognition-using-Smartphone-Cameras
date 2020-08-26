@@ -92,9 +92,9 @@ class PaintingListHorizontal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double size = MediaQuery.of(context).size.width * 0.28;
+    Size size = MediaQuery.of(context).size;
     return Container(
-      height: size,
+      height: listType == "Painting" ? size.width * 0.5 : size.width * 0.28,
       child: listHorizontalFuture(listType),
     );
   }
@@ -150,7 +150,7 @@ Widget listHorizontalFuture(String listType) {
   return FutureBuilder(
     future: loadAssets(assetType: listType),
     builder: (context, snapshot) {
-      double size = MediaQuery.of(context).size.width * 0.28;
+      double width = MediaQuery.of(context).size.width;
       if (snapshot.hasData) {
         return ListView.builder(
             scrollDirection: Axis.horizontal,
@@ -159,7 +159,9 @@ Widget listHorizontalFuture(String listType) {
               int len = results.length;
               return PaintingTile(
                 paintingName: "$listType $index",
-                tileSideLength: size,
+                tileSideLength:
+                    listType == "Painting" ? width * 0.4 : width * 0.28,
+                optionalTileHeight: listType == "Painting" ? width * 0.5 : null,
                 path: results[index % len],
               );
             });
