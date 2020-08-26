@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sensors/sensors.dart';
 
-class ExplorePage extends StatefulWidget {
+class ExplorePageParallax extends StatefulWidget {
   @override
-  _ExplorePageState createState() => _ExplorePageState();
+  _ExplorePageParallaxState createState() => _ExplorePageParallaxState();
 }
 
-class _ExplorePageState extends State<ExplorePage> {
+class _ExplorePageParallaxState extends State<ExplorePageParallax> {
   StreamSubscription<dynamic> _subscription;
   List<double> _accelerometerValues;
   List<double> _xValues = [];
