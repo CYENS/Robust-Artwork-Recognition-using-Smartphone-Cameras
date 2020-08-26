@@ -14,24 +14,28 @@ part 'database.g.dart';
 
 // this will generate a table called "todos" for us. The rows of that table will
 // be represented by a class called "Todo".
-class Todos extends Table {
+class Paintings extends Table {
   IntColumn get id => integer().autoIncrement()();
 
-  TextColumn get title => text().withLength(min: 6, max: 32)();
+  TextColumn get title => text().withLength(min: 2, max: 32)();
 
-  TextColumn get content => text().named('body')();
+  TextColumn get description => text().named('body')();
 
-  IntColumn get category => integer().nullable()();
+  IntColumn get painter => integer().nullable()();
 }
 
-// This will make moor generate a class called "Category" to represent a row in this table.
-// By default, "Categorie" would have been used because it only strips away the trailing "s"
-// in the table name.
-@DataClassName("Category")
-class Categories extends Table {
+// Class "Painter" is automatically generated, by stripping the the trailing "s"
+// in the table name. If a custom name is required, use @DataClassName("CustomName").
+class Painters extends Table {
   IntColumn get id => integer().autoIncrement()();
 
-  TextColumn get description => text()();
+  TextColumn get name => text()();
+
+  TextColumn get yearBirth => text().nullable()();
+
+  TextColumn get yearDeath => text().nullable()();
+
+  TextColumn get biography => text()();
 }
 
 LazyDatabase _openConnection() {
@@ -45,7 +49,7 @@ LazyDatabase _openConnection() {
   });
 }
 
-@UseMoor(tables: [Todos, Categories])
+@UseMoor(tables: [Paintings, Painters])
 class MyDatabase extends _$MyDatabase {
   // we tell the database where to store the data with this constructor
   MyDatabase() : super(_openConnection());
@@ -55,19 +59,20 @@ class MyDatabase extends _$MyDatabase {
   @override
   int get schemaVersion => 1;
 
-  // loads all todo entries
-  Future<List<Todo>> get allTodoEntries => select(todos).get();
+  // loads all paintings
+  Future<List<Painting>> get allPaintingEntries => select(paintings).get();
 
-  Stream<List<Todo>> get watchAllTodoEntries => select(todos).watch();
+  Stream<List<Painting>> get watchAllPaintingEntries =>
+      select(paintings).watch();
 
-  // watches all todo entries in a given category. The stream will automatically
+  // watches all painting entries for a given painter. The stream will automatically
   // emit new items whenever the underlying data changes.
-  Stream<List<Todo>> watchEntriesInCategory(Category c) {
-    return (select(todos)..where((t) => t.category.equals(c.id))).watch();
+  Stream<List<Painting>> watchPaintingsByPainter(Painter c) {
+    return (select(paintings)..where((p) => p.painter.equals(c.id))).watch();
   }
 
   // returns the generated id
-  Future<int> addTodo(TodosCompanion entry) {
-    return into(todos).insert(entry);
+  Future<int> addPainting(PaintingsCompanion entry) {
+    return into(paintings).insert(entry);
   }
 }

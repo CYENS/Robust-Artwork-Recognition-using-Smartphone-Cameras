@@ -7,29 +7,29 @@ part of 'database.dart';
 // **************************************************************************
 
 // ignore_for_file: unnecessary_brace_in_string_interps, unnecessary_this
-class Todo extends DataClass implements Insertable<Todo> {
+class Painting extends DataClass implements Insertable<Painting> {
   final int id;
   final String title;
-  final String content;
-  final int category;
-  Todo(
+  final String description;
+  final int painter;
+  Painting(
       {@required this.id,
       @required this.title,
-      @required this.content,
-      this.category});
-  factory Todo.fromData(Map<String, dynamic> data, GeneratedDatabase db,
+      @required this.description,
+      this.painter});
+  factory Painting.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
     final stringType = db.typeSystem.forDartType<String>();
-    return Todo(
+    return Painting(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       title:
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}title']),
-      content:
+      description:
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}body']),
-      category:
-          intType.mapFromDatabaseResponse(data['${effectivePrefix}category']),
+      painter:
+          intType.mapFromDatabaseResponse(data['${effectivePrefix}painter']),
     );
   }
   @override
@@ -41,37 +41,37 @@ class Todo extends DataClass implements Insertable<Todo> {
     if (!nullToAbsent || title != null) {
       map['title'] = Variable<String>(title);
     }
-    if (!nullToAbsent || content != null) {
-      map['body'] = Variable<String>(content);
+    if (!nullToAbsent || description != null) {
+      map['body'] = Variable<String>(description);
     }
-    if (!nullToAbsent || category != null) {
-      map['category'] = Variable<int>(category);
+    if (!nullToAbsent || painter != null) {
+      map['painter'] = Variable<int>(painter);
     }
     return map;
   }
 
-  TodosCompanion toCompanion(bool nullToAbsent) {
-    return TodosCompanion(
+  PaintingsCompanion toCompanion(bool nullToAbsent) {
+    return PaintingsCompanion(
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
       title:
           title == null && nullToAbsent ? const Value.absent() : Value(title),
-      content: content == null && nullToAbsent
+      description: description == null && nullToAbsent
           ? const Value.absent()
-          : Value(content),
-      category: category == null && nullToAbsent
+          : Value(description),
+      painter: painter == null && nullToAbsent
           ? const Value.absent()
-          : Value(category),
+          : Value(painter),
     );
   }
 
-  factory Todo.fromJson(Map<String, dynamic> json,
+  factory Painting.fromJson(Map<String, dynamic> json,
       {ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
-    return Todo(
+    return Painting(
       id: serializer.fromJson<int>(json['id']),
       title: serializer.fromJson<String>(json['title']),
-      content: serializer.fromJson<String>(json['content']),
-      category: serializer.fromJson<int>(json['category']),
+      description: serializer.fromJson<String>(json['description']),
+      painter: serializer.fromJson<int>(json['painter']),
     );
   }
   @override
@@ -80,83 +80,84 @@ class Todo extends DataClass implements Insertable<Todo> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'title': serializer.toJson<String>(title),
-      'content': serializer.toJson<String>(content),
-      'category': serializer.toJson<int>(category),
+      'description': serializer.toJson<String>(description),
+      'painter': serializer.toJson<int>(painter),
     };
   }
 
-  Todo copyWith({int id, String title, String content, int category}) => Todo(
+  Painting copyWith({int id, String title, String description, int painter}) =>
+      Painting(
         id: id ?? this.id,
         title: title ?? this.title,
-        content: content ?? this.content,
-        category: category ?? this.category,
+        description: description ?? this.description,
+        painter: painter ?? this.painter,
       );
   @override
   String toString() {
-    return (StringBuffer('Todo(')
+    return (StringBuffer('Painting(')
           ..write('id: $id, ')
           ..write('title: $title, ')
-          ..write('content: $content, ')
-          ..write('category: $category')
+          ..write('description: $description, ')
+          ..write('painter: $painter')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode => $mrjf($mrjc(id.hashCode,
-      $mrjc(title.hashCode, $mrjc(content.hashCode, category.hashCode))));
+      $mrjc(title.hashCode, $mrjc(description.hashCode, painter.hashCode))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
-      (other is Todo &&
+      (other is Painting &&
           other.id == this.id &&
           other.title == this.title &&
-          other.content == this.content &&
-          other.category == this.category);
+          other.description == this.description &&
+          other.painter == this.painter);
 }
 
-class TodosCompanion extends UpdateCompanion<Todo> {
+class PaintingsCompanion extends UpdateCompanion<Painting> {
   final Value<int> id;
   final Value<String> title;
-  final Value<String> content;
-  final Value<int> category;
-  const TodosCompanion({
+  final Value<String> description;
+  final Value<int> painter;
+  const PaintingsCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
-    this.content = const Value.absent(),
-    this.category = const Value.absent(),
+    this.description = const Value.absent(),
+    this.painter = const Value.absent(),
   });
-  TodosCompanion.insert({
+  PaintingsCompanion.insert({
     this.id = const Value.absent(),
     @required String title,
-    @required String content,
-    this.category = const Value.absent(),
+    @required String description,
+    this.painter = const Value.absent(),
   })  : title = Value(title),
-        content = Value(content);
-  static Insertable<Todo> custom({
+        description = Value(description);
+  static Insertable<Painting> custom({
     Expression<int> id,
     Expression<String> title,
-    Expression<String> content,
-    Expression<int> category,
+    Expression<String> description,
+    Expression<int> painter,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (title != null) 'title': title,
-      if (content != null) 'body': content,
-      if (category != null) 'category': category,
+      if (description != null) 'body': description,
+      if (painter != null) 'painter': painter,
     });
   }
 
-  TodosCompanion copyWith(
+  PaintingsCompanion copyWith(
       {Value<int> id,
       Value<String> title,
-      Value<String> content,
-      Value<int> category}) {
-    return TodosCompanion(
+      Value<String> description,
+      Value<int> painter}) {
+    return PaintingsCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
-      content: content ?? this.content,
-      category: category ?? this.category,
+      description: description ?? this.description,
+      painter: painter ?? this.painter,
     );
   }
 
@@ -169,31 +170,32 @@ class TodosCompanion extends UpdateCompanion<Todo> {
     if (title.present) {
       map['title'] = Variable<String>(title.value);
     }
-    if (content.present) {
-      map['body'] = Variable<String>(content.value);
+    if (description.present) {
+      map['body'] = Variable<String>(description.value);
     }
-    if (category.present) {
-      map['category'] = Variable<int>(category.value);
+    if (painter.present) {
+      map['painter'] = Variable<int>(painter.value);
     }
     return map;
   }
 
   @override
   String toString() {
-    return (StringBuffer('TodosCompanion(')
+    return (StringBuffer('PaintingsCompanion(')
           ..write('id: $id, ')
           ..write('title: $title, ')
-          ..write('content: $content, ')
-          ..write('category: $category')
+          ..write('description: $description, ')
+          ..write('painter: $painter')
           ..write(')'))
         .toString();
   }
 }
 
-class $TodosTable extends Todos with TableInfo<$TodosTable, Todo> {
+class $PaintingsTable extends Paintings
+    with TableInfo<$PaintingsTable, Painting> {
   final GeneratedDatabase _db;
   final String _alias;
-  $TodosTable(this._db, [this._alias]);
+  $PaintingsTable(this._db, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
   GeneratedIntColumn _id;
   @override
@@ -209,14 +211,16 @@ class $TodosTable extends Todos with TableInfo<$TodosTable, Todo> {
   GeneratedTextColumn get title => _title ??= _constructTitle();
   GeneratedTextColumn _constructTitle() {
     return GeneratedTextColumn('title', $tableName, false,
-        minTextLength: 6, maxTextLength: 32);
+        minTextLength: 2, maxTextLength: 32);
   }
 
-  final VerificationMeta _contentMeta = const VerificationMeta('content');
-  GeneratedTextColumn _content;
+  final VerificationMeta _descriptionMeta =
+      const VerificationMeta('description');
+  GeneratedTextColumn _description;
   @override
-  GeneratedTextColumn get content => _content ??= _constructContent();
-  GeneratedTextColumn _constructContent() {
+  GeneratedTextColumn get description =>
+      _description ??= _constructDescription();
+  GeneratedTextColumn _constructDescription() {
     return GeneratedTextColumn(
       'body',
       $tableName,
@@ -224,28 +228,28 @@ class $TodosTable extends Todos with TableInfo<$TodosTable, Todo> {
     );
   }
 
-  final VerificationMeta _categoryMeta = const VerificationMeta('category');
-  GeneratedIntColumn _category;
+  final VerificationMeta _painterMeta = const VerificationMeta('painter');
+  GeneratedIntColumn _painter;
   @override
-  GeneratedIntColumn get category => _category ??= _constructCategory();
-  GeneratedIntColumn _constructCategory() {
+  GeneratedIntColumn get painter => _painter ??= _constructPainter();
+  GeneratedIntColumn _constructPainter() {
     return GeneratedIntColumn(
-      'category',
+      'painter',
       $tableName,
       true,
     );
   }
 
   @override
-  List<GeneratedColumn> get $columns => [id, title, content, category];
+  List<GeneratedColumn> get $columns => [id, title, description, painter];
   @override
-  $TodosTable get asDslTable => this;
+  $PaintingsTable get asDslTable => this;
   @override
-  String get $tableName => _alias ?? 'todos';
+  String get $tableName => _alias ?? 'paintings';
   @override
-  final String actualTableName = 'todos';
+  final String actualTableName = 'paintings';
   @override
-  VerificationContext validateIntegrity(Insertable<Todo> instance,
+  VerificationContext validateIntegrity(Insertable<Painting> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
@@ -259,14 +263,14 @@ class $TodosTable extends Todos with TableInfo<$TodosTable, Todo> {
       context.missing(_titleMeta);
     }
     if (data.containsKey('body')) {
-      context.handle(_contentMeta,
-          content.isAcceptableOrUnknown(data['body'], _contentMeta));
+      context.handle(_descriptionMeta,
+          description.isAcceptableOrUnknown(data['body'], _descriptionMeta));
     } else if (isInserting) {
-      context.missing(_contentMeta);
+      context.missing(_descriptionMeta);
     }
-    if (data.containsKey('category')) {
-      context.handle(_categoryMeta,
-          category.isAcceptableOrUnknown(data['category'], _categoryMeta));
+    if (data.containsKey('painter')) {
+      context.handle(_painterMeta,
+          painter.isAcceptableOrUnknown(data['painter'], _painterMeta));
     }
     return context;
   }
@@ -274,30 +278,43 @@ class $TodosTable extends Todos with TableInfo<$TodosTable, Todo> {
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Todo map(Map<String, dynamic> data, {String tablePrefix}) {
+  Painting map(Map<String, dynamic> data, {String tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
-    return Todo.fromData(data, _db, prefix: effectivePrefix);
+    return Painting.fromData(data, _db, prefix: effectivePrefix);
   }
 
   @override
-  $TodosTable createAlias(String alias) {
-    return $TodosTable(_db, alias);
+  $PaintingsTable createAlias(String alias) {
+    return $PaintingsTable(_db, alias);
   }
 }
 
-class Category extends DataClass implements Insertable<Category> {
+class Painter extends DataClass implements Insertable<Painter> {
   final int id;
-  final String description;
-  Category({@required this.id, @required this.description});
-  factory Category.fromData(Map<String, dynamic> data, GeneratedDatabase db,
+  final String name;
+  final String yearBirth;
+  final String yearDeath;
+  final String biography;
+  Painter(
+      {@required this.id,
+      @required this.name,
+      this.yearBirth,
+      this.yearDeath,
+      @required this.biography});
+  factory Painter.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
     final stringType = db.typeSystem.forDartType<String>();
-    return Category(
+    return Painter(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
-      description: stringType
-          .mapFromDatabaseResponse(data['${effectivePrefix}description']),
+      name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name']),
+      yearBirth: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}year_birth']),
+      yearDeath: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}year_death']),
+      biography: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}biography']),
     );
   }
   @override
@@ -306,27 +323,46 @@ class Category extends DataClass implements Insertable<Category> {
     if (!nullToAbsent || id != null) {
       map['id'] = Variable<int>(id);
     }
-    if (!nullToAbsent || description != null) {
-      map['description'] = Variable<String>(description);
+    if (!nullToAbsent || name != null) {
+      map['name'] = Variable<String>(name);
+    }
+    if (!nullToAbsent || yearBirth != null) {
+      map['year_birth'] = Variable<String>(yearBirth);
+    }
+    if (!nullToAbsent || yearDeath != null) {
+      map['year_death'] = Variable<String>(yearDeath);
+    }
+    if (!nullToAbsent || biography != null) {
+      map['biography'] = Variable<String>(biography);
     }
     return map;
   }
 
-  CategoriesCompanion toCompanion(bool nullToAbsent) {
-    return CategoriesCompanion(
+  PaintersCompanion toCompanion(bool nullToAbsent) {
+    return PaintersCompanion(
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
-      description: description == null && nullToAbsent
+      name: name == null && nullToAbsent ? const Value.absent() : Value(name),
+      yearBirth: yearBirth == null && nullToAbsent
           ? const Value.absent()
-          : Value(description),
+          : Value(yearBirth),
+      yearDeath: yearDeath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(yearDeath),
+      biography: biography == null && nullToAbsent
+          ? const Value.absent()
+          : Value(biography),
     );
   }
 
-  factory Category.fromJson(Map<String, dynamic> json,
+  factory Painter.fromJson(Map<String, dynamic> json,
       {ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
-    return Category(
+    return Painter(
       id: serializer.fromJson<int>(json['id']),
-      description: serializer.fromJson<String>(json['description']),
+      name: serializer.fromJson<String>(json['name']),
+      yearBirth: serializer.fromJson<String>(json['yearBirth']),
+      yearDeath: serializer.fromJson<String>(json['yearDeath']),
+      biography: serializer.fromJson<String>(json['biography']),
     );
   }
   @override
@@ -334,58 +370,105 @@ class Category extends DataClass implements Insertable<Category> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
-      'description': serializer.toJson<String>(description),
+      'name': serializer.toJson<String>(name),
+      'yearBirth': serializer.toJson<String>(yearBirth),
+      'yearDeath': serializer.toJson<String>(yearDeath),
+      'biography': serializer.toJson<String>(biography),
     };
   }
 
-  Category copyWith({int id, String description}) => Category(
+  Painter copyWith(
+          {int id,
+          String name,
+          String yearBirth,
+          String yearDeath,
+          String biography}) =>
+      Painter(
         id: id ?? this.id,
-        description: description ?? this.description,
+        name: name ?? this.name,
+        yearBirth: yearBirth ?? this.yearBirth,
+        yearDeath: yearDeath ?? this.yearDeath,
+        biography: biography ?? this.biography,
       );
   @override
   String toString() {
-    return (StringBuffer('Category(')
+    return (StringBuffer('Painter(')
           ..write('id: $id, ')
-          ..write('description: $description')
+          ..write('name: $name, ')
+          ..write('yearBirth: $yearBirth, ')
+          ..write('yearDeath: $yearDeath, ')
+          ..write('biography: $biography')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(id.hashCode, description.hashCode));
+  int get hashCode => $mrjf($mrjc(
+      id.hashCode,
+      $mrjc(
+          name.hashCode,
+          $mrjc(yearBirth.hashCode,
+              $mrjc(yearDeath.hashCode, biography.hashCode)))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
-      (other is Category &&
+      (other is Painter &&
           other.id == this.id &&
-          other.description == this.description);
+          other.name == this.name &&
+          other.yearBirth == this.yearBirth &&
+          other.yearDeath == this.yearDeath &&
+          other.biography == this.biography);
 }
 
-class CategoriesCompanion extends UpdateCompanion<Category> {
+class PaintersCompanion extends UpdateCompanion<Painter> {
   final Value<int> id;
-  final Value<String> description;
-  const CategoriesCompanion({
+  final Value<String> name;
+  final Value<String> yearBirth;
+  final Value<String> yearDeath;
+  final Value<String> biography;
+  const PaintersCompanion({
     this.id = const Value.absent(),
-    this.description = const Value.absent(),
+    this.name = const Value.absent(),
+    this.yearBirth = const Value.absent(),
+    this.yearDeath = const Value.absent(),
+    this.biography = const Value.absent(),
   });
-  CategoriesCompanion.insert({
+  PaintersCompanion.insert({
     this.id = const Value.absent(),
-    @required String description,
-  }) : description = Value(description);
-  static Insertable<Category> custom({
+    @required String name,
+    this.yearBirth = const Value.absent(),
+    this.yearDeath = const Value.absent(),
+    @required String biography,
+  })  : name = Value(name),
+        biography = Value(biography);
+  static Insertable<Painter> custom({
     Expression<int> id,
-    Expression<String> description,
+    Expression<String> name,
+    Expression<String> yearBirth,
+    Expression<String> yearDeath,
+    Expression<String> biography,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (description != null) 'description': description,
+      if (name != null) 'name': name,
+      if (yearBirth != null) 'year_birth': yearBirth,
+      if (yearDeath != null) 'year_death': yearDeath,
+      if (biography != null) 'biography': biography,
     });
   }
 
-  CategoriesCompanion copyWith({Value<int> id, Value<String> description}) {
-    return CategoriesCompanion(
+  PaintersCompanion copyWith(
+      {Value<int> id,
+      Value<String> name,
+      Value<String> yearBirth,
+      Value<String> yearDeath,
+      Value<String> biography}) {
+    return PaintersCompanion(
       id: id ?? this.id,
-      description: description ?? this.description,
+      name: name ?? this.name,
+      yearBirth: yearBirth ?? this.yearBirth,
+      yearDeath: yearDeath ?? this.yearDeath,
+      biography: biography ?? this.biography,
     );
   }
 
@@ -395,27 +478,38 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
     if (id.present) {
       map['id'] = Variable<int>(id.value);
     }
-    if (description.present) {
-      map['description'] = Variable<String>(description.value);
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (yearBirth.present) {
+      map['year_birth'] = Variable<String>(yearBirth.value);
+    }
+    if (yearDeath.present) {
+      map['year_death'] = Variable<String>(yearDeath.value);
+    }
+    if (biography.present) {
+      map['biography'] = Variable<String>(biography.value);
     }
     return map;
   }
 
   @override
   String toString() {
-    return (StringBuffer('CategoriesCompanion(')
+    return (StringBuffer('PaintersCompanion(')
           ..write('id: $id, ')
-          ..write('description: $description')
+          ..write('name: $name, ')
+          ..write('yearBirth: $yearBirth, ')
+          ..write('yearDeath: $yearDeath, ')
+          ..write('biography: $biography')
           ..write(')'))
         .toString();
   }
 }
 
-class $CategoriesTable extends Categories
-    with TableInfo<$CategoriesTable, Category> {
+class $PaintersTable extends Painters with TableInfo<$PaintersTable, Painter> {
   final GeneratedDatabase _db;
   final String _alias;
-  $CategoriesTable(this._db, [this._alias]);
+  $PaintersTable(this._db, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
   GeneratedIntColumn _id;
   @override
@@ -425,43 +519,90 @@ class $CategoriesTable extends Categories
         hasAutoIncrement: true, declaredAsPrimaryKey: true);
   }
 
-  final VerificationMeta _descriptionMeta =
-      const VerificationMeta('description');
-  GeneratedTextColumn _description;
+  final VerificationMeta _nameMeta = const VerificationMeta('name');
+  GeneratedTextColumn _name;
   @override
-  GeneratedTextColumn get description =>
-      _description ??= _constructDescription();
-  GeneratedTextColumn _constructDescription() {
+  GeneratedTextColumn get name => _name ??= _constructName();
+  GeneratedTextColumn _constructName() {
     return GeneratedTextColumn(
-      'description',
+      'name',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _yearBirthMeta = const VerificationMeta('yearBirth');
+  GeneratedTextColumn _yearBirth;
+  @override
+  GeneratedTextColumn get yearBirth => _yearBirth ??= _constructYearBirth();
+  GeneratedTextColumn _constructYearBirth() {
+    return GeneratedTextColumn(
+      'year_birth',
+      $tableName,
+      true,
+    );
+  }
+
+  final VerificationMeta _yearDeathMeta = const VerificationMeta('yearDeath');
+  GeneratedTextColumn _yearDeath;
+  @override
+  GeneratedTextColumn get yearDeath => _yearDeath ??= _constructYearDeath();
+  GeneratedTextColumn _constructYearDeath() {
+    return GeneratedTextColumn(
+      'year_death',
+      $tableName,
+      true,
+    );
+  }
+
+  final VerificationMeta _biographyMeta = const VerificationMeta('biography');
+  GeneratedTextColumn _biography;
+  @override
+  GeneratedTextColumn get biography => _biography ??= _constructBiography();
+  GeneratedTextColumn _constructBiography() {
+    return GeneratedTextColumn(
+      'biography',
       $tableName,
       false,
     );
   }
 
   @override
-  List<GeneratedColumn> get $columns => [id, description];
+  List<GeneratedColumn> get $columns =>
+      [id, name, yearBirth, yearDeath, biography];
   @override
-  $CategoriesTable get asDslTable => this;
+  $PaintersTable get asDslTable => this;
   @override
-  String get $tableName => _alias ?? 'categories';
+  String get $tableName => _alias ?? 'painters';
   @override
-  final String actualTableName = 'categories';
+  final String actualTableName = 'painters';
   @override
-  VerificationContext validateIntegrity(Insertable<Category> instance,
+  VerificationContext validateIntegrity(Insertable<Painter> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
     }
-    if (data.containsKey('description')) {
+    if (data.containsKey('name')) {
       context.handle(
-          _descriptionMeta,
-          description.isAcceptableOrUnknown(
-              data['description'], _descriptionMeta));
+          _nameMeta, name.isAcceptableOrUnknown(data['name'], _nameMeta));
     } else if (isInserting) {
-      context.missing(_descriptionMeta);
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('year_birth')) {
+      context.handle(_yearBirthMeta,
+          yearBirth.isAcceptableOrUnknown(data['year_birth'], _yearBirthMeta));
+    }
+    if (data.containsKey('year_death')) {
+      context.handle(_yearDeathMeta,
+          yearDeath.isAcceptableOrUnknown(data['year_death'], _yearDeathMeta));
+    }
+    if (data.containsKey('biography')) {
+      context.handle(_biographyMeta,
+          biography.isAcceptableOrUnknown(data['biography'], _biographyMeta));
+    } else if (isInserting) {
+      context.missing(_biographyMeta);
     }
     return context;
   }
@@ -469,25 +610,25 @@ class $CategoriesTable extends Categories
   @override
   Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  Category map(Map<String, dynamic> data, {String tablePrefix}) {
+  Painter map(Map<String, dynamic> data, {String tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
-    return Category.fromData(data, _db, prefix: effectivePrefix);
+    return Painter.fromData(data, _db, prefix: effectivePrefix);
   }
 
   @override
-  $CategoriesTable createAlias(String alias) {
-    return $CategoriesTable(_db, alias);
+  $PaintersTable createAlias(String alias) {
+    return $PaintersTable(_db, alias);
   }
 }
 
 abstract class _$MyDatabase extends GeneratedDatabase {
   _$MyDatabase(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
-  $TodosTable _todos;
-  $TodosTable get todos => _todos ??= $TodosTable(this);
-  $CategoriesTable _categories;
-  $CategoriesTable get categories => _categories ??= $CategoriesTable(this);
+  $PaintingsTable _paintings;
+  $PaintingsTable get paintings => _paintings ??= $PaintingsTable(this);
+  $PaintersTable _painters;
+  $PaintersTable get painters => _painters ??= $PaintersTable(this);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [todos, categories];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [paintings, painters];
 }
