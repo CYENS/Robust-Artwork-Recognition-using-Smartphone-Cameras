@@ -160,7 +160,7 @@ Widget listHorizontalFuture(String listType) {
               return PaintingTile(
                 paintingName: "$listType $index",
                 tileSideLength:
-                    listType == "Painting" ? width * 0.4 : width * 0.28,
+                    listType == "Painting" ? width * 0.5 / 1.618 : width * 0.28,
                 optionalTileHeight: listType == "Painting" ? width * 0.5 : null,
                 path: results[index % len],
               );
