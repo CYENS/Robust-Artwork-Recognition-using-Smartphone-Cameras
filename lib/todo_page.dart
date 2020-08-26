@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:modern_art_app/db/database.dart';
+import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/painting_list.dart';
 import 'package:moor/moor.dart';
 import 'package:moor_db_viewer/moor_db_viewer.dart';

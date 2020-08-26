@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'package:modern_art_app/db/database.dart';
+import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/home_page.dart';
 import 'package:provider/provider.dart';
 
