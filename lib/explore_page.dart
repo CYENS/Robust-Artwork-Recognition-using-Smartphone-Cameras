@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:modern_art_app/painting_list.dart';
 
-class IntroPage extends StatelessWidget {
+class ExplorePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;

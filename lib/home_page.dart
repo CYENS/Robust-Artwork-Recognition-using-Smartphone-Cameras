@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     List<Widget> _screens = [
-      IntroPage(),
+      ExplorePage(),
       TakePictureScreen(cameras: widget.cameras),
       TodoPage(),
     ];
