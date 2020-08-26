@@ -14,14 +14,14 @@ class ExplorePage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Container(
-                height: size.height * 0.45,
+                height: size.height * 0.3,
                 width: size.width,
                 child: Stack(
                   children: [
                     Positioned.fill(
                       child: Image.asset(
                         "assets/pinakothiki_building.jpg",
-                        fit: BoxFit.fitHeight,
+                        fit: BoxFit.fitWidth,
                       ),
                     ),
                     Container(
