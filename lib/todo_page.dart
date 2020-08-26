@@ -20,26 +20,28 @@ class TodoPage extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => MoorDbViewer(db))))
         ],
       ),
-      body: StreamBuilder<List<Todo>>(
-        stream: db.watchAllTodoEntries,
+      body: StreamBuilder<List<Painting>>(
+        stream: db.watchAllPaintingEntries,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const Center(
               child: CircularProgressIndicator(),
             );
           }
-          final todos = snapshot.data;
+          final paintings = snapshot.data;
           return ListView.builder(
-              itemCount: todos.length,
+              itemCount: paintings.length,
               itemBuilder: (context, index) => PaintingRow(
-                  paintingName: "${todos[index].id} ${todos[index].content}"));
+                  paintingName:
+                      "${paintings[index].id} ${paintings[index].description}"));
         },
       ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          db.addTodo(TodosCompanion(
-              title: Value("todosssssss"), content: Value("todo todo todo")));
+          db.addPainting(PaintingsCompanion(
+              title: Value("todosssssss"),
+              description: Value("todo todo todo")));
         },
       ),
     );
