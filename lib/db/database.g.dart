@@ -12,11 +12,13 @@ class Painting extends DataClass implements Insertable<Painting> {
   final String title;
   final String description;
   final int painter;
+  final String fileName;
   Painting(
       {@required this.id,
       @required this.title,
       @required this.description,
-      this.painter});
+      this.painter,
+      this.fileName});
   factory Painting.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -30,6 +32,8 @@ class Painting extends DataClass implements Insertable<Painting> {
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}body']),
       painter:
           intType.mapFromDatabaseResponse(data['${effectivePrefix}painter']),
+      fileName: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}file_name']),
     );
   }
   @override
@@ -47,6 +51,9 @@ class Painting extends DataClass implements Insertable<Painting> {
     if (!nullToAbsent || painter != null) {
       map['painter'] = Variable<int>(painter);
     }
+    if (!nullToAbsent || fileName != null) {
+      map['file_name'] = Variable<String>(fileName);
+    }
     return map;
   }
 
@@ -61,6 +68,9 @@ class Painting extends DataClass implements Insertable<Painting> {
       painter: painter == null && nullToAbsent
           ? const Value.absent()
           : Value(painter),
+      fileName: fileName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(fileName),
     );
   }
 
@@ -72,6 +82,7 @@ class Painting extends DataClass implements Insertable<Painting> {
       title: serializer.fromJson<String>(json['title']),
       description: serializer.fromJson<String>(json['description']),
       painter: serializer.fromJson<int>(json['painter']),
+      fileName: serializer.fromJson<String>(json['fileName']),
     );
   }
   @override
@@ -82,15 +93,22 @@ class Painting extends DataClass implements Insertable<Painting> {
       'title': serializer.toJson<String>(title),
       'description': serializer.toJson<String>(description),
       'painter': serializer.toJson<int>(painter),
+      'fileName': serializer.toJson<String>(fileName),
     };
   }
 
-  Painting copyWith({int id, String title, String description, int painter}) =>
+  Painting copyWith(
+          {int id,
+          String title,
+          String description,
+          int painter,
+          String fileName}) =>
       Painting(
         id: id ?? this.id,
         title: title ?? this.title,
         description: description ?? this.description,
         painter: painter ?? this.painter,
+        fileName: fileName ?? this.fileName,
       );
   @override
   String toString() {
@@ -98,14 +116,19 @@ class Painting extends DataClass implements Insertable<Painting> {
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('description: $description, ')
-          ..write('painter: $painter')
+          ..write('painter: $painter, ')
+          ..write('fileName: $fileName')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(id.hashCode,
-      $mrjc(title.hashCode, $mrjc(description.hashCode, painter.hashCode))));
+  int get hashCode => $mrjf($mrjc(
+      id.hashCode,
+      $mrjc(
+          title.hashCode,
+          $mrjc(description.hashCode,
+              $mrjc(painter.hashCode, fileName.hashCode)))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
@@ -113,7 +136,8 @@ class Painting extends DataClass implements Insertable<Painting> {
           other.id == this.id &&
           other.title == this.title &&
           other.description == this.description &&
-          other.painter == this.painter);
+          other.painter == this.painter &&
+          other.fileName == this.fileName);
 }
 
 class PaintingsCompanion extends UpdateCompanion<Painting> {
@@ -121,17 +145,20 @@ class PaintingsCompanion extends UpdateCompanion<Painting> {
   final Value<String> title;
   final Value<String> description;
   final Value<int> painter;
+  final Value<String> fileName;
   const PaintingsCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
     this.description = const Value.absent(),
     this.painter = const Value.absent(),
+    this.fileName = const Value.absent(),
   });
   PaintingsCompanion.insert({
     this.id = const Value.absent(),
     @required String title,
     @required String description,
     this.painter = const Value.absent(),
+    this.fileName = const Value.absent(),
   })  : title = Value(title),
         description = Value(description);
   static Insertable<Painting> custom({
@@ -139,12 +166,14 @@ class PaintingsCompanion extends UpdateCompanion<Painting> {
     Expression<String> title,
     Expression<String> description,
     Expression<int> painter,
+    Expression<String> fileName,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (title != null) 'title': title,
       if (description != null) 'body': description,
       if (painter != null) 'painter': painter,
+      if (fileName != null) 'file_name': fileName,
     });
   }
 
@@ -152,12 +181,14 @@ class PaintingsCompanion extends UpdateCompanion<Painting> {
       {Value<int> id,
       Value<String> title,
       Value<String> description,
-      Value<int> painter}) {
+      Value<int> painter,
+      Value<String> fileName}) {
     return PaintingsCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
       description: description ?? this.description,
       painter: painter ?? this.painter,
+      fileName: fileName ?? this.fileName,
     );
   }
 
@@ -176,6 +207,9 @@ class PaintingsCompanion extends UpdateCompanion<Painting> {
     if (painter.present) {
       map['painter'] = Variable<int>(painter.value);
     }
+    if (fileName.present) {
+      map['file_name'] = Variable<String>(fileName.value);
+    }
     return map;
   }
 
@@ -185,7 +219,8 @@ class PaintingsCompanion extends UpdateCompanion<Painting> {
           ..write('id: $id, ')
           ..write('title: $title, ')
           ..write('description: $description, ')
-          ..write('painter: $painter')
+          ..write('painter: $painter, ')
+          ..write('fileName: $fileName')
           ..write(')'))
         .toString();
   }
@@ -240,8 +275,21 @@ class $PaintingsTable extends Paintings
     );
   }
 
+  final VerificationMeta _fileNameMeta = const VerificationMeta('fileName');
+  GeneratedTextColumn _fileName;
   @override
-  List<GeneratedColumn> get $columns => [id, title, description, painter];
+  GeneratedTextColumn get fileName => _fileName ??= _constructFileName();
+  GeneratedTextColumn _constructFileName() {
+    return GeneratedTextColumn(
+      'file_name',
+      $tableName,
+      true,
+    );
+  }
+
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, title, description, painter, fileName];
   @override
   $PaintingsTable get asDslTable => this;
   @override
@@ -271,6 +319,10 @@ class $PaintingsTable extends Paintings
     if (data.containsKey('painter')) {
       context.handle(_painterMeta,
           painter.isAcceptableOrUnknown(data['painter'], _painterMeta));
+    }
+    if (data.containsKey('file_name')) {
+      context.handle(_fileNameMeta,
+          fileName.isAcceptableOrUnknown(data['file_name'], _fileNameMeta));
     }
     return context;
   }

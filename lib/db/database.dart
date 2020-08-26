@@ -22,6 +22,8 @@ class Paintings extends Table {
   TextColumn get description => text().named('body')();
 
   IntColumn get painter => integer().nullable()();
+
+  TextColumn get fileName => text().nullable()();
 }
 
 // Class "Painter" is automatically generated, by stripping the the trailing "s"
