@@ -104,8 +104,14 @@ class PaintingTile extends StatelessWidget {
   final String paintingName;
   final String _path;
   final double tileSideLength;
+  final double optionalTileHeight;
 
-  PaintingTile({Key key, this.paintingName, this.tileSideLength, path})
+  PaintingTile(
+      {Key key,
+      @required this.paintingName,
+      @required this.tileSideLength,
+      this.optionalTileHeight,
+      String path})
       : _path = path ?? "assets/paintings/mona_lisa.webp",
         super(key: key);
 
@@ -123,8 +129,8 @@ class PaintingTile extends StatelessWidget {
       },
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 8),
-        height: tileSideLength,
         width: tileSideLength,
+        height: optionalTileHeight ?? tileSideLength,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(10),
           child: Hero(
