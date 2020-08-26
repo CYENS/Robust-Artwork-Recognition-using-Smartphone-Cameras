@@ -21,7 +21,8 @@ class Paintings extends Table {
 
   TextColumn get description => text().named('body')();
 
-  IntColumn get painter => integer().nullable()();
+  TextColumn get painter =>
+      text().nullable().customConstraint("NULL REFERENCES painters(name)")();
 
   TextColumn get fileName => text().nullable()();
 }
@@ -29,8 +30,6 @@ class Paintings extends Table {
 // Class "Painter" is automatically generated, by stripping the the trailing "s"
 // in the table name. If a custom name is required, use @DataClassName("CustomName").
 class Painters extends Table {
-  IntColumn get id => integer().autoIncrement()();
-
   TextColumn get name => text()();
 
   TextColumn get yearBirth => text().nullable()();
@@ -38,6 +37,9 @@ class Painters extends Table {
   TextColumn get yearDeath => text().nullable()();
 
   TextColumn get biography => text()();
+
+  @override
+  Set<Column> get primaryKey => {name};
 }
 
 LazyDatabase _openConnection() {
@@ -70,7 +72,7 @@ class MyDatabase extends _$MyDatabase {
   // watches all painting entries for a given painter. The stream will automatically
   // emit new items whenever the underlying data changes.
   Stream<List<Painting>> watchPaintingsByPainter(Painter c) {
-    return (select(paintings)..where((p) => p.painter.equals(c.id))).watch();
+    return (select(paintings)..where((p) => p.painter.equals(c.name))).watch();
   }
 
   // returns the generated id
