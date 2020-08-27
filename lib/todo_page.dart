@@ -6,7 +6,6 @@ import 'package:http/http.dart' as http;
 import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/data/urls.dart';
 import 'package:modern_art_app/painting_list.dart';
-import 'package:moor/moor.dart';
 import 'package:moor_db_viewer/moor_db_viewer.dart';
 import 'package:provider/provider.dart';
 
@@ -46,14 +45,6 @@ class TodoPage extends StatelessWidget {
                   path: "assets/paintings/${artwork.fileName}",
                 );
               });
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () {
-          db.addCArtwork(ArtworksCompanion(
-              title: Value("todosssssss"),
-              description: Value("todo todo todo")));
         },
       ),
     );
