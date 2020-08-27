@@ -24,7 +24,7 @@ class TodoPage extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => MoorDbViewer(db)))),
           IconButton(
             icon: Icon(Icons.http),
-            onPressed: getJson,
+            onPressed: () => getJson(db),
           )
         ],
       ),
@@ -50,7 +50,7 @@ class TodoPage extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          db.addArtwork(ArtworksCompanion(
+          db.addCArtwork(ArtworksCompanion(
               title: Value("todosssssss"),
               description: Value("todo todo todo")));
         },
@@ -59,27 +59,27 @@ class TodoPage extends StatelessWidget {
   }
 }
 
-void getJson() async {
+void getJson(MyDatabase db) async {
   var jsonData = await http.get(gSheetUrlArtworks);
 
   if (jsonData.statusCode == 200) {
     Map body = json.decode(jsonData.body);
     var artworks = List<Map>.from(body["feed"]["entry"]);
 
-    var s = Map<String, dynamic>.fromIterable(
-      // filter keys, only interested in the ones that start with "gsx$"
-      artworks[0].keys.where((k) => k.startsWith("gsx")),
-      // remove "gsx$" from keys, to match with local data class column names
-      key: (k) => k.replaceAll("gsx\$", ""),
-      // get value for key, in the case of id parse it into int first
-      value: (k) => k == "gsx\$id"
-          ? int.parse(artworks[0][k]["\$t"])
-          : artworks[0][k]["\$t"],
-    );
-    s.forEach((key, value) {
-      print("$key ${key.runtimeType} $value ${value.runtimeType}");
+    artworks.forEach((item) {
+      // convert map from Json to compatible Map for data class
+      var itemMap = Map<String, dynamic>.fromIterable(
+        // filter keys, only interested in the ones that start with "gsx$"
+        item.keys.where((k) => k.startsWith("gsx")),
+        // remove "gsx$" from keys, to match with local data class column names
+        key: (k) => k.replaceAll("gsx\$", ""),
+        // get value for key, in the case of id parse it into int first
+        value: (k) =>
+            k == "gsx\$id" ? int.parse(item[k]["\$t"]) : item[k]["\$t"],
+      );
+
+      db.addArtwork(Artwork.fromJson(itemMap).copyWith(artist: null));
     });
-    print(Artwork.fromJson(s));
   } else {
     print("Error getting json: statusCode ${jsonData.statusCode}");
   }
