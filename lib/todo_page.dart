@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:modern_art_app/data/database.dart';
+import 'package:modern_art_app/data/urls.dart';
 import 'package:modern_art_app/painting_list.dart';
 import 'package:moor/moor.dart';
 import 'package:moor_db_viewer/moor_db_viewer.dart';
@@ -48,5 +52,28 @@ class TodoPage extends StatelessWidget {
         },
       ),
     );
+  }
+}
+
+void getJson() async {
+  var jsonData = await http.get(gSheetDbUrl);
+
+  if (jsonData.statusCode == 200) {
+    Map body = json.decode(jsonData.body);
+    var artworks = List<Map>.from(body["feed"]["entry"]);
+
+    var s = Map<String, dynamic>.fromIterable(
+      artworks[0].keys.where((k) => k.startsWith("gsx")),
+      key: (k) => k.replaceAll("gsx\$", ""),
+      value: (k) => k == "gsx\$id"
+          ? int.parse(artworks[0][k]["\$t"])
+          : artworks[0][k]["\$t"],
+    );
+    s.forEach((key, value) {
+      print("$key ${key.runtimeType} $value ${value.runtimeType}");
+    });
+    print(Artwork.fromJson(s));
+  } else {
+    print("Error getting json: statusCode ${jsonData.statusCode}");
   }
 }
