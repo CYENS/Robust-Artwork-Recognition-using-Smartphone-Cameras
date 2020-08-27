@@ -21,7 +21,11 @@ class TodoPage extends StatelessWidget {
           IconButton(
               icon: Icon(Icons.list),
               onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => MoorDbViewer(db))))
+                  MaterialPageRoute(builder: (context) => MoorDbViewer(db)))),
+          IconButton(
+            icon: Icon(Icons.http),
+            onPressed: getJson,
+          )
         ],
       ),
       body: StreamBuilder<List<Artwork>>(
