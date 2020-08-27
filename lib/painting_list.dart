@@ -92,9 +92,9 @@ class PaintingListHorizontal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double size = MediaQuery.of(context).size.width * 0.28;
+    Size size = MediaQuery.of(context).size;
     return Container(
-      height: size,
+      height: listType == "Painting" ? size.width * 0.5 : size.width * 0.28,
       child: listHorizontalFuture(listType),
     );
   }
@@ -104,8 +104,14 @@ class PaintingTile extends StatelessWidget {
   final String paintingName;
   final String _path;
   final double tileSideLength;
+  final double optionalTileHeight;
 
-  PaintingTile({Key key, this.paintingName, this.tileSideLength, path})
+  PaintingTile(
+      {Key key,
+      @required this.paintingName,
+      @required this.tileSideLength,
+      this.optionalTileHeight,
+      String path})
       : _path = path ?? "assets/paintings/mona_lisa.webp",
         super(key: key);
 
@@ -123,8 +129,8 @@ class PaintingTile extends StatelessWidget {
       },
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: 8),
-        height: tileSideLength,
         width: tileSideLength,
+        height: optionalTileHeight ?? tileSideLength,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(10),
           child: Hero(
@@ -144,7 +150,7 @@ Widget listHorizontalFuture(String listType) {
   return FutureBuilder(
     future: loadAssets(assetType: listType),
     builder: (context, snapshot) {
-      double size = MediaQuery.of(context).size.width * 0.28;
+      double width = MediaQuery.of(context).size.width;
       if (snapshot.hasData) {
         return ListView.builder(
             scrollDirection: Axis.horizontal,
@@ -153,7 +159,9 @@ Widget listHorizontalFuture(String listType) {
               int len = results.length;
               return PaintingTile(
                 paintingName: "$listType $index",
-                tileSideLength: size,
+                tileSideLength:
+                    listType == "Painting" ? width * 0.5 / 1.618 : width * 0.28,
+                optionalTileHeight: listType == "Painting" ? width * 0.5 : null,
                 path: results[index % len],
               );
             });
