@@ -10,14 +10,16 @@ part of 'database.dart';
 class Painting extends DataClass implements Insertable<Painting> {
   final int id;
   final String title;
+  final String year;
   final String description;
-  final String painter;
+  final String artist;
   final String fileName;
   Painting(
       {@required this.id,
       @required this.title,
-      @required this.description,
-      this.painter,
+      this.year,
+      this.description,
+      this.artist,
       this.fileName});
   factory Painting.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
@@ -28,10 +30,11 @@ class Painting extends DataClass implements Insertable<Painting> {
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       title:
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}title']),
-      description:
-          stringType.mapFromDatabaseResponse(data['${effectivePrefix}body']),
-      painter:
-          stringType.mapFromDatabaseResponse(data['${effectivePrefix}painter']),
+      year: stringType.mapFromDatabaseResponse(data['${effectivePrefix}year']),
+      description: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}description']),
+      artist:
+          stringType.mapFromDatabaseResponse(data['${effectivePrefix}artist']),
       fileName: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}file_name']),
     );
@@ -45,11 +48,14 @@ class Painting extends DataClass implements Insertable<Painting> {
     if (!nullToAbsent || title != null) {
       map['title'] = Variable<String>(title);
     }
-    if (!nullToAbsent || description != null) {
-      map['body'] = Variable<String>(description);
+    if (!nullToAbsent || year != null) {
+      map['year'] = Variable<String>(year);
     }
-    if (!nullToAbsent || painter != null) {
-      map['painter'] = Variable<String>(painter);
+    if (!nullToAbsent || description != null) {
+      map['description'] = Variable<String>(description);
+    }
+    if (!nullToAbsent || artist != null) {
+      map['artist'] = Variable<String>(artist);
     }
     if (!nullToAbsent || fileName != null) {
       map['file_name'] = Variable<String>(fileName);
@@ -62,12 +68,12 @@ class Painting extends DataClass implements Insertable<Painting> {
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
       title:
           title == null && nullToAbsent ? const Value.absent() : Value(title),
+      year: year == null && nullToAbsent ? const Value.absent() : Value(year),
       description: description == null && nullToAbsent
           ? const Value.absent()
           : Value(description),
-      painter: painter == null && nullToAbsent
-          ? const Value.absent()
-          : Value(painter),
+      artist:
+          artist == null && nullToAbsent ? const Value.absent() : Value(artist),
       fileName: fileName == null && nullToAbsent
           ? const Value.absent()
           : Value(fileName),
@@ -80,8 +86,9 @@ class Painting extends DataClass implements Insertable<Painting> {
     return Painting(
       id: serializer.fromJson<int>(json['id']),
       title: serializer.fromJson<String>(json['title']),
+      year: serializer.fromJson<String>(json['year']),
       description: serializer.fromJson<String>(json['description']),
-      painter: serializer.fromJson<String>(json['painter']),
+      artist: serializer.fromJson<String>(json['artist']),
       fileName: serializer.fromJson<String>(json['fileName']),
     );
   }
@@ -91,8 +98,9 @@ class Painting extends DataClass implements Insertable<Painting> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'title': serializer.toJson<String>(title),
+      'year': serializer.toJson<String>(year),
       'description': serializer.toJson<String>(description),
-      'painter': serializer.toJson<String>(painter),
+      'artist': serializer.toJson<String>(artist),
       'fileName': serializer.toJson<String>(fileName),
     };
   }
@@ -100,14 +108,16 @@ class Painting extends DataClass implements Insertable<Painting> {
   Painting copyWith(
           {int id,
           String title,
+          String year,
           String description,
-          String painter,
+          String artist,
           String fileName}) =>
       Painting(
         id: id ?? this.id,
         title: title ?? this.title,
+        year: year ?? this.year,
         description: description ?? this.description,
-        painter: painter ?? this.painter,
+        artist: artist ?? this.artist,
         fileName: fileName ?? this.fileName,
       );
   @override
@@ -115,8 +125,9 @@ class Painting extends DataClass implements Insertable<Painting> {
     return (StringBuffer('Painting(')
           ..write('id: $id, ')
           ..write('title: $title, ')
+          ..write('year: $year, ')
           ..write('description: $description, ')
-          ..write('painter: $painter, ')
+          ..write('artist: $artist, ')
           ..write('fileName: $fileName')
           ..write(')'))
         .toString();
@@ -127,52 +138,59 @@ class Painting extends DataClass implements Insertable<Painting> {
       id.hashCode,
       $mrjc(
           title.hashCode,
-          $mrjc(description.hashCode,
-              $mrjc(painter.hashCode, fileName.hashCode)))));
+          $mrjc(
+              year.hashCode,
+              $mrjc(description.hashCode,
+                  $mrjc(artist.hashCode, fileName.hashCode))))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is Painting &&
           other.id == this.id &&
           other.title == this.title &&
+          other.year == this.year &&
           other.description == this.description &&
-          other.painter == this.painter &&
+          other.artist == this.artist &&
           other.fileName == this.fileName);
 }
 
 class PaintingsCompanion extends UpdateCompanion<Painting> {
   final Value<int> id;
   final Value<String> title;
+  final Value<String> year;
   final Value<String> description;
-  final Value<String> painter;
+  final Value<String> artist;
   final Value<String> fileName;
   const PaintingsCompanion({
     this.id = const Value.absent(),
     this.title = const Value.absent(),
+    this.year = const Value.absent(),
     this.description = const Value.absent(),
-    this.painter = const Value.absent(),
+    this.artist = const Value.absent(),
     this.fileName = const Value.absent(),
   });
   PaintingsCompanion.insert({
     this.id = const Value.absent(),
     @required String title,
-    @required String description,
-    this.painter = const Value.absent(),
+    this.year = const Value.absent(),
+    this.description = const Value.absent(),
+    this.artist = const Value.absent(),
     this.fileName = const Value.absent(),
-  })  : title = Value(title),
-        description = Value(description);
+  }) : title = Value(title);
   static Insertable<Painting> custom({
     Expression<int> id,
     Expression<String> title,
+    Expression<String> year,
     Expression<String> description,
-    Expression<String> painter,
+    Expression<String> artist,
     Expression<String> fileName,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (title != null) 'title': title,
-      if (description != null) 'body': description,
-      if (painter != null) 'painter': painter,
+      if (year != null) 'year': year,
+      if (description != null) 'description': description,
+      if (artist != null) 'artist': artist,
       if (fileName != null) 'file_name': fileName,
     });
   }
@@ -180,14 +198,16 @@ class PaintingsCompanion extends UpdateCompanion<Painting> {
   PaintingsCompanion copyWith(
       {Value<int> id,
       Value<String> title,
+      Value<String> year,
       Value<String> description,
-      Value<String> painter,
+      Value<String> artist,
       Value<String> fileName}) {
     return PaintingsCompanion(
       id: id ?? this.id,
       title: title ?? this.title,
+      year: year ?? this.year,
       description: description ?? this.description,
-      painter: painter ?? this.painter,
+      artist: artist ?? this.artist,
       fileName: fileName ?? this.fileName,
     );
   }
@@ -201,11 +221,14 @@ class PaintingsCompanion extends UpdateCompanion<Painting> {
     if (title.present) {
       map['title'] = Variable<String>(title.value);
     }
-    if (description.present) {
-      map['body'] = Variable<String>(description.value);
+    if (year.present) {
+      map['year'] = Variable<String>(year.value);
     }
-    if (painter.present) {
-      map['painter'] = Variable<String>(painter.value);
+    if (description.present) {
+      map['description'] = Variable<String>(description.value);
+    }
+    if (artist.present) {
+      map['artist'] = Variable<String>(artist.value);
     }
     if (fileName.present) {
       map['file_name'] = Variable<String>(fileName.value);
@@ -218,8 +241,9 @@ class PaintingsCompanion extends UpdateCompanion<Painting> {
     return (StringBuffer('PaintingsCompanion(')
           ..write('id: $id, ')
           ..write('title: $title, ')
+          ..write('year: $year, ')
           ..write('description: $description, ')
-          ..write('painter: $painter, ')
+          ..write('artist: $artist, ')
           ..write('fileName: $fileName')
           ..write(')'))
         .toString();
@@ -249,6 +273,18 @@ class $PaintingsTable extends Paintings
         minTextLength: 2, maxTextLength: 32);
   }
 
+  final VerificationMeta _yearMeta = const VerificationMeta('year');
+  GeneratedTextColumn _year;
+  @override
+  GeneratedTextColumn get year => _year ??= _constructYear();
+  GeneratedTextColumn _constructYear() {
+    return GeneratedTextColumn(
+      'year',
+      $tableName,
+      true,
+    );
+  }
+
   final VerificationMeta _descriptionMeta =
       const VerificationMeta('description');
   GeneratedTextColumn _description;
@@ -257,18 +293,18 @@ class $PaintingsTable extends Paintings
       _description ??= _constructDescription();
   GeneratedTextColumn _constructDescription() {
     return GeneratedTextColumn(
-      'body',
+      'description',
       $tableName,
-      false,
+      true,
     );
   }
 
-  final VerificationMeta _painterMeta = const VerificationMeta('painter');
-  GeneratedTextColumn _painter;
+  final VerificationMeta _artistMeta = const VerificationMeta('artist');
+  GeneratedTextColumn _artist;
   @override
-  GeneratedTextColumn get painter => _painter ??= _constructPainter();
-  GeneratedTextColumn _constructPainter() {
-    return GeneratedTextColumn('painter', $tableName, true,
+  GeneratedTextColumn get artist => _artist ??= _constructArtist();
+  GeneratedTextColumn _constructArtist() {
+    return GeneratedTextColumn('artist', $tableName, true,
         $customConstraints: 'NULL REFERENCES painters(name)');
   }
 
@@ -286,7 +322,7 @@ class $PaintingsTable extends Paintings
 
   @override
   List<GeneratedColumn> get $columns =>
-      [id, title, description, painter, fileName];
+      [id, title, year, description, artist, fileName];
   @override
   $PaintingsTable get asDslTable => this;
   @override
@@ -307,15 +343,19 @@ class $PaintingsTable extends Paintings
     } else if (isInserting) {
       context.missing(_titleMeta);
     }
-    if (data.containsKey('body')) {
-      context.handle(_descriptionMeta,
-          description.isAcceptableOrUnknown(data['body'], _descriptionMeta));
-    } else if (isInserting) {
-      context.missing(_descriptionMeta);
+    if (data.containsKey('year')) {
+      context.handle(
+          _yearMeta, year.isAcceptableOrUnknown(data['year'], _yearMeta));
     }
-    if (data.containsKey('painter')) {
-      context.handle(_painterMeta,
-          painter.isAcceptableOrUnknown(data['painter'], _painterMeta));
+    if (data.containsKey('description')) {
+      context.handle(
+          _descriptionMeta,
+          description.isAcceptableOrUnknown(
+              data['description'], _descriptionMeta));
+    }
+    if (data.containsKey('artist')) {
+      context.handle(_artistMeta,
+          artist.isAcceptableOrUnknown(data['artist'], _artistMeta));
     }
     if (data.containsKey('file_name')) {
       context.handle(_fileNameMeta,
@@ -343,11 +383,13 @@ class Painter extends DataClass implements Insertable<Painter> {
   final String yearBirth;
   final String yearDeath;
   final String biography;
+  final String fileName;
   Painter(
       {@required this.name,
       this.yearBirth,
       this.yearDeath,
-      @required this.biography});
+      this.biography,
+      this.fileName});
   factory Painter.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -360,6 +402,8 @@ class Painter extends DataClass implements Insertable<Painter> {
           .mapFromDatabaseResponse(data['${effectivePrefix}year_death']),
       biography: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}biography']),
+      fileName: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}file_name']),
     );
   }
   @override
@@ -377,6 +421,9 @@ class Painter extends DataClass implements Insertable<Painter> {
     if (!nullToAbsent || biography != null) {
       map['biography'] = Variable<String>(biography);
     }
+    if (!nullToAbsent || fileName != null) {
+      map['file_name'] = Variable<String>(fileName);
+    }
     return map;
   }
 
@@ -392,6 +439,9 @@ class Painter extends DataClass implements Insertable<Painter> {
       biography: biography == null && nullToAbsent
           ? const Value.absent()
           : Value(biography),
+      fileName: fileName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(fileName),
     );
   }
 
@@ -403,6 +453,7 @@ class Painter extends DataClass implements Insertable<Painter> {
       yearBirth: serializer.fromJson<String>(json['yearBirth']),
       yearDeath: serializer.fromJson<String>(json['yearDeath']),
       biography: serializer.fromJson<String>(json['biography']),
+      fileName: serializer.fromJson<String>(json['fileName']),
     );
   }
   @override
@@ -413,6 +464,7 @@ class Painter extends DataClass implements Insertable<Painter> {
       'yearBirth': serializer.toJson<String>(yearBirth),
       'yearDeath': serializer.toJson<String>(yearDeath),
       'biography': serializer.toJson<String>(biography),
+      'fileName': serializer.toJson<String>(fileName),
     };
   }
 
@@ -420,12 +472,14 @@ class Painter extends DataClass implements Insertable<Painter> {
           {String name,
           String yearBirth,
           String yearDeath,
-          String biography}) =>
+          String biography,
+          String fileName}) =>
       Painter(
         name: name ?? this.name,
         yearBirth: yearBirth ?? this.yearBirth,
         yearDeath: yearDeath ?? this.yearDeath,
         biography: biography ?? this.biography,
+        fileName: fileName ?? this.fileName,
       );
   @override
   String toString() {
@@ -433,7 +487,8 @@ class Painter extends DataClass implements Insertable<Painter> {
           ..write('name: $name, ')
           ..write('yearBirth: $yearBirth, ')
           ..write('yearDeath: $yearDeath, ')
-          ..write('biography: $biography')
+          ..write('biography: $biography, ')
+          ..write('fileName: $fileName')
           ..write(')'))
         .toString();
   }
@@ -442,7 +497,9 @@ class Painter extends DataClass implements Insertable<Painter> {
   int get hashCode => $mrjf($mrjc(
       name.hashCode,
       $mrjc(
-          yearBirth.hashCode, $mrjc(yearDeath.hashCode, biography.hashCode))));
+          yearBirth.hashCode,
+          $mrjc(yearDeath.hashCode,
+              $mrjc(biography.hashCode, fileName.hashCode)))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
@@ -450,7 +507,8 @@ class Painter extends DataClass implements Insertable<Painter> {
           other.name == this.name &&
           other.yearBirth == this.yearBirth &&
           other.yearDeath == this.yearDeath &&
-          other.biography == this.biography);
+          other.biography == this.biography &&
+          other.fileName == this.fileName);
 }
 
 class PaintersCompanion extends UpdateCompanion<Painter> {
@@ -458,30 +516,34 @@ class PaintersCompanion extends UpdateCompanion<Painter> {
   final Value<String> yearBirth;
   final Value<String> yearDeath;
   final Value<String> biography;
+  final Value<String> fileName;
   const PaintersCompanion({
     this.name = const Value.absent(),
     this.yearBirth = const Value.absent(),
     this.yearDeath = const Value.absent(),
     this.biography = const Value.absent(),
+    this.fileName = const Value.absent(),
   });
   PaintersCompanion.insert({
     @required String name,
     this.yearBirth = const Value.absent(),
     this.yearDeath = const Value.absent(),
-    @required String biography,
-  })  : name = Value(name),
-        biography = Value(biography);
+    this.biography = const Value.absent(),
+    this.fileName = const Value.absent(),
+  }) : name = Value(name);
   static Insertable<Painter> custom({
     Expression<String> name,
     Expression<String> yearBirth,
     Expression<String> yearDeath,
     Expression<String> biography,
+    Expression<String> fileName,
   }) {
     return RawValuesInsertable({
       if (name != null) 'name': name,
       if (yearBirth != null) 'year_birth': yearBirth,
       if (yearDeath != null) 'year_death': yearDeath,
       if (biography != null) 'biography': biography,
+      if (fileName != null) 'file_name': fileName,
     });
   }
 
@@ -489,12 +551,14 @@ class PaintersCompanion extends UpdateCompanion<Painter> {
       {Value<String> name,
       Value<String> yearBirth,
       Value<String> yearDeath,
-      Value<String> biography}) {
+      Value<String> biography,
+      Value<String> fileName}) {
     return PaintersCompanion(
       name: name ?? this.name,
       yearBirth: yearBirth ?? this.yearBirth,
       yearDeath: yearDeath ?? this.yearDeath,
       biography: biography ?? this.biography,
+      fileName: fileName ?? this.fileName,
     );
   }
 
@@ -513,6 +577,9 @@ class PaintersCompanion extends UpdateCompanion<Painter> {
     if (biography.present) {
       map['biography'] = Variable<String>(biography.value);
     }
+    if (fileName.present) {
+      map['file_name'] = Variable<String>(fileName.value);
+    }
     return map;
   }
 
@@ -522,7 +589,8 @@ class PaintersCompanion extends UpdateCompanion<Painter> {
           ..write('name: $name, ')
           ..write('yearBirth: $yearBirth, ')
           ..write('yearDeath: $yearDeath, ')
-          ..write('biography: $biography')
+          ..write('biography: $biography, ')
+          ..write('fileName: $fileName')
           ..write(')'))
         .toString();
   }
@@ -576,12 +644,25 @@ class $PaintersTable extends Painters with TableInfo<$PaintersTable, Painter> {
     return GeneratedTextColumn(
       'biography',
       $tableName,
-      false,
+      true,
+    );
+  }
+
+  final VerificationMeta _fileNameMeta = const VerificationMeta('fileName');
+  GeneratedTextColumn _fileName;
+  @override
+  GeneratedTextColumn get fileName => _fileName ??= _constructFileName();
+  GeneratedTextColumn _constructFileName() {
+    return GeneratedTextColumn(
+      'file_name',
+      $tableName,
+      true,
     );
   }
 
   @override
-  List<GeneratedColumn> get $columns => [name, yearBirth, yearDeath, biography];
+  List<GeneratedColumn> get $columns =>
+      [name, yearBirth, yearDeath, biography, fileName];
   @override
   $PaintersTable get asDslTable => this;
   @override
@@ -610,8 +691,10 @@ class $PaintersTable extends Painters with TableInfo<$PaintersTable, Painter> {
     if (data.containsKey('biography')) {
       context.handle(_biographyMeta,
           biography.isAcceptableOrUnknown(data['biography'], _biographyMeta));
-    } else if (isInserting) {
-      context.missing(_biographyMeta);
+    }
+    if (data.containsKey('file_name')) {
+      context.handle(_fileNameMeta,
+          fileName.isAcceptableOrUnknown(data['file_name'], _fileNameMeta));
     }
     return context;
   }

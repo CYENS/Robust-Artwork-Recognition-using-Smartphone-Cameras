@@ -19,9 +19,11 @@ class Paintings extends Table {
 
   TextColumn get title => text().withLength(min: 2, max: 32)();
 
-  TextColumn get description => text().named('body')();
+  TextColumn get year => text().nullable()();
 
-  TextColumn get painter =>
+  TextColumn get description => text().nullable()();
+
+  TextColumn get artist =>
       text().nullable().customConstraint("NULL REFERENCES painters(name)")();
 
   TextColumn get fileName => text().nullable()();
@@ -36,7 +38,9 @@ class Painters extends Table {
 
   TextColumn get yearDeath => text().nullable()();
 
-  TextColumn get biography => text()();
+  TextColumn get biography => text().nullable()();
+
+  TextColumn get fileName => text().nullable()();
 
   @override
   Set<Column> get primaryKey => {name};
@@ -80,7 +84,7 @@ class MyDatabase extends _$MyDatabase {
   // watches all painting entries for a given painter. The stream will automatically
   // emit new items whenever the underlying data changes.
   Stream<List<Painting>> watchPaintingsByPainter(Painter c) {
-    return (select(paintings)..where((p) => p.painter.equals(c.name))).watch();
+    return (select(paintings)..where((p) => p.artist.equals(c.name))).watch();
   }
 
   // returns the generated id
