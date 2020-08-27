@@ -1,3 +1,9 @@
+## Version 0.0.9
+### 2010-08-27
+- App database now fully functional
+- App is able to update it's database from a remote backend
+- UI updates
+
 ## Version 0.0.8
 ### 2010-08-25
 - Incorporated database into app
