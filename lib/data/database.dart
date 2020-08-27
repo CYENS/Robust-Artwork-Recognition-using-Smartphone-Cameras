@@ -63,6 +63,14 @@ class MyDatabase extends _$MyDatabase {
   @override
   int get schemaVersion => 1;
 
+  /// Enable foreign keys.
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+        beforeOpen: (details) async {
+          await customStatement("PRAGMA foreign_keys = ON");
+        },
+      );
+
   // loads all paintings
   Future<List<Painting>> get allPaintingEntries => select(paintings).get();
 
