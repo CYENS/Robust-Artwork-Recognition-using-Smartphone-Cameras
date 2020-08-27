@@ -20,8 +20,8 @@ class TodoPage extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => MoorDbViewer(db))))
         ],
       ),
-      body: StreamBuilder<List<Painting>>(
-        stream: db.watchAllPaintingEntries,
+      body: StreamBuilder<List<Artwork>>(
+        stream: db.watchAllArtworkEntries,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const Center(
@@ -39,7 +39,7 @@ class TodoPage extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add),
         onPressed: () {
-          db.addPainting(PaintingsCompanion(
+          db.addArtwork(ArtworksCompanion(
               title: Value("todosssssss"),
               description: Value("todo todo todo")));
         },

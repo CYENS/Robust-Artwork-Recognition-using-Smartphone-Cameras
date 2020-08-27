@@ -14,7 +14,7 @@ part 'database.g.dart';
 
 // this will generate a table called "todos" for us. The rows of that table will
 // be represented by a class called "Todo".
-class Paintings extends Table {
+class Artworks extends Table {
   IntColumn get id => integer().autoIncrement()();
 
   TextColumn get title => text().withLength(min: 2, max: 32)();
@@ -24,14 +24,14 @@ class Paintings extends Table {
   TextColumn get description => text().nullable()();
 
   TextColumn get artist =>
-      text().nullable().customConstraint("NULL REFERENCES painters(name)")();
+      text().nullable().customConstraint("NULL REFERENCES artists(name)")();
 
   TextColumn get fileName => text().nullable()();
 }
 
-// Class "Painter" is automatically generated, by stripping the the trailing "s"
-// in the table name. If a custom name is required, use @DataClassName("CustomName").
-class Painters extends Table {
+// Class "Artist" is automatically generated, by stripping the trailing "s" in
+// the table name. If a custom name is required, use @DataClassName("CustomName").
+class Artists extends Table {
   TextColumn get name => text()();
 
   TextColumn get yearBirth => text().nullable()();
@@ -57,7 +57,7 @@ LazyDatabase _openConnection() {
   });
 }
 
-@UseMoor(tables: [Paintings, Painters])
+@UseMoor(tables: [Artworks, Artists])
 class MyDatabase extends _$MyDatabase {
   // we tell the database where to store the data with this constructor
   MyDatabase() : super(_openConnection());
@@ -75,20 +75,19 @@ class MyDatabase extends _$MyDatabase {
         },
       );
 
-  // loads all paintings
-  Future<List<Painting>> get allPaintingEntries => select(paintings).get();
+  // loads all artworks
+  Future<List<Artwork>> get allArtworkEntries => select(artworks).get();
 
-  Stream<List<Painting>> get watchAllPaintingEntries =>
-      select(paintings).watch();
+  Stream<List<Artwork>> get watchAllArtworkEntries => select(artworks).watch();
 
-  // watches all painting entries for a given painter. The stream will automatically
+  // watches all artwork entries for a given painter. The stream will automatically
   // emit new items whenever the underlying data changes.
-  Stream<List<Painting>> watchPaintingsByPainter(Painter c) {
-    return (select(paintings)..where((p) => p.artist.equals(c.name))).watch();
+  Stream<List<Artwork>> watchArtworksByArtist(Artist a) {
+    return (select(artworks)..where((p) => p.artist.equals(a.name))).watch();
   }
 
   // returns the generated id
-  Future<int> addPainting(PaintingsCompanion entry) {
-    return into(paintings).insert(entry);
+  Future<int> addArtwork(ArtworksCompanion entry) {
+    return into(artworks).insert(entry);
   }
 }
