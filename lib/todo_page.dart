@@ -61,7 +61,7 @@ void getJson(MyDatabase db) async {
     artists.forEach((item) {
       // convert map from Json to compatible Map for data class
       var itemMap = parseJsonMap(item);
-      db.addArtist(Artist.fromJson(itemMap));
+      db.upsertArtist(Artist.fromJson(itemMap));
       print("added ${itemMap["name"]}");
     });
   } else {
@@ -77,7 +77,7 @@ void getJson(MyDatabase db) async {
     artworks.forEach((item) {
       // convert map from Json to compatible Map for data class
       var itemMap = parseJsonMap(item);
-      db.addArtwork(Artwork.fromJson(itemMap));
+      db.upsertArtwork(Artwork.fromJson(itemMap));
       print("added ${itemMap["title"]}");
     });
   } else {

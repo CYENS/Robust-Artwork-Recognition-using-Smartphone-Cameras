@@ -96,11 +96,11 @@ class MyDatabase extends _$MyDatabase {
     return into(artworks).insert(entry);
   }
 
-  Future<int> addArtwork(Artwork entry) {
+  Future<int> upsertArtwork(Artwork entry) {
     return into(artworks).insertOnConflictUpdate(entry);
   }
 
-  Future<int> addArtist(Artist entry) {
+  Future<int> upsertArtist(Artist entry) {
     return into(artists).insertOnConflictUpdate(entry);
   }
 }
