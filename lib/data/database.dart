@@ -92,7 +92,11 @@ class MyDatabase extends _$MyDatabase {
   }
 
   // returns the generated id
-  Future<int> addArtwork(ArtworksCompanion entry) {
+  Future<int> addCArtwork(ArtworksCompanion entry) {
     return into(artworks).insert(entry);
+  }
+
+  Future<int> addArtwork(Artwork entry) {
+    return into(artworks).insertOnConflictUpdate(entry);
   }
 }
