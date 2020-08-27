@@ -28,12 +28,15 @@ class TodoPage extends StatelessWidget {
               child: CircularProgressIndicator(),
             );
           }
-          final paintings = snapshot.data;
+          final artworks = snapshot.data;
           return ListView.builder(
-              itemCount: paintings.length,
-              itemBuilder: (context, index) => PaintingRow(
-                  paintingName:
-                      "${paintings[index].id} ${paintings[index].description}"));
+              itemCount: artworks.length,
+              itemBuilder: (context, index) {
+                Artwork artwork = artworks[index];
+                print(artwork.toJsonString());
+                return PaintingRow(
+                    paintingName: "${artwork.id} ${artwork.description}");
+              });
         },
       ),
       floatingActionButton: FloatingActionButton(
