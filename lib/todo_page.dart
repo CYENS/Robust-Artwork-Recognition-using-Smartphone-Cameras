@@ -60,15 +60,18 @@ class TodoPage extends StatelessWidget {
 }
 
 void getJson() async {
-  var jsonData = await http.get(gSheetDbUrl);
+  var jsonData = await http.get(gSheetUrlArtworks);
 
   if (jsonData.statusCode == 200) {
     Map body = json.decode(jsonData.body);
     var artworks = List<Map>.from(body["feed"]["entry"]);
 
     var s = Map<String, dynamic>.fromIterable(
+      // filter keys, only interested in the ones that start with "gsx$"
       artworks[0].keys.where((k) => k.startsWith("gsx")),
+      // remove "gsx$" from keys, to match with local data class column names
       key: (k) => k.replaceAll("gsx\$", ""),
+      // get value for key, in the case of id parse it into int first
       value: (k) => k == "gsx\$id"
           ? int.parse(artworks[0][k]["\$t"])
           : artworks[0][k]["\$t"],
