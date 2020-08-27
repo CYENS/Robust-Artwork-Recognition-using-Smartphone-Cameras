@@ -41,9 +41,10 @@ class TodoPage extends StatelessWidget {
               itemCount: artworks.length,
               itemBuilder: (context, index) {
                 Artwork artwork = artworks[index];
-                print(artwork.toJsonString());
                 return PaintingRow(
-                    paintingName: "${artwork.id} ${artwork.description}");
+                  paintingName: "${artwork.id} ${artwork.title}",
+                  path: "assets/paintings/${artwork.fileName}",
+                );
               });
         },
       ),
@@ -60,19 +61,36 @@ class TodoPage extends StatelessWidget {
 }
 
 void getJson(MyDatabase db) async {
-  var jsonData = await http.get(gSheetUrlArtworks);
+  var jsonArtists = await http.get(gSheetUrlArtists);
 
-  if (jsonData.statusCode == 200) {
-    Map body = json.decode(jsonData.body);
+  if (jsonArtists.statusCode == 200) {
+    Map body = json.decode(jsonArtists.body);
+    var artists = List<Map>.from(body["feed"]["entry"]);
+
+    artists.forEach((item) {
+      // convert map from Json to compatible Map for data class
+      var itemMap = parseJsonMap(item);
+      db.addArtist(Artist.fromJson(itemMap));
+      print("added ${itemMap["name"]}");
+    });
+  } else {
+    print("Error getting json: statusCode ${jsonArtists.statusCode}");
+  }
+
+  var jsonArtworks = await http.get(gSheetUrlArtworks);
+
+  if (jsonArtworks.statusCode == 200) {
+    Map body = json.decode(jsonArtworks.body);
     var artworks = List<Map>.from(body["feed"]["entry"]);
 
     artworks.forEach((item) {
       // convert map from Json to compatible Map for data class
       var itemMap = parseJsonMap(item);
-      db.addArtwork(Artwork.fromJson(itemMap).copyWith(artist: ""));
+      db.addArtwork(Artwork.fromJson(itemMap));
+      print("added ${itemMap["title"]}");
     });
   } else {
-    print("Error getting json: statusCode ${jsonData.statusCode}");
+    print("Error getting json: statusCode ${jsonArtworks.statusCode}");
   }
 }
 
