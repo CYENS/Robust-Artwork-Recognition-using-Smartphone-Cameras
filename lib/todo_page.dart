@@ -68,19 +68,19 @@ void getJson(MyDatabase db) async {
 
     artworks.forEach((item) {
       // convert map from Json to compatible Map for data class
-      var itemMap = Map<String, dynamic>.fromIterable(
-        // filter keys, only interested in the ones that start with "gsx$"
-        item.keys.where((k) => k.startsWith("gsx")),
-        // remove "gsx$" from keys, to match with local data class column names
-        key: (k) => k.replaceAll("gsx\$", ""),
-        // get value for key, in the case of id parse it into int first
-        value: (k) =>
-            k == "gsx\$id" ? int.parse(item[k]["\$t"]) : item[k]["\$t"],
-      );
-
-      db.addArtwork(Artwork.fromJson(itemMap).copyWith(artist: null));
+      var itemMap = parseJsonMap(item);
+      db.addArtwork(Artwork.fromJson(itemMap).copyWith(artist: ""));
     });
   } else {
     print("Error getting json: statusCode ${jsonData.statusCode}");
   }
 }
+
+Map<String, dynamic> parseJsonMap(Map map) => Map<String, dynamic>.fromIterable(
+      // filter keys, only interested in the ones that start with "gsx$"
+      map.keys.where((k) => k.startsWith("gsx")),
+      // remove "gsx$" from keys, to match with local data class column names
+      key: (k) => k.replaceAll("gsx\$", ""),
+      // get value for key, in the case of id parse it into int first
+      value: (k) => k == "gsx\$id" ? int.parse(map[k]["\$t"]) : map[k]["\$t"],
+    );
