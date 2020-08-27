@@ -7,13 +7,13 @@ import 'package:path_provider/path_provider.dart';
 
 part 'database.g.dart';
 
-// to auto-generate necessary code, run the following in the terminal:
+// To auto-generate necessary code, run the following in the terminal:
 // 'flutter packages pub run build_runner build'
 // or the following to continuously regenerate code when code changes
 // 'flutter packages pub run build_runner watch'
 
-// this will generate a table called "todos" for us. The rows of that table will
-// be represented by a class called "Todo".
+// Class "Artwork" is automatically generated, by stripping the trailing "s" in
+// the table name. If a custom name is required, use @DataClassName("CustomName").
 class Artworks extends Table {
   IntColumn get id => integer().autoIncrement()();
 
@@ -26,21 +26,25 @@ class Artworks extends Table {
   TextColumn get artist =>
       text().nullable().customConstraint("NULL REFERENCES artists(name)")();
 
+  // GSheets returns columns keys in all lowercase, so it's necessary to specify
+  // the JsonKey below. Setting the column title in the spreadsheet as "file_name",
+  // for example, does not help either, since GSheets removes the underscore
   @JsonKey("filename")
   TextColumn get fileName => text().nullable()();
 }
 
-// Class "Artist" is automatically generated, by stripping the trailing "s" in
-// the table name. If a custom name is required, use @DataClassName("CustomName").
 class Artists extends Table {
   TextColumn get name => text()();
 
+  @JsonKey("yearbirth")
   TextColumn get yearBirth => text().nullable()();
 
+  @JsonKey("yeardeath")
   TextColumn get yearDeath => text().nullable()();
 
   TextColumn get biography => text().nullable()();
 
+  @JsonKey("filename")
   TextColumn get fileName => text().nullable()();
 
   @override

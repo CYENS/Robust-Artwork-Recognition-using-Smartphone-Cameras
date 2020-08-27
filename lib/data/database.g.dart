@@ -449,10 +449,10 @@ class Artist extends DataClass implements Insertable<Artist> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return Artist(
       name: serializer.fromJson<String>(json['name']),
-      yearBirth: serializer.fromJson<String>(json['yearBirth']),
-      yearDeath: serializer.fromJson<String>(json['yearDeath']),
+      yearBirth: serializer.fromJson<String>(json['yearbirth']),
+      yearDeath: serializer.fromJson<String>(json['yeardeath']),
       biography: serializer.fromJson<String>(json['biography']),
-      fileName: serializer.fromJson<String>(json['fileName']),
+      fileName: serializer.fromJson<String>(json['filename']),
     );
   }
   @override
@@ -460,10 +460,10 @@ class Artist extends DataClass implements Insertable<Artist> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'name': serializer.toJson<String>(name),
-      'yearBirth': serializer.toJson<String>(yearBirth),
-      'yearDeath': serializer.toJson<String>(yearDeath),
+      'yearbirth': serializer.toJson<String>(yearBirth),
+      'yeardeath': serializer.toJson<String>(yearDeath),
       'biography': serializer.toJson<String>(biography),
-      'fileName': serializer.toJson<String>(fileName),
+      'filename': serializer.toJson<String>(fileName),
     };
   }
 
