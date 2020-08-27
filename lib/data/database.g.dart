@@ -89,7 +89,7 @@ class Artwork extends DataClass implements Insertable<Artwork> {
       year: serializer.fromJson<String>(json['year']),
       description: serializer.fromJson<String>(json['description']),
       artist: serializer.fromJson<String>(json['artist']),
-      fileName: serializer.fromJson<String>(json['file_name']),
+      fileName: serializer.fromJson<String>(json['filename']),
     );
   }
   @override
@@ -101,7 +101,7 @@ class Artwork extends DataClass implements Insertable<Artwork> {
       'year': serializer.toJson<String>(year),
       'description': serializer.toJson<String>(description),
       'artist': serializer.toJson<String>(artist),
-      'file_name': serializer.toJson<String>(fileName),
+      'filename': serializer.toJson<String>(fileName),
     };
   }
 

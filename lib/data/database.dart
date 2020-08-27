@@ -26,7 +26,7 @@ class Artworks extends Table {
   TextColumn get artist =>
       text().nullable().customConstraint("NULL REFERENCES artists(name)")();
 
-  @JsonKey("file_name")
+  @JsonKey("filename")
   TextColumn get fileName => text().nullable()();
 }
 
