@@ -712,12 +712,15 @@ class $ArtistsTable extends Artists with TableInfo<$ArtistsTable, Artist> {
   }
 }
 
-abstract class _$MyDatabase extends GeneratedDatabase {
-  _$MyDatabase(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
+abstract class _$AppDatabase extends GeneratedDatabase {
+  _$AppDatabase(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
   $ArtworksTable _artworks;
   $ArtworksTable get artworks => _artworks ??= $ArtworksTable(this);
   $ArtistsTable _artists;
   $ArtistsTable get artists => _artists ??= $ArtistsTable(this);
+  ArtworksDao _artworksDao;
+  ArtworksDao get artworksDao =>
+      _artworksDao ??= ArtworksDao(this as AppDatabase);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override

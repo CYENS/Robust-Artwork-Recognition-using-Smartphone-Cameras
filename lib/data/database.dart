@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:modern_art_app/data/artworks_dao.dart';
 import 'package:moor/ffi.dart';
 import 'package:moor/moor.dart';
 import 'package:path/path.dart' as p;
@@ -62,8 +63,8 @@ LazyDatabase _openConnection() {
   });
 }
 
-@UseMoor(tables: [Artworks, Artists])
-class AppDatabase extends _$MyDatabase {
+@UseMoor(tables: [Artworks, Artists], daos: [ArtworksDao])
+class AppDatabase extends _$AppDatabase {
   // we tell the database where to store the data with this constructor
   AppDatabase() : super(_openConnection());
 
@@ -79,26 +80,6 @@ class AppDatabase extends _$MyDatabase {
           await customStatement("PRAGMA foreign_keys = ON");
         },
       );
-
-  // loads all artworks
-  Future<List<Artwork>> get allArtworkEntries => select(artworks).get();
-
-  Stream<List<Artwork>> get watchAllArtworkEntries => select(artworks).watch();
-
-  // watches all artwork entries for a given painter. The stream will automatically
-  // emit new items whenever the underlying data changes.
-  Stream<List<Artwork>> watchArtworksByArtist(Artist a) {
-    return (select(artworks)..where((p) => p.artist.equals(a.name))).watch();
-  }
-
-  // returns the generated id
-  Future<int> addCArtwork(ArtworksCompanion entry) {
-    return into(artworks).insert(entry);
-  }
-
-  Future<int> upsertArtwork(Artwork entry) {
-    return into(artworks).insertOnConflictUpdate(entry);
-  }
 
   Future<int> upsertArtist(Artist entry) {
     return into(artists).insertOnConflictUpdate(entry);
