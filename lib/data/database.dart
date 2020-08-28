@@ -9,13 +9,15 @@ import 'package:path_provider/path_provider.dart';
 
 part 'database.g.dart';
 
-// To auto-generate necessary code, run the following in the terminal:
+// To auto-generate the necessary moor-related code, run the following in the terminal:
 // 'flutter packages pub run build_runner build'
 // or the following to continuously regenerate code when code changes
 // 'flutter packages pub run build_runner watch'
 
-// Class "Artwork" is automatically generated, by stripping the trailing "s" in
-// the table name. If a custom name is required, use @DataClassName("CustomName").
+/// Table for [Artwork]s in database.
+///
+/// Class "Artwork" is automatically generated, by stripping the trailing "s" in
+/// the table name. If a custom name is required, use @DataClassName("CustomName").
 class Artworks extends Table {
   IntColumn get id => integer().autoIncrement()();
 
@@ -35,6 +37,7 @@ class Artworks extends Table {
   TextColumn get fileName => text().nullable()();
 }
 
+/// Table for [Artist]s in database.
 class Artists extends Table {
   TextColumn get name => text()();
 
@@ -64,20 +67,24 @@ LazyDatabase _openConnection() {
   });
 }
 
+/// Creates an instance of [AppDatabase] (lazily).
+///
+/// During the first use of [AppDatabase], it is automatically populated from a
+/// Json file with the necessary information in assets.
 @UseMoor(tables: [Artworks, Artists], daos: [ArtworksDao, ArtistsDao])
 class AppDatabase extends _$AppDatabase {
-  // we tell the database where to store the data with this constructor
   AppDatabase() : super(_openConnection());
 
-  // you should bump this number whenever you change or add a table definition. Migrations
-  // are covered later in this readme.
+  /// The schemaVersion number should be incremented whenever there is a change
+  /// in any of the table definitions (also a migration policy must be declared
+  /// below.
   @override
   int get schemaVersion => 1;
 
-  /// Enable foreign keys.
   @override
   MigrationStrategy get migration => MigrationStrategy(
         beforeOpen: (details) async {
+          /// Enables foreign keys in the db.
           await customStatement("PRAGMA foreign_keys = ON");
         },
       );
