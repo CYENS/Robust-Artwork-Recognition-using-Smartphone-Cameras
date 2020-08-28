@@ -25,6 +25,7 @@ class MyApp extends StatelessWidget {
     final db = AppDatabase();
     return MultiProvider(
       providers: [
+        Provider(create: (_) => db.artistsDao),
         Provider(create: (_) => db.artworksDao),
         Provider(create: (_) => db),
       ],
