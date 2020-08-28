@@ -12,4 +12,7 @@ class ArtistsDao extends DatabaseAccessor<AppDatabase> with _$ArtistsDaoMixin {
   Future<int> upsertArtist(Artist artist) {
     return into(artists).insertOnConflictUpdate(artist);
   }
+
+  /// Gets a list of all artists in the db.
+  Future<List<Artist>> get allArtistEntries => select(artists).get();
 }
