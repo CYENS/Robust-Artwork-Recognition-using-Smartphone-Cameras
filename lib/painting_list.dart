@@ -63,7 +63,7 @@ class PaintingRow extends StatelessWidget {
 
 Widget listVerticalFuture(String listType) {
   return FutureBuilder(
-    future: loadAssets(assetType: listType),
+    future: getAllAssets(assetType: listType),
     builder: (context, snapshot) {
       if (snapshot.hasData) {
         return ListView.builder(
@@ -146,7 +146,7 @@ class PaintingTile extends StatelessWidget {
 
 Widget listHorizontalFuture(String listType) {
   return FutureBuilder(
-    future: loadAssets(assetType: listType),
+    future: getAllAssets(assetType: listType),
     builder: (context, snapshot) {
       double width = MediaQuery.of(context).size.width;
       if (snapshot.hasData) {
