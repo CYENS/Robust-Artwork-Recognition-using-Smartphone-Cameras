@@ -17,21 +17,17 @@ class ArtworksDao extends DatabaseAccessor<AppDatabase>
   Stream<List<Artwork>> get watchAllArtworkEntries => select(artworks).watch();
 
   /// Gets a live stream of all artworks for a given painter
-  Stream<List<Artwork>> watchArtworksByArtist(Artist artist) {
-    return (select(artworks)
-          ..where((artwork) => artwork.artist.equals(artist.name)))
-        .watch();
-  }
+  Stream<List<Artwork>> watchArtworksByArtist(Artist artist) =>
+      (select(artworks)..where((artwork) => artwork.artist.equals(artist.name)))
+          .watch();
 
   /// Safely insert an [Artwork] into db, with the use of an [ArtworksCompanion].
   /// Returns the generated [Artwork] id.
-  Future<int> addCArtwork(ArtworksCompanion artworkC) {
-    return into(artworks).insert(artworkC);
-  }
+  Future<int> addCArtwork(ArtworksCompanion artworkC) =>
+      into(artworks).insert(artworkC);
 
   /// Upsert [Artwork] in db (insert if new, replace if exists already). Returns
   /// the generated/replaced [Artwork] id.
-  Future<int> upsertArtwork(Artwork artwork) {
-    return into(artworks).insertOnConflictUpdate(artwork);
-  }
+  Future<int> upsertArtwork(Artwork artwork) =>
+      into(artworks).insertOnConflictUpdate(artwork);
 }
