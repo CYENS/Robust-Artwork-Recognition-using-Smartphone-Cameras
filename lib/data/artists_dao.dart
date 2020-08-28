@@ -9,7 +9,7 @@ class ArtistsDao extends DatabaseAccessor<AppDatabase> with _$ArtistsDaoMixin {
   ArtistsDao(AppDatabase db) : super(db);
 
   /// Upsert [Artist] in db (insert if new, replace if exists already).
-  Future<int> upsertArtist(Artist entry) {
-    return into(artists).insertOnConflictUpdate(entry);
+  Future<int> upsertArtist(Artist artist) {
+    return into(artists).insertOnConflictUpdate(artist);
   }
 }
