@@ -16,8 +16,8 @@ Future<void> main() async {
   } on CameraException catch (e) {
     print("Error ${e.code}\nError msg: ${e.description}");
   }
-  runApp(Provider<MyDatabase>(
-    create: (context) => MyDatabase(),
+  runApp(Provider<AppDatabase>(
+    create: (context) => AppDatabase(),
     child: MyApp(),
     dispose: (context, db) => db.close(),
   ));

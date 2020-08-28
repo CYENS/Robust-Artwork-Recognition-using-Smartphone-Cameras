@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 class TodoPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    MyDatabase db = Provider.of<MyDatabase>(context);
+    AppDatabase db = Provider.of<AppDatabase>(context);
     return Scaffold(
       appBar: AppBar(
         title: Text("Todos"),
@@ -51,7 +51,7 @@ class TodoPage extends StatelessWidget {
   }
 }
 
-void getJson(MyDatabase db) async {
+void getJson(AppDatabase db) async {
   var jsonArtists = await http.get(gSheetUrlArtists);
 
   if (jsonArtists.statusCode == 200) {
