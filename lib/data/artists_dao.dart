@@ -3,10 +3,12 @@ import 'package:moor/moor.dart';
 
 part 'artists_dao.g.dart';
 
+/// Data access object for [Artist] database related operations.
 @UseDao(tables: [Artists])
 class ArtistsDao extends DatabaseAccessor<AppDatabase> with _$ArtistsDaoMixin {
   ArtistsDao(AppDatabase db) : super(db);
 
+  /// Upsert [Artist] in db (insert if new, replace if exists already).
   Future<int> upsertArtist(Artist entry) {
     return into(artists).insertOnConflictUpdate(entry);
   }
