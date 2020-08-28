@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:modern_art_app/data/artworks_dao.dart';
 import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/data/urls.dart';
 import 'package:modern_art_app/painting_list.dart';
@@ -13,9 +14,10 @@ class TodoPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     AppDatabase db = Provider.of<AppDatabase>(context);
+    ArtworksDao dao = Provider.of<ArtworksDao>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text("Todos"),
+        title: Text("Artworks"),
         actions: [
           IconButton(
               icon: Icon(Icons.list),
@@ -23,12 +25,12 @@ class TodoPage extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => MoorDbViewer(db)))),
           IconButton(
             icon: Icon(Icons.http),
-            onPressed: () => getJson(db),
+            onPressed: () => getJson(dao, db),
           )
         ],
       ),
       body: StreamBuilder<List<Artwork>>(
-        stream: db.watchAllArtworkEntries,
+        stream: dao.watchAllArtworkEntries,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const Center(
@@ -51,7 +53,7 @@ class TodoPage extends StatelessWidget {
   }
 }
 
-void getJson(AppDatabase db) async {
+void getJson(ArtworksDao dao, AppDatabase db) async {
   var jsonArtists = await http.get(gSheetUrlArtists);
 
   if (jsonArtists.statusCode == 200) {
@@ -77,7 +79,7 @@ void getJson(AppDatabase db) async {
     artworks.forEach((item) {
       // convert map from Json to compatible Map for data class
       var itemMap = parseJsonMap(item);
-      db.upsertArtwork(Artwork.fromJson(itemMap));
+      dao.upsertArtwork(Artwork.fromJson(itemMap));
       print("added ${itemMap["title"]}");
     });
   } else {
