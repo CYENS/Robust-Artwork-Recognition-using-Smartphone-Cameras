@@ -1,8 +1,6 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
-import 'package:flutter/services.dart';
+import 'package:modern_art_app/utils.dart';
 
 import 'painting_details_page.dart';
 
@@ -169,13 +167,4 @@ Widget listHorizontalFuture(String listType) {
       return Center(child: CircularProgressIndicator());
     },
   );
-}
-
-Future<List<String>> loadAssets({String assetType = "assets"}) async {
-  final assetManifest = await rootBundle.loadString("AssetManifest.json");
-  final Map<String, dynamic> assetMap = json.decode(assetManifest);
-//  await Future.delayed(Duration(seconds: 1));
-  return assetMap.keys
-      .where((String key) => key.contains(assetType.toLowerCase()))
-      .toList();
 }
