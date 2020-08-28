@@ -16,20 +16,23 @@ Future<void> main() async {
   } on CameraException catch (e) {
     print("Error ${e.code}\nError msg: ${e.description}");
   }
-  runApp(Provider<AppDatabase>(
-    create: (context) => AppDatabase(),
-    child: MyApp(),
-    dispose: (context, db) => db.close(),
-  ));
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark(),
-      home: HomePage(cameras: cameras),
+    final db = AppDatabase();
+    return MultiProvider(
+      providers: [
+        Provider(create: (_) => db.artworksDao),
+        Provider(create: (_) => db),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData.dark(),
+        home: HomePage(cameras: cameras),
+      ),
     );
   }
 }
