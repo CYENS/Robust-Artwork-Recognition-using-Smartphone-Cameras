@@ -269,7 +269,7 @@ class $ArtworksTable extends Artworks with TableInfo<$ArtworksTable, Artwork> {
   GeneratedTextColumn get title => _title ??= _constructTitle();
   GeneratedTextColumn _constructTitle() {
     return GeneratedTextColumn('title', $tableName, false,
-        minTextLength: 2, maxTextLength: 32);
+        minTextLength: 1, maxTextLength: 32);
   }
 
   final VerificationMeta _yearMeta = const VerificationMeta('year');
@@ -721,6 +721,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   ArtworksDao _artworksDao;
   ArtworksDao get artworksDao =>
       _artworksDao ??= ArtworksDao(this as AppDatabase);
+  ArtistsDao _artistsDao;
+  ArtistsDao get artistsDao => _artistsDao ??= ArtistsDao(this as AppDatabase);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override

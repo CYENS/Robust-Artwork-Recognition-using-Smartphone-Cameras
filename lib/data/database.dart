@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:modern_art_app/data/artists_dao.dart';
 import 'package:modern_art_app/data/artworks_dao.dart';
 import 'package:moor/ffi.dart';
 import 'package:moor/moor.dart';
@@ -18,7 +19,7 @@ part 'database.g.dart';
 class Artworks extends Table {
   IntColumn get id => integer().autoIncrement()();
 
-  TextColumn get title => text().withLength(min: 2, max: 32)();
+  TextColumn get title => text().withLength(min: 1, max: 32)();
 
   TextColumn get year => text().nullable()();
 
@@ -63,7 +64,7 @@ LazyDatabase _openConnection() {
   });
 }
 
-@UseMoor(tables: [Artworks, Artists], daos: [ArtworksDao])
+@UseMoor(tables: [Artworks, Artists], daos: [ArtworksDao, ArtistsDao])
 class AppDatabase extends _$AppDatabase {
   // we tell the database where to store the data with this constructor
   AppDatabase() : super(_openConnection());
@@ -80,8 +81,4 @@ class AppDatabase extends _$AppDatabase {
           await customStatement("PRAGMA foreign_keys = ON");
         },
       );
-
-  Future<int> upsertArtist(Artist entry) {
-    return into(artists).insertOnConflictUpdate(entry);
-  }
 }
