@@ -86,6 +86,9 @@ class AppDatabase extends _$AppDatabase {
         beforeOpen: (details) async {
           /// Enables foreign keys in the db.
           await customStatement("PRAGMA foreign_keys = ON");
+
+          /// todo When db is first created, populate it from assets.
+//          if (details.wasCreated) {}
         },
       );
 }
