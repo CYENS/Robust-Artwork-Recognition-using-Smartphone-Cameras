@@ -26,14 +26,19 @@ class Tile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: tileWidth,
-      height: tileHeight ?? tileWidth,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(10),
-        child: Hero(
-          tag: imagePath,
-          child: Image.asset(imagePath, fit: BoxFit.cover,),
+    return Center(
+      child: SizedBox(
+        width: tileWidth,
+        height: tileHeight ?? tileWidth,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(10),
+          child: Hero(
+            tag: imagePath,
+            child: Image.asset(
+              imagePath,
+              fit: BoxFit.cover,
+            ),
+          ),
         ),
       ),
     );
