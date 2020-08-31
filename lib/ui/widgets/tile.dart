@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:modern_art_app/data/database.dart';
+import 'package:modern_art_app/ui/widgets/artist_details_page.dart';
 
 /// Displays the provided image at [imagePath] in a tile with rounded corners.
 class Tile extends StatelessWidget {
@@ -58,11 +59,20 @@ class ArtistTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ArtistDetailsPage(
+                      artist: artist,
+                    )));
+      },
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 8),
         child: Tile(
           imagePath: artist.fileName,
           tileWidth: 100,
+          heroTag: artist.name,
         ),
       ),
     );
