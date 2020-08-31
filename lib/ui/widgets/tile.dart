@@ -14,6 +14,7 @@ class Tile extends StatelessWidget {
     @required this.imagePath,
     @required this.tileWidth,
     this.tileHeight,
+    this.heroTag,
   }) : super(key: key);
 
   /// Path to the image to be displayed.
@@ -25,6 +26,9 @@ class Tile extends StatelessWidget {
   /// Desired height of the tile.
   final double tileHeight;
 
+  /// Desired hero tag for the image displayed in the tile.
+  final String heroTag;
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -34,7 +38,7 @@ class Tile extends StatelessWidget {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(10),
           child: Hero(
-            tag: imagePath,
+            tag: heroTag ?? imagePath,
             child: Image.asset(
               imagePath,
               fit: BoxFit.cover,
