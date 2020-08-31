@@ -7,7 +7,7 @@ import 'package:modern_art_app/data/artists_dao.dart';
 import 'package:modern_art_app/data/artworks_dao.dart';
 import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/data/urls.dart';
-import 'package:modern_art_app/painting_list.dart';
+import 'package:modern_art_app/ui/widgets/tile.dart';
 import 'package:moor_db_viewer/moor_db_viewer.dart';
 import 'package:provider/provider.dart';
 
@@ -31,22 +31,20 @@ class TodoPage extends StatelessWidget {
           )
         ],
       ),
-      body: StreamBuilder<List<Artwork>>(
-        stream: artworksDao.watchAllArtworkEntries,
+      body: StreamBuilder<List<Artist>>(
+        stream: artistsDao.watchAllArtistEntries,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const Center(
               child: CircularProgressIndicator(),
             );
           }
-          final artworks = snapshot.data;
+          final artists = snapshot.data;
           return ListView.builder(
-              itemCount: artworks.length,
+              itemCount: artists.length,
               itemBuilder: (context, index) {
-                Artwork artwork = artworks[index];
-                return PaintingRow(
-                  paintingName: "${artwork.id} ${artwork.title}",
-                  path: "assets/paintings/${artwork.fileName}",
+                Artist artist = artists[index];
+                return ArtistTile(artist: artist,
                 );
               });
         },
