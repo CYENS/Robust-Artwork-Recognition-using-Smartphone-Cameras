@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:modern_art_app/data/database.dart';
 
 /// Displays the provided image at [imagePath] in a tile with rounded corners.
 class Tile extends StatelessWidget {
@@ -39,6 +40,25 @@ class Tile extends StatelessWidget {
               fit: BoxFit.cover,
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class ArtistTile extends StatelessWidget {
+  const ArtistTile({Key key, this.artist}) : super(key: key);
+
+  final Artist artist;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 8),
+        child: Tile(
+          imagePath: artist.fileName,
+          tileWidth: 100,
         ),
       ),
     );
