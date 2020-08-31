@@ -14,4 +14,7 @@ class ArtistsDao extends DatabaseAccessor<AppDatabase> with _$ArtistsDaoMixin {
 
   /// Gets a list of all artists in the db.
   Future<List<Artist>> get allArtistEntries => select(artists).get();
+
+  /// Gets a stream of all artists in the db.
+  Stream<List<Artist>> get watchAllArtistEntries => select(artists).watch();
 }
