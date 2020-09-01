@@ -35,23 +35,36 @@ class TodoPage extends StatelessWidget {
         stream: artistsDao.watchAllArtistEntries,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
           final artists = snapshot.data;
           return ListView.builder(
+              // itemExtent: 100,
               itemCount: artists.length,
               itemBuilder: (context, index) {
                 Artist artist = artists[index];
-                return ArtistTile(artist: artist,
-                );
+                return ItemRow.artist(artist: artist);
+                // return ArtistTile(artist: artist,
+                // );
               });
         },
       ),
     );
   }
 }
+
+Card _card(Artist artist) => Card(
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          Image.asset(artist.fileName),
+          ListTile(
+            title: Text(artist.name),
+            subtitle: Text(artist.biography),
+          ),
+        ],
+      ),
+    );
 
 void getJson(ArtworksDao artworksDao, ArtistsDao artistsDao) async {
   var jsonArtists = await http.get(gSheetUrlArtists);
