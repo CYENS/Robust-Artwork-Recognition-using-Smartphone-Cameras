@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/painting_details_page.dart';
 import 'package:modern_art_app/ui/widgets/artist_details_page.dart';
-import 'package:modern_art_app/ui/widgets/tile.dart';
+import 'package:modern_art_app/ui/widgets/item_tile.dart';
 
 class ItemRow extends StatelessWidget {
   final String title;

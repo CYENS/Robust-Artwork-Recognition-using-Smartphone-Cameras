@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:modern_art_app/data/artworks_dao.dart';
 import 'package:modern_art_app/data/database.dart';
-import 'package:modern_art_app/ui/widgets/tile.dart';
+import 'package:modern_art_app/ui/widgets/item_tile.dart';
 import 'package:provider/provider.dart';
 
 class ArtistDetailsPage extends StatelessWidget {
