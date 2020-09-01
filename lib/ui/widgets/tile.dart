@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/ui/widgets/artist_details_page.dart';
@@ -32,7 +31,7 @@ class Tile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return Container(
       child: SizedBox(
         width: tileWidth,
         height: tileHeight ?? tileWidth,
@@ -77,4 +76,53 @@ class ArtistTile extends StatelessWidget {
       ),
     );
   }
+}
+
+class ItemRow extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final String imgFileName;
+  final double rowHeight;
+  final dynamic detailsPage;
+
+  // const ItemRow({
+  //   Key key,
+  //   @required this.itemDbId,
+  //   @required this.title,
+  //   @required this.imgFileName,
+  //   this.subtitle,
+  //   this.rowHeight = 100,
+  // }) : super(key: key);
+
+  ItemRow.artist({Key key, @required Artist artist, this.rowHeight})
+      : title = artist.name,
+        subtitle = artist.name,
+        imgFileName = artist.fileName,
+        detailsPage = ArtistDetailsPage(artist: artist),
+        super(key: key);
+
+  @override
+  Widget build(BuildContext context) => Card(
+        child: InkWell(
+          onTap: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => detailsPage));
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Tile(
+                  imagePath: imgFileName,
+                  heroTag: title,
+                  tileWidth:
+                      rowHeight ?? MediaQuery.of(context).size.height * 0.2,
+                ),
+              ),
+              Text(title)
+            ],
+          ),
+        ),
+      );
 }
