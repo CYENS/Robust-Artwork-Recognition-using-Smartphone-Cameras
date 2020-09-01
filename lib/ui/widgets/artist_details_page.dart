@@ -32,27 +32,28 @@ class ArtistDetailsPage extends StatelessWidget {
           Text(artist.name, style: TextStyle(fontSize: 30)),
           Text("Description", style: TextStyle(fontSize: 25)),
           Text(artist.biography),
-          Text("Artworks by artist", style: TextStyle(fontSize: 25)),
-          ArtistListHorizontal(artist: artist),
+          Text("Artworks by ${artist.name}", style: TextStyle(fontSize: 25)),
+          ArtworkListHorizontal(
+              artworkList: Provider.of<ArtworksDao>(context)
+                  .getArtworksByArtist(artist)),
         ],
       ),
     );
   }
 }
 
-class ArtistListHorizontal extends StatelessWidget {
-  const ArtistListHorizontal({Key key, @required this.artist})
+class ArtworkListHorizontal extends StatelessWidget {
+  const ArtworkListHorizontal({Key key, @required this.artworkList})
       : super(key: key);
 
-  final Artist artist;
+  final Future<List<Artwork>> artworkList;
 
   @override
   Widget build(BuildContext context) {
-    ArtworksDao artworksDao = Provider.of<ArtworksDao>(context);
     return Container(
       height: 200,
       child: FutureBuilder(
-        future: artworksDao.getArtworksByArtist(artist),
+        future: artworkList,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             List<Artwork> artworks = snapshot.data;
