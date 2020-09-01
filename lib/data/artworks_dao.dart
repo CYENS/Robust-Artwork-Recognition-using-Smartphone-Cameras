@@ -16,10 +16,10 @@ class ArtworksDao extends DatabaseAccessor<AppDatabase>
   /// whenever the underlying data changes).
   Stream<List<Artwork>> get watchAllArtworkEntries => select(artworks).watch();
 
-  /// Gets a live stream of all artworks for a given painter
-  Stream<List<Artwork>> watchArtworksByArtist(Artist artist) =>
+  /// Gets a list of all artworks for a given painter.
+  Future<List<Artwork>> getArtworksByArtist(Artist artist) =>
       (select(artworks)..where((artwork) => artwork.artist.equals(artist.name)))
-          .watch();
+          .get();
 
   /// Safely insert an [Artwork] into db, with the use of an [ArtworksCompanion].
   /// Returns the generated [Artwork] id.
