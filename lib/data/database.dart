@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:modern_art_app/data/artists_dao.dart';
+import 'package:modern_art_app/data/artworks_dao.dart';
 import 'package:moor/ffi.dart';
 import 'package:moor/moor.dart';
 import 'package:path/path.dart' as p;
@@ -7,17 +9,19 @@ import 'package:path_provider/path_provider.dart';
 
 part 'database.g.dart';
 
-// To auto-generate necessary code, run the following in the terminal:
+// To auto-generate the necessary moor-related code, run the following in the terminal:
 // 'flutter packages pub run build_runner build'
 // or the following to continuously regenerate code when code changes
 // 'flutter packages pub run build_runner watch'
 
-// Class "Artwork" is automatically generated, by stripping the trailing "s" in
-// the table name. If a custom name is required, use @DataClassName("CustomName").
+/// Table for [Artwork]s in database.
+///
+/// Class "Artwork" is automatically generated, by stripping the trailing "s" in
+/// the table name. If a custom name is required, use @DataClassName("CustomName").
 class Artworks extends Table {
   IntColumn get id => integer().autoIncrement()();
 
-  TextColumn get title => text().withLength(min: 2, max: 32)();
+  TextColumn get title => text().withLength(min: 1, max: 32)();
 
   TextColumn get year => text().nullable()();
 
@@ -33,6 +37,7 @@ class Artworks extends Table {
   TextColumn get fileName => text().nullable()();
 }
 
+/// Table for [Artist]s in database.
 class Artists extends Table {
   TextColumn get name => text()();
 
@@ -62,45 +67,28 @@ LazyDatabase _openConnection() {
   });
 }
 
-@UseMoor(tables: [Artworks, Artists])
-class MyDatabase extends _$MyDatabase {
-  // we tell the database where to store the data with this constructor
-  MyDatabase() : super(_openConnection());
+/// Creates an instance of [AppDatabase] (lazily).
+///
+/// During the first use of [AppDatabase], it is automatically populated from a
+/// Json file with the necessary information in assets.
+@UseMoor(tables: [Artworks, Artists], daos: [ArtworksDao, ArtistsDao])
+class AppDatabase extends _$AppDatabase {
+  AppDatabase() : super(_openConnection());
 
-  // you should bump this number whenever you change or add a table definition. Migrations
-  // are covered later in this readme.
+  /// The schemaVersion number should be incremented whenever there is a change
+  /// in any of the table definitions (also a migration policy must be declared
+  /// below.
   @override
   int get schemaVersion => 1;
 
-  /// Enable foreign keys.
   @override
   MigrationStrategy get migration => MigrationStrategy(
         beforeOpen: (details) async {
+          /// Enables foreign keys in the db.
           await customStatement("PRAGMA foreign_keys = ON");
+
+          /// todo When db is first created, populate it from assets.
+//          if (details.wasCreated) {}
         },
       );
-
-  // loads all artworks
-  Future<List<Artwork>> get allArtworkEntries => select(artworks).get();
-
-  Stream<List<Artwork>> get watchAllArtworkEntries => select(artworks).watch();
-
-  // watches all artwork entries for a given painter. The stream will automatically
-  // emit new items whenever the underlying data changes.
-  Stream<List<Artwork>> watchArtworksByArtist(Artist a) {
-    return (select(artworks)..where((p) => p.artist.equals(a.name))).watch();
-  }
-
-  // returns the generated id
-  Future<int> addCArtwork(ArtworksCompanion entry) {
-    return into(artworks).insert(entry);
-  }
-
-  Future<int> upsertArtwork(Artwork entry) {
-    return into(artworks).insertOnConflictUpdate(entry);
-  }
-
-  Future<int> upsertArtist(Artist entry) {
-    return into(artists).insertOnConflictUpdate(entry);
-  }
 }
