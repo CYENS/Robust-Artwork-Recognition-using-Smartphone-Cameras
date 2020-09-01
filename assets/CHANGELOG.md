@@ -1,3 +1,8 @@
+## Version 0.0.10
+### 2010-09-01
+- Added new page showing artist details
+- General database improvements
+
 ## Version 0.0.9
 ### 2010-08-27
 - App database now fully functional
