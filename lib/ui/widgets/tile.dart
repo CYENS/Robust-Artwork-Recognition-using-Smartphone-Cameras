@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:modern_art_app/data/database.dart';
+import 'package:modern_art_app/painting_details_page.dart';
 import 'package:modern_art_app/ui/widgets/artist_details_page.dart';
 
 /// Displays the provided image at [imagePath] in a tile with rounded corners.
@@ -85,15 +86,6 @@ class ItemRow extends StatelessWidget {
   final double rowHeight;
   final dynamic detailsPage;
 
-  // const ItemRow({
-  //   Key key,
-  //   @required this.itemDbId,
-  //   @required this.title,
-  //   @required this.imgFileName,
-  //   this.subtitle,
-  //   this.rowHeight = 100,
-  // }) : super(key: key);
-
   ItemRow.artist({Key key, @required Artist artist, this.rowHeight})
       : title = artist.name,
         subtitle = artist.name,
@@ -101,12 +93,22 @@ class ItemRow extends StatelessWidget {
         detailsPage = ArtistDetailsPage(artist: artist),
         super(key: key);
 
+  ItemRow.artwork({Key key, @required Artwork artwork, this.rowHeight})
+      : title = artwork.title,
+        subtitle = artwork.title,
+        imgFileName = artwork.fileName,
+        detailsPage = PaintingDetailsPage(
+          path: artwork.fileName,
+          name: artwork.title,
+        ),
+        super(key: key);
+
   @override
   Widget build(BuildContext context) => Card(
         child: InkWell(
           onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => detailsPage));
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => detailsPage));
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.start,
