@@ -88,14 +88,14 @@ class ItemRow extends StatelessWidget {
 
   ItemRow.artist({Key key, @required Artist artist, this.rowHeight})
       : title = artist.name,
-        subtitle = artist.name,
+        subtitle = artist.yearBirth,
         imgFileName = artist.fileName,
         detailsPage = ArtistDetailsPage(artist: artist),
         super(key: key);
 
   ItemRow.artwork({Key key, @required Artwork artwork, this.rowHeight})
       : title = artwork.title,
-        subtitle = artwork.title,
+        subtitle = artwork.year,
         imgFileName = artwork.fileName,
         detailsPage = PaintingDetailsPage(
           path: artwork.fileName,
@@ -122,7 +122,19 @@ class ItemRow extends StatelessWidget {
                       rowHeight ?? MediaQuery.of(context).size.height * 0.2,
                 ),
               ),
-              Text(title)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Text(title, style: TextStyle(fontSize: 20),),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: Text(subtitle),
+                  ),
+                ],
+              )
             ],
           ),
         ),
