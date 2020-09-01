@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:modern_art_app/data/database.dart';
+import 'package:modern_art_app/painting_details_page.dart';
 import 'package:modern_art_app/ui/widgets/artist_details_page.dart';
 
 /// Displays the provided image at [imagePath] in a tile with rounded corners.
@@ -50,30 +51,45 @@ class Tile extends StatelessWidget {
   }
 }
 
-class ArtistTile extends StatelessWidget {
-  const ArtistTile({Key key, this.artist}) : super(key: key);
+class ItemTile extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final String imgFileName;
+  final double tileHeight;
+  final dynamic detailsPage;
 
-  final Artist artist;
+  ItemTile.artist({Key key, @required Artist artist, this.tileHeight})
+      : title = artist.name,
+        subtitle = artist.yearBirth,
+        imgFileName = artist.fileName,
+        detailsPage = ArtistDetailsPage(artist: artist),
+        super(key: key);
+
+  ItemTile.artwork({Key key, @required Artwork artwork, this.tileHeight})
+      : title = artwork.title,
+        subtitle = artwork.year,
+        imgFileName = artwork.fileName,
+        detailsPage = PaintingDetailsPage(
+          path: artwork.fileName,
+          name: artwork.title,
+        ),
+        super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => ArtistDetailsPage(
-                      artist: artist,
-                    )));
-      },
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 8),
-        child: Tile(
-          imagePath: artist.fileName,
-          tileWidth: 100,
-          heroTag: artist.name,
+  Widget build(BuildContext context) => InkWell(
+        onTap: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => detailsPage));
+        },
+        child: Container(
+          child: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Tile(
+              imagePath: imgFileName,
+              heroTag: title,
+              tileWidth: tileHeight ?? MediaQuery.of(context).size.height * 0.2,
+            ),
+          ),
         ),
-      ),
-    );
-  }
+      );
 }

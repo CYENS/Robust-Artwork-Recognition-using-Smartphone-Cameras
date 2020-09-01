@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:modern_art_app/data/artworks_dao.dart';
 import 'package:modern_art_app/data/database.dart';
-import 'package:modern_art_app/painting_list.dart';
+import 'package:modern_art_app/ui/widgets/tile.dart';
 import 'package:provider/provider.dart';
 
 class ArtistDetailsPage extends StatelessWidget {
@@ -61,11 +61,7 @@ class ArtworkListHorizontal extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               itemCount: artworks.length,
               itemBuilder: (context, index) {
-                return PaintingTile(
-                  paintingName: artworks[index].title,
-                  tileSideLength: 200,
-                  path: artworks[index].fileName,
-                );
+                return ItemTile.artwork(artwork: artworks[index]);
               },
             );
           }
