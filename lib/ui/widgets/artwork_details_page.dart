@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lorem/flutter_lorem.dart';
 import 'package:photo_view/photo_view.dart';
 
-class PaintingDetailsPage extends StatelessWidget {
+class ArtworkDetailsPage extends StatelessWidget {
   final String path;
   final String name;
   final String painter;
 
   // todo add hero tag as argument
 
-  const PaintingDetailsPage({
+  const ArtworkDetailsPage({
     Key key,
     this.path = "assets/paintings/mona_lisa.webp",
     this.name = "Painting name",

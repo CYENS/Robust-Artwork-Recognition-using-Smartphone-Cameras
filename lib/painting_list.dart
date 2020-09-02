@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:modern_art_app/utils.dart';
 
-import 'painting_details_page.dart';
+import 'ui/widgets/artwork_details_page.dart';
 
 class PaintingListVertical extends StatelessWidget {
   final String listType;
@@ -37,7 +37,7 @@ class PaintingRow extends StatelessWidget {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => PaintingDetailsPage(
+                  builder: (context) => ArtworkDetailsPage(
                         name: paintingName,
                         path: _path,
                       )));
@@ -120,7 +120,7 @@ class PaintingTile extends StatelessWidget {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => PaintingDetailsPage(
+                builder: (context) => ArtworkDetailsPage(
                       name: paintingName,
                       path: _path,
                     )));

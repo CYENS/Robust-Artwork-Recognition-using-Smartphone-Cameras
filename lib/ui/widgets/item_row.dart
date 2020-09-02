@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:modern_art_app/data/database.dart';
-import 'package:modern_art_app/painting_details_page.dart';
 import 'package:modern_art_app/ui/widgets/artist_details_page.dart';
+import 'package:modern_art_app/ui/widgets/artwork_details_page.dart';
 import 'package:modern_art_app/ui/widgets/item_tile.dart';
 
 class ItemRow extends StatelessWidget {
@@ -23,7 +23,7 @@ class ItemRow extends StatelessWidget {
         subtitle = "${artwork.artist}" +
             (artwork.year != "" ? ", ${artwork.year}" : ""),
         imgFileName = artwork.fileName,
-        detailsPage = PaintingDetailsPage(
+        detailsPage = ArtworkDetailsPage(
           path: artwork.fileName,
           name: artwork.title,
         ),

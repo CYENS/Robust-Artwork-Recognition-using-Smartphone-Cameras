@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:modern_art_app/data/database.dart';
-import 'package:modern_art_app/painting_details_page.dart';
 import 'package:modern_art_app/ui/widgets/artist_details_page.dart';
+import 'package:modern_art_app/ui/widgets/artwork_details_page.dart';
 
 /// Displays the provided image at [imagePath] in a tile with rounded corners.
 class Tile extends StatelessWidget {
@@ -74,7 +74,7 @@ class ItemTile extends StatelessWidget {
       : _title = artwork.title,
         _subtitle = artwork.year,
         _imgFileName = artwork.fileName,
-        _detailsPage = PaintingDetailsPage(
+        _detailsPage = ArtworkDetailsPage(
           path: artwork.fileName,
           name: artwork.title,
         ),
