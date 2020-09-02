@@ -33,7 +33,7 @@ class ArtistDetailsPage extends StatelessWidget {
           Text("Description", style: TextStyle(fontSize: 25)),
           Text(artist.biography),
           Text("Artworks by ${artist.name}", style: TextStyle(fontSize: 25)),
-          ArtworkListHorizontal(
+          ItemList(
               artworkList: Provider.of<ArtworksDao>(context)
                   .getArtworksByArtist(artist)),
         ],
@@ -42,8 +42,8 @@ class ArtistDetailsPage extends StatelessWidget {
   }
 }
 
-class ArtworkListHorizontal extends StatelessWidget {
-  const ArtworkListHorizontal({Key key, @required this.artworkList})
+class ItemList extends StatelessWidget {
+  const ItemList({Key key, @required this.artworkList})
       : super(key: key);
 
   final Future<List<Artwork>> artworkList;
