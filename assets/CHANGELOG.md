@@ -1,3 +1,11 @@
+## Version 0.1.0
+### 2010-09-02
+- First minor version
+- Overhaul of pages showing details for Artists and Artworks
+  - Artist detail page now includes a list of all artworks by Artist
+- Standardisation of all app widgets (e.g. tiles, rows, lists)
+- More database improvements
+
 ## Version 0.0.10
 ### 2010-09-01
 - Added new page showing artist details
