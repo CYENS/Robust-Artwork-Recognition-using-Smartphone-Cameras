@@ -4,7 +4,6 @@ import 'dart:math' as math;
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:modern_art_app/data/artworks_dao.dart';
-import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/ui/widgets/artwork_details_page.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -77,19 +76,14 @@ class TakePictureScreenState extends State<TakePictureScreen> {
             );
             // take picture
             await _controller.takePicture(path);
-            Artwork randomArtwork;
             Provider.of<ArtworksDao>(context, listen: false)
                 .allArtworkEntries
-                .then((value) =>
-                    randomArtwork = value[math.Random().nextInt(value.length)]);
-            // if picture was taken, show it in DisplayPictureScreen widget
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>
-                    ArtworkDetailsPage(artwork: randomArtwork),
-              ),
-            );
+                .then((value) => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ArtworkDetailsPage(
+                          artwork: value[math.Random().nextInt(value.length)]),
+                    )));
           } catch (e) {
             // catch any errors
             print(e);
@@ -98,8 +92,4 @@ class TakePictureScreenState extends State<TakePictureScreen> {
       ),
     );
   }
-}
-
-void getRandom() {
-  // Provider.of<ArtworksDao>(context)
 }
