@@ -33,7 +33,7 @@ class ArtistDetailsPage extends StatelessWidget {
           Text("Description", style: TextStyle(fontSize: 25)),
           Text(artist.biography),
           Text("Artworks by ${artist.name}", style: TextStyle(fontSize: 25)),
-          ItemList(
+          ArtworkList(
               artworkList: Provider.of<ArtworksDao>(context)
                   .getArtworksByArtist(artist)),
         ],
