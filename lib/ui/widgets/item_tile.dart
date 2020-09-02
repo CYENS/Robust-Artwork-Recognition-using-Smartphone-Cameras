@@ -51,13 +51,11 @@ class Tile extends StatelessWidget {
   }
 }
 
+/// Displays the provided [Artist] or [Artwork] as an image tile, which when
+/// tapped takes the user to a details page showing more info about the
+/// provided object.
 class ItemTile extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final String imgFileName;
-  final double tileHeight;
-  final dynamic detailsPage;
-
+  /// Creates a tile with rounded corners displaying the provided [Artist].
   ItemTile.artist({Key key, @required Artist artist, this.tileHeight})
       : title = artist.name,
         subtitle = artist.yearBirth,
@@ -65,6 +63,7 @@ class ItemTile extends StatelessWidget {
         detailsPage = ArtistDetailsPage(artist: artist),
         super(key: key);
 
+  /// Creates a tile with rounded corners displaying the provided [Artist].
   ItemTile.artwork({Key key, @required Artwork artwork, this.tileHeight})
       : title = artwork.title,
         subtitle = artwork.year,
@@ -74,6 +73,12 @@ class ItemTile extends StatelessWidget {
           name: artwork.title,
         ),
         super(key: key);
+
+  final String title;
+  final String subtitle;
+  final String imgFileName;
+  final double tileHeight;
+  final dynamic detailsPage;
 
   @override
   Widget build(BuildContext context) => InkWell(
