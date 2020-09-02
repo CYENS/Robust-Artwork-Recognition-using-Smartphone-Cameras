@@ -7,7 +7,7 @@ import 'package:modern_art_app/data/artists_dao.dart';
 import 'package:modern_art_app/data/artworks_dao.dart';
 import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/data/urls.dart';
-import 'package:modern_art_app/ui/widgets/tile.dart';
+import 'package:modern_art_app/ui/widgets/item_list.dart';
 import 'package:moor_db_viewer/moor_db_viewer.dart';
 import 'package:provider/provider.dart';
 
@@ -31,27 +31,23 @@ class TodoPage extends StatelessWidget {
           )
         ],
       ),
-      body: StreamBuilder<List<Artist>>(
-        stream: artistsDao.watchAllArtistEntries,
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          final artists = snapshot.data;
-          return ListView.builder(
-              itemCount: artists.length,
-              itemBuilder: (context, index) {
-                Artist artist = artists[index];
-                return ArtistTile(artist: artist,
-                );
-              });
-        },
-      ),
+      body: ListVertical(itemList: artistsDao.watchAllArtistEntries),
     );
   }
 }
+
+Card _card(Artist artist) => Card(
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        children: [
+          Image.asset(artist.fileName),
+          ListTile(
+            title: Text(artist.name),
+            subtitle: Text(artist.biography),
+          ),
+        ],
+      ),
+    );
 
 void getJson(ArtworksDao artworksDao, ArtistsDao artistsDao) async {
   var jsonArtists = await http.get(gSheetUrlArtists);

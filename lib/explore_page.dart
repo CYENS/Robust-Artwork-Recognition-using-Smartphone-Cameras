@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:modern_art_app/painting_list.dart';
+import 'package:modern_art_app/data/artists_dao.dart';
+import 'package:modern_art_app/data/artworks_dao.dart';
+import 'package:modern_art_app/ui/widgets/item_list.dart';
+import 'package:provider/provider.dart';
 
 class ExplorePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    ArtworksDao artworksDao = Provider.of<ArtworksDao>(context);
+    ArtistsDao artistsDao = Provider.of<ArtistsDao>(context);
     return SafeArea(
       child: SingleChildScrollView(
         child: Container(
@@ -14,7 +19,7 @@ class ExplorePage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Container(
-                height: size.height * 0.3,
+                height: size.height * 0.4,
                 width: size.width,
                 child: Stack(
                   children: [
@@ -54,10 +59,14 @@ class ExplorePage extends StatelessWidget {
                   ],
                 ),
               ),
-              HeadlineAndMoreRow(listType: "Painting"),
-              PaintingListHorizontal(listType: "Painting"),
-              HeadlineAndMoreRow(listType: "Painter"),
-              PaintingListHorizontal(listType: "Painter"),
+              HeadlineAndMoreRow(
+                  listType: "Artworks",
+                  itemList: artworksDao.watchAllArtworkEntries),
+              ListHorizontal(itemList: artworksDao.watchAllArtworkEntries),
+              HeadlineAndMoreRow(
+                  listType: "Artists",
+                  itemList: artistsDao.watchAllArtistEntries),
+              ListHorizontal(itemList: artistsDao.watchAllArtistEntries),
             ],
           ),
         ),
@@ -68,25 +77,26 @@ class ExplorePage extends StatelessWidget {
 
 class HeadlineAndMoreRow extends StatelessWidget {
   final String listType;
+  final Stream<List<dynamic>> itemList;
 
-  const HeadlineAndMoreRow({Key key, @required this.listType})
+  const HeadlineAndMoreRow({Key key, @required this.listType, this.itemList})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.fromLTRB(8, 24, 8, 8),
         child: Row(
-//          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            headline("${listType}s"),
+            headline(listType),
             Spacer(),
             InkWell(
                 onTap: () {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => PaintingListVertical(
-                                listType: listType,
+                          builder: (context) => Scaffold(
+                                appBar: AppBar(title: Text(listType)),
+                                body: ListVertical(itemList: itemList),
                               )));
                 },
                 child: Text("more"))
