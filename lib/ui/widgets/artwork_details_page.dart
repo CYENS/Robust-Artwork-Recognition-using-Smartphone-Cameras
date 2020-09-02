@@ -3,11 +3,10 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_lorem/flutter_lorem.dart';
 import 'package:modern_art_app/data/database.dart';
+import 'package:photo_view/photo_view.dart';
 
 class ArtworkDetailsPage extends StatelessWidget {
   final Artwork artwork;
-
-  // todo add hero tag as argument
 
   const ArtworkDetailsPage({Key key, this.artwork}) : super(key: key);
 
@@ -22,15 +21,24 @@ class ArtworkDetailsPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Hero(
-              tag: artwork.title,
-              child: Container(
-                height: size.height * 0.6,
-                width: size.width,
-                decoration: BoxDecoration(
-                    image: DecorationImage(
-                        image: AssetImage(artwork.fileName),
-                        fit: BoxFit.fitHeight)),
+            GestureDetector(
+              onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ItemZoomPage(
+                            fileName: artwork.fileName,
+                            heroTag: artwork.title,
+                          ))),
+              child: Hero(
+                tag: artwork.title,
+                child: Container(
+                  height: size.height * 0.6,
+                  width: size.width,
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                          image: AssetImage(artwork.fileName),
+                          fit: BoxFit.fitHeight)),
+                ),
               ),
             ),
             Padding(
@@ -55,6 +63,28 @@ class ArtworkDetailsPage extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class ItemZoomPage extends StatelessWidget {
+  final String fileName;
+  final String heroTag;
+
+  const ItemZoomPage({Key key, @required this.fileName, this.heroTag})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: BoxConstraints.expand(
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+      ),
+      child: PhotoView(
+        imageProvider: AssetImage(fileName),
+        heroAttributes: PhotoViewHeroAttributes(tag: heroTag),
       ),
     );
   }
