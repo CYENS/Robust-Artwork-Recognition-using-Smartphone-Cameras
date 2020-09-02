@@ -11,6 +11,7 @@ class ListHorizontal extends StatelessWidget {
     this.listHeight,
   }) : super(key: key);
 
+  // todo make input argument simple List
   final Stream<List<dynamic>> itemList;
   final double listHeight;
 
@@ -48,6 +49,7 @@ class ListHorizontal extends StatelessWidget {
 class ListVertical extends StatelessWidget {
   const ListVertical({Key key, @required this.itemList}) : super(key: key);
 
+  // todo make input argument simple List
   final Stream<List<dynamic>> itemList;
 
   @override
