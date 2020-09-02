@@ -54,7 +54,7 @@ class ItemRow extends StatelessWidget {
                     padding: const EdgeInsets.all(4.0),
                     child: Text(
                       title,
-                      style: TextStyle(fontSize: 20),
+                      style: TextStyle(fontSize: 15),
                     ),
                   ),
                   Padding(
