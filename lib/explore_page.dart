@@ -95,7 +95,7 @@ class HeadlineAndMoreRow extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                           builder: (context) => Scaffold(
-                                appBar: AppBar(title: Text("${listType}s")),
+                                appBar: AppBar(title: Text(listType)),
                                 body: ListVertical(itemList: itemList),
                               )));
                 },
