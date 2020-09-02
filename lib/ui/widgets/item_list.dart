@@ -17,26 +17,29 @@ class ListHorizontal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double height = listHeight ?? MediaQuery.of(context).size.height * 0.2;
-    return Container(
-      height: height,
-      child: StreamBuilder(
-        stream: itemList,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            List<dynamic> items = snapshot.data;
-            return ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: items.length,
-              itemBuilder: (context, index) {
-                return items[0].runtimeType == Artist
-                    ? ItemTile.artist(artist: items[index], tileWidth: height)
-                    : ItemTile.artwork(
-                        artwork: items[index], tileWidth: height);
-              },
-            );
-          }
-          return const Center(child: CircularProgressIndicator());
-        },
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+      child: Container(
+        height: height,
+        child: StreamBuilder(
+          stream: itemList,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              List<dynamic> items = snapshot.data;
+              return ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: items.length,
+                itemBuilder: (context, index) {
+                  return items[0].runtimeType == Artist
+                      ? ItemTile.artist(artist: items[index], tileWidth: height)
+                      : ItemTile.artwork(
+                          artwork: items[index], tileWidth: height);
+                },
+              );
+            }
+            return const Center(child: CircularProgressIndicator());
+          },
+        ),
       ),
     );
   }
