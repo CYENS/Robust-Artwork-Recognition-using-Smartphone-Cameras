@@ -57,41 +57,41 @@ class Tile extends StatelessWidget {
 class ItemTile extends StatelessWidget {
   /// Creates a tile with rounded corners displaying the provided [Artist].
   ItemTile.artist({Key key, @required Artist artist, this.tileHeight})
-      : title = artist.name,
-        subtitle = artist.yearBirth,
-        imgFileName = artist.fileName,
-        detailsPage = ArtistDetailsPage(artist: artist),
+      : _title = artist.name,
+        _subtitle = artist.yearBirth,
+        _imgFileName = artist.fileName,
+        _detailsPage = ArtistDetailsPage(artist: artist),
         super(key: key);
 
   /// Creates a tile with rounded corners displaying the provided [Artist].
   ItemTile.artwork({Key key, @required Artwork artwork, this.tileHeight})
-      : title = artwork.title,
-        subtitle = artwork.year,
-        imgFileName = artwork.fileName,
-        detailsPage = PaintingDetailsPage(
+      : _title = artwork.title,
+        _subtitle = artwork.year,
+        _imgFileName = artwork.fileName,
+        _detailsPage = PaintingDetailsPage(
           path: artwork.fileName,
           name: artwork.title,
         ),
         super(key: key);
 
-  final String title;
-  final String subtitle;
-  final String imgFileName;
+  final String _title;
+  final String _subtitle;
+  final String _imgFileName;
+  final dynamic _detailsPage;
   final double tileHeight;
-  final dynamic detailsPage;
 
   @override
   Widget build(BuildContext context) => InkWell(
         onTap: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => detailsPage));
+              context, MaterialPageRoute(builder: (context) => _detailsPage));
         },
         child: Container(
           child: Padding(
             padding: const EdgeInsets.all(4.0),
             child: Tile(
-              imagePath: imgFileName,
-              heroTag: title,
+              imagePath: _imgFileName,
+              heroTag: _title,
               tileWidth: tileHeight ?? MediaQuery.of(context).size.height * 0.2,
             ),
           ),
