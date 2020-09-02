@@ -54,9 +54,14 @@ class Tile extends StatelessWidget {
 /// Displays the provided [Artist] or [Artwork] as an image tile, which when
 /// tapped takes the user to a details page showing more info about the
 /// provided object.
+///
+/// If [tileHeight] is not specified, it will be set to equal [tileWidth], i.e.
+/// a square tile will be created. If neither is provided, they will default to
+/// a value equal to 20% of the current screen height.
 class ItemTile extends StatelessWidget {
   /// Creates a tile with rounded corners displaying the provided [Artist].
-  ItemTile.artist({Key key, @required Artist artist, this.tileHeight})
+  ItemTile.artist(
+      {Key key, @required Artist artist, this.tileWidth, this.tileHeight})
       : _title = artist.name,
         _subtitle = artist.yearBirth,
         _imgFileName = artist.fileName,
@@ -64,7 +69,8 @@ class ItemTile extends StatelessWidget {
         super(key: key);
 
   /// Creates a tile with rounded corners displaying the provided [Artist].
-  ItemTile.artwork({Key key, @required Artwork artwork, this.tileHeight})
+  ItemTile.artwork(
+      {Key key, @required Artwork artwork, this.tileWidth, this.tileHeight})
       : _title = artwork.title,
         _subtitle = artwork.year,
         _imgFileName = artwork.fileName,
@@ -74,10 +80,16 @@ class ItemTile extends StatelessWidget {
         ),
         super(key: key);
 
+  // todo add option to include title and subtitle below tiles
   final String _title;
   final String _subtitle;
   final String _imgFileName;
   final dynamic _detailsPage;
+
+  /// Desired width of the tile.
+  final double tileWidth;
+
+  /// Desired height of the tile.
   final double tileHeight;
 
   @override
@@ -92,7 +104,9 @@ class ItemTile extends StatelessWidget {
             child: Tile(
               imagePath: _imgFileName,
               heroTag: _title,
-              tileWidth: tileHeight ?? MediaQuery.of(context).size.height * 0.2,
+              tileWidth: tileWidth ?? MediaQuery.of(context).size.height * 0.2,
+              tileHeight:
+                  tileHeight ?? MediaQuery.of(context).size.height * 0.2,
             ),
           ),
         ),
