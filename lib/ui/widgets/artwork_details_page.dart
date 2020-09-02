@@ -1,43 +1,58 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_lorem/flutter_lorem.dart';
-import 'package:photo_view/photo_view.dart';
+import 'package:modern_art_app/data/database.dart';
 
 class ArtworkDetailsPage extends StatelessWidget {
-  final String path;
-  final String name;
-  final String painter;
+  final Artwork artwork;
 
   // todo add hero tag as argument
 
-  const ArtworkDetailsPage({
-    Key key,
-    this.path = "assets/paintings/mona_lisa.webp",
-    this.name = "Painting name",
-    this.painter = "Painter",
-  }) : super(key: key);
+  const ArtworkDetailsPage({Key key, this.artwork}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: AppBar(title: Text("Painting details")),
+      appBar: AppBar(
+        title: Text("Artwork details"),
+      ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(name,
-                style: TextStyle(fontSize: 30, fontStyle: FontStyle.italic)),
-            Text(painter),
-            Align(
-              child: AspectRatio(
-                aspectRatio: 1 / 0.9,
-                child: PhotoView(
-                  imageProvider: AssetImage(path),
-                  heroAttributes: PhotoViewHeroAttributes(tag: name),
-                ),
+            Hero(
+              tag: artwork.title,
+              child: Container(
+                height: size.height * 0.6,
+                width: size.width,
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage(artwork.fileName),
+                        fit: BoxFit.fitHeight)),
               ),
             ),
-            Text("Description", style: TextStyle(fontSize: 25)),
-            Text(lorem(paragraphs: 5, words: 300)),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(4.0, 12.0, 4.0, 0.0),
+              child: Text(artwork.title, style: TextStyle(fontSize: 30)),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: Text(
+                  "${artwork.artist}" +
+                      (artwork.year != "" ? ", ${artwork.year}" : ""),
+                  style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic)),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(4.0, 12.0, 4.0, 0.0),
+              child: Text("Description", style: TextStyle(fontSize: 20)),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: Text(lorem(
+                  paragraphs: 3, words: 250 - math.Random().nextInt(100))),
+            ),
           ],
         ),
       ),
