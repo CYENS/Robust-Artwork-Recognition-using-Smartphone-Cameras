@@ -5,6 +5,7 @@ import 'package:modern_art_app/ui/widgets/artwork_details_page.dart';
 import 'package:modern_art_app/ui/widgets/item_tile.dart';
 
 class ItemRow extends StatelessWidget {
+  // todo make arguments private
   final String title;
   final String subtitle;
   final String imgFileName;
@@ -23,10 +24,7 @@ class ItemRow extends StatelessWidget {
         subtitle = "${artwork.artist}" +
             (artwork.year != "" ? ", ${artwork.year}" : ""),
         imgFileName = artwork.fileName,
-        detailsPage = ArtworkDetailsPage(
-          path: artwork.fileName,
-          name: artwork.title,
-        ),
+        detailsPage = ArtworkDetailsPage(artwork: artwork),
         super(key: key);
 
   @override

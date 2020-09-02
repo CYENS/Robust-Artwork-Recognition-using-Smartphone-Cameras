@@ -74,10 +74,7 @@ class ItemTile extends StatelessWidget {
       : _title = artwork.title,
         _subtitle = artwork.year,
         _imgFileName = artwork.fileName,
-        _detailsPage = ArtworkDetailsPage(
-          path: artwork.fileName,
-          name: artwork.title,
-        ),
+        _detailsPage = ArtworkDetailsPage(artwork: artwork),
         super(key: key);
 
   // todo add option to include title and subtitle below tiles

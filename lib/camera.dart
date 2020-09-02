@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/ui/widgets/artwork_details_page.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -77,8 +78,14 @@ class TakePictureScreenState extends State<TakePictureScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) =>
-                    ArtworkDetailsPage(name: "The Mona Lisa"),
+                builder: (context) => ArtworkDetailsPage(
+                    artwork: Artwork(
+                  id: 199,
+                  title: "The Mona Lisa",
+                  artist: "Leonardo",
+                  year: "2000",
+                  fileName: "assets/paintings/mona_lisa.webp",
+                )),
               ),
             );
           } catch (e) {
