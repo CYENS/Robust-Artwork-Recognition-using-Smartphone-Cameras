@@ -21,6 +21,10 @@ class ArtworksDao extends DatabaseAccessor<AppDatabase>
       (select(artworks)..where((artwork) => artwork.artist.equals(artist.name)))
           .get();
 
+  Stream<List<Artwork>> watchArtworksByArtist(Artist artist) =>
+      (select(artworks)..where((artwork) => artwork.artist.equals(artist.name)))
+          .watch();
+
   /// Safely insert an [Artwork] into db, with the use of an [ArtworksCompanion].
   /// Returns the generated [Artwork] id.
   Future<int> addCArtwork(ArtworksCompanion artworkC) =>

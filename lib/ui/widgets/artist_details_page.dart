@@ -34,8 +34,8 @@ class ArtistDetailsPage extends StatelessWidget {
           Text(artist.biography),
           Text("Artworks by ${artist.name}", style: TextStyle(fontSize: 25)),
           ListHorizontal(
-              itemList:
-                  Provider.of<ArtworksDao>(context).watchAllArtworkEntries),
+              itemList: Provider.of<ArtworksDao>(context)
+                  .watchArtworksByArtist(artist)),
         ],
       ),
     );
