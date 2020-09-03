@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -17,6 +18,18 @@ Future<List<String>> getAllAssets({String assetType = "assets"}) async {
   return assetMap.keys
       .where((String key) => key.contains(assetType.toLowerCase()))
       .toList();
+}
+
+Future<List<Map>> getRemoteJson(String url) async {
+  var itemsJson = await http.get(url);
+
+  if (itemsJson.statusCode == 200) {
+    Map body = json.decode(itemsJson.body);
+    return List<Map>.from(body["feed"]["entry"]);
+  } else {
+    throw HttpException(
+        "Error getting remote json: statusCode ${itemsJson.statusCode}");
+  }
 }
 
 void getJson(ArtworksDao artworksDao, ArtistsDao artistsDao) async {
