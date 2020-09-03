@@ -20,7 +20,13 @@ Future<List<String>> getAllAssets({String assetType = "assets"}) async {
       .toList();
 }
 
-Future<List<Map>> getRemoteJson(String url) async {
+Future<List<Map>> getLocalJsonItemList(String assetsPath) async {
+  return rootBundle
+      .loadString(assetsPath)
+      .then((jsonStr) => List<Map>.from(json.decode(jsonStr)["feed"]["entry"]));
+}
+
+Future<List<Map>> getRemoteJsonItemList(String url) async {
   var itemsJson = await http.get(url);
 
   if (itemsJson.statusCode == 200) {
