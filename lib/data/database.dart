@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:modern_art_app/data/artists_dao.dart';
 import 'package:modern_art_app/data/artworks_dao.dart';
+import 'package:modern_art_app/data/data_processing.dart';
 import 'package:moor/ffi.dart';
 import 'package:moor/moor.dart';
 import 'package:path/path.dart' as p;
@@ -16,8 +17,8 @@ part 'database.g.dart';
 
 /// Table for [Artwork]s in database.
 ///
-/// Class "Artwork" is automatically generated, by stripping the trailing "s" in
-/// the table name. If a custom name is required, use @DataClassName("CustomName").
+/// Class "Artwork" is auto-generated, by stripping the trailing "s" in the
+/// table name. If a custom name is required, use @DataClassName("CustomName").
 class Artworks extends Table {
   IntColumn get id => integer().autoIncrement()();
 
@@ -77,7 +78,7 @@ class AppDatabase extends _$AppDatabase {
 
   /// The schemaVersion number should be incremented whenever there is a change
   /// in any of the table definitions (also a migration policy must be declared
-  /// below.
+  /// below).
   @override
   int get schemaVersion => 1;
 
@@ -87,8 +88,26 @@ class AppDatabase extends _$AppDatabase {
           /// Enables foreign keys in the db.
           await customStatement("PRAGMA foreign_keys = ON");
 
-          /// todo When db is first created, populate it from assets.
-//          if (details.wasCreated) {}
+          /// When db is first created, populate it from json files in assets.
+          if (details.wasCreated) {
+            // artists must be inserted first, since artist name is a foreign
+            // key in artworks table
+            await getLocalJsonItemList(artistsJsonPath)
+                .then((artistEntries) => artistEntries.forEach((entry) {
+                      var artist = Artist.fromJson(parseItemMap(entry));
+                      into(artists).insertOnConflictUpdate(artist);
+                      print("Created entry for artist ${artist.name}");
+                    }));
+
+            // insert artworks
+            await getLocalJsonItemList(artworksJsonPath)
+                .then((artworkEntries) => artworkEntries.forEach((entry) {
+                      var artwork = Artwork.fromJson(parseItemMap(entry));
+                      into(artworks).insertOnConflictUpdate(artwork);
+                      print("Created entry for artwork \"${artwork.title}\" by "
+                          "${artwork.artist}");
+                    }));
+          }
         },
       );
 }
