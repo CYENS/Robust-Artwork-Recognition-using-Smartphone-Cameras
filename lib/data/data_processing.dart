@@ -8,6 +8,12 @@ import 'package:modern_art_app/data/artworks_dao.dart';
 import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/data/urls.dart';
 
+/// Path of locally cached json file with artists info.
+const String artistsJsonPath = "assets/data/artists.json";
+
+/// Path of locally cached json file with artworks info.
+const String artworksJsonPath = "assets/data/artists.json";
+
 /// Returns a list with the paths of all asset files; the [assetType] argument
 /// can optionally be used to get assets only from specific subdirectories in
 /// assets.
@@ -78,7 +84,7 @@ void getJson(ArtworksDao artworksDao, ArtistsDao artistsDao) async {
 }
 
 void getJson2(ArtworksDao artworksDao, ArtistsDao artistsDao) async {
-  var arts = getLocalJsonItemList("assets/data/artists.json");
+  var arts = getLocalJsonItemList(artistsJsonPath);
   arts.then((artists) => artists.forEach((artist) {
         var item = Artist.fromJson(parseItemMap(artist));
         artistsDao.upsertArtist(item);
