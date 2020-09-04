@@ -1,6 +1,6 @@
 // import 'package:flutter/material.dart';
 // import 'package:flutter/painting.dart';
-// import 'package:modern_art_app/utils.dart';
+// import 'package:modern_art_app/data_processing.dart';
 //
 // import 'ui/widgets/artwork_details_page.dart';
 //

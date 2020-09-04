@@ -1,0 +1,4 @@
+# ignore file with sensitive information
+constants.py
+
+.idea

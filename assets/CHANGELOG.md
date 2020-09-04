@@ -1,3 +1,7 @@
+## Version 0.1.1
+### 2010-09-04
+- The app's database is now auto-populated on first app launch
+
 ## Version 0.1.0
 ### 2010-09-02
 - First minor version

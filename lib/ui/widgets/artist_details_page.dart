@@ -30,7 +30,9 @@ class ArtistDetailsPage extends StatelessWidget {
                 width: size.width,
                 decoration: BoxDecoration(
                     image: DecorationImage(
-                        image: AssetImage(artist.fileName), fit: BoxFit.cover)),
+                  image: AssetImage(artist.fileName),
+                  fit: BoxFit.fitHeight,
+                )),
               ),
             ),
             Padding(
