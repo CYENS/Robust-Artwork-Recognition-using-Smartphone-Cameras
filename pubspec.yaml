@@ -1,3 +1,5 @@
+# To set the app's name, for Android edit /android/app/src/main/AndroidManifest.xml - android:label,
+# for iOS edit /ios/Runner/info.plist - <key>CFBundleName</key>.
 name: modern_art_app
 description: A new Flutter application.
 
