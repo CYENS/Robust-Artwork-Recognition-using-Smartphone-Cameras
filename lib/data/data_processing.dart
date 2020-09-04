@@ -49,13 +49,16 @@ Future<List<Map>> getRemoteJsonItemList(String url) async {
   }
 }
 
+/// Updates the app's db from the remote Google spreadsheet.
 void updateDbFromGSheets(ArtworksDao artworksDao, ArtistsDao artistsDao) async {
+  // first update artists
   getRemoteJsonItemList(gSheetUrlArtists)
       .then((artists) => artists.forEach((entry) {
             var artist = Artist.fromJson(parseItemMap(entry));
             artistsDao.upsertArtist(artist);
             print("Updated artist ${artist.name}");
           }));
+  // then update artworks
   getRemoteJsonItemList(gSheetUrlArtworks)
       .then((artworks) => artworks.forEach((entry) {
             var artwork = Artwork.fromJson(parseItemMap(entry));
