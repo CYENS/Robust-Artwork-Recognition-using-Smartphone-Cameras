@@ -15,6 +15,12 @@ part 'database.g.dart';
 // or the following to continuously regenerate code when code changes
 // 'flutter packages pub run build_runner watch'
 
+/// Path of locally cached json file with artists info.
+const String artistsJsonPath = "assets/data/artists.json";
+
+/// Path of locally cached json file with artworks info.
+const String artworksJsonPath = "assets/data/artworks.json";
+
 /// Table for [Artwork]s in database.
 ///
 /// Class "Artwork" is auto-generated, by stripping the trailing "s" in the

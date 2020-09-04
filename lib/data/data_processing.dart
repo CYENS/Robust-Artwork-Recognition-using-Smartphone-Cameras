@@ -8,12 +8,6 @@ import 'package:modern_art_app/data/artworks_dao.dart';
 import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/data/urls.dart';
 
-/// Path of locally cached json file with artists info.
-const String artistsJsonPath = "assets/data/artists.json";
-
-/// Path of locally cached json file with artworks info.
-const String artworksJsonPath = "assets/data/artworks.json";
-
 /// Returns a list with the paths of all asset files; the [assetType] argument
 /// can optionally be used to get assets only from specific subdirectories in
 /// assets.
