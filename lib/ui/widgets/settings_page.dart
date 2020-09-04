@@ -6,7 +6,24 @@ class SettingsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SettingsScreen(
       title: "Settings",
-      children: [],
+      children: [
+        SimpleSettingsTile(
+          title: "About",
+          subtitle: "subtitle",
+          onTap: () => showAboutDialog(
+              context: context, applicationName: "Modern Art App"),
+        ),
+        CheckboxSettingsTile(
+          settingKey: 'key-setting-checkbox',
+          title: 'Checkbox',
+          subtitle: "subtitle",
+        ),
+        SwitchSettingsTile(
+          settingKey: "switch-key",
+          title: "Switch",
+          subtitle: "subtitle",
+        )
+      ],
     );
   }
 }
