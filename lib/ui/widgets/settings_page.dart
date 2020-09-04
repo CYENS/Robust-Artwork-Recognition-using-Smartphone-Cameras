@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
+import 'package:package_info/package_info.dart';
 
 class SettingsPage extends StatelessWidget {
   @override
@@ -10,8 +11,13 @@ class SettingsPage extends StatelessWidget {
         SimpleSettingsTile(
           title: "About",
           subtitle: "subtitle",
-          onTap: () => showAboutDialog(
-              context: context, applicationName: "Modern Art App"),
+          onTap: () {
+            PackageInfo.fromPlatform().then((packageInfo) => showAboutDialog(
+                  context: context,
+                  applicationName: packageInfo.appName,
+                  applicationVersion: packageInfo.version,
+                ));
+          },
         ),
         CheckboxSettingsTile(
           settingKey: 'key-setting-checkbox',
