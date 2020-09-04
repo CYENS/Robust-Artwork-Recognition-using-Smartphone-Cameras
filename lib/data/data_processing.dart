@@ -49,47 +49,19 @@ Future<List<Map>> getRemoteJsonItemList(String url) async {
   }
 }
 
-void getJson(ArtworksDao artworksDao, ArtistsDao artistsDao) async {
-  var jsonArtists = await http.get(gSheetUrlArtists);
-
-  if (jsonArtists.statusCode == 200) {
-    Map body = json.decode(jsonArtists.body);
-    var artists = List<Map>.from(body["feed"]["entry"]);
-
-    artists.forEach((item) {
-      // convert map from Json to compatible Map for data class
-      var itemMap = parseItemMap(item);
-      artistsDao.upsertArtist(Artist.fromJson(itemMap));
-      print("added ${itemMap["name"]}");
-    });
-  } else {
-    print("Error getting json: statusCode ${jsonArtists.statusCode}");
-  }
-
-  var jsonArtworks = await http.get(gSheetUrlArtworks);
-
-  if (jsonArtworks.statusCode == 200) {
-    Map body = json.decode(jsonArtworks.body);
-    var artworks = List<Map>.from(body["feed"]["entry"]);
-
-    artworks.forEach((item) {
-      // convert map from Json to compatible Map for data class
-      var itemMap = parseItemMap(item);
-      artworksDao.upsertArtwork(Artwork.fromJson(itemMap));
-      print("added ${itemMap["title"]}");
-    });
-  } else {
-    print("Error getting json: statusCode ${jsonArtworks.statusCode}");
-  }
-}
-
-void getJson2(ArtworksDao artworksDao, ArtistsDao artistsDao) async {
-  var arts = getLocalJsonItemList(artistsJsonPath);
-  arts.then((artists) => artists.forEach((artist) {
-        var item = Artist.fromJson(parseItemMap(artist));
-        artistsDao.upsertArtist(item);
-        print(item);
-      }));
+void updateDbFromGSheets(ArtworksDao artworksDao, ArtistsDao artistsDao) async {
+  getRemoteJsonItemList(gSheetUrlArtists)
+      .then((artists) => artists.forEach((entry) {
+            var artist = Artist.fromJson(parseItemMap(entry));
+            artistsDao.upsertArtist(artist);
+            print("Updated artist ${artist.name}");
+          }));
+  getRemoteJsonItemList(gSheetUrlArtworks)
+      .then((artworks) => artworks.forEach((entry) {
+            var artwork = Artwork.fromJson(parseItemMap(entry));
+            artworksDao.upsertArtwork(artwork);
+            print("Updated artwork ${artwork.title}");
+          }));
 }
 
 /// Extracts the necessary fields from each [mapItem] and discards the excess

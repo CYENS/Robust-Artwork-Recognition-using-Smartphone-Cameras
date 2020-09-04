@@ -24,7 +24,7 @@ class TodoPage extends StatelessWidget {
                       MoorDbViewer(Provider.of<AppDatabase>(context))))),
           IconButton(
             icon: Icon(Icons.http),
-            onPressed: () => getJson(artworksDao, artistsDao),
+            onPressed: () => updateDbFromGSheets(artworksDao, artistsDao),
           )
         ],
       ),
