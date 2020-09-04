@@ -18,7 +18,7 @@ Future<void> main() async {
     print("Error ${e.code}\nError msg: ${e.description}");
   }
   // init settings
-  Settings.init();
+  await Settings.init();
   runApp(MyApp());
 }
 
