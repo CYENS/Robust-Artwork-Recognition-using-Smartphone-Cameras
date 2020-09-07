@@ -1,6 +1,10 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:modern_art_app/data/artists_dao.dart';
 import 'package:modern_art_app/data/artworks_dao.dart';
+import 'package:modern_art_app/data/database.dart';
+import 'package:modern_art_app/ui/widgets/item_featured.dart';
 import 'package:modern_art_app/ui/widgets/item_list.dart';
 import 'package:provider/provider.dart';
 
@@ -59,6 +63,20 @@ class ExplorePage extends StatelessWidget {
                   ],
                 ),
               ),
+              FutureBuilder(
+                  future: artworksDao.allArtworkEntries,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      List<Artwork> artworks = snapshot.data;
+                      return FeaturedTile(
+                        artwork:
+                            artworks[math.Random().nextInt(artworks.length)],
+                        tileHeight: size.height * 0.35,
+                        tileWidth: size.width,
+                      );
+                    }
+                    return Container();
+                  }),
               HeadlineAndMoreRow(
                   listType: "Artworks",
                   itemList: artworksDao.watchAllArtworkEntries),
