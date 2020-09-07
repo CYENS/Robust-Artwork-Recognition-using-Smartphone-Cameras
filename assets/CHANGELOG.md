@@ -1,3 +1,8 @@
+## Version 0.2.0
+### 2010-09-07
+- Added Settings page
+- New tile in Explore page showing featured artwork
+
 ## Version 0.1.1
 ### 2010-09-04
 - The app's database is now auto-populated on first app launch
