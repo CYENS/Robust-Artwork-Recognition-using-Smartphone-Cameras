@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/home_page.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +17,8 @@ Future<void> main() async {
   } on CameraException catch (e) {
     print("Error ${e.code}\nError msg: ${e.description}");
   }
+  // init settings
+  await Settings.init();
   runApp(MyApp());
 }
 

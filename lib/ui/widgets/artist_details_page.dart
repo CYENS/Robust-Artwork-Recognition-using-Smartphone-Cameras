@@ -15,6 +15,8 @@ class ArtistDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    // to change appbar color according to image, use below with futurebuilder
+    // PaletteGenerator.fromImageProvider(AssetImage(artist.fileName));
     return Scaffold(
       appBar: AppBar(
         title: Text("Artist details"),

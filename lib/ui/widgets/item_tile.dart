@@ -60,21 +60,32 @@ class Tile extends StatelessWidget {
 /// a value equal to 20% of the current screen height.
 class ItemTile extends StatelessWidget {
   /// Creates a tile with rounded corners displaying the provided [Artist].
-  ItemTile.artist(
-      {Key key, @required Artist artist, this.tileWidth, this.tileHeight})
-      : _title = artist.name,
+  ItemTile.artist({
+    Key key,
+    @required Artist artist,
+    this.tileWidth,
+    this.tileHeight,
+    this.customHeroTag,
+  })  : _title = artist.name,
         _subtitle = artist.yearBirth,
         _imgFileName = artist.fileName,
         _detailsPage = ArtistDetailsPage(artist: artist),
         super(key: key);
 
-  /// Creates a tile with rounded corners displaying the provided [Artist].
-  ItemTile.artwork(
-      {Key key, @required Artwork artwork, this.tileWidth, this.tileHeight})
-      : _title = artwork.title,
+  /// Creates a tile with rounded corners displaying the provided [Artwork].
+  ItemTile.artwork({
+    Key key,
+    @required Artwork artwork,
+    this.tileWidth,
+    this.tileHeight,
+    this.customHeroTag,
+  })  : _title = artwork.title,
         _subtitle = artwork.year,
         _imgFileName = artwork.fileName,
-        _detailsPage = ArtworkDetailsPage(artwork: artwork),
+        _detailsPage = ArtworkDetailsPage(
+          artwork: artwork,
+          customHeroTag: customHeroTag ?? artwork.title,
+        ),
         super(key: key);
 
   // todo add option to include title and subtitle below tiles
@@ -89,6 +100,9 @@ class ItemTile extends StatelessWidget {
   /// Desired height of the tile.
   final double tileHeight;
 
+  /// Optional custom hero tag.
+  final String customHeroTag;
+
   @override
   Widget build(BuildContext context) => InkWell(
         onTap: () {
@@ -100,7 +114,7 @@ class ItemTile extends StatelessWidget {
             padding: const EdgeInsets.all(4.0),
             child: Tile(
               imagePath: _imgFileName,
-              heroTag: _title,
+              heroTag: customHeroTag ?? _title,
               tileWidth: tileWidth ?? MediaQuery.of(context).size.height * 0.2,
               tileHeight:
                   tileHeight ?? MediaQuery.of(context).size.height * 0.2,

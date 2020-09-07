@@ -1,3 +1,5 @@
+# To set the app's name, for Android edit /android/app/src/main/AndroidManifest.xml - android:label,
+# for iOS edit /ios/Runner/info.plist - <key>CFBundleName</key>.
 name: modern_art_app
 description: A new Flutter application.
 
@@ -15,7 +17,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 0.1.1+1
+version: 0.2.0+1
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -26,18 +28,22 @@ dependencies:
   cupertino_icons: ^1.0.0
   camera: ^0.5.8+5
   flutter_lorem: ^1.1.0
-  flutter_markdown: ^0.4.4
+#  flutter_markdown: ^0.4.4
+  flutter_settings_screens: ^0.2.1
+  flutter_staggered_grid_view: ^0.3.2
+  flutter_whatsnew: ^1.0.3
+  http: ^0.12.2
   moor: ^3.3.1
   moor_db_viewer: ^2.0.3
+  palette_generator: ^0.2.3
   path:
   path_provider:
+  package_info: '>=0.4.3 <2.0.0'
   photo_view: ^0.10.2
-  provider: ^4.3.2+1
+  provider: ^4.3.2+2
+  sensors: '>=0.4.2+4 <2.0.0'
   sqlite3_flutter_libs:
   tflite: 1.1.1
-  sensors: '>=0.4.2+4 <2.0.0'
-  http: ^0.12.2
-  flutter_staggered_grid_view: ^0.3.2
 
 dev_dependencies:
   build_runner:
@@ -55,6 +61,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
+    - CHANGELOG.md
     - assets/
     - assets/data/
     - assets/painters/
