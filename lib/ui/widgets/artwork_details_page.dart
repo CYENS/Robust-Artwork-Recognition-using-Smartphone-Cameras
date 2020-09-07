@@ -6,9 +6,12 @@ import 'package:modern_art_app/data/database.dart';
 import 'package:photo_view/photo_view.dart';
 
 class ArtworkDetailsPage extends StatelessWidget {
-  final Artwork artwork;
+  const ArtworkDetailsPage(
+      {Key key, @required this.artwork, this.customHeroTag})
+      : super(key: key);
 
-  const ArtworkDetailsPage({Key key, this.artwork}) : super(key: key);
+  final Artwork artwork;
+  final String customHeroTag;
 
   @override
   Widget build(BuildContext context) {
@@ -27,10 +30,10 @@ class ArtworkDetailsPage extends StatelessWidget {
                   MaterialPageRoute(
                       builder: (context) => ItemZoomPage(
                             fileName: artwork.fileName,
-                            heroTag: artwork.title,
+                            heroTag: customHeroTag ?? artwork.title,
                           ))),
               child: Hero(
-                tag: artwork.title,
+                tag: customHeroTag ?? artwork.title,
                 child: Container(
                   height: size.height * 0.6,
                   width: size.width,
