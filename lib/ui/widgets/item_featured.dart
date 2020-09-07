@@ -27,33 +27,36 @@ class FeaturedTile extends StatelessWidget {
           tileHeight: tileHeight,
           customHeroTag: artwork.title + "_featured",
         ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: headline("Artwork of the week"),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: RichText(
-                text: TextSpan(
-                  children: [
-                    TextSpan(
-                      text: artwork.title,
-                      style:
-                          TextStyle(fontSize: 28, fontStyle: FontStyle.normal),
-                    ),
-                    TextSpan(
-                      text: " by " + artwork.artist,
-                      style:
-                          TextStyle(fontSize: 18, fontStyle: FontStyle.italic),
-                    )
-                  ],
-                ),
+        Container(
+          color: Colors.black45,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: headline("Artwork of the week"),
               ),
-            )
-          ],
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: artwork.title,
+                        style: TextStyle(
+                            fontSize: 28, fontStyle: FontStyle.normal),
+                      ),
+                      TextSpan(
+                        text: " by " + artwork.artist,
+                        style: TextStyle(
+                            fontSize: 18, fontStyle: FontStyle.italic),
+                      )
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
         )
       ],
     );
