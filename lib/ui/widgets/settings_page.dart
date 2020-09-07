@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
+import 'package:flutter_whatsnew/flutter_whatsnew.dart';
 import 'package:package_info/package_info.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -10,7 +11,7 @@ class SettingsPage extends StatelessWidget {
       children: [
         SimpleSettingsTile(
           title: "About",
-          subtitle: "subtitle",
+          subtitle: "App info & Open source licences",
           onTap: () {
             PackageInfo.fromPlatform().then((packageInfo) => showAboutDialog(
                   context: context,
@@ -19,10 +20,17 @@ class SettingsPage extends StatelessWidget {
                 ));
           },
         ),
-        CheckboxSettingsTile(
-          settingKey: 'key-setting-checkbox',
-          title: 'Checkbox',
-          subtitle: "subtitle",
+        SimpleSettingsTile(
+          title: 'Changelog',
+          subtitle: "Timeline of changes in the app",
+          onTap: () {
+            print("tapped");
+            return WhatsNewPage.changelog(
+              title: Text("whats new"),
+              buttonText: Text("null"),
+              // path: "/assets/CHANGELOG.md",
+            );
+          },
         ),
         SwitchSettingsTile(
           settingKey: "switch-key",
