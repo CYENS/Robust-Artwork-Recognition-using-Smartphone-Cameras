@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:modern_art_app/data/database.dart';
+import 'package:modern_art_app/explore_page.dart';
 import 'package:modern_art_app/ui/widgets/item_tile.dart';
 
 class FeaturedTile extends StatelessWidget {
@@ -16,11 +18,44 @@ class FeaturedTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ItemTile.artwork(
-      artwork: artwork,
-      tileWidth: tileWidth,
-      tileHeight: tileHeight,
-      customHeroTag: artwork.title + "_featured",
+    return Stack(
+      alignment: Alignment.bottomLeft,
+      children: [
+        ItemTile.artwork(
+          artwork: artwork,
+          tileWidth: tileWidth,
+          tileHeight: tileHeight,
+          customHeroTag: artwork.title + "_featured",
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: headline("Artwork of the week"),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+              child: RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: artwork.title,
+                      style:
+                          TextStyle(fontSize: 28, fontStyle: FontStyle.normal),
+                    ),
+                    TextSpan(
+                      text: " by " + artwork.artist,
+                      style:
+                          TextStyle(fontSize: 18, fontStyle: FontStyle.italic),
+                    )
+                  ],
+                ),
+              ),
+            )
+          ],
+        )
+      ],
     );
   }
 }
