@@ -35,6 +35,7 @@ dependencies:
   http: ^0.12.2
   moor: ^3.3.1
   moor_db_viewer: ^2.0.3
+  palette_generator: ^0.2.3
   path:
   path_provider:
   package_info: '>=0.4.3 <2.0.0'
