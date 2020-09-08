@@ -63,6 +63,10 @@ class ExplorePage extends StatelessWidget {
                   ],
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: headline("Artwork of the week"),
+              ),
               FutureBuilder(
                   future: artworksDao.allArtworkEntries,
                   builder: (context, snapshot) {

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:modern_art_app/data/database.dart';
-import 'package:modern_art_app/explore_page.dart';
 import 'package:modern_art_app/ui/widgets/item_tile.dart';
 
 class FeaturedTile extends StatelessWidget {
@@ -32,10 +31,6 @@ class FeaturedTile extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: headline("Artwork of the week"),
-              ),
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                 child: RichText(
