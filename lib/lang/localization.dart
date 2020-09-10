@@ -6,7 +6,7 @@ import 'package:modern_art_app/data/url_data_sources.dart';
 
 part 'localization.g.dart';
 
-@SheetLocalization(docId, i18nSheetID, 1)
+@SheetLocalization(docId, i18nSheetID, 2)
 class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const AppLocalizationsDelegate();
 
