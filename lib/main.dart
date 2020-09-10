@@ -36,15 +36,33 @@ class MyApp extends StatelessWidget {
         Provider(create: (_) => db),
       ],
       child: MaterialApp(
-        // current locale
-        locale: AppLocalizations.languages.keys.first,
+        // can specify app locale here explicitly
+        // locale: AppLocalizations.languages.keys.first,
         localizationsDelegates: [
-          const AppLocalizationsDelegate(), // custom localization delegate
+          // Custom localization delegate, gen. by flutter_sheet_localization lib
+          const AppLocalizationsDelegate(),
+          // Built-in localization of basic text for Material widgets
           GlobalMaterialLocalizations.delegate,
+          // Built-in localization for text direction LTR/RTL
           GlobalWidgetsLocalizations.delegate,
         ],
-        // supported locales
         supportedLocales: AppLocalizations.languages.keys.toList(),
+        localeResolutionCallback: (locale, supportedLocales) {
+          /// Algorithm for determining which locale to choose for the app; the
+          /// algorithm used is very simple, just checking the languageCode, and
+          /// defaulting to the first locale (en) if the required locale is not
+          /// included in supportedLocales. See the following for more info:
+          /// - https://api.flutter.dev/flutter/widgets/WidgetsApp/localeResolutionCallback.html
+          /// - https://flutter.dev/docs/development/accessibility-and-localization/internationalization
+          /// - https://resocoder.com/2019/06/01/flutter-localization-the-easy-way-internationalization-with-json/
+          for (var supportedLocale in supportedLocales) {
+            if (supportedLocale.languageCode == locale.languageCode) {
+              return supportedLocale;
+            }
+          }
+          // if locale is not supported, fall back to English
+          return supportedLocales.first;
+        },
         debugShowCheckedModeBanner: false,
         theme: ThemeData.dark(),
         home: HomePage(cameras: cameras),
