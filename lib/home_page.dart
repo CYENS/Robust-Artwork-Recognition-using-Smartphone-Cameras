@@ -2,6 +2,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:modern_art_app/camera.dart';
 import 'package:modern_art_app/explore_page.dart';
+import 'package:modern_art_app/lang/localization.dart';
 import 'package:modern_art_app/ui/widgets/settings_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -24,6 +25,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final labels = AppLocalizations.of(context);
     List<Widget> _screens = [
       ExplorePage(),
       TakePictureScreen(cameras: widget.cameras),
@@ -34,11 +36,11 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(
-              icon: Icon(Icons.home), title: Text("Explore")),
+              icon: Icon(Icons.home), title: Text(labels.nav.explore)),
           BottomNavigationBarItem(
-              icon: Icon(Icons.camera), title: Text("Identify painting")),
+              icon: Icon(Icons.camera), title: Text(labels.nav.identify)),
           BottomNavigationBarItem(
-              icon: Icon(Icons.settings), title: Text("Settings")),
+              icon: Icon(Icons.settings), title: Text(labels.nav.settings)),
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
