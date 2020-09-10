@@ -2,10 +2,13 @@ import 'dart:async';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/home_page.dart';
 import 'package:provider/provider.dart';
+
+import 'lang/localization.dart';
 
 List<CameraDescription> cameras;
 
@@ -33,6 +36,15 @@ class MyApp extends StatelessWidget {
         Provider(create: (_) => db),
       ],
       child: MaterialApp(
+        // current locale
+        locale: AppLocalizations.languages.keys.first,
+        localizationsDelegates: [
+          const AppLocalizationsDelegate(), // custom localization delegate
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+        ],
+        // supported locales
+        supportedLocales: AppLocalizations.languages.keys.toList(),
         debugShowCheckedModeBanner: false,
         theme: ThemeData.dark(),
         home: HomePage(cameras: cameras),
