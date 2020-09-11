@@ -8,6 +8,8 @@ import 'package:modern_art_app/ui/widgets/item_featured.dart';
 import 'package:modern_art_app/ui/widgets/item_list.dart';
 import 'package:provider/provider.dart';
 
+import 'extensions.dart';
+
 class ExplorePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -65,7 +67,7 @@ class ExplorePage extends StatelessWidget {
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: headline("Artwork of the week"),
+                child: headline(context.strings().artworkOfTheWeek),
               ),
               FutureBuilder(
                   future: artworksDao.allArtworkEntries,
@@ -128,6 +130,6 @@ class HeadlineAndMoreRow extends StatelessWidget {
 }
 
 Widget headline(String text) => Text(
-      text.toUpperCase(),
+      text.customToUpperCase(),
       style: Typography.whiteMountainView.headline1.copyWith(fontSize: 20),
     );
