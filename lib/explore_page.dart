@@ -107,26 +107,31 @@ class HeadlineAndMoreRow extends StatelessWidget {
       : super(key: key);
 
   @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.fromLTRB(8, 24, 8, 8),
-        child: Row(
-          children: [
-            headline(listType),
-            Spacer(),
-            InkWell(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => Scaffold(
-                                appBar: AppBar(title: Text(listType)),
-                                body: ListVertical(itemList: itemList),
-                              )));
-                },
-                child: Text("more"))
-          ],
-        ),
-      );
+  Widget build(BuildContext context) {
+    var strings = context.strings();
+    // TODO: fix this
+    String title = listType == "Artists" ? strings.artists : strings.artworks;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8, 24, 8, 8),
+      child: Row(
+        children: [
+          headline(title),
+          Spacer(),
+          InkWell(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Scaffold(
+                              appBar: AppBar(title: Text(title)),
+                              body: ListVertical(itemList: itemList),
+                            )));
+              },
+              child: Text(strings.button.more))
+        ],
+      ),
+    );
+  }
 }
 
 Widget headline(String text) => Text(

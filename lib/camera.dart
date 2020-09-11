@@ -9,6 +9,8 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
+import 'extensions.dart';
+
 class TakePictureScreen extends StatefulWidget {
   final List<CameraDescription> cameras;
 
@@ -45,7 +47,7 @@ class TakePictureScreenState extends State<TakePictureScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Point the camera to a painting"),
+        title: Text(context.strings().pointTheCamera),
       ),
       body: FutureBuilder<void>(
         future: _initializeControllerFuture,
