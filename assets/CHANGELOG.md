@@ -1,3 +1,8 @@
+## Version 0.3.0
+### 2010-09-11
+- Translated app to Greek
+- Bug fixes
+
 ## Version 0.2.0
 ### 2010-09-07
 - Added Settings page

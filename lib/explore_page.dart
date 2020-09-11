@@ -8,6 +8,8 @@ import 'package:modern_art_app/ui/widgets/item_featured.dart';
 import 'package:modern_art_app/ui/widgets/item_list.dart';
 import 'package:provider/provider.dart';
 
+import 'extensions.dart';
+
 class ExplorePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -63,6 +65,10 @@ class ExplorePage extends StatelessWidget {
                   ],
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: headline(context.strings().artworkOfTheWeek),
+              ),
               FutureBuilder(
                   future: artworksDao.allArtworkEntries,
                   builder: (context, snapshot) {
@@ -101,29 +107,34 @@ class HeadlineAndMoreRow extends StatelessWidget {
       : super(key: key);
 
   @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.fromLTRB(8, 24, 8, 8),
-        child: Row(
-          children: [
-            headline(listType),
-            Spacer(),
-            InkWell(
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => Scaffold(
-                                appBar: AppBar(title: Text(listType)),
-                                body: ListVertical(itemList: itemList),
-                              )));
-                },
-                child: Text("more"))
-          ],
-        ),
-      );
+  Widget build(BuildContext context) {
+    var strings = context.strings();
+    // TODO: fix this
+    String title = listType == "Artists" ? strings.artists : strings.artworks;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8, 24, 8, 8),
+      child: Row(
+        children: [
+          headline(title),
+          Spacer(),
+          InkWell(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Scaffold(
+                              appBar: AppBar(title: Text(title)),
+                              body: ListVertical(itemList: itemList),
+                            )));
+              },
+              child: Text(strings.button.more))
+        ],
+      ),
+    );
+  }
 }
 
 Widget headline(String text) => Text(
-      text.toUpperCase(),
+      text.customToUpperCase(),
       style: Typography.whiteMountainView.headline1.copyWith(fontSize: 20),
     );

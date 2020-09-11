@@ -176,6 +176,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.16.2"
+  csv:
+    dependency: transitive
+    description:
+      name: csv
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.0.3"
   cupertino_icons:
     dependency: "direct main"
     description:
@@ -223,6 +230,11 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_localizations:
+    dependency: "direct main"
+    description: flutter
+    source: sdk
+    version: "0.0.0"
   flutter_lorem:
     dependency: "direct main"
     description:
@@ -251,6 +263,20 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.1"
+  flutter_sheet_localization:
+    dependency: "direct main"
+    description:
+      name: flutter_sheet_localization
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.0"
+  flutter_sheet_localization_generator:
+    dependency: "direct dev"
+    description:
+      name: flutter_sheet_localization_generator
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "2.0.1"
   flutter_staggered_grid_view:
     dependency: "direct main"
     description:
@@ -318,7 +344,7 @@ packages:
     source: hosted
     version: "3.1.4"
   intl:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: intl
       url: "https://pub.dartlang.org"
@@ -561,7 +587,7 @@ packages:
       name: recase
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.0"
+    version: "2.0.1"
   sensors:
     dependency: "direct main"
     description:

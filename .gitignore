@@ -44,4 +44,4 @@ app.*.map.json
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 
 # Exclude sensitive information
-lib/data/urls.dart
+lib/data/sensitive.dart

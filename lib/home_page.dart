@@ -4,6 +4,8 @@ import 'package:modern_art_app/camera.dart';
 import 'package:modern_art_app/explore_page.dart';
 import 'package:modern_art_app/ui/widgets/settings_page.dart';
 
+import 'extensions.dart';
+
 class HomePage extends StatefulWidget {
   final List<CameraDescription> cameras;
 
@@ -24,6 +26,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final strings = context.strings();
     List<Widget> _screens = [
       ExplorePage(),
       TakePictureScreen(cameras: widget.cameras),
@@ -34,11 +37,11 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(
-              icon: Icon(Icons.home), title: Text("Explore")),
+              icon: Icon(Icons.home), title: Text(strings.nav.explore)),
           BottomNavigationBarItem(
-              icon: Icon(Icons.camera), title: Text("Identify painting")),
+              icon: Icon(Icons.camera), title: Text(strings.nav.identify)),
           BottomNavigationBarItem(
-              icon: Icon(Icons.settings), title: Text("Settings")),
+              icon: Icon(Icons.settings), title: Text(strings.nav.settings)),
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,

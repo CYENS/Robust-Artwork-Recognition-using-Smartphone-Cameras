@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:modern_art_app/data/artists_dao.dart';
 import 'package:modern_art_app/data/artworks_dao.dart';
 import 'package:modern_art_app/data/database.dart';
-import 'package:modern_art_app/data/urls.dart';
+import 'package:modern_art_app/data/url_data_sources.dart';
 
 /// Returns a list with the paths of all asset files; the [assetType] argument
 /// can optionally be used to get assets only from specific subdirectories in
