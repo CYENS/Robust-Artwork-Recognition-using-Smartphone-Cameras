@@ -28,7 +28,7 @@ dependencies:
   cupertino_icons: ^1.0.0
   camera: ^0.5.8+5
   flutter_lorem: ^1.1.0
-#  flutter_markdown: ^0.4.4
+  #  flutter_markdown: ^0.4.4
   flutter_settings_screens: ^0.2.1
   flutter_staggered_grid_view: ^0.3.2
   flutter_whatsnew: ^1.0.3
