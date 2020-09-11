@@ -16,20 +16,28 @@ class AppLocalizations {
       artworks: "Artworks",
       artists: "Artists",
       artworkOfTheWeek: "Artwork of the week",
+      pointTheCamera: "Point the camera to an artwork",
       nav: AppLocalizations_Labels_Nav(
         explore: "Explore",
         identify: "Identify artwork",
         settings: "Settings",
+      ),
+      button: AppLocalizations_Labels_Button(
+        more: "more",
       ),
     ),
     Locale.fromSubtags(languageCode: "el"): AppLocalizations_Labels(
       artworks: "Εργα τέχνης",
       artists: "Καλλιτέχνες",
       artworkOfTheWeek: "Έργο τέχνης της εβδομάδας",
+      pointTheCamera: "Στρέψτε την κάμερα σε ένα έργο τέχνης",
       nav: AppLocalizations_Labels_Nav(
         explore: "Εξερευνήστε",
         identify: "Αναγνώριση έργου τέχνης",
         settings: "Ρυθμίσεις",
+      ),
+      button: AppLocalizations_Labels_Button(
+        more: "περισσότερα",
       ),
     ),
   };
@@ -64,9 +72,29 @@ class AppLocalizations_Labels_Nav {
   }
 }
 
+class AppLocalizations_Labels_Button {
+  const AppLocalizations_Labels_Button({this.more});
+
+  final String more;
+
+  String getByKey(String key) {
+    switch (key) {
+      case 'more':
+        return more;
+      default:
+        return '';
+    }
+  }
+}
+
 class AppLocalizations_Labels {
   const AppLocalizations_Labels(
-      {this.artworks, this.artists, this.artworkOfTheWeek, this.nav});
+      {this.artworks,
+      this.artists,
+      this.artworkOfTheWeek,
+      this.pointTheCamera,
+      this.nav,
+      this.button});
 
   final String artworks;
 
@@ -74,7 +102,11 @@ class AppLocalizations_Labels {
 
   final String artworkOfTheWeek;
 
+  final String pointTheCamera;
+
   final AppLocalizations_Labels_Nav nav;
+
+  final AppLocalizations_Labels_Button button;
 
   String getByKey(String key) {
     switch (key) {
@@ -84,6 +116,8 @@ class AppLocalizations_Labels {
         return artists;
       case 'artworkOfTheWeek':
         return artworkOfTheWeek;
+      case 'pointTheCamera':
+        return pointTheCamera;
       default:
         return '';
     }
