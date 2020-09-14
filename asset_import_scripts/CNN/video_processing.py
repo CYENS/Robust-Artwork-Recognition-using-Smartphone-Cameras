@@ -1,11 +1,15 @@
-import json
 from pathlib import Path
 
 import skvideo.io
 
+video_files_dir = "/home/marios/Downloads/contemporary_art_video_files"
+
+
+def get_video_files():
+    return Path(video_files_dir).glob("*.mp4")
+
 
 def video_processing():
-    video_path = Path("/home/marios/Downloads/VID_20190523_135937.mp4")
     count = 0
     # vidcap = cv2.VideoCapture(str(video_path))
     # success, image = vidcap.read()
@@ -14,8 +18,15 @@ def video_processing():
     #     success, image = vidcap.read()
     #     print(count)
     #     count += 1
-    metadata = skvideo.io.ffprobe(str(video_path))
-    print(json.dumps(metadata["video"]["tag"], indent=4))
+    for f in get_video_files():
+        metadata = skvideo.io.ffprobe(str(f))
+        # print(json.dumps(metadata, indent=4))
+        for tags in metadata["video"]["tag"]:
+            # we get OrderedDicts here
+            if tags["@key"] == "rotate":
+                print(tags['@value'])
+        if count == 0: break
+        # print(json.dumps(metadata["video"]["tag"][0], indent=4))
 
 
 if __name__ == '__main__':
