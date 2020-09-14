@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import cv2
 import skvideo.io
 
 video_files_dir = "/home/marios/Downloads/contemporary_art_video_files"
@@ -31,19 +32,24 @@ def get_video_rotation(video_path: str):
                              f"metadata, or rotation is not included in its metadata.")
 
 
-def video_processing():
+def extract_video_frames(video_path: str):
     count = 0
-    # vidcap = cv2.VideoCapture(str(video_path))
-    # success, image = vidcap.read()
-    # while success:
-    #     # cv2.imwrite("s.jpg", image)
-    #     success, image = vidcap.read()
-    #     print(count)
-    #     count += 1
-    for f in get_video_files():
-        rotation = get_video_rotation(str(f))
-        print(rotation, type(rotation))
-        if count == 0: break
+    vidcap = cv2.VideoCapture(video_path)
+    success, image = vidcap.read()
+    while success:
+        # cv2.imwrite("s.jpg", image)
+        success, image = vidcap.read()
+        count += 1
+    return count
+
+
+def video_processing():
+    # count = 0
+    # for f in get_video_files():
+    #     rotation = get_video_rotation(str(f))
+    #     print(rotation, type(rotation))
+    #     # if count == 0: break
+    print(sum(extract_video_frames(str(v)) for v in get_video_files()))
 
 
 if __name__ == '__main__':
