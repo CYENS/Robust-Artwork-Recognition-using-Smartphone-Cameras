@@ -1,6 +1,8 @@
 from pathlib import Path
 
 import cv2
+import numpy as np
+import pandas as pd
 import skvideo.io
 
 video_files_dir = "/home/marios/Downloads/contemporary_art_video_files"
@@ -42,13 +44,23 @@ def extract_video_frames(video_path: Path):
     frame_dest = video_path.parent / video_path.stem
     frame_dest.mkdir(exist_ok=True)
 
+    video_rotation = 0
+    try:
+        video_rotation = get_video_rotation(str(video_path))
+    except AssertionError as e:
+        print(e)
+
     count = 0
 
     vidcap = cv2.VideoCapture(str(video_path))
     success, frame = vidcap.read()
 
     while success:
+        if video_rotation != 0:
+            frame = rotate_frame(frame, video_rotation)
+        frame = resize(frame)
         cv2.imwrite(str(frame_dest / f"{video_path.stem}_{count}.jpg"), frame)
+
         success, frame = vidcap.read()
         count += 1
 
@@ -56,11 +68,27 @@ def extract_video_frames(video_path: Path):
     return count
 
 
+def rotate_frame(frame: np.ndarray, degrees: int):
+    if degrees == 90:
+        return cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
+    elif degrees == 180:
+        return cv2.rotate(frame, cv2.ROTATE_180)
+    elif degrees == 270:
+        return cv2.rotate(frame, cv2.ROTATE_90_COUNTERCLOCKWISE)
+    else:
+        return frame
+
+
+def resize(frame: np.ndarray, target_dim: int = 224):
+    return cv2.resize(frame, (target_dim, target_dim), interpolation=cv2.INTER_AREA)
+
+
 def video_processing():
     count = 0
     for f in get_video_files(video_files_dir):
         extract_video_frames(f)
-        if count == 0: break
+        if count == 0:
+            break
     # print(sum(extract_video_frames(str(v)) for v in get_video_files()))
 
 
