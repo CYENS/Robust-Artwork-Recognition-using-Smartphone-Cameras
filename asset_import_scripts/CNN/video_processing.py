@@ -34,15 +34,19 @@ def get_video_rotation(video_path: str):
                              f"metadata, or rotation is not included in its metadata.")
 
 
-def extract_video_frames(video_path: Path):
-    """ Extracts all frames from the provided video, and places them in a directory with the same name as the video.
+def extract_video_frames(video_path: Path, save_as_files: bool = False):
+    """ Extracts all frames from the provided video, and optionally saves them as individual images in a directory with
+    the same name as the video.
 
     :param video_path: path to the video file
-    :return: the number of extracted frames
+    :param save_as_files: whether to save extracted frames as individual image files
+    :return: list of extracted frames
     """
-    # create frame destination dir and make sure it exists
-    frame_dest = video_path.parent / video_path.stem
-    frame_dest.mkdir(exist_ok=True)
+    frame_dest = ""
+    if save_as_files:
+        # create frame destination dir and make sure it exists
+        frame_dest = video_path.parent / video_path.stem
+        frame_dest.mkdir(exist_ok=True)
 
     video_rotation = 0
     try:
@@ -55,17 +59,25 @@ def extract_video_frames(video_path: Path):
     vidcap = cv2.VideoCapture(str(video_path))
     success, frame = vidcap.read()
 
+    all_frames = []
+
     while success:
         if video_rotation != 0:
             frame = rotate_frame(frame, video_rotation)
+
         frame = resize(frame)
-        cv2.imwrite(str(frame_dest / f"{video_path.stem}_{count}.jpg"), frame)
+
+        if save_as_files:
+            cv2.imwrite(str(frame_dest / f"{video_path.stem}_{count}.jpg"), frame)
+
+        all_frames.append(np.copy(frame))
 
         success, frame = vidcap.read()
         count += 1
 
     print(f"Extracted {count} frames from video {video_path.name}")
-    return count
+
+    return all_frames
 
 
 def rotate_frame(frame: np.ndarray, degrees: int):
