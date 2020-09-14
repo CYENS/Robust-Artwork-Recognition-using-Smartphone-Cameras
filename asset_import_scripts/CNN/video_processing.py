@@ -7,7 +7,7 @@ video_files_dir = "/home/marios/Downloads/contemporary_art_video_files"
 
 
 def get_video_files(video_dir: str):
-    """  Gets paths of video files at provided directory.
+    """ Gets paths of video files at provided directory.
 
     :param video_dir: path of dir with video files
     :return: generator of Paths
@@ -32,24 +32,36 @@ def get_video_rotation(video_path: str):
                              f"metadata, or rotation is not included in its metadata.")
 
 
-def extract_video_frames(video_path: str):
+def extract_video_frames(video_path: Path):
+    """ Extracts all frames from the provided video, and places them in a directory with the same name as the video.
+
+    :param video_path: path to the video file
+    :return: the number of extracted frames
+    """
+    # create frame destination dir and make sure it exists
+    frame_dest = video_path.parent / video_path.stem
+    frame_dest.mkdir(exist_ok=True)
+
     count = 0
-    vidcap = cv2.VideoCapture(video_path)
-    success, image = vidcap.read()
+
+    vidcap = cv2.VideoCapture(str(video_path))
+    success, frame = vidcap.read()
+
     while success:
-        # cv2.imwrite("s.jpg", image)
-        success, image = vidcap.read()
+        cv2.imwrite(str(frame_dest / f"{video_path.stem}_{count}.jpg"), frame)
+        success, frame = vidcap.read()
         count += 1
+
+    print(f"Extracted {count} frames from video {video_path.name}")
     return count
 
 
 def video_processing():
-    # count = 0
-    # for f in get_video_files():
-    #     rotation = get_video_rotation(str(f))
-    #     print(rotation, type(rotation))
-    #     # if count == 0: break
-    print(sum(extract_video_frames(str(v)) for v in get_video_files()))
+    count = 0
+    for f in get_video_files(video_files_dir):
+        extract_video_frames(f)
+        if count == 0: break
+    # print(sum(extract_video_frames(str(v)) for v in get_video_files()))
 
 
 if __name__ == '__main__':
