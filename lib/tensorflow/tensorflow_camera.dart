@@ -46,7 +46,26 @@ class _TensorFlowCameraState extends State<TensorFlowCamera> {
 
             int startTime = new DateTime.now().millisecondsSinceEpoch;
 
-            if (widget.model == mobilenet) {
+            if ([modernArt, modernArtQuant].contains(widget.model)) {
+              print("calculating with ${widget.model}");
+              Tflite.runModelOnFrame(
+                bytesList: img.planes.map((plane) {
+                  return plane.bytes;
+                }).toList(),
+                imageHeight: img.height,
+                imageWidth: img.width,
+                imageMean: 0,
+                imageStd: 255.0,
+                numResults: 2,
+              ).then((recognitions) {
+                int endTime = new DateTime.now().millisecondsSinceEpoch;
+                print("Detection took ${endTime - startTime}");
+
+                widget.setRecognitions(recognitions, img.height, img.width);
+
+                isDetecting = false;
+              });
+            } else if (widget.model == mobilenet) {
               Tflite.runModelOnFrame(
                 bytesList: img.planes.map((plane) {
                   return plane.bytes;
