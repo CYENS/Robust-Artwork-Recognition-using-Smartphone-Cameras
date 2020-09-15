@@ -134,11 +134,8 @@ def video_processing(video_files_dir: Path):
 
     t.close()
 
-    # package into dict to pickle in a single file
-    photos_labels = {"photos": photos, "labels": labels}
-
-    with open(video_files_dir / "processed", "wb+") as f:
-        pickle.dump(photos_labels, f)
+    # return results as a single dict
+    return {"photos": photos, "labels": labels}
 
 
 def unpickle():
@@ -149,4 +146,7 @@ def unpickle():
 
 
 if __name__ == '__main__':
-    video_processing(Path("/home/marios/Downloads/contemporary_art_video_files"))
+    files_dir = Path("/home/marios/Downloads/contemporary_art_video_files")
+    processed = video_processing(files_dir)
+    with open(files_dir / "processed", "wb+") as f:
+        pickle.dump(processed, f)
