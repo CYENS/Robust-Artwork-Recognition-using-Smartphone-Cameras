@@ -1,3 +1,9 @@
+## Version 0.4.0
+### 2010-09-15
+- The app now incorporates a Convolutional Neural Network (based on
+  VGG19) capable of detecting 13 artworks in the Gallery; more artworks
+  will be added in future updates
+
 ## Version 0.3.0
 ### 2010-09-11
 - Translated app to Greek

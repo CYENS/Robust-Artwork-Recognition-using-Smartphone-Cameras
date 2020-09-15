@@ -1,4 +1,5 @@
 import pickle
+import random
 from pathlib import Path
 
 import cv2
@@ -28,17 +29,19 @@ def get_video_rotation(video_path: str):
     for tags in metadata["video"]["tag"]:
         # we get OrderedDicts here
         if tags["@key"] == "rotate":
-            return int(tags['@value'])
+            return int(tags["@value"])
     else:
         raise AssertionError(f"Couldn't get rotation for {video_path}, either file doesn't exist, does not contain "
                              f"metadata, or rotation is not included in its metadata.")
 
 
-def extract_video_frames(video_path: Path, save_as_files: bool = False):
+def extract_video_frames(video_path: Path, rotate: bool = True, resize: bool = True, save_as_files: bool = False):
     """ Extracts all frames from the provided video, and optionally saves them as individual images in a directory with
     the same name as the video.
 
     :param video_path: path to the video file
+    :param resize: whether to resize frames
+    :param rotate: whether to rotate frames
     :param save_as_files: whether to save extracted frames as individual image files
     :return: list of extracted frames
     """
@@ -62,10 +65,12 @@ def extract_video_frames(video_path: Path, save_as_files: bool = False):
     all_frames = []
 
     while success:
-        if video_rotation != 0:
-            frame = rotate_frame(frame, video_rotation)
+        if rotate:
+            if video_rotation != 0:
+                frame = rotate_frame(frame, video_rotation)
 
-        frame = resize(frame)
+        if resize:
+            frame = resize_frame(frame)
 
         if save_as_files:
             cv2.imwrite(str(frame_dest / f"{video_path.stem}_{count}.jpg"), frame)
@@ -96,7 +101,7 @@ def rotate_frame(frame: np.ndarray, degrees: int):
         return frame
 
 
-def resize(frame: np.ndarray, target_dim: int = 224):
+def resize_frame(frame: np.ndarray, target_dim: int = 224):
     """ Resizes the provided frame to a square with the provided dimension as its sides.
 
     :param frame: frame to be resized
@@ -138,6 +143,23 @@ def video_processing(video_files_dir: Path):
     return {"photos": photos, "labels": labels}
 
 
+def save_sample_frames(video_files_dir: Path):
+    dataset = pd.read_csv(video_files_dir / "description_export.csv")
+
+    # make new dir to put samples in
+    sample_dir = video_files_dir / "artwork_samples"
+    sample_dir.mkdir(exist_ok=True)
+
+    for i in range(dataset.shape[0]):
+        video_file_row = dataset.iloc[i]
+        print(video_file_row["id"])
+
+        video_frames = extract_video_frames(video_files_dir / video_file_row["file"], resize=False)
+
+        for j, frame in enumerate(random.sample(video_frames, 5)):
+            cv2.imwrite(str(sample_dir / f"{video_file_row['id']}_{i}_{j}.jpg"), frame)
+
+
 def unpickle():
     pickled = Path("/home/marios/Downloads/contemporary_art_video_files/processed")
     with open(pickled, "rb") as f:
@@ -150,3 +172,4 @@ if __name__ == '__main__':
     processed = video_processing(files_dir)
     with open(files_dir / "processed", "wb+") as f:
         pickle.dump(processed, f)
+    save_sample_frames(files_dir)

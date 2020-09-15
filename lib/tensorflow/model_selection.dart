@@ -33,26 +33,39 @@ class _ModelSelectionState extends State<ModelSelection> {
     switch (_model) {
       case yolo:
         res = await Tflite.loadModel(
-          model: "assets/yolov2_tiny.tflite",
-          labels: "assets/yolov2_tiny.txt",
+          model: "assets/tflite_models/yolov2_tiny.tflite",
+          labels: "assets/tflite_models/yolov2_tiny.txt",
         );
         break;
 
       case mobilenet:
         res = await Tflite.loadModel(
-            model: "assets/mobilenet_v1_1.0_224.tflite",
-            labels: "assets/mobilenet_v1_1.0_224.txt");
+            model: "assets/tflite_models/mobilenet_v1_1.0_224.tflite",
+            labels: "assets/tflite_models/mobilenet_v1_1.0_224.txt");
         break;
 
       case posenet:
         res = await Tflite.loadModel(
-            model: "assets/posenet_mv1_075_float_from_checkpoints.tflite");
+            model:
+                "assets/tflite_models/posenet_mv1_075_float_from_checkpoints.tflite");
+        break;
+
+      case modernArt:
+        res = await Tflite.loadModel(
+            model: "assets/tflite_models/cnn224RGB_VGG19.tflite",
+            labels: "assets/tflite_models/cnn224RGB_VGG19_labels.txt");
+        break;
+
+      case modernArtQuant:
+        res = await Tflite.loadModel(
+            model: "assets/tflite_models/cnn224RGB_VGG19_quant.tflite",
+            labels: "assets/tflite_models/cnn224RGB_VGG19_labels.txt");
         break;
 
       default:
         res = await Tflite.loadModel(
-            model: "assets/ssd_mobilenet.tflite",
-            labels: "assets/ssd_mobilenet.txt");
+            model: "assets/tflite_models/ssd_mobilenet.tflite",
+            labels: "assets/tflite_models/ssd_mobilenet.txt");
     }
     print(res);
   }
@@ -96,6 +109,14 @@ class _ModelSelectionState extends State<ModelSelection> {
                   RaisedButton(
                     child: const Text(posenet),
                     onPressed: () => onSelect(posenet),
+                  ),
+                  RaisedButton(
+                    child: const Text(modernArt),
+                    onPressed: () => onSelect(modernArt),
+                  ),
+                  RaisedButton(
+                    child: const Text(modernArtQuant),
+                    onPressed: () => onSelect(modernArtQuant),
                   ),
                 ],
               ),
