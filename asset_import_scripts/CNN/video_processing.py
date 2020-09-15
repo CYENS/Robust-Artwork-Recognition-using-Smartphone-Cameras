@@ -79,6 +79,13 @@ def extract_video_frames(video_path: Path, save_as_files: bool = False):
 
 
 def rotate_frame(frame: np.ndarray, degrees: int):
+    """ Rotates the provided frame 90, 180, or 270 degrees; any other value of degrees is ignored, and the original
+    frame is returned un-rotated.
+
+    :param frame: frame to be rotated
+    :param degrees: degrees of rotation, must be either 90, 180, or 270, any other values are ignored
+    :return: the rotated frame
+    """
     if degrees == 90:
         return cv2.rotate(frame, cv2.ROTATE_90_CLOCKWISE)
     elif degrees == 180:
@@ -90,12 +97,16 @@ def rotate_frame(frame: np.ndarray, degrees: int):
 
 
 def resize(frame: np.ndarray, target_dim: int = 224):
+    """ Resizes the provided frame to a square with the provided dimension as its sides.
+
+    :param frame: frame to be resized
+    :param target_dim: the required side length of the resized frame (optional)
+    :return: the resized frame
+    """
     return cv2.resize(frame, (target_dim, target_dim), interpolation=cv2.INTER_AREA)
 
 
-def video_processing():
-    video_files_dir = Path("/home/marios/Downloads/contemporary_art_video_files")
-
+def video_processing(video_files_dir: Path):
     dataset = pd.read_csv(video_files_dir / "description_export.csv")
 
     # dict with all artwork IDs, as well as a corresponding numerical value
@@ -138,4 +149,4 @@ def unpickle():
 
 
 if __name__ == '__main__':
-    video_processing()
+    video_processing(Path("/home/marios/Downloads/contemporary_art_video_files"))
