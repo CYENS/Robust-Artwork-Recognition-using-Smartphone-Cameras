@@ -73,4 +73,5 @@ flutter:
     - assets/data/
     - assets/painters/
     - assets/paintings/
-    - assets/tflite_models/
+    - assets/tflite/
+#    - assets/tflite/other/
