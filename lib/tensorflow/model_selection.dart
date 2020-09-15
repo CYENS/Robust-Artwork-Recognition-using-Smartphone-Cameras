@@ -50,6 +50,18 @@ class _ModelSelectionState extends State<ModelSelection> {
                 "assets/tflite_models/posenet_mv1_075_float_from_checkpoints.tflite");
         break;
 
+      case modernArt:
+        res = await Tflite.loadModel(
+            model: "assets/tflite_models/cnn224RGB_VGG19.tflite",
+            labels: "assets/tflite_models/cnn224RGB_VGG19_labels.txt");
+        break;
+
+      case modernArtQuant:
+        res = await Tflite.loadModel(
+            model: "assets/tflite_models/cnn224RGB_VGG19_quant.tflite",
+            labels: "assets/tflite_models/cnn224RGB_VGG19_labels.txt");
+        break;
+
       default:
         res = await Tflite.loadModel(
             model: "assets/tflite_models/ssd_mobilenet.tflite",
@@ -97,6 +109,14 @@ class _ModelSelectionState extends State<ModelSelection> {
                   RaisedButton(
                     child: const Text(posenet),
                     onPressed: () => onSelect(posenet),
+                  ),
+                  RaisedButton(
+                    child: const Text(modernArt),
+                    onPressed: () => onSelect(modernArt),
+                  ),
+                  RaisedButton(
+                    child: const Text(modernArtQuant),
+                    onPressed: () => onSelect(modernArtQuant),
                   ),
                 ],
               ),
