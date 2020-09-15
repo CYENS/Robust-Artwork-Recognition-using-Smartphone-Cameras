@@ -1,11 +1,11 @@
+import pickle
 from pathlib import Path
 
 import cv2
 import numpy as np
 import pandas as pd
 import skvideo.io
-
-video_files_dir = "/home/marios/Downloads/contemporary_art_video_files"
+from tqdm import tqdm
 
 
 def get_video_files(video_dir: str):
@@ -75,8 +75,6 @@ def extract_video_frames(video_path: Path, save_as_files: bool = False):
         success, frame = vidcap.read()
         count += 1
 
-    print(f"Extracted {count} frames from video {video_path.name}")
-
     return all_frames
 
 
@@ -96,12 +94,47 @@ def resize(frame: np.ndarray, target_dim: int = 224):
 
 
 def video_processing():
-    count = 0
-    for f in get_video_files(video_files_dir):
-        extract_video_frames(f)
-        if count == 0:
-            break
-    # print(sum(extract_video_frames(str(v)) for v in get_video_files()))
+    video_files_dir = Path("/home/marios/Downloads/contemporary_art_video_files")
+
+    dataset = pd.read_csv(video_files_dir / "description_export.csv")
+
+    # dict with all artwork IDs, as well as a corresponding numerical value
+    artwork_dict = {artwork_id: i for i, artwork_id in enumerate(sorted(dataset["id"].unique()))}
+    print(artwork_dict)
+    photos, labels = [], []
+    t = tqdm(total=dataset.shape[0])
+    total_frames = 0
+
+    # process all video files
+    for i in range(dataset.shape[0]):
+        video_file_row = dataset.iloc[i]
+
+        t.set_postfix_str(f"Processing file {video_file_row['file']} (total frames for far: {total_frames})")
+
+        video_frames = extract_video_frames(video_files_dir / video_file_row["file"])
+
+        frame_labels = [video_file_row["id"]] * len(video_frames)
+
+        photos.extend(video_frames)
+        labels.extend(frame_labels)
+
+        total_frames += len(video_frames)
+        t.update()
+
+    t.close()
+
+    # package into dict to pickle in a single file
+    photos_labels = {"photos": photos, "labels": labels}
+
+    with open(video_files_dir / "processed", "wb+") as f:
+        pickle.dump(photos_labels, f)
+
+
+def unpickle():
+    pickled = Path("/home/marios/Downloads/contemporary_art_video_files/processed")
+    with open(pickled, "rb") as f:
+        f.seek(0)
+        dataset = pickle.load(f)
 
 
 if __name__ == '__main__':
