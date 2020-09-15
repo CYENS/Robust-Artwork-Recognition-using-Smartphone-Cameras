@@ -1,4 +1,5 @@
 import pickle
+import random
 from pathlib import Path
 
 import cv2
@@ -142,6 +143,23 @@ def video_processing(video_files_dir: Path):
     return {"photos": photos, "labels": labels}
 
 
+def save_sample_frames(video_files_dir: Path):
+    dataset = pd.read_csv(video_files_dir / "description_export.csv")
+
+    # make new dir to put samples in
+    sample_dir = video_files_dir / "artwork_samples"
+    sample_dir.mkdir(exist_ok=True)
+
+    for i in range(dataset.shape[0]):
+        video_file_row = dataset.iloc[i]
+        print(video_file_row["id"])
+
+        video_frames = extract_video_frames(video_files_dir / video_file_row["file"], resize=False)
+
+        for j, frame in enumerate(random.sample(video_frames, 5)):
+            cv2.imwrite(str(sample_dir / f"{video_file_row['id']}_{i}_{j}.jpg"), frame)
+
+
 def unpickle():
     pickled = Path("/home/marios/Downloads/contemporary_art_video_files/processed")
     with open(pickled, "rb") as f:
@@ -154,3 +172,4 @@ if __name__ == '__main__':
     processed = video_processing(files_dir)
     with open(files_dir / "processed", "wb+") as f:
         pickle.dump(processed, f)
+    save_sample_frames(files_dir)
