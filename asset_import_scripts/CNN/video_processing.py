@@ -28,17 +28,19 @@ def get_video_rotation(video_path: str):
     for tags in metadata["video"]["tag"]:
         # we get OrderedDicts here
         if tags["@key"] == "rotate":
-            return int(tags['@value'])
+            return int(tags["@value"])
     else:
         raise AssertionError(f"Couldn't get rotation for {video_path}, either file doesn't exist, does not contain "
                              f"metadata, or rotation is not included in its metadata.")
 
 
-def extract_video_frames(video_path: Path, save_as_files: bool = False):
+def extract_video_frames(video_path: Path, rotate: bool = True, resize: bool = True, save_as_files: bool = False):
     """ Extracts all frames from the provided video, and optionally saves them as individual images in a directory with
     the same name as the video.
 
     :param video_path: path to the video file
+    :param resize: whether to resize frames
+    :param rotate: whether to rotate frames
     :param save_as_files: whether to save extracted frames as individual image files
     :return: list of extracted frames
     """
@@ -62,10 +64,12 @@ def extract_video_frames(video_path: Path, save_as_files: bool = False):
     all_frames = []
 
     while success:
-        if video_rotation != 0:
-            frame = rotate_frame(frame, video_rotation)
+        if rotate:
+            if video_rotation != 0:
+                frame = rotate_frame(frame, video_rotation)
 
-        frame = resize(frame)
+        if resize:
+            frame = resize_frame(frame)
 
         if save_as_files:
             cv2.imwrite(str(frame_dest / f"{video_path.stem}_{count}.jpg"), frame)
@@ -96,7 +100,7 @@ def rotate_frame(frame: np.ndarray, degrees: int):
         return frame
 
 
-def resize(frame: np.ndarray, target_dim: int = 224):
+def resize_frame(frame: np.ndarray, target_dim: int = 224):
     """ Resizes the provided frame to a square with the provided dimension as its sides.
 
     :param frame: frame to be resized
