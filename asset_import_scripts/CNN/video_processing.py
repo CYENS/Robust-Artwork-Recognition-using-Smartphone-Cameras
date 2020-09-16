@@ -9,13 +9,18 @@ import skvideo.io
 from tqdm import tqdm
 
 
-def get_video_files(video_dir: str):
+def get_video_files(video_dir: str, video_ext: str = ".mp4"):
     """ Gets paths of video files at provided directory.
 
+    NOTE: returning simply ``Path(video_dir).glob(f"*.{video_ext}")`` may miss files depending on the capitalization
+    of their extensions, at least on Linux
+
+    :param video_ext: the extension of the required video files, defaults to .mp4, MUST include leading dot
     :param video_dir: path of dir with video files
     :return: generator of Paths
     """
-    return Path(video_dir).glob("*.mp4")
+
+    return (v for v in Path(video_dir).glob("*") if v.suffix.lower() == video_ext)
 
 
 def get_video_rotation(video_path: str):
@@ -183,15 +188,11 @@ def unpickle():
         dataset = pickle.load(f)
 
 
-def test_mod():
-    for i in range(30):
-        print(i, "% 6", i % 6)
-
-
 if __name__ == '__main__':
     files_dir = Path("/home/marios/Downloads/contemporary_art_video_files")
     # processed = video_processing(files_dir)
     # with open(files_dir / "processed", "wb+") as f:
     #     pickle.dump(processed, f)
     # save_sample_frames(files_dir)
-    test_mod()
+    for f in get_video_files(files_dir, ".mov"):
+        print(get_video_rotation(str(f)))
