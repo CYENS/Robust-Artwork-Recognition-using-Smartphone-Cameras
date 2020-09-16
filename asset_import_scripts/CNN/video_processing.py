@@ -177,15 +177,15 @@ def save_sample_frames(video_files_dir: Path):
         video_file_row = dataset.iloc[i]
         print("extracting from:", video_file_row["id"])
 
-        video_frames = extract_video_frames(video_files_dir / video_file_row["file"], resize=False)
-
         video_dir = sample_dir / video_file_row['id']
-        video_dir.mkdir(exist_ok=True)
+        if not video_dir.is_dir():  # skip video if dir with extracted frames already exists
+            video_dir.mkdir()
+            video_frames = extract_video_frames(video_files_dir / video_file_row["file"], resize=False,
+                                                frame_limiter=10)
 
-        for j, frame in enumerate(random.sample(video_frames, 25)):
-            frame_path = video_dir / f"{i}_{j}.jpg"
-            print(f"Saving frame at {frame_path}")
-            cv2.imwrite(str(frame_path), frame)
+            for j, frame in enumerate(random.sample(video_frames, 25)):
+                frame_path = video_dir / f"{i}_{j}.jpg"
+                cv2.imwrite(str(frame_path), frame)
 
 
 def unpickle():
