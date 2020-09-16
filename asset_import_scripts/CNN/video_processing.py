@@ -35,14 +35,19 @@ def get_video_rotation(video_path: str):
                              f"metadata, or rotation is not included in its metadata.")
 
 
-def extract_video_frames(video_path: Path, rotate: bool = True, resize: bool = True, save_as_files: bool = False):
+def extract_video_frames(video_path: Path, rotate: bool = True, resize: bool = True, frame_limiter: int = 1,
+                         number_of_frames: int = None, save_as_files: bool = False):
     """ Extracts all frames from the provided video, and optionally saves them as individual images in a directory with
     the same name as the video.
 
+    :param frame_limiter: optional, an integer that limits the number of frames returned; e.g. if equal to 2,
+     every second frame will be returned, if 3 every 3rd, etc
+    :param number_of_frames: optional, the total number of frames required; in case the video contains fewer frames
+     than required, all available frames will be returned; careful when used in conjunction with frame_limiter
     :param video_path: path to the video file
-    :param resize: whether to resize frames
-    :param rotate: whether to rotate frames
-    :param save_as_files: whether to save extracted frames as individual image files
+    :param resize: optional, whether to resize frames
+    :param rotate: optional, whether to rotate frames
+    :param save_as_files: optional, whether to save extracted frames as individual image files
     :return: list of extracted frames
     """
     frame_dest = ""
@@ -60,25 +65,31 @@ def extract_video_frames(video_path: Path, rotate: bool = True, resize: bool = T
     count = 0
 
     vidcap = cv2.VideoCapture(str(video_path))
-    success, frame = vidcap.read()
+    success, frame = vidcap.read()  # read 1st frame
 
     all_frames = []
 
     while success:
-        if rotate:
-            if video_rotation != 0:
-                frame = rotate_frame(frame, video_rotation)
+        if count % frame_limiter == 0:  # limits the number of frames
+            if rotate:
+                if video_rotation != 0:
+                    frame = rotate_frame(frame, video_rotation)
 
-        if resize:
-            frame = resize_frame(frame)
+            if resize:
+                frame = resize_frame(frame)
 
-        if save_as_files:
-            cv2.imwrite(str(frame_dest / f"{video_path.stem}_{count}.jpg"), frame)
+            if save_as_files:
+                cv2.imwrite(str(frame_dest / f"{video_path.stem}_{count}.jpg"), frame)
 
-        all_frames.append(np.copy(frame))
+            all_frames.append(np.copy(frame))
 
-        success, frame = vidcap.read()
+        success, frame = vidcap.read()  # read next frame
+
         count += 1
+
+        if number_of_frames is not None:
+            if number_of_frames >= count:
+                break
 
     return all_frames
 
@@ -147,17 +158,22 @@ def save_sample_frames(video_files_dir: Path):
     dataset = pd.read_csv(video_files_dir / "description_export.csv")
 
     # make new dir to put samples in
-    sample_dir = video_files_dir / "artwork_samples"
+    sample_dir = video_files_dir / "artwork_samples_50"
     sample_dir.mkdir(exist_ok=True)
 
     for i in range(dataset.shape[0]):
         video_file_row = dataset.iloc[i]
-        print(video_file_row["id"])
+        print("extracting from:", video_file_row["id"])
 
         video_frames = extract_video_frames(video_files_dir / video_file_row["file"], resize=False)
 
-        for j, frame in enumerate(random.sample(video_frames, 5)):
-            cv2.imwrite(str(sample_dir / f"{video_file_row['id']}_{i}_{j}.jpg"), frame)
+        video_dir = sample_dir / video_file_row['id']
+        video_dir.mkdir(exist_ok=True)
+
+        for j, frame in enumerate(random.sample(video_frames, 25)):
+            frame_path = video_dir / f"{i}_{j}.jpg"
+            print(f"Saving frame at {frame_path}")
+            cv2.imwrite(str(frame_path), frame)
 
 
 def unpickle():
@@ -167,9 +183,15 @@ def unpickle():
         dataset = pickle.load(f)
 
 
+def test_mod():
+    for i in range(30):
+        print(i, "% 6", i % 6)
+
+
 if __name__ == '__main__':
     files_dir = Path("/home/marios/Downloads/contemporary_art_video_files")
-    processed = video_processing(files_dir)
-    with open(files_dir / "processed", "wb+") as f:
-        pickle.dump(processed, f)
-    save_sample_frames(files_dir)
+    # processed = video_processing(files_dir)
+    # with open(files_dir / "processed", "wb+") as f:
+    #     pickle.dump(processed, f)
+    # save_sample_frames(files_dir)
+    test_mod()
