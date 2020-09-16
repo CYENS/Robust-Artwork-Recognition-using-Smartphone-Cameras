@@ -26,18 +26,23 @@ def get_video_files(video_dir: str, video_ext: str = ".mp4"):
 def get_video_rotation(video_path: str):
     """ Reads video rotation from video metadata.
 
+    Works well with .mp4 files, has trouble with .mov files due to different metadata structure.
+
     :param video_path: path to the video file
     :return: rotation of video in int degrees (e.g. 90, 180)
     :raises AssertionError if rotation is not available, files doesn't exist, or file doesn't have metadata
     """
     metadata = skvideo.io.ffprobe(video_path)
-    for tags in metadata["video"]["tag"]:
-        # we get OrderedDicts here
-        if tags["@key"] == "rotate":
-            return int(tags["@value"])
-    else:
-        raise AssertionError(f"Couldn't get rotation for {video_path}, either file doesn't exist, does not contain "
-                             f"metadata, or rotation is not included in its metadata.")
+    try:
+        for tags in metadata["video"]["tag"]:
+            # we get OrderedDicts here
+            if tags["@key"] == "rotate":
+                return int(tags["@value"])
+        else:
+            raise AssertionError(f"Couldn't get rotation for {video_path}, either file doesn't exist, does not contain "
+                                 f"metadata, or rotation is not included in its metadata.")
+    except Exception as e:
+        raise e
 
 
 def extract_video_frames(video_path: Path, rotate: bool = True, resize: bool = True, frame_limiter: int = 1,
@@ -64,8 +69,10 @@ def extract_video_frames(video_path: Path, rotate: bool = True, resize: bool = T
     video_rotation = 0
     try:
         video_rotation = get_video_rotation(str(video_path))
-    except AssertionError as e:
-        print(e)
+    except AssertionError as ex:
+        print(ex)
+    except Exception as ex2:  # catch any other exceptions
+        print(ex2)
 
     count = 0
 
@@ -132,7 +139,7 @@ def video_processing(video_files_dir: Path):
 
     # dict with all artwork IDs, as well as a corresponding numerical value
     artwork_dict = {artwork_id: i for i, artwork_id in enumerate(sorted(dataset["id"].unique()))}
-    print(artwork_dict)
+
     photos, labels = [], []
     t = tqdm(total=dataset.shape[0])
     total_frames = 0
@@ -193,6 +200,4 @@ if __name__ == '__main__':
     # processed = video_processing(files_dir)
     # with open(files_dir / "processed", "wb+") as f:
     #     pickle.dump(processed, f)
-    # save_sample_frames(files_dir)
-    for f in get_video_files(files_dir, ".mov"):
-        print(get_video_rotation(str(f)))
+    save_sample_frames(files_dir)
