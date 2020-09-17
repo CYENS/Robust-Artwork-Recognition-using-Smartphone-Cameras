@@ -65,10 +65,11 @@ class ItemTile extends StatelessWidget {
     @required Artist artist,
     this.tileWidth,
     this.tileHeight,
-    this.customHeroTag,
+    String customHeroTag, // Optional custom hero tag
   })  : _title = artist.name,
         _subtitle = artist.yearBirth,
         _imgFileName = artist.fileName,
+        _customHeroTag = customHeroTag ?? artist.name,
         _detailsPage = ArtistDetailsPage(artist: artist),
         super(key: key);
 
@@ -78,13 +79,14 @@ class ItemTile extends StatelessWidget {
     @required Artwork artwork,
     this.tileWidth,
     this.tileHeight,
-    this.customHeroTag,
+    String customHeroTag, // Optional custom hero tag
   })  : _title = artwork.title,
         _subtitle = artwork.year,
         _imgFileName = artwork.fileName,
+        _customHeroTag = customHeroTag ?? artwork.id,
         _detailsPage = ArtworkDetailsPage(
           artwork: artwork,
-          customHeroTag: customHeroTag ?? artwork.title,
+          customHeroTag: customHeroTag ?? artwork.id,
         ),
         super(key: key);
 
@@ -100,8 +102,7 @@ class ItemTile extends StatelessWidget {
   /// Desired height of the tile.
   final double tileHeight;
 
-  /// Optional custom hero tag.
-  final String customHeroTag;
+  final String _customHeroTag;
 
   @override
   Widget build(BuildContext context) => InkWell(
@@ -114,7 +115,7 @@ class ItemTile extends StatelessWidget {
             padding: const EdgeInsets.all(4.0),
             child: Tile(
               imagePath: _imgFileName,
-              heroTag: customHeroTag ?? _title,
+              heroTag: _customHeroTag,
               tileWidth: tileWidth ?? MediaQuery.of(context).size.height * 0.2,
               tileHeight:
                   tileHeight ?? MediaQuery.of(context).size.height * 0.2,
