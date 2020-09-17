@@ -33,39 +33,39 @@ class _ModelSelectionState extends State<ModelSelection> {
     switch (_model) {
       case yolo:
         res = await Tflite.loadModel(
-          model: "assets/tflite_models/yolov2_tiny.tflite",
-          labels: "assets/tflite_models/yolov2_tiny.txt",
+          model: "assets/tflite/other/yolov2_tiny.tflite",
+          labels: "assets/tflite/other/yolov2_tiny.txt",
         );
         break;
 
       case mobilenet:
         res = await Tflite.loadModel(
-            model: "assets/tflite_models/mobilenet_v1_1.0_224.tflite",
-            labels: "assets/tflite_models/mobilenet_v1_1.0_224.txt");
+            model: "assets/tflite/other/mobilenet_v1_1.0_224.tflite",
+            labels: "assets/tflite/other/mobilenet_v1_1.0_224.txt");
         break;
 
       case posenet:
         res = await Tflite.loadModel(
             model:
-                "assets/tflite_models/posenet_mv1_075_float_from_checkpoints.tflite");
+                "assets/tflite/other/posenet_mv1_075_float_from_checkpoints.tflite");
         break;
 
       case modernArt:
         res = await Tflite.loadModel(
-            model: "assets/tflite_models/cnn224RGB_VGG19.tflite",
-            labels: "assets/tflite_models/cnn224RGB_VGG19_labels.txt");
+            model: "assets/tflite/cnn224RGB_VGG19.tflite",
+            labels: "assets/tflite/cnn224RGB_VGG19_labels.txt");
         break;
 
       case modernArtQuant:
         res = await Tflite.loadModel(
-            model: "assets/tflite_models/cnn224RGB_VGG19_quant.tflite",
-            labels: "assets/tflite_models/cnn224RGB_VGG19_labels.txt");
+            model: "assets/tflite/cnn224RGB_VGG19_quant.tflite",
+            labels: "assets/tflite/cnn224RGB_VGG19_labels.txt");
         break;
 
       default:
         res = await Tflite.loadModel(
-            model: "assets/tflite_models/ssd_mobilenet.tflite",
-            labels: "assets/tflite_models/ssd_mobilenet.txt");
+            model: "assets/tflite/other/ssd_mobilenet.tflite",
+            labels: "assets/tflite/other/ssd_mobilenet.txt");
     }
     print(res);
   }
@@ -94,22 +94,22 @@ class _ModelSelectionState extends State<ModelSelection> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  RaisedButton(
-                    child: const Text(ssd),
-                    onPressed: () => onSelect(ssd),
-                  ),
-                  RaisedButton(
-                    child: const Text(yolo),
-                    onPressed: () => onSelect(yolo),
-                  ),
-                  RaisedButton(
-                    child: const Text(mobilenet),
-                    onPressed: () => onSelect(mobilenet),
-                  ),
-                  RaisedButton(
-                    child: const Text(posenet),
-                    onPressed: () => onSelect(posenet),
-                  ),
+                  // RaisedButton(
+                  //   child: const Text(ssd),
+                  //   onPressed: () => onSelect(ssd),
+                  // ),
+                  // RaisedButton(
+                  //   child: const Text(yolo),
+                  //   onPressed: () => onSelect(yolo),
+                  // ),
+                  // RaisedButton(
+                  //   child: const Text(mobilenet),
+                  //   onPressed: () => onSelect(mobilenet),
+                  // ),
+                  // RaisedButton(
+                  //   child: const Text(posenet),
+                  //   onPressed: () => onSelect(posenet),
+                  // ),
                   RaisedButton(
                     child: const Text(modernArt),
                     onPressed: () => onSelect(modernArt),

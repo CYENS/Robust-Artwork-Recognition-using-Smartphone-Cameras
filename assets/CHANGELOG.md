@@ -1,3 +1,8 @@
+## Version 0.4.1
+### 2010-09-17
+- The Convolutional Neural Network can now detect an additional 3
+  sculptures in the Gallery
+
 ## Version 0.4.0
 ### 2010-09-15
 - The app now incorporates a Convolutional Neural Network (based on
