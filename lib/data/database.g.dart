@@ -8,7 +8,7 @@ part of 'database.dart';
 
 // ignore_for_file: unnecessary_brace_in_string_interps, unnecessary_this
 class Artwork extends DataClass implements Insertable<Artwork> {
-  final int id;
+  final String id;
   final String title;
   final String year;
   final String description;
@@ -24,10 +24,9 @@ class Artwork extends DataClass implements Insertable<Artwork> {
   factory Artwork.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
-    final intType = db.typeSystem.forDartType<int>();
     final stringType = db.typeSystem.forDartType<String>();
     return Artwork(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
+      id: stringType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       title:
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}title']),
       year: stringType.mapFromDatabaseResponse(data['${effectivePrefix}year']),
@@ -43,7 +42,7 @@ class Artwork extends DataClass implements Insertable<Artwork> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (!nullToAbsent || id != null) {
-      map['id'] = Variable<int>(id);
+      map['id'] = Variable<String>(id);
     }
     if (!nullToAbsent || title != null) {
       map['title'] = Variable<String>(title);
@@ -84,7 +83,7 @@ class Artwork extends DataClass implements Insertable<Artwork> {
       {ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return Artwork(
-      id: serializer.fromJson<int>(json['id']),
+      id: serializer.fromJson<String>(json['id']),
       title: serializer.fromJson<String>(json['title']),
       year: serializer.fromJson<String>(json['year']),
       description: serializer.fromJson<String>(json['description']),
@@ -96,7 +95,7 @@ class Artwork extends DataClass implements Insertable<Artwork> {
   Map<String, dynamic> toJson({ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
+      'id': serializer.toJson<String>(id),
       'title': serializer.toJson<String>(title),
       'year': serializer.toJson<String>(year),
       'description': serializer.toJson<String>(description),
@@ -106,7 +105,7 @@ class Artwork extends DataClass implements Insertable<Artwork> {
   }
 
   Artwork copyWith(
-          {int id,
+          {String id,
           String title,
           String year,
           String description,
@@ -155,7 +154,7 @@ class Artwork extends DataClass implements Insertable<Artwork> {
 }
 
 class ArtworksCompanion extends UpdateCompanion<Artwork> {
-  final Value<int> id;
+  final Value<String> id;
   final Value<String> title;
   final Value<String> year;
   final Value<String> description;
@@ -170,15 +169,16 @@ class ArtworksCompanion extends UpdateCompanion<Artwork> {
     this.fileName = const Value.absent(),
   });
   ArtworksCompanion.insert({
-    this.id = const Value.absent(),
+    @required String id,
     @required String title,
     this.year = const Value.absent(),
     this.description = const Value.absent(),
     this.artist = const Value.absent(),
     this.fileName = const Value.absent(),
-  }) : title = Value(title);
+  })  : id = Value(id),
+        title = Value(title);
   static Insertable<Artwork> custom({
-    Expression<int> id,
+    Expression<String> id,
     Expression<String> title,
     Expression<String> year,
     Expression<String> description,
@@ -196,7 +196,7 @@ class ArtworksCompanion extends UpdateCompanion<Artwork> {
   }
 
   ArtworksCompanion copyWith(
-      {Value<int> id,
+      {Value<String> id,
       Value<String> title,
       Value<String> year,
       Value<String> description,
@@ -216,7 +216,7 @@ class ArtworksCompanion extends UpdateCompanion<Artwork> {
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
     if (id.present) {
-      map['id'] = Variable<int>(id.value);
+      map['id'] = Variable<String>(id.value);
     }
     if (title.present) {
       map['title'] = Variable<String>(title.value);
@@ -255,12 +255,15 @@ class $ArtworksTable extends Artworks with TableInfo<$ArtworksTable, Artwork> {
   final String _alias;
   $ArtworksTable(this._db, [this._alias]);
   final VerificationMeta _idMeta = const VerificationMeta('id');
-  GeneratedIntColumn _id;
+  GeneratedTextColumn _id;
   @override
-  GeneratedIntColumn get id => _id ??= _constructId();
-  GeneratedIntColumn _constructId() {
-    return GeneratedIntColumn('id', $tableName, false,
-        hasAutoIncrement: true, declaredAsPrimaryKey: true);
+  GeneratedTextColumn get id => _id ??= _constructId();
+  GeneratedTextColumn _constructId() {
+    return GeneratedTextColumn(
+      'id',
+      $tableName,
+      false,
+    );
   }
 
   final VerificationMeta _titleMeta = const VerificationMeta('title');
@@ -335,6 +338,8 @@ class $ArtworksTable extends Artworks with TableInfo<$ArtworksTable, Artwork> {
     final data = instance.toColumns(true);
     if (data.containsKey('id')) {
       context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
     }
     if (data.containsKey('title')) {
       context.handle(
