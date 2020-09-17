@@ -71,6 +71,7 @@ Map<String, dynamic> parseItemMap(Map mapItem) =>
       // remove "gsx$" from keys, to match with local data class column names
       key: (k) => k.replaceAll("gsx\$", ""),
       // get value for key, in the case of id parse it into int first
-      value: (k) =>
-          k == "gsx\$id" ? int.parse(mapItem[k]["\$t"]) : mapItem[k]["\$t"],
+      // value: (k) =>
+      //     k == "gsx\$id" ? int.parse(mapItem[k]["\$t"]) : mapItem[k]["\$t"],
+      value: (k) => mapItem[k]["\$t"],
     );
