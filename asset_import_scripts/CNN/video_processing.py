@@ -170,7 +170,7 @@ def save_sample_frames(video_files_dir: Path):
     dataset = pd.read_csv(video_files_dir / "description_export.csv")
 
     # make new dir to put samples in
-    sample_dir = video_files_dir / "artwork_samples_50"
+    sample_dir = video_files_dir / "artwork_samples_100"
     sample_dir.mkdir(exist_ok=True)
 
     for i in range(dataset.shape[0]):
@@ -181,9 +181,9 @@ def save_sample_frames(video_files_dir: Path):
         if not video_dir.is_dir():  # skip video if dir with extracted frames already exists
             video_dir.mkdir()
             video_frames = extract_video_frames(video_files_dir / video_file_row["file"], resize=False,
-                                                frame_limiter=10)
+                                                frame_limiter=8)
 
-            for j, frame in enumerate(random.sample(video_frames, 25)):
+            for j, frame in enumerate(random.sample(video_frames, 50)):
                 frame_path = video_dir / f"{i}_{j}.jpg"
                 cv2.imwrite(str(frame_path), frame)
 
