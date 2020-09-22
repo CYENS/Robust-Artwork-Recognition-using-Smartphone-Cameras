@@ -26,7 +26,7 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.0
-  camera: ^0.5.8+5
+  camera: ^0.5.8+6
   flutter_lorem: ^1.1.0
   #  flutter_markdown: ^0.4.4
   flutter_settings_screens: ^0.2.1
