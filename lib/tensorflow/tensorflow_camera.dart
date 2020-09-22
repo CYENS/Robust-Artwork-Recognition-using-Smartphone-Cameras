@@ -61,7 +61,11 @@ class _TensorFlowCameraState extends State<TensorFlowCamera> {
                 int endTime = new DateTime.now().millisecondsSinceEpoch;
                 print("Detection took ${endTime - startTime}");
 
-                widget.setRecognitions(recognitions, img.height, img.width);
+                // must check if mounted here, in case user navigates away the
+                // next inference should not setRecognitions (setState after dispose)
+                if (mounted) {
+                  widget.setRecognitions(recognitions, img.height, img.width);
+                }
 
                 isDetecting = false;
               });
