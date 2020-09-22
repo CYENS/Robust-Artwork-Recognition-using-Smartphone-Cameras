@@ -38,7 +38,7 @@ class AppLocalizations {
       artworkOfTheWeek: "Έργο τέχνης της εβδομάδας",
       pointTheCamera: "Στρέψτε την κάμερα σε ένα έργο τέχνης",
       biography: "Βιογραφικό",
-      artworksBy: "Έργο τέχνης από",
+      artworksBy: "Έργα τέχνης από",
       description: "Περιγραφή",
       galleryName: "Κρατική Πινακοθήκη Σύγχρονης Τέχνης",
       artistDetails: "Στοιχεία καλλιτέχνη",
