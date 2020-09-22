@@ -25,6 +25,17 @@ class _ModelSelectionState extends State<ModelSelection> {
   var _recHistory = Map();
 
   @override
+  void setState(VoidCallback fn) {
+    // must check if mounted here before setting state, in case user navigates
+    // away from the widget, since TensorFlowCamera may use setRecognitions for
+    // setting the results of its the last inference, that most likely will
+    // arrive after user navigated away (setState after dispose)
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
+
+  @override
   void initState() {
     super.initState();
   }
