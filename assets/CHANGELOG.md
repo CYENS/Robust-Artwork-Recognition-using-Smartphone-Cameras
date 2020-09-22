@@ -1,3 +1,9 @@
+## Version 0.4.2
+### 2010-09-22
+- Updated app database with actual artworks from the Gallery (13
+  paintings and 3 sculptures)
+- Removed older placeholder artworks
+
 ## Version 0.4.1
 ### 2010-09-17
 - The Convolutional Neural Network can now detect an additional 3
