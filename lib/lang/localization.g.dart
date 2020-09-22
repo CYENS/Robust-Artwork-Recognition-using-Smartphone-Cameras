@@ -17,6 +17,10 @@ class AppLocalizations {
       artists: "Artists",
       artworkOfTheWeek: "Artwork of the week",
       pointTheCamera: "Point the camera to an artwork",
+      biography: "Biography",
+      artworksBy: "Artworks by",
+      description: "Description",
+      galleryName: "State Gallery of Contemporary Art",
       nav: AppLocalizations_Labels_Nav(
         explore: "Explore",
         identify: "Identify artwork",
@@ -31,6 +35,10 @@ class AppLocalizations {
       artists: "Καλλιτέχνες",
       artworkOfTheWeek: "Έργο τέχνης της εβδομάδας",
       pointTheCamera: "Στρέψτε την κάμερα σε ένα έργο τέχνης",
+      biography: "Βιογραφικό",
+      artworksBy: "Έργο τέχνης από",
+      description: "Περιγραφή",
+      galleryName: "Κρατική Πινακοθήκη Σύγχρονης Τέχνης",
       nav: AppLocalizations_Labels_Nav(
         explore: "Εξερευνήστε",
         identify: "Αναγνώριση έργου τέχνης",
@@ -93,6 +101,10 @@ class AppLocalizations_Labels {
       this.artists,
       this.artworkOfTheWeek,
       this.pointTheCamera,
+      this.biography,
+      this.artworksBy,
+      this.description,
+      this.galleryName,
       this.nav,
       this.button});
 
@@ -103,6 +115,14 @@ class AppLocalizations_Labels {
   final String artworkOfTheWeek;
 
   final String pointTheCamera;
+
+  final String biography;
+
+  final String artworksBy;
+
+  final String description;
+
+  final String galleryName;
 
   final AppLocalizations_Labels_Nav nav;
 
@@ -118,6 +138,14 @@ class AppLocalizations_Labels {
         return artworkOfTheWeek;
       case 'pointTheCamera':
         return pointTheCamera;
+      case 'biography':
+        return biography;
+      case 'artworksBy':
+        return artworksBy;
+      case 'description':
+        return description;
+      case 'galleryName':
+        return galleryName;
       default:
         return '';
     }
