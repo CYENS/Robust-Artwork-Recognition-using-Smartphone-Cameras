@@ -56,8 +56,8 @@ class ExplorePage extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(
                             vertical: 20, horizontal: 8),
                         child: Text(
-                          "Κρατική Πινακοθήκη\nΣύγχρονης Κυπριακής Τέχνης",
-                          style: TextStyle(fontSize: 30),
+                          context.strings().galleryName,
+                          style: TextStyle(fontSize: 28),
                           textAlign: TextAlign.end,
                         ),
                       ),
