@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_lorem/flutter_lorem.dart';
 import 'package:modern_art_app/data/database.dart';
@@ -52,7 +50,7 @@ class ArtworkDetailsPage extends StatelessWidget {
               padding: const EdgeInsets.all(4.0),
               child: Text(
                   "${artwork.artist}" +
-                      (artwork.year != "" ? ", ${artwork.year}" : ""),
+                      (artwork.year.isNotEmpty ? ", ${artwork.year}" : ""),
                   style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic)),
             ),
             Padding(
@@ -61,8 +59,9 @@ class ArtworkDetailsPage extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.all(4.0),
-              child: Text(lorem(
-                  paragraphs: 3, words: 250 - math.Random().nextInt(100))),
+              child: Text(artwork.description.isNotEmpty
+                  ? artwork.description
+                  : lorem(paragraphs: 2, words: 50)),
             ),
           ],
         ),
