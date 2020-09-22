@@ -87,6 +87,7 @@ class BBox extends StatelessWidget {
             onTap: () {
               ArtworksDao artworksDao =
                   Provider.of<ArtworksDao>(context, listen: false);
+              // todo: navigating to artwork details here leaves tensorflow camera inferences running in the background!
               artworksDao.getArtworkById(re["label"]).then((value) =>
                   Navigator.push(
                       context,
