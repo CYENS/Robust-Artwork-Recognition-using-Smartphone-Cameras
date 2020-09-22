@@ -21,6 +21,8 @@ class AppLocalizations {
       artworksBy: "Artworks by",
       description: "Description",
       galleryName: "State Gallery of Contemporary Art",
+      artistDetails: "Artist details",
+      artworkDetails: "Artwork details",
       nav: AppLocalizations_Labels_Nav(
         explore: "Explore",
         identify: "Identify artwork",
@@ -39,6 +41,8 @@ class AppLocalizations {
       artworksBy: "Έργο τέχνης από",
       description: "Περιγραφή",
       galleryName: "Κρατική Πινακοθήκη Σύγχρονης Τέχνης",
+      artistDetails: "Στοιχεία καλλιτέχνη",
+      artworkDetails: "Στοιχεία έργου τέχνης ",
       nav: AppLocalizations_Labels_Nav(
         explore: "Εξερευνήστε",
         identify: "Αναγνώριση έργου τέχνης",
@@ -105,6 +109,8 @@ class AppLocalizations_Labels {
       this.artworksBy,
       this.description,
       this.galleryName,
+      this.artistDetails,
+      this.artworkDetails,
       this.nav,
       this.button});
 
@@ -123,6 +129,10 @@ class AppLocalizations_Labels {
   final String description;
 
   final String galleryName;
+
+  final String artistDetails;
+
+  final String artworkDetails;
 
   final AppLocalizations_Labels_Nav nav;
 
@@ -146,6 +156,10 @@ class AppLocalizations_Labels {
         return description;
       case 'galleryName':
         return galleryName;
+      case 'artistDetails':
+        return artistDetails;
+      case 'artworkDetails':
+        return artworkDetails;
       default:
         return '';
     }
