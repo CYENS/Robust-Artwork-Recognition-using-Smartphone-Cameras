@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lorem/flutter_lorem.dart';
 import 'package:modern_art_app/data/database.dart';
+import 'package:modern_art_app/extensions.dart';
 import 'package:photo_view/photo_view.dart';
 
 class ArtworkDetailsPage extends StatelessWidget {
@@ -16,7 +17,7 @@ class ArtworkDetailsPage extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Artwork details"),
+        title: Text(context.strings().artworkDetails),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -55,7 +56,8 @@ class ArtworkDetailsPage extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(4.0, 12.0, 4.0, 0.0),
-              child: Text("Description", style: TextStyle(fontSize: 20)),
+              child: Text(context.strings().description,
+                  style: TextStyle(fontSize: 20)),
             ),
             Padding(
               padding: const EdgeInsets.all(4.0),
