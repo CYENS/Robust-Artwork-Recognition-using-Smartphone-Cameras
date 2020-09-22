@@ -11,11 +11,13 @@ class ItemRow extends StatelessWidget {
   final String imgFileName;
   final double rowHeight;
   final dynamic detailsPage;
+  final String _heroTag;
 
   ItemRow.artist({Key key, @required Artist artist, this.rowHeight})
       : title = artist.name,
         subtitle = "${artist.yearBirth}–${artist.yearDeath}",
         imgFileName = artist.fileName,
+        _heroTag = artist.name,
         detailsPage = ArtistDetailsPage(artist: artist),
         super(key: key);
 
@@ -24,6 +26,7 @@ class ItemRow extends StatelessWidget {
         subtitle = "${artwork.artist}" +
             (artwork.year != "" ? ", ${artwork.year}" : ""),
         imgFileName = artwork.fileName,
+        _heroTag = artwork.id,
         detailsPage = ArtworkDetailsPage(artwork: artwork),
         super(key: key);
 
@@ -41,7 +44,7 @@ class ItemRow extends StatelessWidget {
                 padding: const EdgeInsets.all(4.0),
                 child: Tile(
                   imagePath: imgFileName,
-                  heroTag: title,
+                  heroTag: _heroTag,
                   tileWidth:
                       rowHeight ?? MediaQuery.of(context).size.height * 0.2,
                 ),

@@ -26,7 +26,11 @@ const String artworksJsonPath = "assets/data/artworks.json";
 /// Class "Artwork" is auto-generated, by stripping the trailing "s" in the
 /// table name. If a custom name is required, use @DataClassName("CustomName").
 class Artworks extends Table {
-  IntColumn get id => integer().autoIncrement()();
+  TextColumn get id => text()();
+
+  // if primary key is not an autoIncrement IntColumn, it must be set like this
+  @override
+  Set<Column> get primaryKey => {id};
 
   TextColumn get title => text().withLength(min: 1, max: 32)();
 
