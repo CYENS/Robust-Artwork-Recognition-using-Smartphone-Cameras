@@ -1,3 +1,10 @@
+## Version 0.4.3
+### 2010-09-23
+- Added ability to navigate from Tensorflow inferences to artwork detail
+  pages
+- Updated artwork/artist detail pages
+- Added more translations to Greek
+
 ## Version 0.4.2
 ### 2010-09-22
 - Updated app database with actual artworks from the Gallery (13
