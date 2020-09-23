@@ -1,9 +1,8 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_lorem/flutter_lorem.dart';
 import 'package:modern_art_app/data/artworks_dao.dart';
 import 'package:modern_art_app/data/database.dart';
+import 'package:modern_art_app/extensions.dart';
 import 'package:modern_art_app/ui/widgets/item_list.dart';
 import 'package:provider/provider.dart';
 
@@ -19,7 +18,7 @@ class ArtistDetailsPage extends StatelessWidget {
     // PaletteGenerator.fromImageProvider(AssetImage(artist.fileName));
     return Scaffold(
       appBar: AppBar(
-        title: Text("Artist details"),
+        title: Text(context.strings().artistDetails),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -43,21 +42,26 @@ class ArtistDetailsPage extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.all(4.0),
-              child: Text("${artist.yearBirth}–${artist.yearDeath}",
+              child: Text(
+                  artist.yearDeath.isNotEmpty
+                      ? "${artist.yearBirth}–${artist.yearDeath}"
+                      : artist.yearBirth,
                   style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic)),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(4.0, 12.0, 4.0, 0.0),
-              child: Text("Short Biography", style: TextStyle(fontSize: 20)),
+              child: Text(context.strings().biography,
+                  style: TextStyle(fontSize: 20)),
             ),
             Padding(
               padding: const EdgeInsets.all(4.0),
-              child: Text(lorem(
-                  paragraphs: 1, words: 150 - math.Random().nextInt(100))),
+              child: Text(artist.biography.isNotEmpty
+                  ? artist.biography
+                  : lorem(paragraphs: 1, words: 150)),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(4.0, 12.0, 4.0, 4.0),
-              child: Text("Artworks by ${artist.name}",
+              child: Text("${context.strings().artworksBy} ${artist.name}",
                   style: TextStyle(fontSize: 20)),
             ),
             ListHorizontal(

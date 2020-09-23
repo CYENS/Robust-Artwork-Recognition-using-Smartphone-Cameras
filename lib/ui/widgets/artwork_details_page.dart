@@ -1,8 +1,7 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_lorem/flutter_lorem.dart';
 import 'package:modern_art_app/data/database.dart';
+import 'package:modern_art_app/extensions.dart';
 import 'package:photo_view/photo_view.dart';
 
 class ArtworkDetailsPage extends StatelessWidget {
@@ -18,7 +17,7 @@ class ArtworkDetailsPage extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: Text("Artwork details"),
+        title: Text(context.strings().artworkDetails),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -52,17 +51,19 @@ class ArtworkDetailsPage extends StatelessWidget {
               padding: const EdgeInsets.all(4.0),
               child: Text(
                   "${artwork.artist}" +
-                      (artwork.year != "" ? ", ${artwork.year}" : ""),
+                      (artwork.year.isNotEmpty ? ", ${artwork.year}" : ""),
                   style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic)),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(4.0, 12.0, 4.0, 0.0),
-              child: Text("Description", style: TextStyle(fontSize: 20)),
+              child: Text(context.strings().description,
+                  style: TextStyle(fontSize: 20)),
             ),
             Padding(
               padding: const EdgeInsets.all(4.0),
-              child: Text(lorem(
-                  paragraphs: 3, words: 250 - math.Random().nextInt(100))),
+              child: Text(artwork.description.isNotEmpty
+                  ? artwork.description
+                  : lorem(paragraphs: 2, words: 50)),
             ),
           ],
         ),

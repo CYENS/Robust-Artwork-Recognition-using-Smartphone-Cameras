@@ -1,6 +1,9 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:modern_art_app/data/artworks_dao.dart';
+import 'package:modern_art_app/ui/widgets/artwork_details_page.dart';
+import 'package:provider/provider.dart';
 
 import 'models.dart';
 
@@ -78,14 +81,31 @@ class BBox extends StatelessWidget {
         return Positioned(
           left: 10,
           top: offset,
-          width: screenWidth,
-          height: screenHeight,
-          child: Text(
-            "${re["label"]} ${(re["confidence"] * 100).toStringAsFixed(0)}%",
-            style: TextStyle(
-              color: Color.fromRGBO(255, 255, 255, 1.0),
-              fontSize: 20.0,
-              fontWeight: FontWeight.bold,
+          // width: screenWidth,
+          // height: screenHeight,
+          child: InkWell(
+            onTap: () {
+              ArtworksDao artworksDao =
+                  Provider.of<ArtworksDao>(context, listen: false);
+              // todo: navigating to artwork details here leaves tensorflow camera inferences running in the background!
+              artworksDao.getArtworkById(re["label"]).then((value) =>
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              ArtworkDetailsPage(artwork: value))));
+            },
+            child: Row(
+              children: [
+                Text(
+                  "${re["label"]} ${(re["confidence"] * 100).toStringAsFixed(0)}%",
+                  style: TextStyle(
+                    color: Color.fromRGBO(255, 255, 255, 1.0),
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
           ),
         );

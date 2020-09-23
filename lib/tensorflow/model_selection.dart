@@ -22,6 +22,18 @@ class _ModelSelectionState extends State<ModelSelection> {
   int _imageHeight = 0;
   int _imageWidth = 0;
   String _model = "";
+  var _recHistory = Map();
+
+  @override
+  void setState(VoidCallback fn) {
+    // must check if mounted here before setting state, in case user navigates
+    // away from the widget, since TensorFlowCamera may use setRecognitions for
+    // setting the results of its the last inference, that most likely will
+    // arrive after user navigated away (setState after dispose)
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
 
   @override
   void initState() {
@@ -79,6 +91,17 @@ class _ModelSelectionState extends State<ModelSelection> {
 
   setRecognitions(recognitions, imageHeight, imageWidth) {
     setState(() {
+      _recHistory.addAll(Map<String, double>.fromIterable(
+        recognitions,
+        // each item in recognitions is a LinkedHashMap in the form of
+        // {confidence: 0.5562283396720886, index: 15, label: untitled_votsis}
+        key: (recognition) => recognition["label"],
+        value: (recognition) => recognition["confidence"],
+      ));
+      print(_recHistory);
+      recognitions.forEach((element) {
+        print(element);
+      });
       _recognitions = recognitions;
       _imageHeight = imageHeight;
       _imageWidth = imageWidth;

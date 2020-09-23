@@ -34,4 +34,8 @@ class ArtworksDao extends DatabaseAccessor<AppDatabase>
   /// the generated/replaced [Artwork] id.
   Future<int> upsertArtwork(Artwork artwork) =>
       into(artworks).insertOnConflictUpdate(artwork);
+
+  /// Get artwork by id.
+  Future<Artwork> getArtworkById(String id) =>
+      (select(artworks)..where((tbl) => tbl.id.equals(id))).getSingle();
 }
