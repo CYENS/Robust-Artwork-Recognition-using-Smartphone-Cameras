@@ -75,9 +75,9 @@ class BBox extends StatelessWidget {
     }
 
     List<Widget> _renderStrings() {
-      double offset = -10;
+      double offset = -screenWidth / 5 / 1.3;
       return results.map((re) {
-        offset = offset + 30;
+        offset = offset + screenWidth / 5;
         return Positioned(
           left: 10,
           top: offset,
@@ -104,6 +104,11 @@ class BBox extends StatelessWidget {
                     fontSize: 20.0,
                     fontWeight: FontWeight.bold,
                   ),
+                ),
+                Image.asset(
+                  "assets/paintings/${re['label']}.webp",
+                  width: screenWidth / 5,
+                  height: screenWidth / 5,
                 ),
               ],
             ),
