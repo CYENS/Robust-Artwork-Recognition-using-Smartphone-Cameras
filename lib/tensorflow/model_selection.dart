@@ -21,6 +21,7 @@ class _ModelSelectionState extends State<ModelSelection> {
   List<dynamic> _recognitions;
   int _imageHeight = 0;
   int _imageWidth = 0;
+  int _inferenceTime = 0;
   String _model = "";
   var _recHistory = Map();
 
@@ -89,7 +90,7 @@ class _ModelSelectionState extends State<ModelSelection> {
     loadModel();
   }
 
-  setRecognitions(recognitions, imageHeight, imageWidth) {
+  setRecognitions(recognitions, imageHeight, imageWidth, inferenceTime) {
     setState(() {
       _recHistory.addAll(Map<String, double>.fromIterable(
         recognitions,
@@ -105,6 +106,7 @@ class _ModelSelectionState extends State<ModelSelection> {
       _recognitions = recognitions;
       _imageHeight = imageHeight;
       _imageWidth = imageWidth;
+      _inferenceTime = inferenceTime;
     });
   }
 
@@ -157,7 +159,8 @@ class _ModelSelectionState extends State<ModelSelection> {
                     math.min(_imageHeight, _imageWidth),
                     screen.height,
                     screen.width,
-                    _model),
+                    _model,
+                    _inferenceTime),
               ],
             ),
     );
