@@ -67,6 +67,33 @@ class Artists extends Table {
   Set<Column> get primaryKey => {name};
 }
 
+class Arts extends Table {
+  IntColumn get artId => integer().autoIncrement()();
+
+  @JsonKey("yearbirth")
+  TextColumn get yearBirth => text().nullable()();
+
+  @JsonKey("yeardeath")
+  TextColumn get yearDeath => text().nullable()();
+
+  TextColumn get photo => text().nullable()();
+}
+
+class ArtI18ns extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  // no primary key?
+  IntColumn get artId =>
+      integer().customConstraint("NULL REFERENCES arts(art_id)")();
+
+  // should specify json key
+  TextColumn get languageCode => text()();
+
+  TextColumn get name => text()();
+
+  TextColumn get biography => text().nullable()();
+}
+
 LazyDatabase _openConnection() {
   // the LazyDatabase util lets us find the right location for the file async.
   return LazyDatabase(() async {
@@ -74,7 +101,7 @@ LazyDatabase _openConnection() {
     // for your app.
     final dbFolder = await getApplicationDocumentsDirectory();
     final file = File(p.join(dbFolder.path, 'db.sqlite'));
-    return VmDatabase(file);
+    return VmDatabase(file, logStatements: true);
   });
 }
 
@@ -82,7 +109,9 @@ LazyDatabase _openConnection() {
 ///
 /// During the first use of [AppDatabase], it is automatically populated from a
 /// Json file with the necessary information in assets.
-@UseMoor(tables: [Artworks, Artists], daos: [ArtworksDao, ArtistsDao])
+@UseMoor(
+    tables: [Artworks, Artists, Arts, ArtI18ns],
+    daos: [ArtworksDao, ArtistsDao])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
@@ -117,6 +146,22 @@ class AppDatabase extends _$AppDatabase {
                       print("Created entry for artwork \"${artwork.title}\" by "
                           "${artwork.artist}");
                     }));
+
+            [1, 2, 3].forEach((id) {
+              into(arts).insertOnConflictUpdate(
+                  Art(artId: id, yearBirth: "1950", yearDeath: "2050"));
+            });
+
+            var count = 0;
+            [1, 2, 3].forEach((id) {
+              into(artI18ns).insertOnConflictUpdate(ArtI18n(
+                  id: count, artId: id, languageCode: "en", name: "name"));
+
+              count += 1;
+              into(artI18ns).insertOnConflictUpdate(ArtI18n(
+                  id: count, artId: id, languageCode: "el", name: "onoma"));
+              count += 1;
+            });
           }
         },
       );
