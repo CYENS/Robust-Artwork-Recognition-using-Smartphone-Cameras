@@ -155,11 +155,19 @@ class AppDatabase extends _$AppDatabase {
             var count = 0;
             [1, 2, 3].forEach((id) {
               into(artI18ns).insertOnConflictUpdate(ArtI18n(
-                  id: count, artId: id, languageCode: "en", name: "name"));
+                  id: count,
+                  artId: id,
+                  languageCode: "en",
+                  name: "name $id",
+                  biography: "biography $id"));
 
               count += 1;
               into(artI18ns).insertOnConflictUpdate(ArtI18n(
-                  id: count, artId: id, languageCode: "el", name: "onoma"));
+                  id: count,
+                  artId: id,
+                  languageCode: "el",
+                  name: "όνομα $id",
+                  biography: "βιογραφικό $id"));
               count += 1;
             });
           }
