@@ -6,7 +6,7 @@ import 'package:tflite/tflite.dart';
 
 import 'models.dart';
 
-typedef void Callback(List<dynamic> list, int h, int w);
+typedef void Callback(List<dynamic> list, int h, int w, int inferenceTime);
 
 class TensorFlowCamera extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -59,9 +59,10 @@ class _TensorFlowCameraState extends State<TensorFlowCamera> {
                 numResults: 2,
               ).then((recognitions) {
                 int endTime = new DateTime.now().millisecondsSinceEpoch;
-                print("Detection took ${endTime - startTime}");
-
-                widget.setRecognitions(recognitions, img.height, img.width);
+                var inferenceTime = endTime - startTime;
+                print("Detection took $inferenceTime ms");
+                widget.setRecognitions(
+                    recognitions, img.height, img.width, inferenceTime);
 
                 isDetecting = false;
               });
@@ -75,9 +76,10 @@ class _TensorFlowCameraState extends State<TensorFlowCamera> {
                 numResults: 2,
               ).then((recognitions) {
                 int endTime = new DateTime.now().millisecondsSinceEpoch;
-                print("Detection took ${endTime - startTime}");
-
-                widget.setRecognitions(recognitions, img.height, img.width);
+                var inferenceTime = endTime - startTime;
+                print("Detection took $inferenceTime ms");
+                widget.setRecognitions(
+                    recognitions, img.height, img.width, inferenceTime);
 
                 isDetecting = false;
               });
@@ -91,9 +93,10 @@ class _TensorFlowCameraState extends State<TensorFlowCamera> {
                 numResults: 2,
               ).then((recognitions) {
                 int endTime = new DateTime.now().millisecondsSinceEpoch;
-                print("Detection took ${endTime - startTime}");
-
-                widget.setRecognitions(recognitions, img.height, img.width);
+                var inferenceTime = endTime - startTime;
+                print("Detection took $inferenceTime ms");
+                widget.setRecognitions(
+                    recognitions, img.height, img.width, inferenceTime);
 
                 isDetecting = false;
               });
@@ -111,9 +114,10 @@ class _TensorFlowCameraState extends State<TensorFlowCamera> {
                 threshold: widget.model == yolo ? 0.2 : 0.4,
               ).then((recognitions) {
                 int endTime = new DateTime.now().millisecondsSinceEpoch;
-                print("Detection took ${endTime - startTime}");
-
-                widget.setRecognitions(recognitions, img.height, img.width);
+                var inferenceTime = endTime - startTime;
+                print("Detection took $inferenceTime ms");
+                widget.setRecognitions(
+                    recognitions, img.height, img.width, inferenceTime);
 
                 isDetecting = false;
               });
