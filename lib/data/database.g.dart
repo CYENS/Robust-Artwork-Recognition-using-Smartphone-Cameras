@@ -993,14 +993,12 @@ class $ArtsTable extends Arts with TableInfo<$ArtsTable, Art> {
 }
 
 class ArtI18n extends DataClass implements Insertable<ArtI18n> {
-  final int id;
   final int artId;
   final String languageCode;
   final String name;
   final String biography;
   ArtI18n(
-      {@required this.id,
-      @required this.artId,
+      {@required this.artId,
       @required this.languageCode,
       @required this.name,
       this.biography});
@@ -1010,7 +1008,6 @@ class ArtI18n extends DataClass implements Insertable<ArtI18n> {
     final intType = db.typeSystem.forDartType<int>();
     final stringType = db.typeSystem.forDartType<String>();
     return ArtI18n(
-      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       artId: intType.mapFromDatabaseResponse(data['${effectivePrefix}art_id']),
       languageCode: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}language_code']),
@@ -1022,9 +1019,6 @@ class ArtI18n extends DataClass implements Insertable<ArtI18n> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (!nullToAbsent || id != null) {
-      map['id'] = Variable<int>(id);
-    }
     if (!nullToAbsent || artId != null) {
       map['art_id'] = Variable<int>(artId);
     }
@@ -1042,7 +1036,6 @@ class ArtI18n extends DataClass implements Insertable<ArtI18n> {
 
   ArtI18nsCompanion toCompanion(bool nullToAbsent) {
     return ArtI18nsCompanion(
-      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
       artId:
           artId == null && nullToAbsent ? const Value.absent() : Value(artId),
       languageCode: languageCode == null && nullToAbsent
@@ -1059,7 +1052,6 @@ class ArtI18n extends DataClass implements Insertable<ArtI18n> {
       {ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return ArtI18n(
-      id: serializer.fromJson<int>(json['id']),
       artId: serializer.fromJson<int>(json['artId']),
       languageCode: serializer.fromJson<String>(json['languageCode']),
       name: serializer.fromJson<String>(json['name']),
@@ -1070,7 +1062,6 @@ class ArtI18n extends DataClass implements Insertable<ArtI18n> {
   Map<String, dynamic> toJson({ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'id': serializer.toJson<int>(id),
       'artId': serializer.toJson<int>(artId),
       'languageCode': serializer.toJson<String>(languageCode),
       'name': serializer.toJson<String>(name),
@@ -1079,13 +1070,8 @@ class ArtI18n extends DataClass implements Insertable<ArtI18n> {
   }
 
   ArtI18n copyWith(
-          {int id,
-          int artId,
-          String languageCode,
-          String name,
-          String biography}) =>
+          {int artId, String languageCode, String name, String biography}) =>
       ArtI18n(
-        id: id ?? this.id,
         artId: artId ?? this.artId,
         languageCode: languageCode ?? this.languageCode,
         name: name ?? this.name,
@@ -1094,7 +1080,6 @@ class ArtI18n extends DataClass implements Insertable<ArtI18n> {
   @override
   String toString() {
     return (StringBuffer('ArtI18n(')
-          ..write('id: $id, ')
           ..write('artId: $artId, ')
           ..write('languageCode: $languageCode, ')
           ..write('name: $name, ')
@@ -1104,17 +1089,12 @@ class ArtI18n extends DataClass implements Insertable<ArtI18n> {
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(
-      id.hashCode,
-      $mrjc(
-          artId.hashCode,
-          $mrjc(languageCode.hashCode,
-              $mrjc(name.hashCode, biography.hashCode)))));
+  int get hashCode => $mrjf($mrjc(artId.hashCode,
+      $mrjc(languageCode.hashCode, $mrjc(name.hashCode, biography.hashCode))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is ArtI18n &&
-          other.id == this.id &&
           other.artId == this.artId &&
           other.languageCode == this.languageCode &&
           other.name == this.name &&
@@ -1122,20 +1102,17 @@ class ArtI18n extends DataClass implements Insertable<ArtI18n> {
 }
 
 class ArtI18nsCompanion extends UpdateCompanion<ArtI18n> {
-  final Value<int> id;
   final Value<int> artId;
   final Value<String> languageCode;
   final Value<String> name;
   final Value<String> biography;
   const ArtI18nsCompanion({
-    this.id = const Value.absent(),
     this.artId = const Value.absent(),
     this.languageCode = const Value.absent(),
     this.name = const Value.absent(),
     this.biography = const Value.absent(),
   });
   ArtI18nsCompanion.insert({
-    this.id = const Value.absent(),
     @required int artId,
     @required String languageCode,
     @required String name,
@@ -1144,14 +1121,12 @@ class ArtI18nsCompanion extends UpdateCompanion<ArtI18n> {
         languageCode = Value(languageCode),
         name = Value(name);
   static Insertable<ArtI18n> custom({
-    Expression<int> id,
     Expression<int> artId,
     Expression<String> languageCode,
     Expression<String> name,
     Expression<String> biography,
   }) {
     return RawValuesInsertable({
-      if (id != null) 'id': id,
       if (artId != null) 'art_id': artId,
       if (languageCode != null) 'language_code': languageCode,
       if (name != null) 'name': name,
@@ -1160,13 +1135,11 @@ class ArtI18nsCompanion extends UpdateCompanion<ArtI18n> {
   }
 
   ArtI18nsCompanion copyWith(
-      {Value<int> id,
-      Value<int> artId,
+      {Value<int> artId,
       Value<String> languageCode,
       Value<String> name,
       Value<String> biography}) {
     return ArtI18nsCompanion(
-      id: id ?? this.id,
       artId: artId ?? this.artId,
       languageCode: languageCode ?? this.languageCode,
       name: name ?? this.name,
@@ -1177,9 +1150,6 @@ class ArtI18nsCompanion extends UpdateCompanion<ArtI18n> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (id.present) {
-      map['id'] = Variable<int>(id.value);
-    }
     if (artId.present) {
       map['art_id'] = Variable<int>(artId.value);
     }
@@ -1198,7 +1168,6 @@ class ArtI18nsCompanion extends UpdateCompanion<ArtI18n> {
   @override
   String toString() {
     return (StringBuffer('ArtI18nsCompanion(')
-          ..write('id: $id, ')
           ..write('artId: $artId, ')
           ..write('languageCode: $languageCode, ')
           ..write('name: $name, ')
@@ -1212,15 +1181,6 @@ class $ArtI18nsTable extends ArtI18ns with TableInfo<$ArtI18nsTable, ArtI18n> {
   final GeneratedDatabase _db;
   final String _alias;
   $ArtI18nsTable(this._db, [this._alias]);
-  final VerificationMeta _idMeta = const VerificationMeta('id');
-  GeneratedIntColumn _id;
-  @override
-  GeneratedIntColumn get id => _id ??= _constructId();
-  GeneratedIntColumn _constructId() {
-    return GeneratedIntColumn('id', $tableName, false,
-        hasAutoIncrement: true, declaredAsPrimaryKey: true);
-  }
-
   final VerificationMeta _artIdMeta = const VerificationMeta('artId');
   GeneratedIntColumn _artId;
   @override
@@ -1269,8 +1229,7 @@ class $ArtI18nsTable extends ArtI18ns with TableInfo<$ArtI18nsTable, ArtI18n> {
   }
 
   @override
-  List<GeneratedColumn> get $columns =>
-      [id, artId, languageCode, name, biography];
+  List<GeneratedColumn> get $columns => [artId, languageCode, name, biography];
   @override
   $ArtI18nsTable get asDslTable => this;
   @override
@@ -1282,9 +1241,6 @@ class $ArtI18nsTable extends ArtI18ns with TableInfo<$ArtI18nsTable, ArtI18n> {
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
-    if (data.containsKey('id')) {
-      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
-    }
     if (data.containsKey('art_id')) {
       context.handle(
           _artIdMeta, artId.isAcceptableOrUnknown(data['art_id'], _artIdMeta));
@@ -1313,7 +1269,7 @@ class $ArtI18nsTable extends ArtI18ns with TableInfo<$ArtI18nsTable, ArtI18n> {
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {id};
+  Set<GeneratedColumn> get $primaryKey => {artId, languageCode};
   @override
   ArtI18n map(Map<String, dynamic> data, {String tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;

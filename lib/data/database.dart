@@ -80,9 +80,6 @@ class Arts extends Table {
 }
 
 class ArtI18ns extends Table {
-  IntColumn get id => integer().autoIncrement()();
-
-  // no primary key?
   IntColumn get artId =>
       integer().customConstraint("NULL REFERENCES arts(art_id)")();
 
@@ -92,6 +89,9 @@ class ArtI18ns extends Table {
   TextColumn get name => text()();
 
   TextColumn get biography => text().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {artId, languageCode};
 }
 
 LazyDatabase _openConnection() {
@@ -152,23 +152,18 @@ class AppDatabase extends _$AppDatabase {
                   Art(artId: id, yearBirth: "1950", yearDeath: "2050"));
             });
 
-            var count = 0;
             [1, 2, 3].forEach((id) {
               into(artI18ns).insertOnConflictUpdate(ArtI18n(
-                  id: count,
                   artId: id,
                   languageCode: "en",
                   name: "name $id",
                   biography: "biography $id"));
 
-              count += 1;
               into(artI18ns).insertOnConflictUpdate(ArtI18n(
-                  id: count,
                   artId: id,
                   languageCode: "el",
                   name: "όνομα $id",
                   biography: "βιογραφικό $id"));
-              count += 1;
             });
           }
         },
