@@ -1,3 +1,10 @@
+## Version 0.4.4
+### 2010-09-25
+- App now shows small images of the recognised artworks next to the
+  Tensorflow inferences
+- Preparation for internationalisation of the app's database schema
+- Bug fixes
+
 ## Version 0.4.3
 ### 2010-09-23
 - Added ability to navigate from Tensorflow inferences to artwork detail

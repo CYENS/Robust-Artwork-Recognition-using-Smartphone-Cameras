@@ -9,7 +9,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
-import 'extensions.dart';
+import 'utils/extensions.dart';
 
 class TakePictureScreen extends StatefulWidget {
   final List<CameraDescription> cameras;

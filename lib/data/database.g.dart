@@ -717,12 +717,581 @@ class $ArtistsTable extends Artists with TableInfo<$ArtistsTable, Artist> {
   }
 }
 
+class Art extends DataClass implements Insertable<Art> {
+  final int artId;
+  final String yearBirth;
+  final String yearDeath;
+  final String photo;
+  Art({@required this.artId, this.yearBirth, this.yearDeath, this.photo});
+  factory Art.fromData(Map<String, dynamic> data, GeneratedDatabase db,
+      {String prefix}) {
+    final effectivePrefix = prefix ?? '';
+    final intType = db.typeSystem.forDartType<int>();
+    final stringType = db.typeSystem.forDartType<String>();
+    return Art(
+      artId: intType.mapFromDatabaseResponse(data['${effectivePrefix}art_id']),
+      yearBirth: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}year_birth']),
+      yearDeath: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}year_death']),
+      photo:
+          stringType.mapFromDatabaseResponse(data['${effectivePrefix}photo']),
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || artId != null) {
+      map['art_id'] = Variable<int>(artId);
+    }
+    if (!nullToAbsent || yearBirth != null) {
+      map['year_birth'] = Variable<String>(yearBirth);
+    }
+    if (!nullToAbsent || yearDeath != null) {
+      map['year_death'] = Variable<String>(yearDeath);
+    }
+    if (!nullToAbsent || photo != null) {
+      map['photo'] = Variable<String>(photo);
+    }
+    return map;
+  }
+
+  ArtsCompanion toCompanion(bool nullToAbsent) {
+    return ArtsCompanion(
+      artId:
+          artId == null && nullToAbsent ? const Value.absent() : Value(artId),
+      yearBirth: yearBirth == null && nullToAbsent
+          ? const Value.absent()
+          : Value(yearBirth),
+      yearDeath: yearDeath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(yearDeath),
+      photo:
+          photo == null && nullToAbsent ? const Value.absent() : Value(photo),
+    );
+  }
+
+  factory Art.fromJson(Map<String, dynamic> json,
+      {ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return Art(
+      artId: serializer.fromJson<int>(json['artId']),
+      yearBirth: serializer.fromJson<String>(json['yearbirth']),
+      yearDeath: serializer.fromJson<String>(json['yeardeath']),
+      photo: serializer.fromJson<String>(json['photo']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'artId': serializer.toJson<int>(artId),
+      'yearbirth': serializer.toJson<String>(yearBirth),
+      'yeardeath': serializer.toJson<String>(yearDeath),
+      'photo': serializer.toJson<String>(photo),
+    };
+  }
+
+  Art copyWith({int artId, String yearBirth, String yearDeath, String photo}) =>
+      Art(
+        artId: artId ?? this.artId,
+        yearBirth: yearBirth ?? this.yearBirth,
+        yearDeath: yearDeath ?? this.yearDeath,
+        photo: photo ?? this.photo,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Art(')
+          ..write('artId: $artId, ')
+          ..write('yearBirth: $yearBirth, ')
+          ..write('yearDeath: $yearDeath, ')
+          ..write('photo: $photo')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => $mrjf($mrjc(artId.hashCode,
+      $mrjc(yearBirth.hashCode, $mrjc(yearDeath.hashCode, photo.hashCode))));
+  @override
+  bool operator ==(dynamic other) =>
+      identical(this, other) ||
+      (other is Art &&
+          other.artId == this.artId &&
+          other.yearBirth == this.yearBirth &&
+          other.yearDeath == this.yearDeath &&
+          other.photo == this.photo);
+}
+
+class ArtsCompanion extends UpdateCompanion<Art> {
+  final Value<int> artId;
+  final Value<String> yearBirth;
+  final Value<String> yearDeath;
+  final Value<String> photo;
+  const ArtsCompanion({
+    this.artId = const Value.absent(),
+    this.yearBirth = const Value.absent(),
+    this.yearDeath = const Value.absent(),
+    this.photo = const Value.absent(),
+  });
+  ArtsCompanion.insert({
+    this.artId = const Value.absent(),
+    this.yearBirth = const Value.absent(),
+    this.yearDeath = const Value.absent(),
+    this.photo = const Value.absent(),
+  });
+  static Insertable<Art> custom({
+    Expression<int> artId,
+    Expression<String> yearBirth,
+    Expression<String> yearDeath,
+    Expression<String> photo,
+  }) {
+    return RawValuesInsertable({
+      if (artId != null) 'art_id': artId,
+      if (yearBirth != null) 'year_birth': yearBirth,
+      if (yearDeath != null) 'year_death': yearDeath,
+      if (photo != null) 'photo': photo,
+    });
+  }
+
+  ArtsCompanion copyWith(
+      {Value<int> artId,
+      Value<String> yearBirth,
+      Value<String> yearDeath,
+      Value<String> photo}) {
+    return ArtsCompanion(
+      artId: artId ?? this.artId,
+      yearBirth: yearBirth ?? this.yearBirth,
+      yearDeath: yearDeath ?? this.yearDeath,
+      photo: photo ?? this.photo,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (artId.present) {
+      map['art_id'] = Variable<int>(artId.value);
+    }
+    if (yearBirth.present) {
+      map['year_birth'] = Variable<String>(yearBirth.value);
+    }
+    if (yearDeath.present) {
+      map['year_death'] = Variable<String>(yearDeath.value);
+    }
+    if (photo.present) {
+      map['photo'] = Variable<String>(photo.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ArtsCompanion(')
+          ..write('artId: $artId, ')
+          ..write('yearBirth: $yearBirth, ')
+          ..write('yearDeath: $yearDeath, ')
+          ..write('photo: $photo')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ArtsTable extends Arts with TableInfo<$ArtsTable, Art> {
+  final GeneratedDatabase _db;
+  final String _alias;
+  $ArtsTable(this._db, [this._alias]);
+  final VerificationMeta _artIdMeta = const VerificationMeta('artId');
+  GeneratedIntColumn _artId;
+  @override
+  GeneratedIntColumn get artId => _artId ??= _constructArtId();
+  GeneratedIntColumn _constructArtId() {
+    return GeneratedIntColumn('art_id', $tableName, false,
+        hasAutoIncrement: true, declaredAsPrimaryKey: true);
+  }
+
+  final VerificationMeta _yearBirthMeta = const VerificationMeta('yearBirth');
+  GeneratedTextColumn _yearBirth;
+  @override
+  GeneratedTextColumn get yearBirth => _yearBirth ??= _constructYearBirth();
+  GeneratedTextColumn _constructYearBirth() {
+    return GeneratedTextColumn(
+      'year_birth',
+      $tableName,
+      true,
+    );
+  }
+
+  final VerificationMeta _yearDeathMeta = const VerificationMeta('yearDeath');
+  GeneratedTextColumn _yearDeath;
+  @override
+  GeneratedTextColumn get yearDeath => _yearDeath ??= _constructYearDeath();
+  GeneratedTextColumn _constructYearDeath() {
+    return GeneratedTextColumn(
+      'year_death',
+      $tableName,
+      true,
+    );
+  }
+
+  final VerificationMeta _photoMeta = const VerificationMeta('photo');
+  GeneratedTextColumn _photo;
+  @override
+  GeneratedTextColumn get photo => _photo ??= _constructPhoto();
+  GeneratedTextColumn _constructPhoto() {
+    return GeneratedTextColumn(
+      'photo',
+      $tableName,
+      true,
+    );
+  }
+
+  @override
+  List<GeneratedColumn> get $columns => [artId, yearBirth, yearDeath, photo];
+  @override
+  $ArtsTable get asDslTable => this;
+  @override
+  String get $tableName => _alias ?? 'arts';
+  @override
+  final String actualTableName = 'arts';
+  @override
+  VerificationContext validateIntegrity(Insertable<Art> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('art_id')) {
+      context.handle(
+          _artIdMeta, artId.isAcceptableOrUnknown(data['art_id'], _artIdMeta));
+    }
+    if (data.containsKey('year_birth')) {
+      context.handle(_yearBirthMeta,
+          yearBirth.isAcceptableOrUnknown(data['year_birth'], _yearBirthMeta));
+    }
+    if (data.containsKey('year_death')) {
+      context.handle(_yearDeathMeta,
+          yearDeath.isAcceptableOrUnknown(data['year_death'], _yearDeathMeta));
+    }
+    if (data.containsKey('photo')) {
+      context.handle(
+          _photoMeta, photo.isAcceptableOrUnknown(data['photo'], _photoMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {artId};
+  @override
+  Art map(Map<String, dynamic> data, {String tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
+    return Art.fromData(data, _db, prefix: effectivePrefix);
+  }
+
+  @override
+  $ArtsTable createAlias(String alias) {
+    return $ArtsTable(_db, alias);
+  }
+}
+
+class ArtI18n extends DataClass implements Insertable<ArtI18n> {
+  final int artId;
+  final String languageCode;
+  final String name;
+  final String biography;
+  ArtI18n(
+      {@required this.artId,
+      @required this.languageCode,
+      @required this.name,
+      this.biography});
+  factory ArtI18n.fromData(Map<String, dynamic> data, GeneratedDatabase db,
+      {String prefix}) {
+    final effectivePrefix = prefix ?? '';
+    final intType = db.typeSystem.forDartType<int>();
+    final stringType = db.typeSystem.forDartType<String>();
+    return ArtI18n(
+      artId: intType.mapFromDatabaseResponse(data['${effectivePrefix}art_id']),
+      languageCode: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}language_code']),
+      name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name']),
+      biography: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}biography']),
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || artId != null) {
+      map['art_id'] = Variable<int>(artId);
+    }
+    if (!nullToAbsent || languageCode != null) {
+      map['language_code'] = Variable<String>(languageCode);
+    }
+    if (!nullToAbsent || name != null) {
+      map['name'] = Variable<String>(name);
+    }
+    if (!nullToAbsent || biography != null) {
+      map['biography'] = Variable<String>(biography);
+    }
+    return map;
+  }
+
+  ArtI18nsCompanion toCompanion(bool nullToAbsent) {
+    return ArtI18nsCompanion(
+      artId:
+          artId == null && nullToAbsent ? const Value.absent() : Value(artId),
+      languageCode: languageCode == null && nullToAbsent
+          ? const Value.absent()
+          : Value(languageCode),
+      name: name == null && nullToAbsent ? const Value.absent() : Value(name),
+      biography: biography == null && nullToAbsent
+          ? const Value.absent()
+          : Value(biography),
+    );
+  }
+
+  factory ArtI18n.fromJson(Map<String, dynamic> json,
+      {ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return ArtI18n(
+      artId: serializer.fromJson<int>(json['artId']),
+      languageCode: serializer.fromJson<String>(json['languageCode']),
+      name: serializer.fromJson<String>(json['name']),
+      biography: serializer.fromJson<String>(json['biography']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'artId': serializer.toJson<int>(artId),
+      'languageCode': serializer.toJson<String>(languageCode),
+      'name': serializer.toJson<String>(name),
+      'biography': serializer.toJson<String>(biography),
+    };
+  }
+
+  ArtI18n copyWith(
+          {int artId, String languageCode, String name, String biography}) =>
+      ArtI18n(
+        artId: artId ?? this.artId,
+        languageCode: languageCode ?? this.languageCode,
+        name: name ?? this.name,
+        biography: biography ?? this.biography,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('ArtI18n(')
+          ..write('artId: $artId, ')
+          ..write('languageCode: $languageCode, ')
+          ..write('name: $name, ')
+          ..write('biography: $biography')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => $mrjf($mrjc(artId.hashCode,
+      $mrjc(languageCode.hashCode, $mrjc(name.hashCode, biography.hashCode))));
+  @override
+  bool operator ==(dynamic other) =>
+      identical(this, other) ||
+      (other is ArtI18n &&
+          other.artId == this.artId &&
+          other.languageCode == this.languageCode &&
+          other.name == this.name &&
+          other.biography == this.biography);
+}
+
+class ArtI18nsCompanion extends UpdateCompanion<ArtI18n> {
+  final Value<int> artId;
+  final Value<String> languageCode;
+  final Value<String> name;
+  final Value<String> biography;
+  const ArtI18nsCompanion({
+    this.artId = const Value.absent(),
+    this.languageCode = const Value.absent(),
+    this.name = const Value.absent(),
+    this.biography = const Value.absent(),
+  });
+  ArtI18nsCompanion.insert({
+    @required int artId,
+    @required String languageCode,
+    @required String name,
+    this.biography = const Value.absent(),
+  })  : artId = Value(artId),
+        languageCode = Value(languageCode),
+        name = Value(name);
+  static Insertable<ArtI18n> custom({
+    Expression<int> artId,
+    Expression<String> languageCode,
+    Expression<String> name,
+    Expression<String> biography,
+  }) {
+    return RawValuesInsertable({
+      if (artId != null) 'art_id': artId,
+      if (languageCode != null) 'language_code': languageCode,
+      if (name != null) 'name': name,
+      if (biography != null) 'biography': biography,
+    });
+  }
+
+  ArtI18nsCompanion copyWith(
+      {Value<int> artId,
+      Value<String> languageCode,
+      Value<String> name,
+      Value<String> biography}) {
+    return ArtI18nsCompanion(
+      artId: artId ?? this.artId,
+      languageCode: languageCode ?? this.languageCode,
+      name: name ?? this.name,
+      biography: biography ?? this.biography,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (artId.present) {
+      map['art_id'] = Variable<int>(artId.value);
+    }
+    if (languageCode.present) {
+      map['language_code'] = Variable<String>(languageCode.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
+    if (biography.present) {
+      map['biography'] = Variable<String>(biography.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ArtI18nsCompanion(')
+          ..write('artId: $artId, ')
+          ..write('languageCode: $languageCode, ')
+          ..write('name: $name, ')
+          ..write('biography: $biography')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ArtI18nsTable extends ArtI18ns with TableInfo<$ArtI18nsTable, ArtI18n> {
+  final GeneratedDatabase _db;
+  final String _alias;
+  $ArtI18nsTable(this._db, [this._alias]);
+  final VerificationMeta _artIdMeta = const VerificationMeta('artId');
+  GeneratedIntColumn _artId;
+  @override
+  GeneratedIntColumn get artId => _artId ??= _constructArtId();
+  GeneratedIntColumn _constructArtId() {
+    return GeneratedIntColumn('art_id', $tableName, false,
+        $customConstraints: 'NULL REFERENCES arts(art_id)');
+  }
+
+  final VerificationMeta _languageCodeMeta =
+      const VerificationMeta('languageCode');
+  GeneratedTextColumn _languageCode;
+  @override
+  GeneratedTextColumn get languageCode =>
+      _languageCode ??= _constructLanguageCode();
+  GeneratedTextColumn _constructLanguageCode() {
+    return GeneratedTextColumn(
+      'language_code',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _nameMeta = const VerificationMeta('name');
+  GeneratedTextColumn _name;
+  @override
+  GeneratedTextColumn get name => _name ??= _constructName();
+  GeneratedTextColumn _constructName() {
+    return GeneratedTextColumn(
+      'name',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _biographyMeta = const VerificationMeta('biography');
+  GeneratedTextColumn _biography;
+  @override
+  GeneratedTextColumn get biography => _biography ??= _constructBiography();
+  GeneratedTextColumn _constructBiography() {
+    return GeneratedTextColumn(
+      'biography',
+      $tableName,
+      true,
+    );
+  }
+
+  @override
+  List<GeneratedColumn> get $columns => [artId, languageCode, name, biography];
+  @override
+  $ArtI18nsTable get asDslTable => this;
+  @override
+  String get $tableName => _alias ?? 'art_i18ns';
+  @override
+  final String actualTableName = 'art_i18ns';
+  @override
+  VerificationContext validateIntegrity(Insertable<ArtI18n> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('art_id')) {
+      context.handle(
+          _artIdMeta, artId.isAcceptableOrUnknown(data['art_id'], _artIdMeta));
+    } else if (isInserting) {
+      context.missing(_artIdMeta);
+    }
+    if (data.containsKey('language_code')) {
+      context.handle(
+          _languageCodeMeta,
+          languageCode.isAcceptableOrUnknown(
+              data['language_code'], _languageCodeMeta));
+    } else if (isInserting) {
+      context.missing(_languageCodeMeta);
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+          _nameMeta, name.isAcceptableOrUnknown(data['name'], _nameMeta));
+    } else if (isInserting) {
+      context.missing(_nameMeta);
+    }
+    if (data.containsKey('biography')) {
+      context.handle(_biographyMeta,
+          biography.isAcceptableOrUnknown(data['biography'], _biographyMeta));
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {artId, languageCode};
+  @override
+  ArtI18n map(Map<String, dynamic> data, {String tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
+    return ArtI18n.fromData(data, _db, prefix: effectivePrefix);
+  }
+
+  @override
+  $ArtI18nsTable createAlias(String alias) {
+    return $ArtI18nsTable(_db, alias);
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
   $ArtworksTable _artworks;
   $ArtworksTable get artworks => _artworks ??= $ArtworksTable(this);
   $ArtistsTable _artists;
   $ArtistsTable get artists => _artists ??= $ArtistsTable(this);
+  $ArtsTable _arts;
+  $ArtsTable get arts => _arts ??= $ArtsTable(this);
+  $ArtI18nsTable _artI18ns;
+  $ArtI18nsTable get artI18ns => _artI18ns ??= $ArtI18nsTable(this);
   ArtworksDao _artworksDao;
   ArtworksDao get artworksDao =>
       _artworksDao ??= ArtworksDao(this as AppDatabase);
@@ -731,5 +1300,6 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [artworks, artists];
+  List<DatabaseSchemaEntity> get allSchemaEntities =>
+      [artworks, artists, arts, artI18ns];
 }

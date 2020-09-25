@@ -14,9 +14,10 @@ class BBox extends StatelessWidget {
   final double screenHeight;
   final double screenWidth;
   final String model;
+  final int inferenceTime;
 
   BBox(this.results, this.previewHeight, this.previewWidth, this.screenHeight,
-      this.screenWidth, this.model);
+      this.screenWidth, this.model, this.inferenceTime);
 
   @override
   Widget build(BuildContext context) {
@@ -75,9 +76,9 @@ class BBox extends StatelessWidget {
     }
 
     List<Widget> _renderStrings() {
-      double offset = -10;
+      double offset = -screenWidth / 5 / 1.3;
       return results.map((re) {
-        offset = offset + 30;
+        offset = offset + screenWidth / 5;
         return Positioned(
           left: 10,
           top: offset,
@@ -97,8 +98,13 @@ class BBox extends StatelessWidget {
             },
             child: Row(
               children: [
+                Image.asset(
+                  "assets/paintings/${re['label']}.webp",
+                  width: screenWidth / 5,
+                  height: screenWidth / 5,
+                ),
                 Text(
-                  "${re["label"]} ${(re["confidence"] * 100).toStringAsFixed(0)}%",
+                  "${re["label"]} ${(re["confidence"] * 100).toStringAsFixed(0)}%\n$inferenceTime ms",
                   style: TextStyle(
                     color: Color.fromRGBO(255, 255, 255, 1.0),
                     fontSize: 20.0,

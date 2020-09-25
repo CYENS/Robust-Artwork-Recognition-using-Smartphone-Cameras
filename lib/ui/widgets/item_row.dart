@@ -3,6 +3,7 @@ import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/ui/widgets/artist_details_page.dart';
 import 'package:modern_art_app/ui/widgets/artwork_details_page.dart';
 import 'package:modern_art_app/ui/widgets/item_tile.dart';
+import 'package:modern_art_app/utils/utils.dart';
 
 class ItemRow extends StatelessWidget {
   // todo make arguments private
@@ -15,7 +16,7 @@ class ItemRow extends StatelessWidget {
 
   ItemRow.artist({Key key, @required Artist artist, this.rowHeight})
       : title = artist.name,
-        subtitle = "${artist.yearBirth}–${artist.yearDeath}",
+        subtitle = lifespan(artist),
         imgFileName = artist.fileName,
         _heroTag = artist.name,
         detailsPage = ArtistDetailsPage(artist: artist),

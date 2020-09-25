@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lorem/flutter_lorem.dart';
 import 'package:modern_art_app/data/database.dart';
-import 'package:modern_art_app/extensions.dart';
+import 'package:modern_art_app/utils/extensions.dart';
 import 'package:photo_view/photo_view.dart';
 
 class ArtworkDetailsPage extends StatelessWidget {

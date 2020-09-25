@@ -29,7 +29,7 @@ Future<List<Map>> getLocalJsonItemList(String assetsPath) async {
       .then((jsonStr) => List<Map>.from(json.decode(jsonStr)["feed"]["entry"]));
 }
 
-/// Gets and parses the json entry at the providded [url] and returns a future
+/// Gets and parses the json entry at the provided [url] and returns a future
 /// list of map item entries (the entries must be processed with [parseItemMap]
 /// first to be valid db entities).
 Future<List<Map>> getRemoteJsonItemList(String url) async {

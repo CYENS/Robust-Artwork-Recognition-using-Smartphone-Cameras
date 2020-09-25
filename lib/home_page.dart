@@ -4,7 +4,7 @@ import 'package:modern_art_app/explore_page.dart';
 import 'package:modern_art_app/tensorflow/model_selection.dart';
 import 'package:modern_art_app/ui/widgets/settings_page.dart';
 
-import 'extensions.dart';
+import 'utils/extensions.dart';
 
 class HomePage extends StatefulWidget {
   final List<CameraDescription> cameras;

@@ -8,7 +8,7 @@ import 'package:modern_art_app/ui/widgets/item_featured.dart';
 import 'package:modern_art_app/ui/widgets/item_list.dart';
 import 'package:provider/provider.dart';
 
-import 'extensions.dart';
+import 'utils/extensions.dart';
 
 class ExplorePage extends StatelessWidget {
   @override
