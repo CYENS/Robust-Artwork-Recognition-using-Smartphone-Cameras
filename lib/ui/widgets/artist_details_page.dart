@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lorem/flutter_lorem.dart';
 import 'package:modern_art_app/data/artworks_dao.dart';
 import 'package:modern_art_app/data/database.dart';
-import 'package:modern_art_app/extensions.dart';
 import 'package:modern_art_app/ui/widgets/item_list.dart';
+import 'package:modern_art_app/utils/extensions.dart';
 import 'package:modern_art_app/utils/utils.dart';
 import 'package:provider/provider.dart';
 

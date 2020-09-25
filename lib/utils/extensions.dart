@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'lang/localization.dart';
+import '../lang/localization.dart';
 
 extension Localization on BuildContext {
   /// Extension method on [BuildContext] that provides access to the localized
