@@ -4,6 +4,7 @@ import 'package:modern_art_app/data/artworks_dao.dart';
 import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/extensions.dart';
 import 'package:modern_art_app/ui/widgets/item_list.dart';
+import 'package:modern_art_app/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class ArtistDetailsPage extends StatelessWidget {
@@ -42,10 +43,7 @@ class ArtistDetailsPage extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.all(4.0),
-              child: Text(
-                  artist.yearDeath.isNotEmpty
-                      ? "${artist.yearBirth}–${artist.yearDeath}"
-                      : artist.yearBirth,
+              child: Text(lifespan(artist),
                   style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic)),
             ),
             Padding(
