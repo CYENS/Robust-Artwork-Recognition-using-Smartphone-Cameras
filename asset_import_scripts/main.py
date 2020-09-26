@@ -15,7 +15,7 @@ def get_json(sheet_number):
 
 
 def main():
-    json_types, sheet_numbers = ["artworks", "artists"], [3, 4]
+    json_types, sheet_numbers = ["artworks", "artists"], [8, 9]
 
     for json_type, sheet_number in zip(json_types, sheet_numbers):
         gsheet_json = get_json(sheet_number)
