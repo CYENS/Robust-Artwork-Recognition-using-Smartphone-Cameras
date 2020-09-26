@@ -75,3 +75,15 @@ Map<String, dynamic> parseItemMap(Map mapItem) =>
       //     k == "gsx\$id" ? int.parse(mapItem[k]["\$t"]) : mapItem[k]["\$t"],
       value: (k) => mapItem[k]["\$t"],
     );
+
+Map<String, dynamic> parseItemTranslations(
+        Map<String, dynamic> item, String languageCode) =>
+    Map<String, dynamic>.fromIterable(
+      // add languageCode here as additional key, so it's included in translations
+      item.keys.toList()..add("languageCode"),
+      key: (k) =>
+          k.endsWith("-$languageCode") ? k.replaceAll("-$languageCode", "") : k,
+      // note that key for languageCode must be in all lowercase, in order to
+      // be recognised by the json serializer
+      value: (k) => k == "languageCode" ? languageCode : item[k],
+    );
