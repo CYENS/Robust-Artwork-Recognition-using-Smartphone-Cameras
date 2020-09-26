@@ -57,7 +57,7 @@ void updateDbFromGSheets(ArtworksDao artworksDao, ArtistsDao artistsDao) async {
       .then((artworks) => artworks.forEach((entry) {
             var artwork = Artwork.fromJson(parseItemMap(entry));
             artworksDao.upsertArtwork(artwork);
-            print("Updated artwork ${artwork.title}");
+            print("Updated artwork ${artwork.name}");
           }));
 }
 
