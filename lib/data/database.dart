@@ -102,33 +102,6 @@ class ArtistTranslations extends Table {
   Set<Column> get primaryKey => {id, languageCode};
 }
 
-class Arts extends Table {
-  IntColumn get artId => integer().autoIncrement()();
-
-  @JsonKey("yearbirth")
-  TextColumn get yearBirth => text().nullable()();
-
-  @JsonKey("yeardeath")
-  TextColumn get yearDeath => text().nullable()();
-
-  TextColumn get photo => text().nullable()();
-}
-
-class ArtI18ns extends Table {
-  IntColumn get artId =>
-      integer().customConstraint("NULL REFERENCES arts(art_id)")();
-
-  // should specify json key
-  TextColumn get languageCode => text()();
-
-  TextColumn get name => text()();
-
-  TextColumn get biography => text().nullable()();
-
-  @override
-  Set<Column> get primaryKey => {artId, languageCode};
-}
-
 LazyDatabase _openConnection() {
   // the LazyDatabase util lets us find the right location for the file async.
   return LazyDatabase(() async {
@@ -204,24 +177,6 @@ class AppDatabase extends _$AppDatabase {
                             "Created entry for language $languageCode for artwork with id ${artwork.id}");
                       });
                     }));
-            // [1, 2, 3].forEach((id) {
-            //   into(arts).insertOnConflictUpdate(
-            //       Art(artId: id, yearBirth: "1950", yearDeath: "2050"));
-            // });
-            //
-            // [1, 2, 3].forEach((id) {
-            //   into(artI18ns).insertOnConflictUpdate(ArtI18n(
-            //       artId: id,
-            //       languageCode: "en",
-            //       name: "name $id",
-            //       biography: "biography $id"));
-            //
-            //   into(artI18ns).insertOnConflictUpdate(ArtI18n(
-            //       artId: id,
-            //       languageCode: "el",
-            //       name: "όνομα $id",
-            //       biography: "βιογραφικό $id"));
-            // });
           }
         },
       );
@@ -238,10 +193,3 @@ class AppDatabase extends _$AppDatabase {
 //                   trns: entry.readTable(artI18ns));
 //             }).toList());
 }
-
-// class ArtworkTranslated {
-//   final Art untr;
-//   final ArtI18n trns;
-//
-//   ArtworkTranslated({@required this.untr, @required this.trns});
-// }
