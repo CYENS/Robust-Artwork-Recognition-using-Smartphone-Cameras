@@ -23,7 +23,7 @@ def main():
         print(gsheet_json.text)
 
         # remove links to spreadsheet and personal information (email)
-        pattern = re.compile(r'https://.+?\.google\.com/.+?\"|\"m.+?ma@*')
+        pattern = re.compile(r'https://.+?\.google\.com/.+?\"|\"ms.+?ma@*')
 
         for i in re.findall(pattern, gsheet_json.text):
             print(i)
