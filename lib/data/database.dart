@@ -16,10 +16,10 @@ part 'database.g.dart';
 // 'flutter packages pub run build_runner watch'
 
 /// Path of locally cached json file with artists info.
-const String artistsJsonPath = "assets/data/artists.json";
+const String artistsJsonPath = "assets/data/artists2.json";
 
 /// Path of locally cached json file with artworks info.
-const String artworksJsonPath = "assets/data/artworks.json";
+const String artworksJsonPath = "assets/data/artworks2.json";
 
 /// Table for [Artwork]s in database.
 ///
@@ -145,7 +145,7 @@ LazyDatabase _openConnection() {
 /// During the first use of [AppDatabase], it is automatically populated from a
 /// Json file with the necessary information in assets.
 @UseMoor(
-    tables: [Artworks, Artists, Arts, ArtI18ns],
+    tables: [Artworks, ArtworkTranslations, Artists, ArtistTranslations],
     daos: [ArtworksDao, ArtistsDao])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
@@ -182,44 +182,44 @@ class AppDatabase extends _$AppDatabase {
                           "${artwork.artist}");
                     }));
 
-            [1, 2, 3].forEach((id) {
-              into(arts).insertOnConflictUpdate(
-                  Art(artId: id, yearBirth: "1950", yearDeath: "2050"));
-            });
-
-            [1, 2, 3].forEach((id) {
-              into(artI18ns).insertOnConflictUpdate(ArtI18n(
-                  artId: id,
-                  languageCode: "en",
-                  name: "name $id",
-                  biography: "biography $id"));
-
-              into(artI18ns).insertOnConflictUpdate(ArtI18n(
-                  artId: id,
-                  languageCode: "el",
-                  name: "όνομα $id",
-                  biography: "βιογραφικό $id"));
-            });
+            // [1, 2, 3].forEach((id) {
+            //   into(arts).insertOnConflictUpdate(
+            //       Art(artId: id, yearBirth: "1950", yearDeath: "2050"));
+            // });
+            //
+            // [1, 2, 3].forEach((id) {
+            //   into(artI18ns).insertOnConflictUpdate(ArtI18n(
+            //       artId: id,
+            //       languageCode: "en",
+            //       name: "name $id",
+            //       biography: "biography $id"));
+            //
+            //   into(artI18ns).insertOnConflictUpdate(ArtI18n(
+            //       artId: id,
+            //       languageCode: "el",
+            //       name: "όνομα $id",
+            //       biography: "βιογραφικό $id"));
+            // });
           }
         },
       );
 
-  Stream<List<ArtworkTranslated>> getAllArts(String language) =>
-      (select(arts).join([
-        leftOuterJoin(artI18ns, artI18ns.artId.equalsExp(arts.artId)),
-      ])
-            ..where(artI18ns.languageCode.equals(language)))
-          .watch()
-          .map((List<TypedResult> entries) => entries.map((entry) {
-                return ArtworkTranslated(
-                    untr: entry.readTable(arts),
-                    trns: entry.readTable(artI18ns));
-              }).toList());
+  // Stream<List<ArtworkTranslated>> getAllArts(String language) =>
+  //     (select(arts).join([
+  //       leftOuterJoin(artI18ns, artI18ns.artId.equalsExp(arts.artId)),
+  //     ])
+  //           ..where(artI18ns.languageCode.equals(language)))
+  //         .watch()
+  //         .map((List<TypedResult> entries) => entries.map((entry) {
+  //               return ArtworkTranslated(
+  //                   untr: entry.readTable(arts),
+  //                   trns: entry.readTable(artI18ns));
+  //             }).toList());
 }
 
-class ArtworkTranslated {
-  final Art untr;
-  final ArtI18n trns;
-
-  ArtworkTranslated({@required this.untr, @required this.trns});
-}
+// class ArtworkTranslated {
+//   final Art untr;
+//   final ArtI18n trns;
+//
+//   ArtworkTranslated({@required this.untr, @required this.trns});
+// }
