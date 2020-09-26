@@ -178,7 +178,7 @@ class AppDatabase extends _$AppDatabase {
                 .then((artworkEntries) => artworkEntries.forEach((entry) {
                       var artwork = Artwork.fromJson(parseItemMap(entry));
                       into(artworks).insertOnConflictUpdate(artwork);
-                      print("Created entry for artwork \"${artwork.title}\" by "
+                      print("Created entry for artwork \"${artwork.name}\" by "
                           "${artwork.artist}");
                     }));
 
