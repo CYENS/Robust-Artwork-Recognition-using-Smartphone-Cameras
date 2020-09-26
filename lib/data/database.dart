@@ -19,10 +19,10 @@ part 'database.g.dart';
 // 'flutter packages pub run build_runner watch'
 
 /// Path of locally cached json file with artists info.
-const String artistsJsonPath = "assets/data/artists2.json";
+const String artistsJsonPath = "assets/data/artists.json";
 
 /// Path of locally cached json file with artworks info.
-const String artworksJsonPath = "assets/data/artworks2.json";
+const String artworksJsonPath = "assets/data/artworks.json";
 
 /// Table for [Artwork]s in database.
 ///
