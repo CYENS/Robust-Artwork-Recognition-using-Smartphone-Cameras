@@ -9,33 +9,32 @@ part of 'database.dart';
 // ignore_for_file: unnecessary_brace_in_string_interps, unnecessary_this
 class Artwork extends DataClass implements Insertable<Artwork> {
   final String id;
-  final String title;
+  final String artistId;
   final String year;
+  final String name;
   final String description;
   final String artist;
-  final String fileName;
   Artwork(
       {@required this.id,
-      @required this.title,
+      @required this.artistId,
       this.year,
+      this.name,
       this.description,
-      this.artist,
-      this.fileName});
+      this.artist});
   factory Artwork.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
     final stringType = db.typeSystem.forDartType<String>();
     return Artwork(
       id: stringType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
-      title:
-          stringType.mapFromDatabaseResponse(data['${effectivePrefix}title']),
+      artistId: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}artist_id']),
       year: stringType.mapFromDatabaseResponse(data['${effectivePrefix}year']),
+      name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name']),
       description: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}description']),
       artist:
           stringType.mapFromDatabaseResponse(data['${effectivePrefix}artist']),
-      fileName: stringType
-          .mapFromDatabaseResponse(data['${effectivePrefix}file_name']),
     );
   }
   @override
@@ -44,11 +43,14 @@ class Artwork extends DataClass implements Insertable<Artwork> {
     if (!nullToAbsent || id != null) {
       map['id'] = Variable<String>(id);
     }
-    if (!nullToAbsent || title != null) {
-      map['title'] = Variable<String>(title);
+    if (!nullToAbsent || artistId != null) {
+      map['artist_id'] = Variable<String>(artistId);
     }
     if (!nullToAbsent || year != null) {
       map['year'] = Variable<String>(year);
+    }
+    if (!nullToAbsent || name != null) {
+      map['name'] = Variable<String>(name);
     }
     if (!nullToAbsent || description != null) {
       map['description'] = Variable<String>(description);
@@ -56,26 +58,22 @@ class Artwork extends DataClass implements Insertable<Artwork> {
     if (!nullToAbsent || artist != null) {
       map['artist'] = Variable<String>(artist);
     }
-    if (!nullToAbsent || fileName != null) {
-      map['file_name'] = Variable<String>(fileName);
-    }
     return map;
   }
 
   ArtworksCompanion toCompanion(bool nullToAbsent) {
     return ArtworksCompanion(
       id: id == null && nullToAbsent ? const Value.absent() : Value(id),
-      title:
-          title == null && nullToAbsent ? const Value.absent() : Value(title),
+      artistId: artistId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(artistId),
       year: year == null && nullToAbsent ? const Value.absent() : Value(year),
+      name: name == null && nullToAbsent ? const Value.absent() : Value(name),
       description: description == null && nullToAbsent
           ? const Value.absent()
           : Value(description),
       artist:
           artist == null && nullToAbsent ? const Value.absent() : Value(artist),
-      fileName: fileName == null && nullToAbsent
-          ? const Value.absent()
-          : Value(fileName),
     );
   }
 
@@ -84,11 +82,11 @@ class Artwork extends DataClass implements Insertable<Artwork> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return Artwork(
       id: serializer.fromJson<String>(json['id']),
-      title: serializer.fromJson<String>(json['title']),
+      artistId: serializer.fromJson<String>(json['artistid']),
       year: serializer.fromJson<String>(json['year']),
+      name: serializer.fromJson<String>(json['name']),
       description: serializer.fromJson<String>(json['description']),
       artist: serializer.fromJson<String>(json['artist']),
-      fileName: serializer.fromJson<String>(json['filename']),
     );
   }
   @override
@@ -96,38 +94,38 @@ class Artwork extends DataClass implements Insertable<Artwork> {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
-      'title': serializer.toJson<String>(title),
+      'artistid': serializer.toJson<String>(artistId),
       'year': serializer.toJson<String>(year),
+      'name': serializer.toJson<String>(name),
       'description': serializer.toJson<String>(description),
       'artist': serializer.toJson<String>(artist),
-      'filename': serializer.toJson<String>(fileName),
     };
   }
 
   Artwork copyWith(
           {String id,
-          String title,
+          String artistId,
           String year,
+          String name,
           String description,
-          String artist,
-          String fileName}) =>
+          String artist}) =>
       Artwork(
         id: id ?? this.id,
-        title: title ?? this.title,
+        artistId: artistId ?? this.artistId,
         year: year ?? this.year,
+        name: name ?? this.name,
         description: description ?? this.description,
         artist: artist ?? this.artist,
-        fileName: fileName ?? this.fileName,
       );
   @override
   String toString() {
     return (StringBuffer('Artwork(')
           ..write('id: $id, ')
-          ..write('title: $title, ')
+          ..write('artistId: $artistId, ')
           ..write('year: $year, ')
+          ..write('name: $name, ')
           ..write('description: $description, ')
-          ..write('artist: $artist, ')
-          ..write('fileName: $fileName')
+          ..write('artist: $artist')
           ..write(')'))
         .toString();
   }
@@ -136,79 +134,79 @@ class Artwork extends DataClass implements Insertable<Artwork> {
   int get hashCode => $mrjf($mrjc(
       id.hashCode,
       $mrjc(
-          title.hashCode,
+          artistId.hashCode,
           $mrjc(
               year.hashCode,
-              $mrjc(description.hashCode,
-                  $mrjc(artist.hashCode, fileName.hashCode))))));
+              $mrjc(name.hashCode,
+                  $mrjc(description.hashCode, artist.hashCode))))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is Artwork &&
           other.id == this.id &&
-          other.title == this.title &&
+          other.artistId == this.artistId &&
           other.year == this.year &&
+          other.name == this.name &&
           other.description == this.description &&
-          other.artist == this.artist &&
-          other.fileName == this.fileName);
+          other.artist == this.artist);
 }
 
 class ArtworksCompanion extends UpdateCompanion<Artwork> {
   final Value<String> id;
-  final Value<String> title;
+  final Value<String> artistId;
   final Value<String> year;
+  final Value<String> name;
   final Value<String> description;
   final Value<String> artist;
-  final Value<String> fileName;
   const ArtworksCompanion({
     this.id = const Value.absent(),
-    this.title = const Value.absent(),
+    this.artistId = const Value.absent(),
     this.year = const Value.absent(),
+    this.name = const Value.absent(),
     this.description = const Value.absent(),
     this.artist = const Value.absent(),
-    this.fileName = const Value.absent(),
   });
   ArtworksCompanion.insert({
     @required String id,
-    @required String title,
+    @required String artistId,
     this.year = const Value.absent(),
+    this.name = const Value.absent(),
     this.description = const Value.absent(),
     this.artist = const Value.absent(),
-    this.fileName = const Value.absent(),
   })  : id = Value(id),
-        title = Value(title);
+        artistId = Value(artistId);
   static Insertable<Artwork> custom({
     Expression<String> id,
-    Expression<String> title,
+    Expression<String> artistId,
     Expression<String> year,
+    Expression<String> name,
     Expression<String> description,
     Expression<String> artist,
-    Expression<String> fileName,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
-      if (title != null) 'title': title,
+      if (artistId != null) 'artist_id': artistId,
       if (year != null) 'year': year,
+      if (name != null) 'name': name,
       if (description != null) 'description': description,
       if (artist != null) 'artist': artist,
-      if (fileName != null) 'file_name': fileName,
     });
   }
 
   ArtworksCompanion copyWith(
       {Value<String> id,
-      Value<String> title,
+      Value<String> artistId,
       Value<String> year,
+      Value<String> name,
       Value<String> description,
-      Value<String> artist,
-      Value<String> fileName}) {
+      Value<String> artist}) {
     return ArtworksCompanion(
       id: id ?? this.id,
-      title: title ?? this.title,
+      artistId: artistId ?? this.artistId,
       year: year ?? this.year,
+      name: name ?? this.name,
       description: description ?? this.description,
       artist: artist ?? this.artist,
-      fileName: fileName ?? this.fileName,
     );
   }
 
@@ -218,20 +216,20 @@ class ArtworksCompanion extends UpdateCompanion<Artwork> {
     if (id.present) {
       map['id'] = Variable<String>(id.value);
     }
-    if (title.present) {
-      map['title'] = Variable<String>(title.value);
+    if (artistId.present) {
+      map['artist_id'] = Variable<String>(artistId.value);
     }
     if (year.present) {
       map['year'] = Variable<String>(year.value);
+    }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
     }
     if (description.present) {
       map['description'] = Variable<String>(description.value);
     }
     if (artist.present) {
       map['artist'] = Variable<String>(artist.value);
-    }
-    if (fileName.present) {
-      map['file_name'] = Variable<String>(fileName.value);
     }
     return map;
   }
@@ -240,11 +238,11 @@ class ArtworksCompanion extends UpdateCompanion<Artwork> {
   String toString() {
     return (StringBuffer('ArtworksCompanion(')
           ..write('id: $id, ')
-          ..write('title: $title, ')
+          ..write('artistId: $artistId, ')
           ..write('year: $year, ')
+          ..write('name: $name, ')
           ..write('description: $description, ')
-          ..write('artist: $artist, ')
-          ..write('fileName: $fileName')
+          ..write('artist: $artist')
           ..write(')'))
         .toString();
   }
@@ -266,13 +264,13 @@ class $ArtworksTable extends Artworks with TableInfo<$ArtworksTable, Artwork> {
     );
   }
 
-  final VerificationMeta _titleMeta = const VerificationMeta('title');
-  GeneratedTextColumn _title;
+  final VerificationMeta _artistIdMeta = const VerificationMeta('artistId');
+  GeneratedTextColumn _artistId;
   @override
-  GeneratedTextColumn get title => _title ??= _constructTitle();
-  GeneratedTextColumn _constructTitle() {
-    return GeneratedTextColumn('title', $tableName, false,
-        minTextLength: 1, maxTextLength: 32);
+  GeneratedTextColumn get artistId => _artistId ??= _constructArtistId();
+  GeneratedTextColumn _constructArtistId() {
+    return GeneratedTextColumn('artist_id', $tableName, false,
+        $customConstraints: 'NULL REFERENCES artists(name)');
   }
 
   final VerificationMeta _yearMeta = const VerificationMeta('year');
@@ -282,6 +280,18 @@ class $ArtworksTable extends Artworks with TableInfo<$ArtworksTable, Artwork> {
   GeneratedTextColumn _constructYear() {
     return GeneratedTextColumn(
       'year',
+      $tableName,
+      true,
+    );
+  }
+
+  final VerificationMeta _nameMeta = const VerificationMeta('name');
+  GeneratedTextColumn _name;
+  @override
+  GeneratedTextColumn get name => _name ??= _constructName();
+  GeneratedTextColumn _constructName() {
+    return GeneratedTextColumn(
+      'name',
       $tableName,
       true,
     );
@@ -306,17 +316,8 @@ class $ArtworksTable extends Artworks with TableInfo<$ArtworksTable, Artwork> {
   @override
   GeneratedTextColumn get artist => _artist ??= _constructArtist();
   GeneratedTextColumn _constructArtist() {
-    return GeneratedTextColumn('artist', $tableName, true,
-        $customConstraints: 'NULL REFERENCES artists(name)');
-  }
-
-  final VerificationMeta _fileNameMeta = const VerificationMeta('fileName');
-  GeneratedTextColumn _fileName;
-  @override
-  GeneratedTextColumn get fileName => _fileName ??= _constructFileName();
-  GeneratedTextColumn _constructFileName() {
     return GeneratedTextColumn(
-      'file_name',
+      'artist',
       $tableName,
       true,
     );
@@ -324,7 +325,7 @@ class $ArtworksTable extends Artworks with TableInfo<$ArtworksTable, Artwork> {
 
   @override
   List<GeneratedColumn> get $columns =>
-      [id, title, year, description, artist, fileName];
+      [id, artistId, year, name, description, artist];
   @override
   $ArtworksTable get asDslTable => this;
   @override
@@ -341,15 +342,19 @@ class $ArtworksTable extends Artworks with TableInfo<$ArtworksTable, Artwork> {
     } else if (isInserting) {
       context.missing(_idMeta);
     }
-    if (data.containsKey('title')) {
-      context.handle(
-          _titleMeta, title.isAcceptableOrUnknown(data['title'], _titleMeta));
+    if (data.containsKey('artist_id')) {
+      context.handle(_artistIdMeta,
+          artistId.isAcceptableOrUnknown(data['artist_id'], _artistIdMeta));
     } else if (isInserting) {
-      context.missing(_titleMeta);
+      context.missing(_artistIdMeta);
     }
     if (data.containsKey('year')) {
       context.handle(
           _yearMeta, year.isAcceptableOrUnknown(data['year'], _yearMeta));
+    }
+    if (data.containsKey('name')) {
+      context.handle(
+          _nameMeta, name.isAcceptableOrUnknown(data['name'], _nameMeta));
     }
     if (data.containsKey('description')) {
       context.handle(
@@ -360,10 +365,6 @@ class $ArtworksTable extends Artworks with TableInfo<$ArtworksTable, Artwork> {
     if (data.containsKey('artist')) {
       context.handle(_artistMeta,
           artist.isAcceptableOrUnknown(data['artist'], _artistMeta));
-    }
-    if (data.containsKey('file_name')) {
-      context.handle(_fileNameMeta,
-          fileName.isAcceptableOrUnknown(data['file_name'], _fileNameMeta));
     }
     return context;
   }
@@ -383,38 +384,37 @@ class $ArtworksTable extends Artworks with TableInfo<$ArtworksTable, Artwork> {
 }
 
 class Artist extends DataClass implements Insertable<Artist> {
-  final String name;
+  final String id;
   final String yearBirth;
   final String yearDeath;
+  final String name;
   final String biography;
-  final String fileName;
   Artist(
-      {@required this.name,
+      {@required this.id,
       this.yearBirth,
       this.yearDeath,
-      this.biography,
-      this.fileName});
+      this.name,
+      this.biography});
   factory Artist.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
     final stringType = db.typeSystem.forDartType<String>();
     return Artist(
-      name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name']),
+      id: stringType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       yearBirth: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}year_birth']),
       yearDeath: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}year_death']),
+      name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name']),
       biography: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}biography']),
-      fileName: stringType
-          .mapFromDatabaseResponse(data['${effectivePrefix}file_name']),
     );
   }
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (!nullToAbsent || name != null) {
-      map['name'] = Variable<String>(name);
+    if (!nullToAbsent || id != null) {
+      map['id'] = Variable<String>(id);
     }
     if (!nullToAbsent || yearBirth != null) {
       map['year_birth'] = Variable<String>(yearBirth);
@@ -422,30 +422,28 @@ class Artist extends DataClass implements Insertable<Artist> {
     if (!nullToAbsent || yearDeath != null) {
       map['year_death'] = Variable<String>(yearDeath);
     }
+    if (!nullToAbsent || name != null) {
+      map['name'] = Variable<String>(name);
+    }
     if (!nullToAbsent || biography != null) {
       map['biography'] = Variable<String>(biography);
-    }
-    if (!nullToAbsent || fileName != null) {
-      map['file_name'] = Variable<String>(fileName);
     }
     return map;
   }
 
   ArtistsCompanion toCompanion(bool nullToAbsent) {
     return ArtistsCompanion(
-      name: name == null && nullToAbsent ? const Value.absent() : Value(name),
+      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
       yearBirth: yearBirth == null && nullToAbsent
           ? const Value.absent()
           : Value(yearBirth),
       yearDeath: yearDeath == null && nullToAbsent
           ? const Value.absent()
           : Value(yearDeath),
+      name: name == null && nullToAbsent ? const Value.absent() : Value(name),
       biography: biography == null && nullToAbsent
           ? const Value.absent()
           : Value(biography),
-      fileName: fileName == null && nullToAbsent
-          ? const Value.absent()
-          : Value(fileName),
     );
   }
 
@@ -453,124 +451,124 @@ class Artist extends DataClass implements Insertable<Artist> {
       {ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return Artist(
-      name: serializer.fromJson<String>(json['name']),
+      id: serializer.fromJson<String>(json['id']),
       yearBirth: serializer.fromJson<String>(json['yearbirth']),
       yearDeath: serializer.fromJson<String>(json['yeardeath']),
+      name: serializer.fromJson<String>(json['name']),
       biography: serializer.fromJson<String>(json['biography']),
-      fileName: serializer.fromJson<String>(json['filename']),
     );
   }
   @override
   Map<String, dynamic> toJson({ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'name': serializer.toJson<String>(name),
+      'id': serializer.toJson<String>(id),
       'yearbirth': serializer.toJson<String>(yearBirth),
       'yeardeath': serializer.toJson<String>(yearDeath),
+      'name': serializer.toJson<String>(name),
       'biography': serializer.toJson<String>(biography),
-      'filename': serializer.toJson<String>(fileName),
     };
   }
 
   Artist copyWith(
-          {String name,
+          {String id,
           String yearBirth,
           String yearDeath,
-          String biography,
-          String fileName}) =>
+          String name,
+          String biography}) =>
       Artist(
-        name: name ?? this.name,
+        id: id ?? this.id,
         yearBirth: yearBirth ?? this.yearBirth,
         yearDeath: yearDeath ?? this.yearDeath,
+        name: name ?? this.name,
         biography: biography ?? this.biography,
-        fileName: fileName ?? this.fileName,
       );
   @override
   String toString() {
     return (StringBuffer('Artist(')
-          ..write('name: $name, ')
+          ..write('id: $id, ')
           ..write('yearBirth: $yearBirth, ')
           ..write('yearDeath: $yearDeath, ')
-          ..write('biography: $biography, ')
-          ..write('fileName: $fileName')
+          ..write('name: $name, ')
+          ..write('biography: $biography')
           ..write(')'))
         .toString();
   }
 
   @override
   int get hashCode => $mrjf($mrjc(
-      name.hashCode,
+      id.hashCode,
       $mrjc(
           yearBirth.hashCode,
-          $mrjc(yearDeath.hashCode,
-              $mrjc(biography.hashCode, fileName.hashCode)))));
+          $mrjc(
+              yearDeath.hashCode, $mrjc(name.hashCode, biography.hashCode)))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is Artist &&
-          other.name == this.name &&
+          other.id == this.id &&
           other.yearBirth == this.yearBirth &&
           other.yearDeath == this.yearDeath &&
-          other.biography == this.biography &&
-          other.fileName == this.fileName);
+          other.name == this.name &&
+          other.biography == this.biography);
 }
 
 class ArtistsCompanion extends UpdateCompanion<Artist> {
-  final Value<String> name;
+  final Value<String> id;
   final Value<String> yearBirth;
   final Value<String> yearDeath;
+  final Value<String> name;
   final Value<String> biography;
-  final Value<String> fileName;
   const ArtistsCompanion({
-    this.name = const Value.absent(),
+    this.id = const Value.absent(),
     this.yearBirth = const Value.absent(),
     this.yearDeath = const Value.absent(),
+    this.name = const Value.absent(),
     this.biography = const Value.absent(),
-    this.fileName = const Value.absent(),
   });
   ArtistsCompanion.insert({
-    @required String name,
+    @required String id,
     this.yearBirth = const Value.absent(),
     this.yearDeath = const Value.absent(),
+    this.name = const Value.absent(),
     this.biography = const Value.absent(),
-    this.fileName = const Value.absent(),
-  }) : name = Value(name);
+  }) : id = Value(id);
   static Insertable<Artist> custom({
-    Expression<String> name,
+    Expression<String> id,
     Expression<String> yearBirth,
     Expression<String> yearDeath,
+    Expression<String> name,
     Expression<String> biography,
-    Expression<String> fileName,
   }) {
     return RawValuesInsertable({
-      if (name != null) 'name': name,
+      if (id != null) 'id': id,
       if (yearBirth != null) 'year_birth': yearBirth,
       if (yearDeath != null) 'year_death': yearDeath,
+      if (name != null) 'name': name,
       if (biography != null) 'biography': biography,
-      if (fileName != null) 'file_name': fileName,
     });
   }
 
   ArtistsCompanion copyWith(
-      {Value<String> name,
+      {Value<String> id,
       Value<String> yearBirth,
       Value<String> yearDeath,
-      Value<String> biography,
-      Value<String> fileName}) {
+      Value<String> name,
+      Value<String> biography}) {
     return ArtistsCompanion(
-      name: name ?? this.name,
+      id: id ?? this.id,
       yearBirth: yearBirth ?? this.yearBirth,
       yearDeath: yearDeath ?? this.yearDeath,
+      name: name ?? this.name,
       biography: biography ?? this.biography,
-      fileName: fileName ?? this.fileName,
     );
   }
 
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (name.present) {
-      map['name'] = Variable<String>(name.value);
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
     }
     if (yearBirth.present) {
       map['year_birth'] = Variable<String>(yearBirth.value);
@@ -578,11 +576,11 @@ class ArtistsCompanion extends UpdateCompanion<Artist> {
     if (yearDeath.present) {
       map['year_death'] = Variable<String>(yearDeath.value);
     }
+    if (name.present) {
+      map['name'] = Variable<String>(name.value);
+    }
     if (biography.present) {
       map['biography'] = Variable<String>(biography.value);
-    }
-    if (fileName.present) {
-      map['file_name'] = Variable<String>(fileName.value);
     }
     return map;
   }
@@ -590,11 +588,11 @@ class ArtistsCompanion extends UpdateCompanion<Artist> {
   @override
   String toString() {
     return (StringBuffer('ArtistsCompanion(')
-          ..write('name: $name, ')
+          ..write('id: $id, ')
           ..write('yearBirth: $yearBirth, ')
           ..write('yearDeath: $yearDeath, ')
-          ..write('biography: $biography, ')
-          ..write('fileName: $fileName')
+          ..write('name: $name, ')
+          ..write('biography: $biography')
           ..write(')'))
         .toString();
   }
@@ -604,13 +602,13 @@ class $ArtistsTable extends Artists with TableInfo<$ArtistsTable, Artist> {
   final GeneratedDatabase _db;
   final String _alias;
   $ArtistsTable(this._db, [this._alias]);
-  final VerificationMeta _nameMeta = const VerificationMeta('name');
-  GeneratedTextColumn _name;
+  final VerificationMeta _idMeta = const VerificationMeta('id');
+  GeneratedTextColumn _id;
   @override
-  GeneratedTextColumn get name => _name ??= _constructName();
-  GeneratedTextColumn _constructName() {
+  GeneratedTextColumn get id => _id ??= _constructId();
+  GeneratedTextColumn _constructId() {
     return GeneratedTextColumn(
-      'name',
+      'id',
       $tableName,
       false,
     );
@@ -640,6 +638,18 @@ class $ArtistsTable extends Artists with TableInfo<$ArtistsTable, Artist> {
     );
   }
 
+  final VerificationMeta _nameMeta = const VerificationMeta('name');
+  GeneratedTextColumn _name;
+  @override
+  GeneratedTextColumn get name => _name ??= _constructName();
+  GeneratedTextColumn _constructName() {
+    return GeneratedTextColumn(
+      'name',
+      $tableName,
+      true,
+    );
+  }
+
   final VerificationMeta _biographyMeta = const VerificationMeta('biography');
   GeneratedTextColumn _biography;
   @override
@@ -652,21 +662,9 @@ class $ArtistsTable extends Artists with TableInfo<$ArtistsTable, Artist> {
     );
   }
 
-  final VerificationMeta _fileNameMeta = const VerificationMeta('fileName');
-  GeneratedTextColumn _fileName;
-  @override
-  GeneratedTextColumn get fileName => _fileName ??= _constructFileName();
-  GeneratedTextColumn _constructFileName() {
-    return GeneratedTextColumn(
-      'file_name',
-      $tableName,
-      true,
-    );
-  }
-
   @override
   List<GeneratedColumn> get $columns =>
-      [name, yearBirth, yearDeath, biography, fileName];
+      [id, yearBirth, yearDeath, name, biography];
   @override
   $ArtistsTable get asDslTable => this;
   @override
@@ -678,11 +676,10 @@ class $ArtistsTable extends Artists with TableInfo<$ArtistsTable, Artist> {
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
-    if (data.containsKey('name')) {
-      context.handle(
-          _nameMeta, name.isAcceptableOrUnknown(data['name'], _nameMeta));
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
     } else if (isInserting) {
-      context.missing(_nameMeta);
+      context.missing(_idMeta);
     }
     if (data.containsKey('year_birth')) {
       context.handle(_yearBirthMeta,
@@ -692,19 +689,19 @@ class $ArtistsTable extends Artists with TableInfo<$ArtistsTable, Artist> {
       context.handle(_yearDeathMeta,
           yearDeath.isAcceptableOrUnknown(data['year_death'], _yearDeathMeta));
     }
+    if (data.containsKey('name')) {
+      context.handle(
+          _nameMeta, name.isAcceptableOrUnknown(data['name'], _nameMeta));
+    }
     if (data.containsKey('biography')) {
       context.handle(_biographyMeta,
           biography.isAcceptableOrUnknown(data['biography'], _biographyMeta));
-    }
-    if (data.containsKey('file_name')) {
-      context.handle(_fileNameMeta,
-          fileName.isAcceptableOrUnknown(data['file_name'], _fileNameMeta));
     }
     return context;
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {name};
+  Set<GeneratedColumn> get $primaryKey => {id};
   @override
   Artist map(Map<String, dynamic> data, {String tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;

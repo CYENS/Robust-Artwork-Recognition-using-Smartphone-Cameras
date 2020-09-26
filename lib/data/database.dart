@@ -32,25 +32,46 @@ class Artworks extends Table {
   @override
   Set<Column> get primaryKey => {id};
 
-  TextColumn get title => text().withLength(min: 1, max: 32)();
+  // GSheets returns columns keys in all lowercase, so it's necessary to specify
+  // the JsonKey below. Setting the column title in the spreadsheet as "artist_id",
+  // for example, does not help either, since GSheets removes the underscore in json
+  @JsonKey("artistid")
+  TextColumn get artistId =>
+      text().customConstraint("NULL REFERENCES artists(name)")();
 
   TextColumn get year => text().nullable()();
 
+  // the fields below are specified so they are included in the generated Artwork
+  // class, but will remain null in the table, and only filled on demand from
+  // the ArtworkTranslations table, according to the desired locale
+  TextColumn get name => text().nullable()();
+
   TextColumn get description => text().nullable()();
 
-  TextColumn get artist =>
-      text().nullable().customConstraint("NULL REFERENCES artists(name)")();
+  TextColumn get artist => text().nullable()();
+}
 
-  // GSheets returns columns keys in all lowercase, so it's necessary to specify
-  // the JsonKey below. Setting the column title in the spreadsheet as "file_name",
-  // for example, does not help either, since GSheets removes the underscore
-  @JsonKey("filename")
-  TextColumn get fileName => text().nullable()();
+class ArtworkTranslations extends Table {
+  TextColumn get artworkId =>
+      text().customConstraint("NULL REFERENCES artworks(id)")();
+
+  @JsonKey("languagecode")
+  TextColumn get languageCode => text()();
+
+  TextColumn get name => text()();
+
+  TextColumn get description => text().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {artworkId, languageCode};
 }
 
 /// Table for [Artist]s in database.
 class Artists extends Table {
-  TextColumn get name => text()();
+  TextColumn get id => text()();
+
+  @override
+  Set<Column> get primaryKey => {id};
 
   @JsonKey("yearbirth")
   TextColumn get yearBirth => text().nullable()();
@@ -58,13 +79,27 @@ class Artists extends Table {
   @JsonKey("yeardeath")
   TextColumn get yearDeath => text().nullable()();
 
+  // the fields below are specified so they are included in the generated Artist
+  // class, but will remain null in the table, and only filled on demand from
+  // the ArtistTranslations table, according to the desired locale
+  TextColumn get name => text().nullable()();
+
+  TextColumn get biography => text().nullable()();
+}
+
+class ArtistTranslations extends Table {
+  TextColumn get artistId =>
+      text().customConstraint("NULL REFERENCES artists(id)")();
+
+  @JsonKey("languagecode")
+  TextColumn get languageCode => text()();
+
+  TextColumn get name => text()();
+
   TextColumn get biography => text().nullable()();
 
-  @JsonKey("filename")
-  TextColumn get fileName => text().nullable()();
-
   @override
-  Set<Column> get primaryKey => {name};
+  Set<Column> get primaryKey => {artistId, languageCode};
 }
 
 class Arts extends Table {
