@@ -3,12 +3,15 @@ import 'dart:io';
 import 'package:modern_art_app/data/artists_dao.dart';
 import 'package:modern_art_app/data/artworks_dao.dart';
 import 'package:modern_art_app/data/data_processing.dart';
+import 'package:modern_art_app/lang/localization.dart';
 import 'package:moor/ffi.dart';
 import 'package:moor/moor.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
 part 'database.g.dart';
+
+// TODO add supported locales table
 
 // To auto-generate the necessary moor-related code, run the following in the terminal:
 // 'flutter packages pub run build_runner build'
@@ -37,7 +40,7 @@ class Artworks extends Table {
   // for example, does not help either, since GSheets removes the underscore in json
   @JsonKey("artistid")
   TextColumn get artistId =>
-      text().customConstraint("NULL REFERENCES artists(name)")();
+      text().customConstraint("NULL REFERENCES artists(id)")();
 
   TextColumn get year => text().nullable()();
 
@@ -52,10 +55,9 @@ class Artworks extends Table {
 }
 
 class ArtworkTranslations extends Table {
-  TextColumn get artworkId =>
+  TextColumn get id =>
       text().customConstraint("NULL REFERENCES artworks(id)")();
 
-  @JsonKey("languagecode")
   TextColumn get languageCode => text()();
 
   TextColumn get name => text()();
@@ -63,7 +65,7 @@ class ArtworkTranslations extends Table {
   TextColumn get description => text().nullable()();
 
   @override
-  Set<Column> get primaryKey => {artworkId, languageCode};
+  Set<Column> get primaryKey => {id, languageCode};
 }
 
 /// Table for [Artist]s in database.
@@ -88,10 +90,8 @@ class Artists extends Table {
 }
 
 class ArtistTranslations extends Table {
-  TextColumn get artistId =>
-      text().customConstraint("NULL REFERENCES artists(id)")();
+  TextColumn get id => text().customConstraint("NULL REFERENCES artists(id)")();
 
-  @JsonKey("languagecode")
   TextColumn get languageCode => text()();
 
   TextColumn get name => text()();
@@ -99,7 +99,7 @@ class ArtistTranslations extends Table {
   TextColumn get biography => text().nullable()();
 
   @override
-  Set<Column> get primaryKey => {artistId, languageCode};
+  Set<Column> get primaryKey => {id, languageCode};
 }
 
 class Arts extends Table {
@@ -162,26 +162,48 @@ class AppDatabase extends _$AppDatabase {
           /// Enables foreign keys in the db.
           await customStatement("PRAGMA foreign_keys = ON");
 
-          /// When db is first created, populate it from json files in assets.
+          /// When db is first created, populate it from cached json asset files.
           if (details.wasCreated) {
-            // artists must be inserted first, since artist name is a foreign
-            // key in artworks table
+            // determine supported locales
+            var languageCodes = AppLocalizations.languages.keys
+                .toList()
+                .map((locale) => locale.languageCode)
+                .toList();
+
+            // TODO make logic into function that accepts generics, since it's the same code repeated twice
+            // populate artists and artistTranslations tables
             await getLocalJsonItemList(artistsJsonPath)
                 .then((artistEntries) => artistEntries.forEach((entry) {
-                      var artist = Artist.fromJson(parseItemMap(entry));
+                      var parsedEntry = parseItemMap(entry);
+                      var artist = Artist.fromJson(parsedEntry);
                       into(artists).insertOnConflictUpdate(artist);
-                      print("Created entry for artist ${artist.name}");
+                      print("Created entry for artist with id ${artist.id}");
+                      languageCodes.forEach((languageCode) {
+                        var translatedEntry = ArtistTranslation.fromJson(
+                            parseItemTranslations(parsedEntry, languageCode));
+                        into(artistTranslations)
+                            .insertOnConflictUpdate(translatedEntry);
+                        print(
+                            "Created entry for language $languageCode for artist with id ${artist.id}");
+                      });
                     }));
 
-            // insert artworks
+            // populate artworks and artworkTranslations tables
             await getLocalJsonItemList(artworksJsonPath)
                 .then((artworkEntries) => artworkEntries.forEach((entry) {
-                      var artwork = Artwork.fromJson(parseItemMap(entry));
+                      var parsedEntry = parseItemMap(entry);
+                      var artwork = Artwork.fromJson(parsedEntry);
                       into(artworks).insertOnConflictUpdate(artwork);
-                      print("Created entry for artwork \"${artwork.name}\" by "
-                          "${artwork.artist}");
+                      print("Created entry for artwork with id ${artwork.id}");
+                      languageCodes.forEach((languageCode) {
+                        var translatedEntry = ArtworkTranslation.fromJson(
+                            parseItemTranslations(parsedEntry, languageCode));
+                        into(artworkTranslations)
+                            .insertOnConflictUpdate(translatedEntry);
+                        print(
+                            "Created entry for language $languageCode for artwork with id ${artwork.id}");
+                      });
                     }));
-
             // [1, 2, 3].forEach((id) {
             //   into(arts).insertOnConflictUpdate(
             //       Art(artId: id, yearBirth: "1950", yearDeath: "2050"));
@@ -204,17 +226,17 @@ class AppDatabase extends _$AppDatabase {
         },
       );
 
-  // Stream<List<ArtworkTranslated>> getAllArts(String language) =>
-  //     (select(arts).join([
-  //       leftOuterJoin(artI18ns, artI18ns.artId.equalsExp(arts.artId)),
-  //     ])
-  //           ..where(artI18ns.languageCode.equals(language)))
-  //         .watch()
-  //         .map((List<TypedResult> entries) => entries.map((entry) {
-  //               return ArtworkTranslated(
-  //                   untr: entry.readTable(arts),
-  //                   trns: entry.readTable(artI18ns));
-  //             }).toList());
+// Stream<List<ArtworkTranslated>> getAllArts(String language) =>
+//     (select(arts).join([
+//       leftOuterJoin(artI18ns, artI18ns.artId.equalsExp(arts.artId)),
+//     ])
+//           ..where(artI18ns.languageCode.equals(language)))
+//         .watch()
+//         .map((List<TypedResult> entries) => entries.map((entry) {
+//               return ArtworkTranslated(
+//                   untr: entry.readTable(arts),
+//                   trns: entry.readTable(artI18ns));
+//             }).toList());
 }
 
 // class ArtworkTranslated {

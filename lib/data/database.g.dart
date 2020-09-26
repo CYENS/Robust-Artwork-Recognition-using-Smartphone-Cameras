@@ -270,7 +270,7 @@ class $ArtworksTable extends Artworks with TableInfo<$ArtworksTable, Artwork> {
   GeneratedTextColumn get artistId => _artistId ??= _constructArtistId();
   GeneratedTextColumn _constructArtistId() {
     return GeneratedTextColumn('artist_id', $tableName, false,
-        $customConstraints: 'NULL REFERENCES artists(name)');
+        $customConstraints: 'NULL REFERENCES artists(id)');
   }
 
   final VerificationMeta _yearMeta = const VerificationMeta('year');
@@ -385,12 +385,12 @@ class $ArtworksTable extends Artworks with TableInfo<$ArtworksTable, Artwork> {
 
 class ArtworkTranslation extends DataClass
     implements Insertable<ArtworkTranslation> {
-  final String artworkId;
+  final String id;
   final String languageCode;
   final String name;
   final String description;
   ArtworkTranslation(
-      {@required this.artworkId,
+      {@required this.id,
       @required this.languageCode,
       @required this.name,
       this.description});
@@ -400,8 +400,7 @@ class ArtworkTranslation extends DataClass
     final effectivePrefix = prefix ?? '';
     final stringType = db.typeSystem.forDartType<String>();
     return ArtworkTranslation(
-      artworkId: stringType
-          .mapFromDatabaseResponse(data['${effectivePrefix}artwork_id']),
+      id: stringType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       languageCode: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}language_code']),
       name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name']),
@@ -412,8 +411,8 @@ class ArtworkTranslation extends DataClass
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (!nullToAbsent || artworkId != null) {
-      map['artwork_id'] = Variable<String>(artworkId);
+    if (!nullToAbsent || id != null) {
+      map['id'] = Variable<String>(id);
     }
     if (!nullToAbsent || languageCode != null) {
       map['language_code'] = Variable<String>(languageCode);
@@ -429,9 +428,7 @@ class ArtworkTranslation extends DataClass
 
   ArtworkTranslationsCompanion toCompanion(bool nullToAbsent) {
     return ArtworkTranslationsCompanion(
-      artworkId: artworkId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(artworkId),
+      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
       languageCode: languageCode == null && nullToAbsent
           ? const Value.absent()
           : Value(languageCode),
@@ -446,8 +443,8 @@ class ArtworkTranslation extends DataClass
       {ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return ArtworkTranslation(
-      artworkId: serializer.fromJson<String>(json['artworkId']),
-      languageCode: serializer.fromJson<String>(json['languagecode']),
+      id: serializer.fromJson<String>(json['id']),
+      languageCode: serializer.fromJson<String>(json['languageCode']),
       name: serializer.fromJson<String>(json['name']),
       description: serializer.fromJson<String>(json['description']),
     );
@@ -456,20 +453,17 @@ class ArtworkTranslation extends DataClass
   Map<String, dynamic> toJson({ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'artworkId': serializer.toJson<String>(artworkId),
-      'languagecode': serializer.toJson<String>(languageCode),
+      'id': serializer.toJson<String>(id),
+      'languageCode': serializer.toJson<String>(languageCode),
       'name': serializer.toJson<String>(name),
       'description': serializer.toJson<String>(description),
     };
   }
 
   ArtworkTranslation copyWith(
-          {String artworkId,
-          String languageCode,
-          String name,
-          String description}) =>
+          {String id, String languageCode, String name, String description}) =>
       ArtworkTranslation(
-        artworkId: artworkId ?? this.artworkId,
+        id: id ?? this.id,
         languageCode: languageCode ?? this.languageCode,
         name: name ?? this.name,
         description: description ?? this.description,
@@ -477,7 +471,7 @@ class ArtworkTranslation extends DataClass
   @override
   String toString() {
     return (StringBuffer('ArtworkTranslation(')
-          ..write('artworkId: $artworkId, ')
+          ..write('id: $id, ')
           ..write('languageCode: $languageCode, ')
           ..write('name: $name, ')
           ..write('description: $description')
@@ -487,46 +481,46 @@ class ArtworkTranslation extends DataClass
 
   @override
   int get hashCode => $mrjf($mrjc(
-      artworkId.hashCode,
+      id.hashCode,
       $mrjc(
           languageCode.hashCode, $mrjc(name.hashCode, description.hashCode))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is ArtworkTranslation &&
-          other.artworkId == this.artworkId &&
+          other.id == this.id &&
           other.languageCode == this.languageCode &&
           other.name == this.name &&
           other.description == this.description);
 }
 
 class ArtworkTranslationsCompanion extends UpdateCompanion<ArtworkTranslation> {
-  final Value<String> artworkId;
+  final Value<String> id;
   final Value<String> languageCode;
   final Value<String> name;
   final Value<String> description;
   const ArtworkTranslationsCompanion({
-    this.artworkId = const Value.absent(),
+    this.id = const Value.absent(),
     this.languageCode = const Value.absent(),
     this.name = const Value.absent(),
     this.description = const Value.absent(),
   });
   ArtworkTranslationsCompanion.insert({
-    @required String artworkId,
+    @required String id,
     @required String languageCode,
     @required String name,
     this.description = const Value.absent(),
-  })  : artworkId = Value(artworkId),
+  })  : id = Value(id),
         languageCode = Value(languageCode),
         name = Value(name);
   static Insertable<ArtworkTranslation> custom({
-    Expression<String> artworkId,
+    Expression<String> id,
     Expression<String> languageCode,
     Expression<String> name,
     Expression<String> description,
   }) {
     return RawValuesInsertable({
-      if (artworkId != null) 'artwork_id': artworkId,
+      if (id != null) 'id': id,
       if (languageCode != null) 'language_code': languageCode,
       if (name != null) 'name': name,
       if (description != null) 'description': description,
@@ -534,12 +528,12 @@ class ArtworkTranslationsCompanion extends UpdateCompanion<ArtworkTranslation> {
   }
 
   ArtworkTranslationsCompanion copyWith(
-      {Value<String> artworkId,
+      {Value<String> id,
       Value<String> languageCode,
       Value<String> name,
       Value<String> description}) {
     return ArtworkTranslationsCompanion(
-      artworkId: artworkId ?? this.artworkId,
+      id: id ?? this.id,
       languageCode: languageCode ?? this.languageCode,
       name: name ?? this.name,
       description: description ?? this.description,
@@ -549,8 +543,8 @@ class ArtworkTranslationsCompanion extends UpdateCompanion<ArtworkTranslation> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (artworkId.present) {
-      map['artwork_id'] = Variable<String>(artworkId.value);
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
     }
     if (languageCode.present) {
       map['language_code'] = Variable<String>(languageCode.value);
@@ -567,7 +561,7 @@ class ArtworkTranslationsCompanion extends UpdateCompanion<ArtworkTranslation> {
   @override
   String toString() {
     return (StringBuffer('ArtworkTranslationsCompanion(')
-          ..write('artworkId: $artworkId, ')
+          ..write('id: $id, ')
           ..write('languageCode: $languageCode, ')
           ..write('name: $name, ')
           ..write('description: $description')
@@ -581,12 +575,12 @@ class $ArtworkTranslationsTable extends ArtworkTranslations
   final GeneratedDatabase _db;
   final String _alias;
   $ArtworkTranslationsTable(this._db, [this._alias]);
-  final VerificationMeta _artworkIdMeta = const VerificationMeta('artworkId');
-  GeneratedTextColumn _artworkId;
+  final VerificationMeta _idMeta = const VerificationMeta('id');
+  GeneratedTextColumn _id;
   @override
-  GeneratedTextColumn get artworkId => _artworkId ??= _constructArtworkId();
-  GeneratedTextColumn _constructArtworkId() {
-    return GeneratedTextColumn('artwork_id', $tableName, false,
+  GeneratedTextColumn get id => _id ??= _constructId();
+  GeneratedTextColumn _constructId() {
+    return GeneratedTextColumn('id', $tableName, false,
         $customConstraints: 'NULL REFERENCES artworks(id)');
   }
 
@@ -631,8 +625,7 @@ class $ArtworkTranslationsTable extends ArtworkTranslations
   }
 
   @override
-  List<GeneratedColumn> get $columns =>
-      [artworkId, languageCode, name, description];
+  List<GeneratedColumn> get $columns => [id, languageCode, name, description];
   @override
   $ArtworkTranslationsTable get asDslTable => this;
   @override
@@ -644,11 +637,10 @@ class $ArtworkTranslationsTable extends ArtworkTranslations
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
-    if (data.containsKey('artwork_id')) {
-      context.handle(_artworkIdMeta,
-          artworkId.isAcceptableOrUnknown(data['artwork_id'], _artworkIdMeta));
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
     } else if (isInserting) {
-      context.missing(_artworkIdMeta);
+      context.missing(_idMeta);
     }
     if (data.containsKey('language_code')) {
       context.handle(
@@ -674,7 +666,7 @@ class $ArtworkTranslationsTable extends ArtworkTranslations
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {artworkId, languageCode};
+  Set<GeneratedColumn> get $primaryKey => {id, languageCode};
   @override
   ArtworkTranslation map(Map<String, dynamic> data, {String tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
@@ -1020,12 +1012,12 @@ class $ArtistsTable extends Artists with TableInfo<$ArtistsTable, Artist> {
 
 class ArtistTranslation extends DataClass
     implements Insertable<ArtistTranslation> {
-  final String artistId;
+  final String id;
   final String languageCode;
   final String name;
   final String biography;
   ArtistTranslation(
-      {@required this.artistId,
+      {@required this.id,
       @required this.languageCode,
       @required this.name,
       this.biography});
@@ -1035,8 +1027,7 @@ class ArtistTranslation extends DataClass
     final effectivePrefix = prefix ?? '';
     final stringType = db.typeSystem.forDartType<String>();
     return ArtistTranslation(
-      artistId: stringType
-          .mapFromDatabaseResponse(data['${effectivePrefix}artist_id']),
+      id: stringType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       languageCode: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}language_code']),
       name: stringType.mapFromDatabaseResponse(data['${effectivePrefix}name']),
@@ -1047,8 +1038,8 @@ class ArtistTranslation extends DataClass
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (!nullToAbsent || artistId != null) {
-      map['artist_id'] = Variable<String>(artistId);
+    if (!nullToAbsent || id != null) {
+      map['id'] = Variable<String>(id);
     }
     if (!nullToAbsent || languageCode != null) {
       map['language_code'] = Variable<String>(languageCode);
@@ -1064,9 +1055,7 @@ class ArtistTranslation extends DataClass
 
   ArtistTranslationsCompanion toCompanion(bool nullToAbsent) {
     return ArtistTranslationsCompanion(
-      artistId: artistId == null && nullToAbsent
-          ? const Value.absent()
-          : Value(artistId),
+      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
       languageCode: languageCode == null && nullToAbsent
           ? const Value.absent()
           : Value(languageCode),
@@ -1081,8 +1070,8 @@ class ArtistTranslation extends DataClass
       {ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return ArtistTranslation(
-      artistId: serializer.fromJson<String>(json['artistId']),
-      languageCode: serializer.fromJson<String>(json['languagecode']),
+      id: serializer.fromJson<String>(json['id']),
+      languageCode: serializer.fromJson<String>(json['languageCode']),
       name: serializer.fromJson<String>(json['name']),
       biography: serializer.fromJson<String>(json['biography']),
     );
@@ -1091,20 +1080,17 @@ class ArtistTranslation extends DataClass
   Map<String, dynamic> toJson({ValueSerializer serializer}) {
     serializer ??= moorRuntimeOptions.defaultSerializer;
     return <String, dynamic>{
-      'artistId': serializer.toJson<String>(artistId),
-      'languagecode': serializer.toJson<String>(languageCode),
+      'id': serializer.toJson<String>(id),
+      'languageCode': serializer.toJson<String>(languageCode),
       'name': serializer.toJson<String>(name),
       'biography': serializer.toJson<String>(biography),
     };
   }
 
   ArtistTranslation copyWith(
-          {String artistId,
-          String languageCode,
-          String name,
-          String biography}) =>
+          {String id, String languageCode, String name, String biography}) =>
       ArtistTranslation(
-        artistId: artistId ?? this.artistId,
+        id: id ?? this.id,
         languageCode: languageCode ?? this.languageCode,
         name: name ?? this.name,
         biography: biography ?? this.biography,
@@ -1112,7 +1098,7 @@ class ArtistTranslation extends DataClass
   @override
   String toString() {
     return (StringBuffer('ArtistTranslation(')
-          ..write('artistId: $artistId, ')
+          ..write('id: $id, ')
           ..write('languageCode: $languageCode, ')
           ..write('name: $name, ')
           ..write('biography: $biography')
@@ -1121,45 +1107,45 @@ class ArtistTranslation extends DataClass
   }
 
   @override
-  int get hashCode => $mrjf($mrjc(artistId.hashCode,
+  int get hashCode => $mrjf($mrjc(id.hashCode,
       $mrjc(languageCode.hashCode, $mrjc(name.hashCode, biography.hashCode))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is ArtistTranslation &&
-          other.artistId == this.artistId &&
+          other.id == this.id &&
           other.languageCode == this.languageCode &&
           other.name == this.name &&
           other.biography == this.biography);
 }
 
 class ArtistTranslationsCompanion extends UpdateCompanion<ArtistTranslation> {
-  final Value<String> artistId;
+  final Value<String> id;
   final Value<String> languageCode;
   final Value<String> name;
   final Value<String> biography;
   const ArtistTranslationsCompanion({
-    this.artistId = const Value.absent(),
+    this.id = const Value.absent(),
     this.languageCode = const Value.absent(),
     this.name = const Value.absent(),
     this.biography = const Value.absent(),
   });
   ArtistTranslationsCompanion.insert({
-    @required String artistId,
+    @required String id,
     @required String languageCode,
     @required String name,
     this.biography = const Value.absent(),
-  })  : artistId = Value(artistId),
+  })  : id = Value(id),
         languageCode = Value(languageCode),
         name = Value(name);
   static Insertable<ArtistTranslation> custom({
-    Expression<String> artistId,
+    Expression<String> id,
     Expression<String> languageCode,
     Expression<String> name,
     Expression<String> biography,
   }) {
     return RawValuesInsertable({
-      if (artistId != null) 'artist_id': artistId,
+      if (id != null) 'id': id,
       if (languageCode != null) 'language_code': languageCode,
       if (name != null) 'name': name,
       if (biography != null) 'biography': biography,
@@ -1167,12 +1153,12 @@ class ArtistTranslationsCompanion extends UpdateCompanion<ArtistTranslation> {
   }
 
   ArtistTranslationsCompanion copyWith(
-      {Value<String> artistId,
+      {Value<String> id,
       Value<String> languageCode,
       Value<String> name,
       Value<String> biography}) {
     return ArtistTranslationsCompanion(
-      artistId: artistId ?? this.artistId,
+      id: id ?? this.id,
       languageCode: languageCode ?? this.languageCode,
       name: name ?? this.name,
       biography: biography ?? this.biography,
@@ -1182,8 +1168,8 @@ class ArtistTranslationsCompanion extends UpdateCompanion<ArtistTranslation> {
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
     final map = <String, Expression>{};
-    if (artistId.present) {
-      map['artist_id'] = Variable<String>(artistId.value);
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
     }
     if (languageCode.present) {
       map['language_code'] = Variable<String>(languageCode.value);
@@ -1200,7 +1186,7 @@ class ArtistTranslationsCompanion extends UpdateCompanion<ArtistTranslation> {
   @override
   String toString() {
     return (StringBuffer('ArtistTranslationsCompanion(')
-          ..write('artistId: $artistId, ')
+          ..write('id: $id, ')
           ..write('languageCode: $languageCode, ')
           ..write('name: $name, ')
           ..write('biography: $biography')
@@ -1214,12 +1200,12 @@ class $ArtistTranslationsTable extends ArtistTranslations
   final GeneratedDatabase _db;
   final String _alias;
   $ArtistTranslationsTable(this._db, [this._alias]);
-  final VerificationMeta _artistIdMeta = const VerificationMeta('artistId');
-  GeneratedTextColumn _artistId;
+  final VerificationMeta _idMeta = const VerificationMeta('id');
+  GeneratedTextColumn _id;
   @override
-  GeneratedTextColumn get artistId => _artistId ??= _constructArtistId();
-  GeneratedTextColumn _constructArtistId() {
-    return GeneratedTextColumn('artist_id', $tableName, false,
+  GeneratedTextColumn get id => _id ??= _constructId();
+  GeneratedTextColumn _constructId() {
+    return GeneratedTextColumn('id', $tableName, false,
         $customConstraints: 'NULL REFERENCES artists(id)');
   }
 
@@ -1262,8 +1248,7 @@ class $ArtistTranslationsTable extends ArtistTranslations
   }
 
   @override
-  List<GeneratedColumn> get $columns =>
-      [artistId, languageCode, name, biography];
+  List<GeneratedColumn> get $columns => [id, languageCode, name, biography];
   @override
   $ArtistTranslationsTable get asDslTable => this;
   @override
@@ -1275,11 +1260,10 @@ class $ArtistTranslationsTable extends ArtistTranslations
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
-    if (data.containsKey('artist_id')) {
-      context.handle(_artistIdMeta,
-          artistId.isAcceptableOrUnknown(data['artist_id'], _artistIdMeta));
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
     } else if (isInserting) {
-      context.missing(_artistIdMeta);
+      context.missing(_idMeta);
     }
     if (data.containsKey('language_code')) {
       context.handle(
@@ -1303,7 +1287,7 @@ class $ArtistTranslationsTable extends ArtistTranslations
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => {artistId, languageCode};
+  Set<GeneratedColumn> get $primaryKey => {id, languageCode};
   @override
   ArtistTranslation map(Map<String, dynamic> data, {String tablePrefix}) {
     final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
