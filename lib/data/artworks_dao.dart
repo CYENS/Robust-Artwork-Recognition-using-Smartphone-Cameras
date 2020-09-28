@@ -47,6 +47,30 @@ class ArtworksDao extends DatabaseAccessor<AppDatabase>
       (select(artworks)..where((artwork) => artwork.artist.equals(artist.name)))
           .watch();
 
+  Stream<List<Artwork>> watchArtworksByArtist2(
+          String artistId, String languageCode) =>
+      ((select(artworks)..where((artwork) => artwork.artistId.equals(artistId)))
+              .join([
+        leftOuterJoin(
+            artworkTranslations, artworkTranslations.id.equalsExp(artworks.id)),
+        leftOuterJoin(artistTranslations,
+            artistTranslations.id.equalsExp(artworks.artistId))
+      ])
+                ..where(artworkTranslations.languageCode.equals(languageCode) &
+                    artistTranslations.languageCode.equals(languageCode)))
+          .watch()
+          .map((entries) => entries.map((entry) {
+                Artwork artwork = entry.readTable(artworks);
+                ArtworkTranslation artworkTranslation =
+                    entry.readTable(artworkTranslations);
+                artwork = artwork.copyWith(
+                    name: artworkTranslation.name,
+                    description: artworkTranslation.description,
+                    artist: entry.readTable(artistTranslations).name);
+                print(artwork);
+                return artwork;
+              }).toList());
+
   /// Safely insert an [Artwork] into db, with the use of an [ArtworksCompanion].
   /// Returns the generated [Artwork] id.
   Future<int> addCArtwork(ArtworksCompanion artworkC) =>
