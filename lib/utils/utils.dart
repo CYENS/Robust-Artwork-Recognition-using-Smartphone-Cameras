@@ -9,3 +9,8 @@ import 'package:modern_art_app/data/database.dart';
 String lifespan(Artist artist) => artist.yearDeath.isNotEmpty
     ? "${artist.yearBirth}–${artist.yearDeath}"
     : artist.yearBirth;
+
+String getArtistFilename(Artist artist) => "assets/painters/${artist.id}.webp";
+
+String getArtworkFilename(Artwork artwork) =>
+    "assets/paintings/${artwork.id}.webp";
