@@ -22,14 +22,11 @@ class ArtworksDao extends DatabaseAccessor<AppDatabase>
             ..where(artworkTranslations.languageCode.equals(languageCode) &
                 artistTranslations.languageCode.equals(languageCode)))
           .watch()
-          .map((entries) => entries.map((entry) {
-                Artwork artwork = entry.readTable(artworks);
-                ArtworkTranslation artworkTranslation =
-                    entry.readTable(artworkTranslations);
-                artwork = artwork.copyWith(
-                    name: artworkTranslation.name,
-                    description: artworkTranslation.description,
-                    artist: entry.readTable(artistTranslations).name);
+          .map((entries) => entries.map((e) {
+                Artwork artwork = composeTranslatedArtwork(
+                    artwork: e.readTable(artworks),
+                    artworkTranslation: e.readTable(artworkTranslations),
+                    artistTranslation: e.readTable(artistTranslations));
                 print(artwork);
                 return artwork;
               }).toList());
@@ -59,14 +56,12 @@ class ArtworksDao extends DatabaseAccessor<AppDatabase>
                 ..where(artworkTranslations.languageCode.equals(languageCode) &
                     artistTranslations.languageCode.equals(languageCode)))
           .watch()
-          .map((entries) => entries.map((entry) {
-                Artwork artwork = entry.readTable(artworks);
-                ArtworkTranslation artworkTranslation =
-                    entry.readTable(artworkTranslations);
-                artwork = artwork.copyWith(
-                    name: artworkTranslation.name,
-                    description: artworkTranslation.description,
-                    artist: entry.readTable(artistTranslations).name);
+          .map((entries) => entries.map((e) {
+                Artwork artwork = composeTranslatedArtwork(
+                    artwork: e.readTable(artworks),
+                    artworkTranslation: e.readTable(artworkTranslations),
+                    artistTranslation: e.readTable(artistTranslations));
+
                 print(artwork);
                 return artwork;
               }).toList());
@@ -85,3 +80,13 @@ class ArtworksDao extends DatabaseAccessor<AppDatabase>
   Future<Artwork> getArtworkById(String id) =>
       (select(artworks)..where((tbl) => tbl.id.equals(id))).getSingle();
 }
+
+Artwork composeTranslatedArtwork({
+  Artwork artwork,
+  ArtworkTranslation artworkTranslation,
+  ArtistTranslation artistTranslation,
+}) =>
+    artwork.copyWith(
+        name: artworkTranslation.name,
+        description: artworkTranslation.description,
+        artist: artistTranslation.name);
