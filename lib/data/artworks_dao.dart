@@ -12,7 +12,7 @@ class ArtworksDao extends DatabaseAccessor<AppDatabase>
   /// Gets a list of all artworks in the db.
   Future<List<Artwork>> get allArtworkEntries => select(artworks).get();
 
-  Stream<List<Artwork>> allArtworkEntries2({String languageCode = "en"}) =>
+  Stream<List<Artwork>> watchAllArtworks({String languageCode = "en"}) =>
       (select(artworks).join([
         leftOuterJoin(
             artworkTranslations, artworkTranslations.id.equalsExp(artworks.id)),
@@ -21,15 +21,11 @@ class ArtworksDao extends DatabaseAccessor<AppDatabase>
       ])
             ..where(artworkTranslations.languageCode.equals(languageCode) &
                 artistTranslations.languageCode.equals(languageCode)))
-          .watch()
-          .map((entries) => entries.map((e) {
-                Artwork artwork = composeTranslatedArtwork(
-                    artwork: e.readTable(artworks),
-                    artworkTranslation: e.readTable(artworkTranslations),
-                    artistTranslation: e.readTable(artistTranslations));
-                print(artwork);
-                return artwork;
-              }).toList());
+          .map((e) => composeTranslatedArtwork(
+              artwork: e.readTable(artworks),
+              artworkTranslation: e.readTable(artworkTranslations),
+              artistTranslation: e.readTable(artistTranslations)))
+          .watch();
 
   /// Gets a live stream of all artworks in the db (automatically emits new items
   /// whenever the underlying data changes).
@@ -45,7 +41,7 @@ class ArtworksDao extends DatabaseAccessor<AppDatabase>
           .watch();
 
   Stream<List<Artwork>> watchArtworksByArtist2(
-          String artistId, String languageCode) =>
+          {@required String artistId, String languageCode = "en"}) =>
       ((select(artworks)..where((artwork) => artwork.artistId.equals(artistId)))
               .join([
         leftOuterJoin(
@@ -55,16 +51,11 @@ class ArtworksDao extends DatabaseAccessor<AppDatabase>
       ])
                 ..where(artworkTranslations.languageCode.equals(languageCode) &
                     artistTranslations.languageCode.equals(languageCode)))
-          .watch()
-          .map((entries) => entries.map((e) {
-                Artwork artwork = composeTranslatedArtwork(
-                    artwork: e.readTable(artworks),
-                    artworkTranslation: e.readTable(artworkTranslations),
-                    artistTranslation: e.readTable(artistTranslations));
-
-                print(artwork);
-                return artwork;
-              }).toList());
+          .map((e) => composeTranslatedArtwork(
+              artwork: e.readTable(artworks),
+              artworkTranslation: e.readTable(artworkTranslations),
+              artistTranslation: e.readTable(artistTranslations)))
+          .watch();
 
   /// Safely insert an [Artwork] into db, with the use of an [ArtworksCompanion].
   /// Returns the generated [Artwork] id.
@@ -79,6 +70,10 @@ class ArtworksDao extends DatabaseAccessor<AppDatabase>
   /// Get artwork by id.
   Future<Artwork> getArtworkById(String id) =>
       (select(artworks)..where((tbl) => tbl.id.equals(id))).getSingle();
+
+  SimpleSelectStatement<$ArtworksTable, Artwork> artworksByArtist(
+          String artistId) =>
+      select(artworks)..where((artwork) => artwork.artistId.equals(artistId));
 }
 
 Artwork composeTranslatedArtwork({
