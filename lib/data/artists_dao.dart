@@ -4,7 +4,7 @@ import 'package:moor/moor.dart';
 part 'artists_dao.g.dart';
 
 /// Data access object for [Artist] database related operations.
-@UseDao(tables: [Artists])
+@UseDao(tables: [Artists, ArtistTranslations])
 class ArtistsDao extends DatabaseAccessor<AppDatabase> with _$ArtistsDaoMixin {
   ArtistsDao(AppDatabase db) : super(db);
 
@@ -12,9 +12,17 @@ class ArtistsDao extends DatabaseAccessor<AppDatabase> with _$ArtistsDaoMixin {
   Future<int> upsertArtist(Artist artist) =>
       into(artists).insertOnConflictUpdate(artist);
 
-  /// Gets a list of all artists in the db.
-  Future<List<Artist>> get allArtistEntries => select(artists).get();
-
   /// Gets a stream of all artists in the db.
-  Stream<List<Artist>> get watchAllArtistEntries => select(artists).watch();
+  Stream<List<Artist>> watchAllArtists({String languageCode = "en"}) =>
+      (select(artists).join([
+        leftOuterJoin(
+            artistTranslations, artistTranslations.id.equalsExp(artists.id))
+      ])
+            ..where(artistTranslations.languageCode.equals(languageCode)))
+          .map((e) {
+        Artist artist = e.readTable(artists);
+        return artist.copyWith(
+            name: e.readTable(artistTranslations).name,
+            biography: e.readTable(artistTranslations).biography);
+      }).watch();
 }
