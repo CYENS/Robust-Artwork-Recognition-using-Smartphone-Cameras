@@ -52,6 +52,8 @@ class Artworks extends Table {
   TextColumn get description => text().nullable()();
 
   TextColumn get artist => text().nullable()();
+
+// TODO add current locale
 }
 
 class ArtworkTranslations extends Table {
@@ -180,16 +182,4 @@ class AppDatabase extends _$AppDatabase {
           }
         },
       );
-
-// Stream<List<ArtworkTranslated>> getAllArts(String language) =>
-//     (select(arts).join([
-//       leftOuterJoin(artI18ns, artI18ns.artId.equalsExp(arts.artId)),
-//     ])
-//           ..where(artI18ns.languageCode.equals(language)))
-//         .watch()
-//         .map((List<TypedResult> entries) => entries.map((entry) {
-//               return ArtworkTranslated(
-//                   untr: entry.readTable(arts),
-//                   trns: entry.readTable(artI18ns));
-//             }).toList());
 }
