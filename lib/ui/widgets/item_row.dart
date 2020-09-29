@@ -17,16 +17,16 @@ class ItemRow extends StatelessWidget {
   ItemRow.artist({Key key, @required Artist artist, this.rowHeight})
       : title = artist.name,
         subtitle = lifespan(artist),
-        imgFileName = artist.fileName,
+        imgFileName = getArtistFilename(artist),
         _heroTag = artist.name,
         detailsPage = ArtistDetailsPage(artist: artist),
         super(key: key);
 
   ItemRow.artwork({Key key, @required Artwork artwork, this.rowHeight})
-      : title = artwork.title,
+      : title = artwork.name,
         subtitle = "${artwork.artist}" +
             (artwork.year != "" ? ", ${artwork.year}" : ""),
-        imgFileName = artwork.fileName,
+        imgFileName = getArtworkFilename(artwork),
         _heroTag = artwork.id,
         detailsPage = ArtworkDetailsPage(artwork: artwork),
         super(key: key);

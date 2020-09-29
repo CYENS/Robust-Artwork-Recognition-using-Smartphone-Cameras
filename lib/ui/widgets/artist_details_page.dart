@@ -32,7 +32,7 @@ class ArtistDetailsPage extends StatelessWidget {
                 width: size.width,
                 decoration: BoxDecoration(
                     image: DecorationImage(
-                  image: AssetImage(artist.fileName),
+                  image: AssetImage(getArtistFilename(artist)),
                   fit: BoxFit.fitHeight,
                 )),
               ),
@@ -63,8 +63,11 @@ class ArtistDetailsPage extends StatelessWidget {
                   style: TextStyle(fontSize: 20)),
             ),
             ListHorizontal(
-                itemList: Provider.of<ArtworksDao>(context)
-                    .watchArtworksByArtist(artist)),
+              itemList: Provider.of<ArtworksDao>(context)
+                  .watchArtworksByArtist(
+                      artistId: artist.id,
+                      languageCode: context.locale().languageCode),
+            ),
           ],
         ),
       ),

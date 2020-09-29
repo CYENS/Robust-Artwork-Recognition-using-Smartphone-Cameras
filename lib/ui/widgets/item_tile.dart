@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/ui/widgets/artist_details_page.dart';
 import 'package:modern_art_app/ui/widgets/artwork_details_page.dart';
+import 'package:modern_art_app/utils/utils.dart';
 
 /// Displays the provided image at [imagePath] in a tile with rounded corners.
 class Tile extends StatelessWidget {
@@ -68,7 +69,7 @@ class ItemTile extends StatelessWidget {
     String customHeroTag, // Optional custom hero tag
   })  : _title = artist.name,
         _subtitle = artist.yearBirth,
-        _imgFileName = artist.fileName,
+        _imgFileName = getArtistFilename(artist),
         _customHeroTag = customHeroTag ?? artist.name,
         _detailsPage = ArtistDetailsPage(artist: artist),
         super(key: key);
@@ -80,9 +81,9 @@ class ItemTile extends StatelessWidget {
     this.tileWidth,
     this.tileHeight,
     String customHeroTag, // Optional custom hero tag
-  })  : _title = artwork.title,
+  })  : _title = artwork.name,
         _subtitle = artwork.year,
-        _imgFileName = artwork.fileName,
+        _imgFileName = getArtworkFilename(artwork),
         _customHeroTag = customHeroTag ?? artwork.id,
         _detailsPage = ArtworkDetailsPage(
           artwork: artwork,

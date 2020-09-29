@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_lorem/flutter_lorem.dart';
 import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/utils/extensions.dart';
+import 'package:modern_art_app/utils/utils.dart';
 import 'package:photo_view/photo_view.dart';
 
 class ArtworkDetailsPage extends StatelessWidget {
@@ -28,24 +29,24 @@ class ArtworkDetailsPage extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                       builder: (context) => ItemZoomPage(
-                            fileName: artwork.fileName,
-                            heroTag: customHeroTag ?? artwork.title,
+                            fileName: getArtworkFilename(artwork),
+                            heroTag: customHeroTag ?? artwork.name,
                           ))),
               child: Hero(
-                tag: customHeroTag ?? artwork.title,
+                tag: customHeroTag ?? artwork.name,
                 child: Container(
                   height: size.height * 0.6,
                   width: size.width,
                   decoration: BoxDecoration(
                       image: DecorationImage(
-                          image: AssetImage(artwork.fileName),
+                          image: AssetImage(getArtworkFilename(artwork)),
                           fit: BoxFit.fitHeight)),
                 ),
               ),
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(4.0, 12.0, 4.0, 0.0),
-              child: Text(artwork.title, style: TextStyle(fontSize: 30)),
+              child: Text(artwork.name, style: TextStyle(fontSize: 30)),
             ),
             Padding(
               padding: const EdgeInsets.all(4.0),

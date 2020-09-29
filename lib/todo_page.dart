@@ -5,6 +5,8 @@ import 'package:modern_art_app/data/artworks_dao.dart';
 import 'package:modern_art_app/data/data_processing.dart';
 import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/ui/widgets/item_list.dart';
+import 'package:modern_art_app/utils/extensions.dart';
+import 'package:modern_art_app/utils/utils.dart';
 import 'package:moor_db_viewer/moor_db_viewer.dart';
 import 'package:provider/provider.dart';
 
@@ -28,7 +30,9 @@ class TodoPage extends StatelessWidget {
           )
         ],
       ),
-      body: ListVertical(itemList: artistsDao.watchAllArtistEntries),
+      body: ListVertical(
+          itemList: artistsDao.watchAllArtists(
+              languageCode: context.locale().languageCode)),
     );
   }
 }
@@ -37,7 +41,7 @@ Card _card(Artist artist) => Card(
       clipBehavior: Clip.antiAlias,
       child: Column(
         children: [
-          Image.asset(artist.fileName),
+          Image.asset(getArtistFilename(artist)),
           ListTile(
             title: Text(artist.name),
             subtitle: Text(artist.biography),

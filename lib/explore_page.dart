@@ -1,9 +1,6 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 import 'package:modern_art_app/data/artists_dao.dart';
 import 'package:modern_art_app/data/artworks_dao.dart';
-import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/ui/widgets/item_featured.dart';
 import 'package:modern_art_app/ui/widgets/item_list.dart';
 import 'package:provider/provider.dart';
@@ -70,13 +67,13 @@ class ExplorePage extends StatelessWidget {
                 child: headline(context.strings().artworkOfTheWeek),
               ),
               FutureBuilder(
-                  future: artworksDao.allArtworkEntries,
+                  future: artworksDao.getArtworkById(
+                      artworkId: "the_cyclist_votsis",
+                      languageCode: context.locale().languageCode),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
-                      List<Artwork> artworks = snapshot.data;
                       return FeaturedTile(
-                        artwork:
-                            artworks[math.Random().nextInt(artworks.length)],
+                        artwork: snapshot.data,
                         tileHeight: size.height * 0.35,
                         tileWidth: size.width,
                       );
@@ -85,12 +82,18 @@ class ExplorePage extends StatelessWidget {
                   }),
               HeadlineAndMoreRow(
                   listType: "Artworks",
-                  itemList: artworksDao.watchAllArtworkEntries),
-              ListHorizontal(itemList: artworksDao.watchAllArtworkEntries),
+                  itemList: artworksDao.watchAllArtworks(
+                      languageCode: context.locale().languageCode)),
+              ListHorizontal(
+                  itemList: artworksDao.watchAllArtworks(
+                      languageCode: context.locale().languageCode)),
               HeadlineAndMoreRow(
                   listType: "Artists",
-                  itemList: artistsDao.watchAllArtistEntries),
-              ListHorizontal(itemList: artistsDao.watchAllArtistEntries),
+                  itemList: artistsDao.watchAllArtists(
+                      languageCode: context.locale().languageCode)),
+              ListHorizontal(
+                  itemList: artistsDao.watchAllArtists(
+                      languageCode: context.locale().languageCode)),
             ],
           ),
         ),
