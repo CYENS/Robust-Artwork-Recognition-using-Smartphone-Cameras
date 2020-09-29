@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:modern_art_app/data/artworks_dao.dart';
 import 'package:modern_art_app/ui/widgets/artwork_details_page.dart';
+import 'package:modern_art_app/utils/extensions.dart';
 import 'package:provider/provider.dart';
 
 import 'models.dart';
@@ -89,8 +90,11 @@ class BBox extends StatelessWidget {
               ArtworksDao artworksDao =
                   Provider.of<ArtworksDao>(context, listen: false);
               // todo: navigating to artwork details here leaves tensorflow camera inferences running in the background!
-              artworksDao.getArtworkById(re["label"]).then((value) =>
-                  Navigator.push(
+              artworksDao
+                  .getArtworkById(
+                      artworkId: re["label"],
+                      languageCode: context.locale().languageCode)
+                  .then((value) => Navigator.push(
                       context,
                       MaterialPageRoute(
                           builder: (context) =>

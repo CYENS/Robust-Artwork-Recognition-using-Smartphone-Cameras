@@ -8,4 +8,8 @@ part of 'artworks_dao.dart';
 
 mixin _$ArtworksDaoMixin on DatabaseAccessor<AppDatabase> {
   $ArtworksTable get artworks => attachedDatabase.artworks;
+  $ArtworkTranslationsTable get artworkTranslations =>
+      attachedDatabase.artworkTranslations;
+  $ArtistTranslationsTable get artistTranslations =>
+      attachedDatabase.artistTranslations;
 }

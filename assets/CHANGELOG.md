@@ -1,3 +1,8 @@
+## Version 0.5.0
+### 2010-09-29
+- The app's database is now fully internationalised for both Greek and
+  English
+
 ## Version 0.4.4
 ### 2010-09-25
 - App now shows small images of the recognised artworks next to the

@@ -24,7 +24,7 @@ class FeaturedTile extends StatelessWidget {
           artwork: artwork,
           tileWidth: tileWidth,
           tileHeight: tileHeight,
-          customHeroTag: artwork.title + "_featured",
+          customHeroTag: artwork.name + "_featured",
         ),
         Container(
           color: Colors.black45,
@@ -37,7 +37,7 @@ class FeaturedTile extends StatelessWidget {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: artwork.title,
+                        text: artwork.name,
                         style: TextStyle(
                             fontSize: 28, fontStyle: FontStyle.normal),
                       ),
