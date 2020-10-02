@@ -7,6 +7,7 @@ import numpy as np
 import pandas as pd
 import skvideo.io
 from tqdm import tqdm
+from collections import defaultdict
 
 
 def get_video_files(video_dir: str, video_ext: str = ".mp4"):
@@ -195,9 +196,27 @@ def unpickle():
         dataset = pickle.load(f)
 
 
+def frame_counts(video_files_dir: Path):
+    dataset = pd.read_csv(video_files_dir / "description_export.csv")
+    count_dict = defaultdict(int)
+    for i in range(dataset.shape[0]):
+        vid_path = video_files_dir / dataset.iloc[i]["file"]
+        assert vid_path.is_file()
+        cap = cv2.VideoCapture(str(vid_path))
+        # NOTE: openCv by default reads in BGR, see link
+        # https://docs.opencv.org/3.4/d8/d01/group__imgproc__color__conversions.html#ga397ae87e1288a81d2363b61574eb8cab
+        success, frame = cap.read()
+        fr = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        n = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        count_dict[dataset.iloc[i]["id"]] += n
+        print(dataset.iloc[i]["id"], dataset.iloc[i]["file"], n)
+    print(count_dict)
+
+
 if __name__ == '__main__':
     files_dir = Path("/home/marios/Downloads/contemporary_art_video_files")
     # processed = video_processing(files_dir)
     # with open(files_dir / "processed", "wb+") as f:
     #     pickle.dump(processed, f)
-    save_sample_frames(files_dir)
+    # save_sample_frames(files_dir)
+    frame_counts(files_dir)
