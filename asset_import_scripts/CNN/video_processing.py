@@ -1,5 +1,7 @@
+import json
 import pickle
 import random
+from collections import defaultdict
 from pathlib import Path
 
 import cv2
@@ -7,7 +9,6 @@ import numpy as np
 import pandas as pd
 import skvideo.io
 from tqdm import tqdm
-from collections import defaultdict
 
 
 def get_video_files(video_dir: str, video_ext: str = ".mp4"):
@@ -197,20 +198,32 @@ def unpickle():
 
 
 def frame_counts(video_files_dir: Path):
+    """ Reads all video files in provided dir and returns the number of available frames for each artwork (i.e. frames
+    from videos about the same artworks are aggregated).
+
+    :param video_files_dir: path of dir with video files
+    :return: dict with artwork ids as keys and number of frames as values
+    """
     dataset = pd.read_csv(video_files_dir / "description_export.csv")
     count_dict = defaultdict(int)
+
     for i in range(dataset.shape[0]):
         vid_path = video_files_dir / dataset.iloc[i]["file"]
         assert vid_path.is_file()
+
         cap = cv2.VideoCapture(str(vid_path))
+
         # NOTE: openCv by default reads in BGR, see link
         # https://docs.opencv.org/3.4/d8/d01/group__imgproc__color__conversions.html#ga397ae87e1288a81d2363b61574eb8cab
-        success, frame = cap.read()
-        fr = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        n = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-        count_dict[dataset.iloc[i]["id"]] += n
-        print(dataset.iloc[i]["id"], dataset.iloc[i]["file"], n)
-    print(count_dict)
+        # success, frame = cap.read()
+        # fr = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+        count_dict[dataset.iloc[i]["id"]] += int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+
+    print(f"max frames: {max(count_dict.values())}, min frames: {min(count_dict.values())}", "\n",
+          json.dumps(count_dict, indent=2))
+
+    return count_dict
 
 
 if __name__ == '__main__':
