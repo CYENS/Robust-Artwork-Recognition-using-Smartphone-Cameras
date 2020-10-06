@@ -11,18 +11,29 @@ import skvideo.io
 from tqdm import tqdm
 
 
-def get_video_files(video_dir: str, video_ext: str = ".mp4"):
+def get_video_files(video_dir: str, video_ext=None):
     """ Gets paths of video files at provided directory.
 
     NOTE: returning simply ``Path(video_dir).glob(f"*.{video_ext}")`` may miss files depending on the capitalization
     of their extensions, at least on Linux
 
-    :param video_ext: the extension of the required video files, defaults to .mp4, MUST include leading dot
     :param video_dir: path of dir with video files
+    :param video_ext: the extension(s) of the required video files, can simply be a string (e.g. ".mp4"),
+    or a list of string extensions (e.g. [".mp4", ".mov"], which is the default value); extensions MUST include
+    leading dots
     :return: generator of Paths
     """
 
-    return (v for v in Path(video_dir).glob("*") if v.suffix.lower() == video_ext)
+    if video_ext is None:
+        video_ext = [".mp4", ".mov"]
+    elif type(video_ext) is str:
+        video_ext = [video_ext]
+    else:
+        raise TypeError("Inappropriate extension(s) provided")
+
+    assert all(e.startswith(".") for e in video_ext)
+
+    return (v for v in Path(video_dir).glob("*") if v.suffix.lower() in video_ext)
 
 
 def get_video_rotation(video_path: str):
