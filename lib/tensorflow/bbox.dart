@@ -167,7 +167,8 @@ class BBox extends StatelessWidget {
     }
 
     return Stack(
-      children: [mobilenet, modernArt, modernArtQuant].contains(model)
+      children: [mobilenet, modernArt, modernArtQuant, modernArtNoArtQuant]
+              .contains(model)
           ? _renderStrings()
           : model == posenet ? _renderKeypoints() : _renderBoxes(),
     );

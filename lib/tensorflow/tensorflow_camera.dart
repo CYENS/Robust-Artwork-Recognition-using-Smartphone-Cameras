@@ -46,7 +46,8 @@ class _TensorFlowCameraState extends State<TensorFlowCamera> {
 
             int startTime = new DateTime.now().millisecondsSinceEpoch;
 
-            if ([modernArt, modernArtQuant].contains(widget.model)) {
+            if ([modernArt, modernArtQuant, modernArtNoArtQuant]
+                .contains(widget.model)) {
               print("calculating with ${widget.model}");
               Tflite.runModelOnFrame(
                 bytesList: img.planes.map((plane) {
