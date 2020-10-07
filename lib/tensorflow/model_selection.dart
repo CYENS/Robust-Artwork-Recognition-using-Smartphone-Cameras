@@ -158,6 +158,10 @@ class _ModelSelectionState extends State<ModelSelection> {
                     child: const Text(modernArtNoArtQuant),
                     onPressed: () => onSelect(modernArtNoArtQuant),
                   ),
+                  RaisedButton(
+                    child: const Text(modernArtZeroOneMultiQuant),
+                    onPressed: () => onSelect(modernArtZeroOneMultiQuant),
+                  ),
                 ],
               ),
             )
