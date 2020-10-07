@@ -80,6 +80,11 @@ class _ModelSelectionState extends State<ModelSelection> {
             model: "assets/tflite/VGG_with_no_art_quant.tflite",
             labels: "assets/tflite/VGG_with_no_art_labels.txt");
         break;
+      case modernArtZeroOneMultiQuant:
+        res = await Tflite.loadModel(
+            model: "assets/tflite/VGG_zero_one_multiple_quant.tflite",
+            labels: "assets/tflite/VGG_zero_one_multiple_labels.txt");
+        break;
 
       default:
         res = await Tflite.loadModel(
