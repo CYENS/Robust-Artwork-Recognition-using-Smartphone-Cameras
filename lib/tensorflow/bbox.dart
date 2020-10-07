@@ -102,11 +102,13 @@ class BBox extends StatelessWidget {
             },
             child: Row(
               children: [
-                Image.asset(
-                  "assets/paintings/${re['label']}.webp",
-                  width: screenWidth / 5,
-                  height: screenWidth / 5,
-                ),
+                if (!["multiple_artworks", "no_artwork", "one_artwork"]
+                    .contains(re['label']))
+                  Image.asset(
+                    "assets/paintings/${re['label']}.webp",
+                    width: screenWidth / 5,
+                    height: screenWidth / 5,
+                  ),
                 Text(
                   "${re["label"]} ${(re["confidence"] * 100).toStringAsFixed(0)}%\n$inferenceTime ms",
                   style: TextStyle(
