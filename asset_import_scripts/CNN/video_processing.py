@@ -208,6 +208,10 @@ def unpickle():
         dataset = pickle.load(f)
 
 
+def frame_generator(video_files_dir: Path):
+    pass
+
+
 def frame_counts(video_files_dir: Path):
     """ Reads all video files in provided dir and returns the number of available frames for each artwork (i.e. frames
     from videos about the same artworks are aggregated).
@@ -215,7 +219,7 @@ def frame_counts(video_files_dir: Path):
     :param video_files_dir: path of dir with video files
     :return: dict with artwork ids as keys and number of frames as values
     """
-    dataset = pd.read_csv(video_files_dir / "description_export.csv")
+    dataset = pd.read_csv(video_files_dir / "description_export2.csv")
     count_dict = defaultdict(int)
 
     for i in range(dataset.shape[0]):
@@ -228,8 +232,9 @@ def frame_counts(video_files_dir: Path):
         # https://docs.opencv.org/3.4/d8/d01/group__imgproc__color__conversions.html#ga397ae87e1288a81d2363b61574eb8cab
         # success, frame = cap.read()
         # fr = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-
-        count_dict[dataset.iloc[i]["id"]] += int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        print(frame_count)
+        count_dict[dataset.iloc[i]["id"]] += frame_count
 
     print(f"max frames: {max(count_dict.values())}, min frames: {min(count_dict.values())}", "\n",
           json.dumps(count_dict, indent=2))
@@ -243,4 +248,7 @@ if __name__ == '__main__':
     # with open(files_dir / "processed", "wb+") as f:
     #     pickle.dump(processed, f)
     # save_sample_frames(files_dir)
-    frame_counts(files_dir)
+    # frame_counts(files_dir)
+    for v in get_video_files(files_dir / "not_artwork_videos"):
+        print(v.name)
+    # print(type(".f") is str)
