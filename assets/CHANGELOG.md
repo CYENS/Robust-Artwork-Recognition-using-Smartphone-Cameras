@@ -1,5 +1,7 @@
 ## Version 0.6.0
 ### 2010-10-12
+- All artwork and artist entries updated with actual descriptions and
+  biographies
 - High resolution images of the artworks added
 - Incorporated CNN now has the ability to detect if _no artworks_ are
   present in the frame
