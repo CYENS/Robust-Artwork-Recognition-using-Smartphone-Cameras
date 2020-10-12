@@ -10,8 +10,9 @@ import 'package:provider/provider.dart';
 class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final strings = context.strings();
     return SettingsScreen(
-      title: context.strings().nav.settings,
+      title: strings.stngs.title,
       children: [
         SliderSettingsTile(
           title: 'CNN sensitivity',
@@ -26,11 +27,11 @@ class SettingsPage extends StatelessWidget {
           },
         ),
         SettingsGroup(
-          title: "About",
+          title: strings.stngs.groupAbout,
           children: [
             SimpleSettingsTile(
-              title: "About",
-              subtitle: "App info & Open source licences",
+              title: strings.stngs.stng.appInfo,
+              subtitle: strings.stngs.stng.appInfoSummary,
               onTap: () {
                 PackageInfo.fromPlatform()
                     .then((packageInfo) => showAboutDialog(
@@ -41,8 +42,8 @@ class SettingsPage extends StatelessWidget {
               },
             ),
             SimpleSettingsTile(
-              title: 'Changelog',
-              subtitle: "Timeline of changes in the app",
+              title: strings.stngs.stng.changelog,
+              subtitle: strings.stngs.stng.changelogSummary,
               onTap: () {
                 print("tapped");
                 return WhatsNewPage.changelog(
