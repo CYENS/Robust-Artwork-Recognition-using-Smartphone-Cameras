@@ -26,10 +26,19 @@ class AppLocalizations {
       nav: AppLocalizations_Labels_Nav(
         explore: "Explore",
         identify: "Identify artwork",
-        settings: "Settings",
       ),
       button: AppLocalizations_Labels_Button(
         more: "more",
+      ),
+      stngs: AppLocalizations_Labels_Stngs(
+        title: "Settings",
+        groupAbout: "About",
+        stng: AppLocalizations_Labels_Stngs_Stng(
+          appInfo: "App information",
+          appInfoSummary: "App version & Open source libraries",
+          changelog: "Changelog",
+          changelogSummary: "Timeline of changes in the app",
+        ),
       ),
     ),
     Locale.fromSubtags(languageCode: "el"): AppLocalizations_Labels(
@@ -46,10 +55,19 @@ class AppLocalizations {
       nav: AppLocalizations_Labels_Nav(
         explore: "Εξερευνήστε",
         identify: "Αναγνώριση έργου τέχνης",
-        settings: "Ρυθμίσεις",
       ),
       button: AppLocalizations_Labels_Button(
         more: "περισσότερα",
+      ),
+      stngs: AppLocalizations_Labels_Stngs(
+        title: "Ρυθμίσεις",
+        groupAbout: "Σχετικά",
+        stng: AppLocalizations_Labels_Stngs_Stng(
+          appInfo: "Πληροφορίες για την εφαρμογή",
+          appInfoSummary: "Εκδοση εφαρμογής & Βιβλιοθήκες ανοιχτού κώδικα",
+          changelog: "Ιστορικό αλλαγών",
+          changelogSummary: "Ιστορικό αλλαγών στην εφαρμογή",
+        ),
       ),
     ),
   };
@@ -61,14 +79,11 @@ class AppLocalizations {
 }
 
 class AppLocalizations_Labels_Nav {
-  const AppLocalizations_Labels_Nav(
-      {this.explore, this.identify, this.settings});
+  const AppLocalizations_Labels_Nav({this.explore, this.identify});
 
   final String explore;
 
   final String identify;
-
-  final String settings;
 
   String getByKey(String key) {
     switch (key) {
@@ -76,8 +91,6 @@ class AppLocalizations_Labels_Nav {
         return explore;
       case 'identify':
         return identify;
-      case 'settings':
-        return settings;
       default:
         return '';
     }
@@ -99,6 +112,58 @@ class AppLocalizations_Labels_Button {
   }
 }
 
+class AppLocalizations_Labels_Stngs_Stng {
+  const AppLocalizations_Labels_Stngs_Stng(
+      {this.appInfo,
+      this.appInfoSummary,
+      this.changelog,
+      this.changelogSummary});
+
+  final String appInfo;
+
+  final String appInfoSummary;
+
+  final String changelog;
+
+  final String changelogSummary;
+
+  String getByKey(String key) {
+    switch (key) {
+      case 'appInfo':
+        return appInfo;
+      case 'appInfoSummary':
+        return appInfoSummary;
+      case 'changelog':
+        return changelog;
+      case 'changelogSummary':
+        return changelogSummary;
+      default:
+        return '';
+    }
+  }
+}
+
+class AppLocalizations_Labels_Stngs {
+  const AppLocalizations_Labels_Stngs({this.title, this.groupAbout, this.stng});
+
+  final String title;
+
+  final String groupAbout;
+
+  final AppLocalizations_Labels_Stngs_Stng stng;
+
+  String getByKey(String key) {
+    switch (key) {
+      case 'title':
+        return title;
+      case 'groupAbout':
+        return groupAbout;
+      default:
+        return '';
+    }
+  }
+}
+
 class AppLocalizations_Labels {
   const AppLocalizations_Labels(
       {this.artworks,
@@ -112,7 +177,8 @@ class AppLocalizations_Labels {
       this.artistDetails,
       this.artworkDetails,
       this.nav,
-      this.button});
+      this.button,
+      this.stngs});
 
   final String artworks;
 
@@ -137,6 +203,8 @@ class AppLocalizations_Labels {
   final AppLocalizations_Labels_Nav nav;
 
   final AppLocalizations_Labels_Button button;
+
+  final AppLocalizations_Labels_Stngs stngs;
 
   String getByKey(String key) {
     switch (key) {
