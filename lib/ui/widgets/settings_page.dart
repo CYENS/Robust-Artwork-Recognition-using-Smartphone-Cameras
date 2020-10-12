@@ -13,6 +13,18 @@ class SettingsPage extends StatelessWidget {
     return SettingsScreen(
       title: context.strings().nav.settings,
       children: [
+        SliderSettingsTile(
+          title: 'CNN sensitivity',
+          settingKey: 'key-slider-volume',
+          defaultValue: 99.5,
+          min: 90,
+          max: 100,
+          step: 0.5,
+          // leading: Icon(Icons.volume_up),
+          onChange: (value) {
+            debugPrint('key-slider-volume: $value');
+          },
+        ),
         SimpleSettingsTile(
           title: "About",
           subtitle: "App info & Open source licences",
@@ -42,18 +54,6 @@ class SettingsPage extends StatelessWidget {
           onTap: () => Navigator.of(context).push(MaterialPageRoute(
               builder: (context) =>
                   MoorDbViewer(Provider.of<AppDatabase>(context)))),
-        ),
-        SliderSettingsTile(
-          title: 'Volume',
-          settingKey: 'key-slider-volume',
-          defaultValue: 99.5,
-          min: 90,
-          max: 100,
-          step: 0.5,
-          // leading: Icon(Icons.volume_up),
-          onChange: (value) {
-            debugPrint('key-slider-volume: $value');
-          },
         ),
       ],
     );
