@@ -43,7 +43,7 @@ class AppLocalizations {
     ),
     Locale.fromSubtags(languageCode: "el"): AppLocalizations_Labels(
       artworks: "Εργα τέχνης",
-      artists: "Καλλιτέχνες/ιδες",
+      artists: "Καλλιτέχνες",
       artworkOfTheWeek: "Έργο τέχνης της εβδομάδας",
       pointTheCamera: "Στρέψτε την κάμερα σε ένα έργο τέχνης",
       biography: "Σύντομο βιογραφικό",
