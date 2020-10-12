@@ -35,17 +35,24 @@ class SettingsPage extends StatelessWidget {
             );
           },
         ),
-        SwitchSettingsTile(
-          settingKey: "switch-key",
-          title: "Switch",
-          subtitle: "subtitle",
-        ),
         SimpleSettingsTile(
           title: "App database browser",
           subtitle: "Shows all tables and items in the app's database",
           onTap: () => Navigator.of(context).push(MaterialPageRoute(
               builder: (context) =>
                   MoorDbViewer(Provider.of<AppDatabase>(context)))),
+        ),
+        SliderSettingsTile(
+          title: 'Volume',
+          settingKey: 'key-slider-volume',
+          defaultValue: 99.5,
+          min: 90,
+          max: 100,
+          step: 0.5,
+          // leading: Icon(Icons.volume_up),
+          onChange: (value) {
+            debugPrint('key-slider-volume: $value');
+          },
         ),
       ],
     );
