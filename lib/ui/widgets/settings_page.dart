@@ -25,36 +25,42 @@ class SettingsPage extends StatelessWidget {
             debugPrint('key-slider-volume: $value');
           },
         ),
-        SimpleSettingsTile(
+        SettingsGroup(
           title: "About",
-          subtitle: "App info & Open source licences",
-          onTap: () {
-            PackageInfo.fromPlatform().then((packageInfo) => showAboutDialog(
-                  context: context,
-                  applicationName: packageInfo.appName,
-                  applicationVersion: packageInfo.version,
-                ));
-          },
-        ),
-        SimpleSettingsTile(
-          title: 'Changelog',
-          subtitle: "Timeline of changes in the app",
-          onTap: () {
-            print("tapped");
-            return WhatsNewPage.changelog(
-              title: Text("whats new"),
-              buttonText: Text("null"),
-              // path: "/assets/CHANGELOG.md",
-            );
-          },
-        ),
-        SimpleSettingsTile(
-          title: "App database browser",
-          subtitle: "Shows all tables and items in the app's database",
-          onTap: () => Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) =>
-                  MoorDbViewer(Provider.of<AppDatabase>(context)))),
-        ),
+          children: [
+            SimpleSettingsTile(
+              title: "About",
+              subtitle: "App info & Open source licences",
+              onTap: () {
+                PackageInfo.fromPlatform()
+                    .then((packageInfo) => showAboutDialog(
+                          context: context,
+                          applicationName: packageInfo.appName,
+                          applicationVersion: packageInfo.version,
+                        ));
+              },
+            ),
+            SimpleSettingsTile(
+              title: 'Changelog',
+              subtitle: "Timeline of changes in the app",
+              onTap: () {
+                print("tapped");
+                return WhatsNewPage.changelog(
+                  title: Text("whats new"),
+                  buttonText: Text("null"),
+                  // path: "/assets/CHANGELOG.md",
+                );
+              },
+            ),
+            SimpleSettingsTile(
+              title: "App database browser",
+              subtitle: "Shows all tables and items in the app's database",
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) =>
+                      MoorDbViewer(Provider.of<AppDatabase>(context)))),
+            ),
+          ],
+        )
       ],
     );
   }
