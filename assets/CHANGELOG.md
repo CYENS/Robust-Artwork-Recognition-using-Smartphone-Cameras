@@ -1,3 +1,11 @@
+## Version 0.6.0
+### 2010-10-12
+- High resolution images of the artworks added
+- Incorporated CNN now has the ability to detect if _no artworks_ are
+  present in the frame
+- New experimental neural network incorporated into the app, able to
+  detect if 0, 1 or 1+ artworks are present in the frame
+
 ## Version 0.5.0
 ### 2010-09-29
 - The app's database is now fully internationalised for both Greek and
