@@ -1,5 +1,7 @@
+import json
 import pickle
 import random
+from collections import defaultdict
 from pathlib import Path
 
 import cv2
@@ -9,18 +11,29 @@ import skvideo.io
 from tqdm import tqdm
 
 
-def get_video_files(video_dir: str, video_ext: str = ".mp4"):
+def get_video_files(video_dir: str, video_ext=None):
     """ Gets paths of video files at provided directory.
 
     NOTE: returning simply ``Path(video_dir).glob(f"*.{video_ext}")`` may miss files depending on the capitalization
     of their extensions, at least on Linux
 
-    :param video_ext: the extension of the required video files, defaults to .mp4, MUST include leading dot
     :param video_dir: path of dir with video files
+    :param video_ext: the extension(s) of the required video files, can simply be a string (e.g. ".mp4"),
+    or a list of string extensions (e.g. [".mp4", ".mov"], which is the default value); extensions MUST include
+    leading dots
     :return: generator of Paths
     """
 
-    return (v for v in Path(video_dir).glob("*") if v.suffix.lower() == video_ext)
+    if video_ext is None:
+        video_ext = [".mp4", ".mov"]
+    elif type(video_ext) is str:
+        video_ext = [video_ext]
+    else:
+        raise TypeError("Inappropriate extension(s) provided")
+
+    assert all(e.startswith(".") for e in video_ext)
+
+    return (v for v in Path(video_dir).glob("*") if v.suffix.lower() in video_ext)
 
 
 def get_video_rotation(video_path: str):
@@ -195,9 +208,94 @@ def unpickle():
         dataset = pickle.load(f)
 
 
+def frame_generator_by_artwork(video_files_dir: Path):
+    max_frames_per_artwork = 20
+    dataset = pd.read_csv(video_files_dir / "description_export2.csv")
+    artwork_dict = {artwork_id: i for i, artwork_id in
+                    enumerate(sorted(dataset["id"].unique()))}
+    num_classes = len(artwork_dict)
+    class_list = list(artwork_dict.keys())
+    for artwork_id in class_list:
+        print(artwork_id)
+        videos_for_artwork = [files_dir / row["file"] for _, row in dataset.loc[dataset["id"] == artwork_id].iterrows()]
+
+        assert all(v.is_file() for v in videos_for_artwork)
+
+        total_frames_for_artwork = sum(int(cv2.VideoCapture(str(v)).get(cv2.CAP_PROP_FRAME_COUNT)) for v in videos_for_artwork)
+        print("total", total_frames_for_artwork)
+
+        sample_every_n_frame = max(1, total_frames_for_artwork // max_frames_per_artwork)
+
+        current_frame = 0
+        max_fr = max_frames_per_artwork
+
+        for video_file in videos_for_artwork:
+            print("video", video_file.name, int(cv2.VideoCapture(str(video_file)).get(cv2.CAP_PROP_FRAME_COUNT)))
+            cap = cv2.VideoCapture(str(video_file))
+            while True:
+                success, frame = cap.read()
+
+                if not success:
+                    print("not success, breaking")
+                    break
+
+                if current_frame % sample_every_n_frame == 0:
+                    # openCv reads frames in BGR format, convert to RGB
+                    # frame = frame[:, :, ::-1]
+
+                    # img = tf.image.resize(frame, (224,224))
+
+                    max_fr -= 1
+
+                    # yield  tf.cast(img, tf.float32) / 255., label
+                    yield f"{max_fr} {current_frame} {video_file}"
+
+                    if max_fr <= 0:
+                        print("max_fr reached, breaking")
+                        break
+
+                current_frame += 1
+
+
+def frame_counts(video_files_dir: Path):
+    """ Reads all video files in provided dir and returns the number of available frames for each artwork (i.e. frames
+    from videos about the same artworks are aggregated).
+
+    :param video_files_dir: path of dir with video files
+    :return: dict with artwork ids as keys and number of frames as values
+    """
+    dataset = pd.read_csv(video_files_dir / "description_export2.csv")
+    count_dict = defaultdict(int)
+
+    for i in range(dataset.shape[0]):
+        if dataset.iloc[i]["id"] == "no_artwork":
+            continue
+        vid_path = video_files_dir / dataset.iloc[i]["file"]
+        print(vid_path)
+        assert vid_path.is_file()
+
+        cap = cv2.VideoCapture(str(vid_path))
+
+        # NOTE: openCv by default reads in BGR, see link
+        # https://docs.opencv.org/3.4/d8/d01/group__imgproc__color__conversions.html#ga397ae87e1288a81d2363b61574eb8cab
+        # success, frame = cap.read()
+        # fr = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        frame_count = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        print(frame_count)
+        count_dict[dataset.iloc[i]["id"]] += frame_count
+
+    print(f"max frames: {max(count_dict.values())}, min frames: {min(count_dict.values())}", "\n",
+          json.dumps(count_dict, indent=2))
+
+    return count_dict
+
+
 if __name__ == '__main__':
     files_dir = Path("/home/marios/Downloads/contemporary_art_video_files")
     # processed = video_processing(files_dir)
     # with open(files_dir / "processed", "wb+") as f:
     #     pickle.dump(processed, f)
-    save_sample_frames(files_dir)
+    # save_sample_frames(files_dir)
+    frame_counts(files_dir)
+    # for v in get_video_files(files_dir / "not_artwork_videos"):
+    #     print(v.name)

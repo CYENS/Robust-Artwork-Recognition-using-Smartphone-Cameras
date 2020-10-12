@@ -105,7 +105,7 @@ packages:
       name: camera
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.5.8+7"
+    version: "0.5.8+8"
   characters:
     dependency: transitive
     description:
@@ -147,7 +147,7 @@ packages:
       name: code_builder
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.4.1"
+    version: "3.5.0"
   collection:
     dependency: transitive
     description:
@@ -321,7 +321,7 @@ packages:
       name: html
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.14.0+3"
+    version: "0.14.0+4"
   http:
     dependency: "direct main"
     description:
@@ -545,7 +545,7 @@ packages:
       name: plugin_platform_interface
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.2"
+    version: "1.0.3"
   pool:
     dependency: transitive
     description:
@@ -697,7 +697,7 @@ packages:
       name: sqlite3
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.5"
+    version: "0.1.6"
   sqlite3_flutter_libs:
     dependency: "direct main"
     description:
