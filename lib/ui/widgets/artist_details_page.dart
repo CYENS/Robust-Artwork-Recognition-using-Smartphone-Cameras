@@ -38,35 +38,37 @@ class ArtistDetailsPage extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(4.0, 12.0, 4.0, 0.0),
+              padding: const EdgeInsets.all(8.0),
               child: Text(artist.name, style: TextStyle(fontSize: 30)),
             ),
             Padding(
-              padding: const EdgeInsets.all(4.0),
+              padding: const EdgeInsets.all(8.0),
               child: Text(lifespan(artist),
                   style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic)),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(4.0, 12.0, 4.0, 0.0),
+              padding: const EdgeInsets.all(8.0),
               child: Text(context.strings().biography,
                   style: TextStyle(fontSize: 20)),
             ),
             Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: Text(artist.biography.isNotEmpty
-                  ? artist.biography
-                  : lorem(paragraphs: 1, words: 150)),
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                artist.biography.isNotEmpty
+                    ? artist.biography
+                    : lorem(paragraphs: 1, words: 150),
+                style: TextStyle(fontSize: 16),
+              ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(4.0, 12.0, 4.0, 4.0),
+              padding: const EdgeInsets.all(8.0),
               child: Text("${context.strings().artworksBy} ${artist.name}",
                   style: TextStyle(fontSize: 20)),
             ),
             ListHorizontal(
-              itemList: Provider.of<ArtworksDao>(context)
-                  .watchArtworksByArtist(
-                      artistId: artist.id,
-                      languageCode: context.locale().languageCode),
+              itemList: Provider.of<ArtworksDao>(context).watchArtworksByArtist(
+                  artistId: artist.id,
+                  languageCode: context.locale().languageCode),
             ),
           ],
         ),
