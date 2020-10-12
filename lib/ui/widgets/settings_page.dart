@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:flutter_whatsnew/flutter_whatsnew.dart';
 import 'package:modern_art_app/data/database.dart';
+import 'package:modern_art_app/tensorflow/models.dart';
 import 'package:modern_art_app/utils/extensions.dart';
 import 'package:moor_db_viewer/moor_db_viewer.dart';
 import 'package:package_info/package_info.dart';
@@ -14,17 +15,35 @@ class SettingsPage extends StatelessWidget {
     return SettingsScreen(
       title: strings.stngs.title,
       children: [
-        SliderSettingsTile(
-          title: 'CNN sensitivity',
-          settingKey: 'key-slider-volume',
-          defaultValue: 99.5,
-          min: 90,
-          max: 100,
-          step: 0.5,
-          // leading: Icon(Icons.volume_up),
-          onChange: (value) {
-            debugPrint('key-slider-volume: $value');
-          },
+        SettingsGroup(
+          title: "Computer Vision options",
+          children: [
+            RadioModalSettingsTile<String>(
+              title: 'CNN type',
+              settingKey: 'key-cnn-type',
+              values: <String, String>{
+                modernArtQuant: modernArtQuant,
+                modernArtNoArtQuant: modernArtNoArtQuant,
+                modernArtZeroOneMultiQuant: modernArtZeroOneMultiQuant,
+              },
+              selected: modernArtQuant,
+              onChange: (value) {
+                debugPrint('key-radio-sync-period: $value days');
+              },
+            ),
+            SliderSettingsTile(
+              title: 'CNN sensitivity',
+              settingKey: 'key-cnn-sensitivity',
+              defaultValue: 99.5,
+              min: 90,
+              max: 100,
+              step: 0.5,
+              // leading: Icon(Icons.volume_up),
+              onChange: (value) {
+                debugPrint('key-slider-volume: $value');
+              },
+            )
+          ],
         ),
         SettingsGroup(
           title: strings.stngs.groupAbout,
