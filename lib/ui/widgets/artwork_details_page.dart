@@ -40,31 +40,34 @@ class ArtworkDetailsPage extends StatelessWidget {
                   decoration: BoxDecoration(
                       image: DecorationImage(
                           image: AssetImage(getArtworkFilename(artwork)),
-                          fit: BoxFit.fitHeight)),
+                          fit: BoxFit.contain)),
                 ),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(4.0, 12.0, 4.0, 0.0),
+              padding: const EdgeInsets.all(8.0),
               child: Text(artwork.name, style: TextStyle(fontSize: 30)),
             ),
             Padding(
-              padding: const EdgeInsets.all(4.0),
+              padding: const EdgeInsets.all(8.0),
               child: Text(
                   "${artwork.artist}" +
                       (artwork.year.isNotEmpty ? ", ${artwork.year}" : ""),
                   style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic)),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(4.0, 12.0, 4.0, 0.0),
+              padding: const EdgeInsets.all(8.0),
               child: Text(context.strings().description,
                   style: TextStyle(fontSize: 20)),
             ),
             Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: Text(artwork.description.isNotEmpty
-                  ? artwork.description
-                  : lorem(paragraphs: 2, words: 50)),
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                artwork.description.isNotEmpty
+                    ? artwork.description
+                    : lorem(paragraphs: 2, words: 50),
+                style: TextStyle(fontSize: 16),
+              ),
             ),
           ],
         ),
