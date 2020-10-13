@@ -1,3 +1,11 @@
+## Version 0.6.1
+### 2010-10-13
+- Added new artwork recognition CNNs based on MobileNet, they are much
+  faster, smaller in size, and have comparable accuracy with the
+  previous VGG19 based CNNs
+- Settings screen was reorganised and translated to Greek
+- Improved Artwork/Artist detail pages
+
 ## Version 0.6.0
 ### 2010-10-12
 - All artwork and artist entries updated with actual descriptions and
