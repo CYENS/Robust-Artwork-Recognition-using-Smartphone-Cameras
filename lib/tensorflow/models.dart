@@ -9,3 +9,5 @@ const String modernArtNoArtQuant =
     "Modern Art VGG19 - No Artwork category (Quantized)";
 const String modernArtZeroOneMultiQuant =
     "Modern Art VGG19 - 0, 1, or Multiple (Quantized)";
+const String mobileNetModernArt = "Modern Art MobileNet";
+const String mobileNetModernArtQuant = "Modern Art MobileNet (Quantized)";
