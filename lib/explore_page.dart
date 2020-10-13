@@ -115,13 +115,15 @@ class HeadlineAndMoreRow extends StatelessWidget {
     // TODO: fix this
     String title = listType == "Artists" ? strings.artists : strings.artworks;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 24, 8, 8),
+      padding: const EdgeInsets.fromLTRB(8, 12, 8, 0),
       child: Row(
         children: [
           headline(title),
           Spacer(),
-          InkWell(
-              onTap: () {
+          IconButton(
+              icon: Icon(Icons.arrow_forward),
+              tooltip: strings.button.more,
+              onPressed: () {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -129,8 +131,7 @@ class HeadlineAndMoreRow extends StatelessWidget {
                               appBar: AppBar(title: Text(title)),
                               body: ListVertical(itemList: itemList),
                             )));
-              },
-              child: Text(strings.button.more))
+              }),
         ],
       ),
     );

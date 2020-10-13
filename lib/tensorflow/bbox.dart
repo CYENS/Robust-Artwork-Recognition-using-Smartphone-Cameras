@@ -174,7 +174,9 @@ class BBox extends StatelessWidget {
         modernArt,
         modernArtQuant,
         modernArtNoArtQuant,
-        modernArtZeroOneMultiQuant
+        modernArtZeroOneMultiQuant,
+        mobileNetModernArt,
+        mobileNetModernArtQuant,
       ].contains(model)
           ? _renderStrings()
           : model == posenet ? _renderKeypoints() : _renderBoxes(),

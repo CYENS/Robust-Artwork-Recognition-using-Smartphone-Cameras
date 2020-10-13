@@ -37,12 +37,12 @@ class FeaturedTile extends StatelessWidget {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: artwork.name,
+                        text: "${artwork.name}, ",
                         style: TextStyle(
                             fontSize: 28, fontStyle: FontStyle.normal),
                       ),
                       TextSpan(
-                        text: " by " + artwork.artist,
+                        text: artwork.artist,
                         style: TextStyle(
                             fontSize: 18, fontStyle: FontStyle.italic),
                       )

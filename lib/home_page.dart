@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
               icon: Icon(Icons.camera), title: Text(strings.nav.identify)),
           BottomNavigationBarItem(
-              icon: Icon(Icons.settings), title: Text(strings.nav.settings)),
+              icon: Icon(Icons.settings), title: Text(strings.stngs.title)),
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,

@@ -80,10 +80,23 @@ class _ModelSelectionState extends State<ModelSelection> {
             model: "assets/tflite/VGG_with_no_art_quant.tflite",
             labels: "assets/tflite/VGG_with_no_art_labels.txt");
         break;
+
       case modernArtZeroOneMultiQuant:
         res = await Tflite.loadModel(
             model: "assets/tflite/VGG_zero_one_multiple_quant.tflite",
             labels: "assets/tflite/VGG_zero_one_multiple_labels.txt");
+        break;
+
+      case mobileNetModernArt:
+        res = await Tflite.loadModel(
+            model: "assets/tflite/MobileNet_No_Art.tflite",
+            labels: "assets/tflite/MobileNet_No_Art_labels.txt");
+        break;
+
+      case mobileNetModernArtQuant:
+        res = await Tflite.loadModel(
+            model: "assets/tflite/MobileNet_No_Art_quant.tflite",
+            labels: "assets/tflite/MobileNet_No_Art_labels.txt");
         break;
 
       default:
@@ -161,6 +174,14 @@ class _ModelSelectionState extends State<ModelSelection> {
                   RaisedButton(
                     child: const Text(modernArtZeroOneMultiQuant),
                     onPressed: () => onSelect(modernArtZeroOneMultiQuant),
+                  ),
+                  RaisedButton(
+                    child: const Text(mobileNetModernArt),
+                    onPressed: () => onSelect(mobileNetModernArt),
+                  ),
+                  RaisedButton(
+                    child: const Text(mobileNetModernArtQuant),
+                    onPressed: () => onSelect(mobileNetModernArtQuant),
                   ),
                 ],
               ),
