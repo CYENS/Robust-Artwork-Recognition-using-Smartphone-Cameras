@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:modern_art_app/tensorflow/tensorflow_camera.dart';
 import 'package:modern_art_app/utils/utils.dart';
 import 'package:tflite/tflite.dart';
@@ -44,77 +45,21 @@ class _ModelSelectionState extends State<ModelSelection> {
     super.initState();
   }
 
-  loadModel() async {
-    String res;
-    switch (_model) {
-      case yolo:
-        res = await Tflite.loadModel(
-          model: "assets/tflite/other/yolov2_tiny.tflite",
-          labels: "assets/tflite/other/yolov2_tiny.txt",
-        );
-        break;
-
-      case mobilenet:
-        res = await Tflite.loadModel(
-            model: "assets/tflite/other/mobilenet_v1_1.0_224.tflite",
-            labels: "assets/tflite/other/mobilenet_v1_1.0_224.txt");
-        break;
-
-      case posenet:
-        res = await Tflite.loadModel(
-            model:
-                "assets/tflite/other/posenet_mv1_075_float_from_checkpoints.tflite");
-        break;
-
-      case vgg19:
-        res = await Tflite.loadModel(
-            model: "assets/tflite/cnn224RGB_VGG19.tflite",
-            labels: "assets/tflite/cnn224RGB_VGG19_labels.txt");
-        break;
-
-      case vgg19Quant:
-        res = await Tflite.loadModel(
-            model: "assets/tflite/cnn224RGB_VGG19_quant.tflite",
-            labels: "assets/tflite/cnn224RGB_VGG19_labels.txt");
-        break;
-
-      case vgg19NoArtQuant:
-        res = await Tflite.loadModel(
-            model: "assets/tflite/VGG_with_no_art_quant.tflite",
-            labels: "assets/tflite/VGG_with_no_art_labels.txt");
-        break;
-
-      case vgg19ZeroOneMultiQuant:
-        res = await Tflite.loadModel(
-            model: "assets/tflite/VGG_zero_one_multiple_quant.tflite",
-            labels: "assets/tflite/VGG_zero_one_multiple_labels.txt");
-        break;
-
-      case mobileNetNoArt:
-        res = await Tflite.loadModel(
-            model: "assets/tflite/MobileNet_No_Art.tflite",
-            labels: "assets/tflite/MobileNet_No_Art_labels.txt");
-        break;
-
-      case mobileNetNoArtQuant:
-        res = await Tflite.loadModel(
-            model: "assets/tflite/MobileNet_No_Art_quant.tflite",
-            labels: "assets/tflite/MobileNet_No_Art_labels.txt");
-        break;
-
-      default:
-        res = await Tflite.loadModel(
-            model: "assets/tflite/other/ssd_mobilenet.tflite",
-            labels: "assets/tflite/other/ssd_mobilenet.txt");
-    }
-    print(res);
+  loadModelFromSettings() async {
+    TfLiteModel model = tfLiteModels[_model];
+    String res = await Tflite.loadModel(
+      model: model.modelPath,
+      labels: model.labelsPath,
+    );
+    print("$res loading model $_model, as specified in Settings");
   }
 
   onSelect(model) {
     setState(() {
-      _model = model;
+      String preferredModel = Settings.getValue("key-cnn-type", mobileNetNoArt);
+      _model = preferredModel;
     });
-    loadModel();
+    loadModelFromSettings();
   }
 
   setRecognitions(recognitions, imageHeight, imageWidth, inferenceTime) {
