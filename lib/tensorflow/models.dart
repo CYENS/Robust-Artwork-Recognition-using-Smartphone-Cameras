@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+// older example models
+// TODO remove these
 const String mobilenet = "MobileNet";
 const String ssd = "SSD MobileNet";
 const String yolo = "Tiny YOLOv2";
@@ -13,6 +15,27 @@ const String vgg19ZeroOneMultiQuant = "VGG19 - 0, 1, or Multiple (Quantized)";
 const String mobileNetNoArt = "MobileNet - No Artwork category";
 const String mobileNetNoArtQuant =
     "MobileNet - No Artwork category (Quantized)";
+
+const Map<String, TfLiteModel> tfLiteModels = {
+  vgg19: TfLiteModel(
+      modelPath: "cnn224RGB_VGG19.tflite",
+      labelsPath: "cnn224RGB_VGG19_labels.txt"),
+  vgg19Quant: TfLiteModel(
+      modelPath: "cnn224RGB_VGG19_quant.tflite",
+      labelsPath: "cnn224RGB_VGG19_labels.txt"),
+  vgg19NoArtQuant: TfLiteModel(
+      modelPath: "VGG_with_no_art_quant.tflite",
+      labelsPath: "VGG_with_no_art_labels.txt"),
+  vgg19ZeroOneMultiQuant: TfLiteModel(
+      modelPath: "VGG_zero_one_multiple_quant.tflite",
+      labelsPath: "VGG_zero_one_multiple_labels.txt"),
+  mobileNetNoArt: TfLiteModel(
+      modelPath: "MobileNet_No_Art.tflite",
+      labelsPath: "MobileNet_No_Art_labels.txt"),
+  mobileNetNoArtQuant: TfLiteModel(
+      modelPath: "MobileNet_No_Art_quant.tflite",
+      labelsPath: "MobileNet_No_Art_labels.txt"),
+};
 
 class TfLiteModel {
   final String modelAssetsPath = "assets/tflite/";
