@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:modern_art_app/tensorflow/tensorflow_camera.dart';
+import 'package:modern_art_app/utils/utils.dart';
 import 'package:tflite/tflite.dart';
 
 import 'bbox.dart';
@@ -24,6 +25,8 @@ class _ModelSelectionState extends State<ModelSelection> {
   int _inferenceTime = 0;
   String _model = "";
   var _recHistory = Map();
+  var _recHistory2 = DefaultDict<double, List<String>>(() => []);
+  var _recHistory3 = DefaultDict<String, List<double>>(() => []);
 
   @override
   void setState(VoidCallback fn) {
@@ -123,9 +126,12 @@ class _ModelSelectionState extends State<ModelSelection> {
         key: (recognition) => recognition["label"],
         value: (recognition) => recognition["confidence"],
       ));
-      print(_recHistory);
       recognitions.forEach((element) {
-        print(element);
+        _recHistory2[element["confidence"]].add(element["label"]);
+        _recHistory3[element["label"]].add(element["confidence"]);
+      });
+      _recHistory3.forEach((key, value) {
+        print("$key $value");
       });
       _recognitions = recognitions;
       _imageHeight = imageHeight;
