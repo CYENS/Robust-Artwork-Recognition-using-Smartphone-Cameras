@@ -20,6 +20,7 @@ class SettingsPage extends StatelessWidget {
           children: [
             RadioModalSettingsTile<String>(
               title: "CNN type used",
+              // TODO make keys constants in utils perhaps
               settingKey: "key-cnn-type",
               values: Map<String, String>.fromIterable(
                 tfLiteModels.keys,
