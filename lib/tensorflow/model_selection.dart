@@ -66,37 +66,37 @@ class _ModelSelectionState extends State<ModelSelection> {
                 "assets/tflite/other/posenet_mv1_075_float_from_checkpoints.tflite");
         break;
 
-      case modernArt:
+      case vgg19:
         res = await Tflite.loadModel(
             model: "assets/tflite/cnn224RGB_VGG19.tflite",
             labels: "assets/tflite/cnn224RGB_VGG19_labels.txt");
         break;
 
-      case modernArtQuant:
+      case vgg19Quant:
         res = await Tflite.loadModel(
             model: "assets/tflite/cnn224RGB_VGG19_quant.tflite",
             labels: "assets/tflite/cnn224RGB_VGG19_labels.txt");
         break;
 
-      case modernArtNoArtQuant:
+      case vgg19NoArtQuant:
         res = await Tflite.loadModel(
             model: "assets/tflite/VGG_with_no_art_quant.tflite",
             labels: "assets/tflite/VGG_with_no_art_labels.txt");
         break;
 
-      case modernArtZeroOneMultiQuant:
+      case vgg19ZeroOneMultiQuant:
         res = await Tflite.loadModel(
             model: "assets/tflite/VGG_zero_one_multiple_quant.tflite",
             labels: "assets/tflite/VGG_zero_one_multiple_labels.txt");
         break;
 
-      case mobileNetModernArt:
+      case mobileNetNoArt:
         res = await Tflite.loadModel(
             model: "assets/tflite/MobileNet_No_Art.tflite",
             labels: "assets/tflite/MobileNet_No_Art_labels.txt");
         break;
 
-      case mobileNetModernArtQuant:
+      case mobileNetNoArtQuant:
         res = await Tflite.loadModel(
             model: "assets/tflite/MobileNet_No_Art_quant.tflite",
             labels: "assets/tflite/MobileNet_No_Art_labels.txt");
@@ -166,28 +166,28 @@ class _ModelSelectionState extends State<ModelSelection> {
                   //   onPressed: () => onSelect(posenet),
                   // ),
                   RaisedButton(
-                    child: const Text(modernArt),
-                    onPressed: () => onSelect(modernArt),
+                    child: const Text(vgg19),
+                    onPressed: () => onSelect(vgg19),
                   ),
                   RaisedButton(
-                    child: const Text(modernArtQuant),
-                    onPressed: () => onSelect(modernArtQuant),
+                    child: const Text(vgg19Quant),
+                    onPressed: () => onSelect(vgg19Quant),
                   ),
                   RaisedButton(
-                    child: const Text(modernArtNoArtQuant),
-                    onPressed: () => onSelect(modernArtNoArtQuant),
+                    child: const Text(vgg19NoArtQuant),
+                    onPressed: () => onSelect(vgg19NoArtQuant),
                   ),
                   RaisedButton(
-                    child: const Text(modernArtZeroOneMultiQuant),
-                    onPressed: () => onSelect(modernArtZeroOneMultiQuant),
+                    child: const Text(vgg19ZeroOneMultiQuant),
+                    onPressed: () => onSelect(vgg19ZeroOneMultiQuant),
                   ),
                   RaisedButton(
-                    child: const Text(mobileNetModernArt),
-                    onPressed: () => onSelect(mobileNetModernArt),
+                    child: const Text(mobileNetNoArt),
+                    onPressed: () => onSelect(mobileNetNoArt),
                   ),
                   RaisedButton(
-                    child: const Text(mobileNetModernArtQuant),
-                    onPressed: () => onSelect(mobileNetModernArtQuant),
+                    child: const Text(mobileNetNoArtQuant),
+                    onPressed: () => onSelect(mobileNetNoArtQuant),
                   ),
                 ],
               ),

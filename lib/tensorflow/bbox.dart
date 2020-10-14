@@ -171,12 +171,12 @@ class BBox extends StatelessWidget {
     return Stack(
       children: [
         mobilenet,
-        modernArt,
-        modernArtQuant,
-        modernArtNoArtQuant,
-        modernArtZeroOneMultiQuant,
-        mobileNetModernArt,
-        mobileNetModernArtQuant,
+        vgg19,
+        vgg19Quant,
+        vgg19NoArtQuant,
+        vgg19ZeroOneMultiQuant,
+        mobileNetNoArt,
+        mobileNetNoArtQuant,
       ].contains(model)
           ? _renderStrings()
           : model == posenet ? _renderKeypoints() : _renderBoxes(),

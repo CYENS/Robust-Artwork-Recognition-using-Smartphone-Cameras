@@ -47,10 +47,10 @@ class _TensorFlowCameraState extends State<TensorFlowCamera> {
             int startTime = new DateTime.now().millisecondsSinceEpoch;
 
             if ([
-              modernArt,
-              modernArtQuant,
-              modernArtNoArtQuant,
-              modernArtZeroOneMultiQuant
+              vgg19,
+              vgg19Quant,
+              vgg19NoArtQuant,
+              vgg19ZeroOneMultiQuant
             ].contains(widget.model)) {
               print("calculating with ${widget.model}");
               Tflite.runModelOnFrame(
@@ -71,7 +71,7 @@ class _TensorFlowCameraState extends State<TensorFlowCamera> {
 
                 isDetecting = false;
               });
-            } else if ([mobilenet, mobileNetModernArt, mobileNetModernArtQuant]
+            } else if ([mobilenet, mobileNetNoArt, mobileNetNoArtQuant]
                 .contains(widget.model)) {
               Tflite.runModelOnFrame(
                 bytesList: img.planes.map((plane) {

@@ -22,11 +22,11 @@ class SettingsPage extends StatelessWidget {
               title: 'CNN type',
               settingKey: 'key-cnn-type',
               values: <String, String>{
-                modernArtQuant: modernArtQuant,
-                modernArtNoArtQuant: modernArtNoArtQuant,
-                modernArtZeroOneMultiQuant: modernArtZeroOneMultiQuant,
+                vgg19Quant: vgg19Quant,
+                vgg19NoArtQuant: vgg19NoArtQuant,
+                vgg19ZeroOneMultiQuant: vgg19ZeroOneMultiQuant,
               },
-              selected: modernArtQuant,
+              selected: vgg19Quant,
               onChange: (value) {
                 debugPrint('key-radio-sync-period: $value days');
               },
