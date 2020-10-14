@@ -38,7 +38,7 @@ const Map<String, TfLiteModel> tfLiteModels = {
 };
 
 class TfLiteModel {
-  final String modelAssetsPath = "assets/tflite/";
+  static String modelAssetsPath = "assets/tflite/";
 
   final String _modelPath;
 
