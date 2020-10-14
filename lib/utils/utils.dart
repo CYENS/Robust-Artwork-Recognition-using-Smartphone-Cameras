@@ -21,6 +21,8 @@ String getArtworkFilename(Artwork artwork) =>
 /// Python, using Dart's Map class to implement similar behaviour. If a key is
 /// not present in the "dict", putIfAbsent is automatically used to initialise
 /// it's value with [_ifAbsent].
+///
+/// See https://stackoverflow.com/a/61198678
 class DefaultDict<K, V> extends MapBase<K, V> {
   final Map<K, V> _map = {};
   final V Function() _ifAbsent;
