@@ -87,56 +87,16 @@ class _ModelSelectionState extends State<ModelSelection> {
 
   @override
   Widget build(BuildContext context) {
+    String preferredModel = Settings.getValue("key-cnn-type", mobileNetNoArt);
+    _model = preferredModel;
+    loadModelFromSettings();
     Size screen = MediaQuery.of(context).size;
     return Scaffold(
       body: _model == ""
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  // RaisedButton(
-                  //   child: const Text(ssd),
-                  //   onPressed: () => onSelect(ssd),
-                  // ),
-                  // RaisedButton(
-                  //   child: const Text(yolo),
-                  //   onPressed: () => onSelect(yolo),
-                  // ),
-                  // RaisedButton(
-                  //   child: const Text(mobilenet),
-                  //   onPressed: () => onSelect(mobilenet),
-                  // ),
-                  // RaisedButton(
-                  //   child: const Text(posenet),
-                  //   onPressed: () => onSelect(posenet),
-                  // ),
-                  RaisedButton(
-                    child: const Text(vgg19),
-                    onPressed: () => onSelect(vgg19),
-                  ),
-                  RaisedButton(
-                    child: const Text(vgg19Quant),
-                    onPressed: () => onSelect(vgg19Quant),
-                  ),
-                  RaisedButton(
-                    child: const Text(vgg19NoArtQuant),
-                    onPressed: () => onSelect(vgg19NoArtQuant),
-                  ),
-                  RaisedButton(
-                    child: const Text(vgg19ZeroOneMultiQuant),
-                    onPressed: () => onSelect(vgg19ZeroOneMultiQuant),
-                  ),
-                  RaisedButton(
-                    child: const Text(mobileNetNoArt),
-                    onPressed: () => onSelect(mobileNetNoArt),
-                  ),
-                  RaisedButton(
-                    child: const Text(mobileNetNoArtQuant),
-                    onPressed: () => onSelect(mobileNetNoArtQuant),
-                  ),
-                ],
-              ),
-            )
+          // here check if model was loaded properly (see res in loadFrom...())
+          // instead of checking if _model is empty; if loading fails show an
+          // appropriate msg
+          ? Center(child: CircularProgressIndicator())
           : Stack(
               children: [
                 TensorFlowCamera(
