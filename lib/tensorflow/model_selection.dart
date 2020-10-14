@@ -112,6 +112,13 @@ class _ModelSelectionState extends State<ModelSelection> {
                     screen.width,
                     _model,
                     _inferenceTime),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text("Model used: $_model"),
+                  ),
+                )
               ],
             ),
     );
