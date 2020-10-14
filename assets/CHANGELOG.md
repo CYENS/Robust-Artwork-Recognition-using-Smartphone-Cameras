@@ -1,3 +1,10 @@
+## Version 0.6.2
+### 2010-10-14
+- The selection of the CNN type being used was moved to Settings,
+  instead of as a list of buttons in the "Identify artwork" screen
+- Preparation for implementing artwork auto-detection logic (i.e. how to
+  decide which of the CNN inferred artworks is the correct one)
+
 ## Version 0.6.1
 ### 2010-10-13
 - Added new artwork recognition CNNs based on MobileNet, they are much

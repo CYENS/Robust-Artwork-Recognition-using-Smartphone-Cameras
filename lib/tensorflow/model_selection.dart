@@ -2,7 +2,9 @@ import 'dart:math' as math;
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:modern_art_app/tensorflow/tensorflow_camera.dart';
+import 'package:modern_art_app/utils/utils.dart';
 import 'package:tflite/tflite.dart';
 
 import 'bbox.dart';
@@ -24,6 +26,8 @@ class _ModelSelectionState extends State<ModelSelection> {
   int _inferenceTime = 0;
   String _model = "";
   var _recHistory = Map();
+  var _recHistory2 = DefaultDict<double, List<String>>(() => []);
+  var _recHistory3 = DefaultDict<String, List<double>>(() => []);
 
   @override
   void setState(VoidCallback fn) {
@@ -41,77 +45,21 @@ class _ModelSelectionState extends State<ModelSelection> {
     super.initState();
   }
 
-  loadModel() async {
-    String res;
-    switch (_model) {
-      case yolo:
-        res = await Tflite.loadModel(
-          model: "assets/tflite/other/yolov2_tiny.tflite",
-          labels: "assets/tflite/other/yolov2_tiny.txt",
-        );
-        break;
-
-      case mobilenet:
-        res = await Tflite.loadModel(
-            model: "assets/tflite/other/mobilenet_v1_1.0_224.tflite",
-            labels: "assets/tflite/other/mobilenet_v1_1.0_224.txt");
-        break;
-
-      case posenet:
-        res = await Tflite.loadModel(
-            model:
-                "assets/tflite/other/posenet_mv1_075_float_from_checkpoints.tflite");
-        break;
-
-      case modernArt:
-        res = await Tflite.loadModel(
-            model: "assets/tflite/cnn224RGB_VGG19.tflite",
-            labels: "assets/tflite/cnn224RGB_VGG19_labels.txt");
-        break;
-
-      case modernArtQuant:
-        res = await Tflite.loadModel(
-            model: "assets/tflite/cnn224RGB_VGG19_quant.tflite",
-            labels: "assets/tflite/cnn224RGB_VGG19_labels.txt");
-        break;
-
-      case modernArtNoArtQuant:
-        res = await Tflite.loadModel(
-            model: "assets/tflite/VGG_with_no_art_quant.tflite",
-            labels: "assets/tflite/VGG_with_no_art_labels.txt");
-        break;
-
-      case modernArtZeroOneMultiQuant:
-        res = await Tflite.loadModel(
-            model: "assets/tflite/VGG_zero_one_multiple_quant.tflite",
-            labels: "assets/tflite/VGG_zero_one_multiple_labels.txt");
-        break;
-
-      case mobileNetModernArt:
-        res = await Tflite.loadModel(
-            model: "assets/tflite/MobileNet_No_Art.tflite",
-            labels: "assets/tflite/MobileNet_No_Art_labels.txt");
-        break;
-
-      case mobileNetModernArtQuant:
-        res = await Tflite.loadModel(
-            model: "assets/tflite/MobileNet_No_Art_quant.tflite",
-            labels: "assets/tflite/MobileNet_No_Art_labels.txt");
-        break;
-
-      default:
-        res = await Tflite.loadModel(
-            model: "assets/tflite/other/ssd_mobilenet.tflite",
-            labels: "assets/tflite/other/ssd_mobilenet.txt");
-    }
-    print(res);
+  loadModelFromSettings() async {
+    TfLiteModel model = tfLiteModels[_model];
+    String res = await Tflite.loadModel(
+      model: model.modelPath,
+      labels: model.labelsPath,
+    );
+    print("$res loading model $_model, as specified in Settings");
   }
 
   onSelect(model) {
     setState(() {
-      _model = model;
+      String preferredModel = Settings.getValue("key-cnn-type", mobileNetNoArt);
+      _model = preferredModel;
     });
-    loadModel();
+    loadModelFromSettings();
   }
 
   setRecognitions(recognitions, imageHeight, imageWidth, inferenceTime) {
@@ -123,9 +71,12 @@ class _ModelSelectionState extends State<ModelSelection> {
         key: (recognition) => recognition["label"],
         value: (recognition) => recognition["confidence"],
       ));
-      print(_recHistory);
       recognitions.forEach((element) {
-        print(element);
+        _recHistory2[element["confidence"]].add(element["label"]);
+        _recHistory3[element["label"]].add(element["confidence"]);
+      });
+      _recHistory3.forEach((key, value) {
+        print("$key $value");
       });
       _recognitions = recognitions;
       _imageHeight = imageHeight;
@@ -136,56 +87,16 @@ class _ModelSelectionState extends State<ModelSelection> {
 
   @override
   Widget build(BuildContext context) {
+    String preferredModel = Settings.getValue("key-cnn-type", mobileNetNoArt);
+    _model = preferredModel;
+    loadModelFromSettings();
     Size screen = MediaQuery.of(context).size;
     return Scaffold(
       body: _model == ""
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  // RaisedButton(
-                  //   child: const Text(ssd),
-                  //   onPressed: () => onSelect(ssd),
-                  // ),
-                  // RaisedButton(
-                  //   child: const Text(yolo),
-                  //   onPressed: () => onSelect(yolo),
-                  // ),
-                  // RaisedButton(
-                  //   child: const Text(mobilenet),
-                  //   onPressed: () => onSelect(mobilenet),
-                  // ),
-                  // RaisedButton(
-                  //   child: const Text(posenet),
-                  //   onPressed: () => onSelect(posenet),
-                  // ),
-                  RaisedButton(
-                    child: const Text(modernArt),
-                    onPressed: () => onSelect(modernArt),
-                  ),
-                  RaisedButton(
-                    child: const Text(modernArtQuant),
-                    onPressed: () => onSelect(modernArtQuant),
-                  ),
-                  RaisedButton(
-                    child: const Text(modernArtNoArtQuant),
-                    onPressed: () => onSelect(modernArtNoArtQuant),
-                  ),
-                  RaisedButton(
-                    child: const Text(modernArtZeroOneMultiQuant),
-                    onPressed: () => onSelect(modernArtZeroOneMultiQuant),
-                  ),
-                  RaisedButton(
-                    child: const Text(mobileNetModernArt),
-                    onPressed: () => onSelect(mobileNetModernArt),
-                  ),
-                  RaisedButton(
-                    child: const Text(mobileNetModernArtQuant),
-                    onPressed: () => onSelect(mobileNetModernArtQuant),
-                  ),
-                ],
-              ),
-            )
+          // here check if model was loaded properly (see res in loadFrom...())
+          // instead of checking if _model is empty; if loading fails show an
+          // appropriate msg
+          ? Center(child: CircularProgressIndicator())
           : Stack(
               children: [
                 TensorFlowCamera(
@@ -201,6 +112,13 @@ class _ModelSelectionState extends State<ModelSelection> {
                     screen.width,
                     _model,
                     _inferenceTime),
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text("Model used: $_model"),
+                  ),
+                )
               ],
             ),
     );

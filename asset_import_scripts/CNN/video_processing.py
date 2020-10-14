@@ -221,7 +221,8 @@ def frame_generator_by_artwork(video_files_dir: Path):
 
         assert all(v.is_file() for v in videos_for_artwork)
 
-        total_frames_for_artwork = sum(int(cv2.VideoCapture(str(v)).get(cv2.CAP_PROP_FRAME_COUNT)) for v in videos_for_artwork)
+        total_frames_for_artwork = sum(
+            int(cv2.VideoCapture(str(v)).get(cv2.CAP_PROP_FRAME_COUNT)) for v in videos_for_artwork)
         print("total", total_frames_for_artwork)
 
         sample_every_n_frame = max(1, total_frames_for_artwork // max_frames_per_artwork)
@@ -255,6 +256,22 @@ def frame_generator_by_artwork(video_files_dir: Path):
                         break
 
                 current_frame += 1
+
+
+def video_resolutions(video_files_dir: Path):
+    dataset = pd.read_csv(video_files_dir / "description_export2.csv")
+
+    for i in range(dataset.shape[0]):
+        vid_path = video_files_dir / dataset.iloc[i]["file"]
+        assert vid_path.is_file()
+
+        cap = cv2.VideoCapture(str(vid_path))
+
+        print({"video height": cap.get(cv2.CAP_PROP_FRAME_HEIGHT),
+               "video width": cap.get(cv2.CAP_PROP_FRAME_WIDTH),
+               "frame count": cap.get(cv2.CAP_PROP_FRAME_COUNT),
+               "file": vid_path.name,
+               "id": dataset.iloc[i]["id"]})
 
 
 def frame_counts(video_files_dir: Path):
@@ -296,6 +313,7 @@ if __name__ == '__main__':
     # with open(files_dir / "processed", "wb+") as f:
     #     pickle.dump(processed, f)
     # save_sample_frames(files_dir)
-    frame_counts(files_dir)
+    # frame_counts(files_dir)
     # for v in get_video_files(files_dir / "not_artwork_videos"):
     #     print(v.name)
+    video_resolutions(files_dir)

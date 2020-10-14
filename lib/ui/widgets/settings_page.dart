@@ -19,28 +19,29 @@ class SettingsPage extends StatelessWidget {
           title: "Computer Vision options",
           children: [
             RadioModalSettingsTile<String>(
-              title: 'CNN type',
-              settingKey: 'key-cnn-type',
-              values: <String, String>{
-                modernArtQuant: modernArtQuant,
-                modernArtNoArtQuant: modernArtNoArtQuant,
-                modernArtZeroOneMultiQuant: modernArtZeroOneMultiQuant,
-              },
-              selected: modernArtQuant,
+              title: "CNN type used",
+              // TODO make keys constants in utils perhaps
+              settingKey: "key-cnn-type",
+              values: Map<String, String>.fromIterable(
+                tfLiteModels.keys,
+                key: (key) => key,
+                value: (key) => key,
+              ),
+              selected: mobileNetNoArt,
               onChange: (value) {
-                debugPrint('key-radio-sync-period: $value days');
+                debugPrint("key-cnn-type: $value");
               },
             ),
             SliderSettingsTile(
-              title: 'CNN sensitivity',
-              settingKey: 'key-cnn-sensitivity',
+              title: "CNN sensitivity",
+              settingKey: "key-cnn-sensitivity",
               defaultValue: 99.5,
               min: 90,
               max: 100,
               step: 0.5,
               // leading: Icon(Icons.volume_up),
               onChange: (value) {
-                debugPrint('key-slider-volume: $value');
+                debugPrint("key-cnn-sensitivity: $value");
               },
             )
           ],
