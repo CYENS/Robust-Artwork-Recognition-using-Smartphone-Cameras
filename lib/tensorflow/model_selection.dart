@@ -24,7 +24,10 @@ class _ModelSelectionState extends State<ModelSelection> {
   int _imageHeight = 0;
   int _imageWidth = 0;
   int _inferenceTime = 0;
+  List<int> _inferenceTimeHistory = [];
+  double _fps = 0.0;
   String _model = "";
+  double _preferredSensitivity = 0.0;
   var _history = [];
   var _recHistory = DefaultDict<String, List<double>>(() => []);
   var _currentTopInference = "Calculating...";
@@ -54,16 +57,22 @@ class _ModelSelectionState extends State<ModelSelection> {
     print("$res loading model $_model, as specified in Settings");
   }
 
-  onSelect(model) {
+  onSelect(model, sensitivity) {
     setState(() {
-      String preferredModel = Settings.getValue("key-cnn-type", mobileNetNoArt);
-      _model = preferredModel;
+      _model = model;
+      _preferredSensitivity = sensitivity;
     });
     loadModelFromSettings();
   }
 
   setRecognitions(recognitions, imageHeight, imageWidth, inferenceTime) {
     setState(() {
+      _recognitions = recognitions;
+      _imageHeight = imageHeight;
+      _imageWidth = imageWidth;
+      _inferenceTime = inferenceTime;
+      _inferenceTimeHistory.add(inferenceTime);
+
       recognitions.forEach((element) {
         // each item in recognitions is a LinkedHashMap in the form of
         // {confidence: 0.5562283396720886, index: 15, label: untitled_votsis}
@@ -87,23 +96,26 @@ class _ModelSelectionState extends State<ModelSelection> {
         if (sortedByMean.length >= 1) {
           _currentTopInference = sortedByMean.last;
         }
+        var fps = 1000 /
+            (_inferenceTimeHistory
+                    .sublist(_inferenceTimeHistory.length - 5)
+                    .reduce((a, b) => a + b) /
+                5);
+
+        if (fps != 0.0) _fps = fps;
 
         print(sortedByMean);
 
         _recHistory.clear();
       }
-      _recognitions = recognitions;
-      _imageHeight = imageHeight;
-      _imageWidth = imageWidth;
-      _inferenceTime = inferenceTime;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     String preferredModel = Settings.getValue("key-cnn-type", mobileNetNoArt);
-    _model = preferredModel;
-    loadModelFromSettings();
+    double sensitivity = Settings.getValue("key-cnn-sensitivity", 99.0);
+    onSelect(preferredModel, sensitivity);
     Size screen = MediaQuery.of(context).size;
     return Scaffold(
       body: _model == ""
@@ -134,10 +146,12 @@ class _ModelSelectionState extends State<ModelSelection> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Text(
-                          "Selection based last 5 inferences: $_currentTopInference",
-                          style: TextStyle(fontSize: 16),
+                          _currentTopInference,
+                          style: TextStyle(fontSize: 20),
                         ),
-                        Text("Model used: $_model"),
+                        Text("Model: $_model"),
+                        Text("Sensitivity: $_preferredSensitivity" +
+                            ", ${_fps != 0.0 ? "${_fps.toStringAsPrecision(2)}" : "N/A"} fps"),
                       ],
                     ),
                   ),
