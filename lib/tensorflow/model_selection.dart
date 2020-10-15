@@ -25,7 +25,9 @@ class _ModelSelectionState extends State<ModelSelection> {
   int _imageWidth = 0;
   int _inferenceTime = 0;
   String _model = "";
+  var _history = [];
   var _recHistory = DefaultDict<String, List<double>>(() => []);
+  var _currentTopInference = "Calculating...";
 
   @override
   void setState(VoidCallback fn) {
@@ -66,10 +68,30 @@ class _ModelSelectionState extends State<ModelSelection> {
         // each item in recognitions is a LinkedHashMap in the form of
         // {confidence: 0.5562283396720886, index: 15, label: untitled_votsis}
         _recHistory[element["label"]].add(element["confidence"]);
+        _history.add(element);
       });
-      _recHistory.forEach((key, value) {
-        print("$key $value");
-      });
+      // calculate means every 5 inferences, ignore first 5
+      if (_history.length % 5 == 0 && _history.length != 5) {
+        print("Number of results ${_history.length}");
+        _recHistory.forEach((key, value) {
+          print("$key $value");
+        });
+        var means = <String, double>{
+          for (var entry in _recHistory.entries)
+            entry.key: entry.value.reduce((a, b) => a + b) / entry.value.length,
+        };
+
+        var sortedByMean = means.keys.toList(growable: false)
+          ..sort((k1, k2) => means[k1].compareTo(means[k2]));
+
+        if (sortedByMean.length >= 1) {
+          _currentTopInference = sortedByMean.last;
+        }
+
+        print(sortedByMean);
+
+        _recHistory.clear();
+      }
       _recognitions = recognitions;
       _imageHeight = imageHeight;
       _imageWidth = imageWidth;
@@ -108,7 +130,16 @@ class _ModelSelectionState extends State<ModelSelection> {
                   alignment: Alignment.bottomCenter,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text("Model used: $_model"),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          "Selection based last 5 inferences: $_currentTopInference",
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        Text("Model used: $_model"),
+                      ],
+                    ),
                   ),
                 )
               ],
