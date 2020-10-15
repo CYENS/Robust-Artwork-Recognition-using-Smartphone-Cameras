@@ -35,11 +35,10 @@ class SettingsPage extends StatelessWidget {
             SliderSettingsTile(
               title: "CNN sensitivity",
               settingKey: "key-cnn-sensitivity",
-              defaultValue: 99.5,
-              min: 90,
+              defaultValue: 99,
+              min: 98,
               max: 100,
-              step: 0.5,
-              // leading: Icon(Icons.volume_up),
+              step: 0.2,
               onChange: (value) {
                 debugPrint("key-cnn-sensitivity: $value");
               },
