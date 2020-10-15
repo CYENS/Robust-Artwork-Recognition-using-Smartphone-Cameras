@@ -90,12 +90,21 @@ class _ModelSelectionState extends State<ModelSelection> {
             entry.key: entry.value.reduce((a, b) => a + b) / entry.value.length,
         };
 
-        var sortedByMean = means.keys.toList(growable: false)
+        var keysSortedByMean = means.keys.toList(growable: false)
           ..sort((k1, k2) => means[k1].compareTo(means[k2]));
 
-        if (sortedByMean.length >= 1) {
-          _currentTopInference = sortedByMean.last;
+        if (keysSortedByMean.length >= 1) {
+          var topInferenceMean = means[keysSortedByMean.last];
+          if (topInferenceMean >= (_preferredSensitivity / 100)) {
+            _currentTopInference =
+                "${keysSortedByMean.last} (${(topInferenceMean * 100).toStringAsFixed(2)}%)";
+          } else {
+            _currentTopInference = "N/A";
+          }
+        } else {
+          _currentTopInference = "N/A";
         }
+
         var fps = 1000 /
             (_inferenceTimeHistory
                     .sublist(_inferenceTimeHistory.length - 5)
@@ -103,8 +112,6 @@ class _ModelSelectionState extends State<ModelSelection> {
                 5);
 
         if (fps != 0.0) _fps = fps;
-
-        print(sortedByMean);
 
         _recHistory.clear();
       }
