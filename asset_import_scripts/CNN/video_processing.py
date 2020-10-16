@@ -361,7 +361,7 @@ def dataset_from_videos(files_dir: Path, dataset_csv_info_file: str, img_normali
         solution exists). See https://stackoverflow.com/a/58096430 for conversion explanation.
         """
         image = tf.image.resize(image, (frame_size, frame_size))
-        # TODO can convert label here to categorical, to avoid code duplication elsewhere
+        # can convert label here to categorical, to avoid code duplication elsewhere (tried but didn't work...)
         return (tf.cast(image, tf.float32) - mean) / std, label
 
     def random_modifications(image, label):
