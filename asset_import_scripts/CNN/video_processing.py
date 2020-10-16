@@ -367,7 +367,8 @@ def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int
     :param files_dir: path of the directory containing the videos
     :param dataset_info: pandas df containing the names of the videos and their corresponding labels
     :param max_frames: the total number of frames to extract; if fewer frames than requested are available,
-     all frames for artwork/video will be extracted; if more are available, frames are extracted evenly throughout the
+     all frames for artwork/video will be extracted; if more are available, frames are extracted evenly from all
+     frames available
     :param generate_by: whether to extract frames per artwork or per video, since an artwork may have multiple videos;
      should be either "artwork" or "video" only, any other value is ignored
     """
@@ -439,6 +440,30 @@ def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int
                     break
 
                 current_frame += 1
+
+
+def split_dataset(dataset: tf.data.Dataset, validation_data_fraction: float):
+    """
+    Splits a dataset of type tf.data.Dataset into a training and validation dataset using given ratio. Fractions are
+    rounded up to two decimal places. From https://stackoverflow.com/a/59696126
+
+    :param dataset: the input dataset to split
+    :param validation_data_fraction: the fraction of the validation data as a float between 0 and 1
+    :return: a tuple of two tf.data.Datasets as (training, validation)
+    """
+    validation_data_percent = round(validation_data_fraction * 100)
+    if not (0 <= validation_data_percent <= 100):
+        raise ValueError("validation data fraction must be ∈ [0,1]")
+
+    dataset = dataset.enumerate()
+    train_dataset = dataset.filter(lambda f, data: f % 100 > validation_data_percent)
+    validation_dataset = dataset.filter(lambda f, data: f % 100 <= validation_data_percent)
+
+    # remove enumeration
+    train_dataset = train_dataset.map(lambda f, data: data)
+    validation_dataset = validation_dataset.map(lambda f, data: data)
+
+    return train_dataset, validation_dataset
 
 
 if __name__ == '__main__':
