@@ -345,6 +345,9 @@ def dataset_from_videos(files_dir: Path, dataset_csv_info_file: str, img_normali
                                         output_types=(tf.float32, tf.float32),
                                         output_shapes=((None, None, 3), (len(artwork_list))))
 
+    # TODO calculate the datasets' sizes, perhaps print them, and also use them in the shuffling of the train dt below
+    #  can be calculated like so: (num of classes * max_frames) * % of dataset
+
     # split into train, validation & test datasets
     train, val, test = train_val_test_percentages
     train_dataset, validation_and_test = split_dataset(dt, (val + test) / 100)
