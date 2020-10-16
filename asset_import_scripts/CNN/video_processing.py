@@ -322,32 +322,33 @@ def dataset_from_videos(files_dir: Path, dataset_csv_info_file: str, img_normali
     :param frame_size: the size of the final resized square frames, this is dictated by the needs of the underlying NN
      that will be used in the training
     :param train_val_test_percentages: tuple specifying how to split the generated dataset into train, validation and
-     test datasets, the provided ints must add up to 100; if no test dataset is desired, its percentage can be set to 0
+     test datasets, the provided ints must add up to 100
     :param vary_train_dataset: whether to apply random variations to the frames of the train dataset (e.g. random
      crops, random flips left-right, etc.)
-    :return: a tuple of train, validation and test tf.data.Datasets (if 0% was specified for the test dataset,
-     it is excluded from the returned tuple)
+    :return: a tuple of train, validation and test tf.data.Datasets
     """
     assert sum(train_val_test_percentages) == 100, "Split percentages must add up to 100!"
 
     dataset_info = pd.read_csv(files_dir / dataset_csv_info_file)
 
     # make sure all files in csv are present
-    for i, row in dataset_info.iterrows():
+    for _, row in dataset_info.iterrows():
         assert (files_dir / row["file"]).is_file(), "One or more of the video files don't exist"
 
-    artwork_dict = {artwork_id: i for i, artwork_id in
-                    enumerate(sorted(dataset_info["id"].unique()))}
-    num_classes = len(artwork_dict)
+    # sort artwork ids in alphabetical order, this is important as it determines how the CNN outputs its predictions
+    artwork_dict = {artwork_id: i for i, artwork_id in enumerate(sorted(dataset_info["id"].unique()))}
     artwork_list = list(artwork_dict.keys())
 
-    dt = tf.data.Dataset.from_generator(lambda: frame_generator(files_dir, dataset_info, artwork_list, max_frames),
+    # create dataset, output_shapes are set to (None, None, 3), since the extracted frames are not initially resized,
+    # to allow applying variations to the train dataset only below
+    dt = tf.data.Dataset.from_generator(lambda: frame_generator(files_dir, dataset_info, max_frames),
                                         output_types=(tf.float32, tf.float32),
-                                        output_shapes=((None, None, 3), (num_classes)))
+                                        output_shapes=((None, None, 3), (len(artwork_list))))
 
-    # split into 70% train, 20% validation & 10% test datasets
-    train_dataset, validation_and_test = split_dataset(dt, 0.3)
-    validation_dataset, test_dataset = split_dataset(validation_and_test, 1 / 3)
+    # split into train, validation & test datasets
+    train, val, test = train_val_test_percentages
+    train_dataset, validation_and_test = split_dataset(dt, (val + test) / 100)
+    validation_dataset, test_dataset = split_dataset(validation_and_test, test / (val + test))
 
     # see https://www.tensorflow.org/datasets/keras_example
     # train_dataset = train_dataset.cache().shuffle(1000).batch(128).prefetch(tf.data.experimental.AUTOTUNE)
