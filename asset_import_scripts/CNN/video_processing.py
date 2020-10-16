@@ -309,7 +309,7 @@ def frame_counts(video_files_dir: Path):
 
 def dataset_from_videos(files_dir: Path, dataset_csv_info_file: str, img_normalization_params: tuple = (0.0, 255.0),
                         max_frames: int = 750, frame_size: int = 224, train_val_test_percentages: tuple = (70, 30, 0),
-                        vary_train_dataset: bool = True):
+                        batch_size: int = 128):
     """
     Generates train, validation and test tf.data.Datasets from the provided video files.
 
@@ -323,11 +323,11 @@ def dataset_from_videos(files_dir: Path, dataset_csv_info_file: str, img_normali
      that will be used in the training
     :param train_val_test_percentages: tuple specifying how to split the generated dataset into train, validation and
      test datasets, the provided ints must add up to 100
-    :param vary_train_dataset: whether to apply random variations to the frames of the train dataset (e.g. random
-     crops, random flips left-right, etc.)
+    :param batch_size: batch size for datasets
     :return: a tuple of train, validation and test tf.data.Datasets
     """
     assert sum(train_val_test_percentages) == 100, "Split percentages must add up to 100!"
+    assert all(param is float for param in img_normalization_params), "Normalization params must be floats"
 
     dataset_info = pd.read_csv(files_dir / dataset_csv_info_file)
 
@@ -350,12 +350,49 @@ def dataset_from_videos(files_dir: Path, dataset_csv_info_file: str, img_normali
     train_dataset, validation_and_test = split_dataset(dt, (val + test) / 100)
     validation_dataset, test_dataset = split_dataset(validation_and_test, test / (val + test))
 
-    # see https://www.tensorflow.org/datasets/keras_example
-    # train_dataset = train_dataset.cache().shuffle(1000).batch(128).prefetch(tf.data.experimental.AUTOTUNE)
-    # validation_dataset = validation_dataset.batch(128).cache().prefetch(tf.data.experimental.AUTOTUNE)
-    # test_dataset = test_dataset.batch(128).cache().prefetch(tf.data.experimental.AUTOTUNE)
+    mean, std = img_normalization_params
+
+    def normalize_img(image, label):
+        """
+        Resizes frames to the desired shape and range. Has to be a nested function, so that it can access
+        variables mean and std, due to the way the Tensorflow dataset mapping calls it below (check if another
+        solution exists). See https://stackoverflow.com/a/58096430 for conversion explanation.
+        """
+        image = tf.image.resize(image, (frame_size, frame_size))
+        # TODO can convert label here to categorical, to avoid code duplication elsewhere
+        return (tf.cast(image, tf.float32) - mean) / std, label
+
+    # apply necessary conversions (normalization, random modifications, batching & caching) to the created datasets
+    # see https://www.tensorflow.org/datasets/keras_example for batching and caching explanation
+
+    AUTOTUNE = tf.data.experimental.AUTOTUNE  # allows TF decide how to optimise dataset mapping below
+
+    train_dataset = train_dataset \
+        .map(random_modifications, num_parallel_calls=AUTOTUNE) \
+        .map(normalize_img, num_parallel_calls=AUTOTUNE) \
+        .cache().shuffle(1000) \
+        .batch(batch_size) \
+        .prefetch(AUTOTUNE)
+
+    validation_dataset = validation_dataset \
+        .map(normalize_img, num_parallel_calls=AUTOTUNE) \
+        .batch(batch_size) \
+        .cache() \
+        .prefetch(AUTOTUNE)
+
+    test_dataset = test_dataset \
+        .map(normalize_img, num_parallel_calls=AUTOTUNE) \
+        .batch(batch_size) \
+        .cache() \
+        .prefetch(AUTOTUNE)
 
     return train_dataset, validation_dataset, test_dataset
+
+
+def random_modifications(image, label):
+    # image = tf.image.random_crop
+    image = tf.image.random_flip_left_right(image)
+    return image, label
 
 
 def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int, generate_by: str = "artwork"):
