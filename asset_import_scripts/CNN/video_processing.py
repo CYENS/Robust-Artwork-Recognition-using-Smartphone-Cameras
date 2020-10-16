@@ -363,12 +363,12 @@ def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int
 
     Adapted from http://borg.csueastbay.edu/~grewe/CS663/Mat/LSTM/Exercise_VideoActivity_LSTM.html
 
-    @param files_dir: path of the directory containing the videos.
-    @param dataset_info: pandas df containing the names of the videos and their corresponding labels
-    @param max_frames: the total number of frames to extract; if fewer frames than requested are available,
-    all frames for artwork/video will be extracted; if more are available, frames are extracted evenly throughout the
-    @param generate_by: whether to extract frames per artwork or per video, since an artwork may have multiple videos;
-    should be either "artwork" or "video" only, any other value is ignored
+    :param files_dir: path of the directory containing the videos
+    :param dataset_info: pandas df containing the names of the videos and their corresponding labels
+    :param max_frames: the total number of frames to extract; if fewer frames than requested are available,
+     all frames for artwork/video will be extracted; if more are available, frames are extracted evenly throughout the
+    :param generate_by: whether to extract frames per artwork or per video, since an artwork may have multiple videos;
+     should be either "artwork" or "video" only, any other value is ignored
     """
     if generate_by not in ["artwork", "video"]:
         generate_by = "artwork"
