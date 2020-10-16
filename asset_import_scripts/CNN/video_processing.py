@@ -327,7 +327,6 @@ def dataset_from_videos(files_dir: Path, dataset_csv_info_file: str, img_normali
     :return: a tuple of train, validation and test tf.data.Datasets, as well as a list of the artworks ids
     """
     assert sum(train_val_test_percentages) == 100, "Split percentages must add up to 100!"
-    assert all(param is float for param in img_normalization_params), "Normalization params must be floats"
 
     dataset_info = pd.read_csv(files_dir / dataset_csv_info_file)
 
