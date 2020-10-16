@@ -324,7 +324,7 @@ def dataset_from_videos(files_dir: Path, dataset_csv_info_file: str, img_normali
     :param train_val_test_percentages: tuple specifying how to split the generated dataset into train, validation and
      test datasets, the provided ints must add up to 100
     :param batch_size: batch size for datasets
-    :return: a tuple of train, validation and test tf.data.Datasets
+    :return: a tuple of train, validation and test tf.data.Datasets, as well as a list of the artworks ids
     """
     assert sum(train_val_test_percentages) == 100, "Split percentages must add up to 100!"
     assert all(param is float for param in img_normalization_params), "Normalization params must be floats"
@@ -386,7 +386,7 @@ def dataset_from_videos(files_dir: Path, dataset_csv_info_file: str, img_normali
         .cache() \
         .prefetch(AUTOTUNE)
 
-    return train_dataset, validation_dataset, test_dataset
+    return train_dataset, validation_dataset, test_dataset, artwork_list
 
 
 def random_modifications(image, label):
