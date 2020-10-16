@@ -307,6 +307,139 @@ def frame_counts(video_files_dir: Path):
     return count_dict
 
 
+def dataset_from_videos(files_dir: Path, dataset_csv_info_file: str, img_normalization_params: tuple = (0.0, 255.0),
+                        max_frames: int = 750, frame_size: int = 224, train_val_test_percentages: tuple = (70, 30, 0),
+                        vary_train_dataset: bool = True):
+    """
+    Generates train, validation and test tf.data.Datasets from the provided video files.
+
+    :param files_dir: path of the directory containing the videos
+    :param dataset_csv_info_file: name of csv file containing information about the videos, must be located in files_dir
+    :param img_normalization_params: tuple of doubles (mean, standard_deviation) to use for normalizing the extracted
+     frames, e.g. if (0.0, 255.0) is provided, the frames are normalized to the range [0, 1], see this comment for
+     explanation of how to convert between the two https://stackoverflow.com/a/58096430
+    :param max_frames: total number of frames to extract for each artwork
+    :param frame_size: the size of the final resized square frames, this is dictated by the needs of the underlying NN
+     that will be used in the training
+    :param train_val_test_percentages: tuple specifying how to split the generated dataset into train, validation and
+     test datasets, the provided ints must add up to 100; if no test dataset is desired, its percentage can be set to 0
+    :param vary_train_dataset: whether to apply random variations to the frames of the train dataset (e.g. random
+     crops, random flips left-right, etc.)
+    :return: a tuple of train, validation and test tf.data.Datasets (if 0% was specified for the test dataset,
+     it is excluded from the returned tuple)
+    """
+    assert sum(train_val_test_percentages) == 100, "Split percentages must add up to 100!"
+
+    dataset_info = pd.read_csv(files_dir / dataset_csv_info_file)
+
+    # make sure all files in csv are present
+    for i, row in dataset_info.iterrows():
+        assert (files_dir / row["file"]).is_file(), "One or more of the video files don't exist"
+
+    artwork_dict = {artwork_id: i for i, artwork_id in
+                    enumerate(sorted(dataset_info["id"].unique()))}
+    num_classes = len(artwork_dict)
+    artwork_list = list(artwork_dict.keys())
+
+    dt = tf.data.Dataset.from_generator(lambda: frame_generator(files_dir, dataset_info, artwork_list, max_frames),
+                                        output_types=(tf.float32, tf.float32),
+                                        output_shapes=((None, None, 3), (num_classes)))
+
+    # split into 70% train, 20% validation & 10% test datasets
+    train_dataset, validation_and_test = split_dataset(dt, 0.3)
+    validation_dataset, test_dataset = split_dataset(validation_and_test, 1 / 3)
+
+    # see https://www.tensorflow.org/datasets/keras_example
+    # train_dataset = train_dataset.cache().shuffle(1000).batch(128).prefetch(tf.data.experimental.AUTOTUNE)
+    # validation_dataset = validation_dataset.batch(128).cache().prefetch(tf.data.experimental.AUTOTUNE)
+    # test_dataset = test_dataset.batch(128).cache().prefetch(tf.data.experimental.AUTOTUNE)
+
+    return train_dataset, validation_dataset, test_dataset
+
+
+def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int, generate_by: str = "artwork"):
+    """
+    Extracts frames from the video files provided, and can be used as an input to create Tensorflow Datasets.
+
+    Adapted from http://borg.csueastbay.edu/~grewe/CS663/Mat/LSTM/Exercise_VideoActivity_LSTM.html
+
+    @param files_dir: path of the directory containing the videos.
+    @param dataset_info: pandas df containing the names of the videos and their corresponding labels
+    @param max_frames: the total number of frames to extract; if fewer frames than requested are available,
+    all frames for artwork/video will be extracted; if more are available, frames are extracted evenly throughout the
+    @param generate_by: whether to extract frames per artwork or per video, since an artwork may have multiple videos;
+    should be either "artwork" or "video" only, any other value is ignored
+    """
+    if generate_by not in ["artwork", "video"]:
+        generate_by = "artwork"
+
+    artwork_list = [artwork_id for artwork_id in sorted(dataset_info["id"].unique())]
+
+    if generate_by == "artwork":
+        for artwork_id in artwork_list:
+            videos_for_artwork = [files_dir / row["file"] for _, row in
+                                  dataset_info.loc[dataset_info["id"] == artwork_id].iterrows()]
+
+            total_frames_for_artwork = sum(
+                int(cv2.VideoCapture(str(v)).get(cv2.CAP_PROP_FRAME_COUNT)) for v in videos_for_artwork)
+
+            # convert label to categorical array (of type tf.float32)
+            label = tf.one_hot(artwork_list.index(artwork_id), len(artwork_list))
+
+            sample_every_n_frame = max(1, total_frames_for_artwork // max_frames)
+
+            current_frame = 0
+            max_fr = max_frames
+
+            for video_file in videos_for_artwork:
+                cap = cv2.VideoCapture(str(video_file))
+
+                while True:
+                    success, frame = cap.read()
+
+                    if not success:
+                        break
+
+                    if current_frame % sample_every_n_frame == 0:
+                        frame = frame[:, :, ::-1]  # openCv reads frames in BGR format, convert to RGB
+                        max_fr -= 1
+                        yield tf.cast(frame, tf.float32), label
+
+                        if max_fr <= 0:
+                            break
+
+                    current_frame += 1
+
+    elif generate_by == "video":
+        for _, row in dataset_info.iterrows():
+            video_file = files_dir / row["file"]
+
+            # label to categorical (type tf.float32)
+            label = tf.one_hot(artwork_list.index(row["id"]), len(artwork_list))
+
+            cap = cv2.VideoCapture(str(video_file))
+            num_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+            sample_every_n_frame = max(1, num_frames // max_frames)
+
+            current_frame = 0
+            max_fr = max_frames
+
+            while True:
+                success, frame = cap.read()
+                if not success:
+                    break
+
+                if current_frame % sample_every_n_frame == 0:
+                    frame = frame[:, :, ::-1]  # openCv reads frames in BGR format, convert to RGB
+                    max_fr -= 1
+                    yield tf.cast(frame, tf.float32), label
+
+                if max_fr == 0:
+                    break
+
+                current_frame += 1
+
+
 if __name__ == '__main__':
     files_dir = Path("/home/marios/Downloads/contemporary_art_video_files")
     # processed = video_processing(files_dir)
