@@ -365,9 +365,17 @@ def dataset_from_videos(files_dir: Path, dataset_csv_info_file: str, img_normali
         # TODO can convert label here to categorical, to avoid code duplication elsewhere
         return (tf.cast(image, tf.float32) - mean) / std, label
 
+    def random_modifications(image, label):
+        """
+        Applies random modifications to the frame provided. Does not necessarily have to be a nested function,
+        but kept here for convenience.
+        """
+        # image = tf.image.random_crop
+        image = tf.image.random_flip_left_right(image)
+        return image, label
+
     # apply necessary conversions (normalization, random modifications, batching & caching) to the created datasets
     # see https://www.tensorflow.org/datasets/keras_example for batching and caching explanation
-
     AUTOTUNE = tf.data.experimental.AUTOTUNE  # allows TF decide how to optimise dataset mapping below
 
     train_dataset = train_dataset \
@@ -390,12 +398,6 @@ def dataset_from_videos(files_dir: Path, dataset_csv_info_file: str, img_normali
         .prefetch(AUTOTUNE)
 
     return train_dataset, validation_dataset, test_dataset, artwork_list
-
-
-def random_modifications(image, label):
-    # image = tf.image.random_crop
-    image = tf.image.random_flip_left_right(image)
-    return image, label
 
 
 def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int, generate_by: str = "artwork"):
