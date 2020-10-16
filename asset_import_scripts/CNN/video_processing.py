@@ -380,7 +380,8 @@ def dataset_from_videos(files_dir: Path, dataset_csv_info_file: str, img_normali
     train_dataset = train_dataset \
         .map(random_modifications, num_parallel_calls=AUTOTUNE) \
         .map(normalize_img, num_parallel_calls=AUTOTUNE) \
-        .cache().shuffle(1000) \
+        .cache() \
+        .shuffle(1000) \
         .batch(batch_size) \
         .prefetch(AUTOTUNE)
 
@@ -412,6 +413,7 @@ def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int
      frames available
     :param generate_by: whether to extract frames per artwork or per video, since an artwork may have multiple videos;
      should be either "artwork" or "video" only, any other value is ignored
+    :return: frame generator
     """
     if generate_by not in ["artwork", "video"]:
         generate_by = "artwork"
