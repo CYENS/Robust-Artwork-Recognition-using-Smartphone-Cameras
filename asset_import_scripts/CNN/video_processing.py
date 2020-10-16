@@ -420,6 +420,8 @@ def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int
 
     artwork_list = [artwork_id for artwork_id in sorted(dataset_info["id"].unique())]
 
+    # TODO read video orientation and rotate frames accordingly before yielding
+
     if generate_by == "artwork":
         for artwork_id in artwork_list:
             videos_for_artwork = [files_dir / row["file"] for _, row in
