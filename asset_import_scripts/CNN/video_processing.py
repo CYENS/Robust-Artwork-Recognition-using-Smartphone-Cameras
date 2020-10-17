@@ -354,7 +354,7 @@ def dataset_from_videos(files_dir: Path, dataset_csv_info_file: str, img_normali
 
     mean, std = img_normalization_params
 
-    def normalize_img(image, label):
+    def resize_and_rescale(image, label):
         """
         Resizes frames to the desired shape and range. Has to be a nested function, so that it can access
         variables mean and std, due to the way the Tensorflow dataset mapping calls it below (check if another
@@ -379,20 +379,20 @@ def dataset_from_videos(files_dir: Path, dataset_csv_info_file: str, img_normali
 
     train_dataset = train_dataset \
         .map(random_modifications, num_parallel_calls=AUTOTUNE) \
-        .map(normalize_img, num_parallel_calls=AUTOTUNE) \
+        .map(resize_and_rescale, num_parallel_calls=AUTOTUNE) \
         .cache() \
         .shuffle(1000) \
         .batch(batch_size) \
         .prefetch(AUTOTUNE)
 
     validation_dataset = validation_dataset \
-        .map(normalize_img, num_parallel_calls=AUTOTUNE) \
+        .map(resize_and_rescale, num_parallel_calls=AUTOTUNE) \
         .batch(batch_size) \
         .cache() \
         .prefetch(AUTOTUNE)
 
     test_dataset = test_dataset \
-        .map(normalize_img, num_parallel_calls=AUTOTUNE) \
+        .map(resize_and_rescale, num_parallel_calls=AUTOTUNE) \
         .batch(batch_size) \
         .cache() \
         .prefetch(AUTOTUNE)
