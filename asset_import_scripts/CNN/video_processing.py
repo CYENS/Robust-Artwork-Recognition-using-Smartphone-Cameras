@@ -3,6 +3,7 @@ import pickle
 import random
 from collections import defaultdict
 from pathlib import Path
+from typing import Tuple
 
 import cv2
 import numpy as np
@@ -307,9 +308,9 @@ def frame_counts(video_files_dir: Path):
     return count_dict
 
 
-def dataset_from_videos(files_dir: Path, dataset_csv_info_file: str, img_normalization_params: tuple = (0.0, 255.0),
-                        max_frames: int = 750, frame_size: int = 224, train_val_test_percentages: tuple = (70, 30, 0),
-                        batch_size: int = 128):
+def dataset_from_videos(files_dir: Path, dataset_csv_info_file: str, max_frames: int = 750, batch_size: int = 128,
+                        img_normalization_params: Tuple[float, float] = (0.0, 255.0),
+                        frame_size: int = 224, train_val_test_percentages: Tuple[int, int, int] = (70, 30, 0)):
     """
     Generates train, validation and test tf.data.Datasets from the provided video files.
 
