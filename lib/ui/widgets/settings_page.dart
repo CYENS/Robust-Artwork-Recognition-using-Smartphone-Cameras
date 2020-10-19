@@ -32,6 +32,18 @@ class SettingsPage extends StatelessWidget {
                 debugPrint("key-cnn-type: $value");
               },
             ),
+            RadioModalSettingsTile<String>(
+              title: "Recognition algorithm",
+              settingKey: "key-recognition-algo",
+              values: {
+                "taverriti": "Taverriti et al. 2016",
+                "fiveFrameAverage": "5 frame inference average"
+              },
+              selected: "fiveFrameAverage",
+              onChange: (value) {
+                debugPrint("key-recognition-algo: $value");
+              },
+            ),
             SliderSettingsTile(
               title: "CNN sensitivity",
               settingKey: "key-cnn-sensitivity",
