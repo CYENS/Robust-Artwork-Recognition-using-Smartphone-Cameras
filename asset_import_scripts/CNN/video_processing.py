@@ -309,8 +309,8 @@ def frame_counts(video_files_dir: Path):
 
 
 def dataset_from_videos(files_dir: Path, dataset_csv_info_file: str, max_frames: int = 750, batch_size: int = 128,
-                        img_normalization_params: Tuple[float, float] = (0.0, 255.0),
-                        frame_size: int = 224, train_val_test_percentages: Tuple[int, int, int] = (70, 30, 0)):
+                        img_normalization_params: Tuple[float, float] = (0.0, 255.0), frame_size: int = 224,
+                        train_val_test_percentages: Tuple[int, int, int] = (70, 30, 0)):
     """
     Generates train, validation and test tf.data.Datasets from the provided video files.
 
@@ -355,50 +355,50 @@ def dataset_from_videos(files_dir: Path, dataset_csv_info_file: str, max_frames:
 
     mean, std = img_normalization_params
 
-    def resize_and_rescale(image, label):
-        """
-        Resizes frames to the desired shape and range. Has to be a nested function, so that it can access
-        variables mean and std, due to the way the Tensorflow dataset mapping calls it below (check if another
-        solution exists). See https://stackoverflow.com/a/58096430 for conversion explanation.
-        """
-        image = tf.image.resize(image, (frame_size, frame_size))
-        # can convert label here to categorical, to avoid code duplication elsewhere (tried but didn't work...)
-        return (tf.cast(image, tf.float32) - mean) / std, label
-
-    def random_modifications(image, label):
-        """
-        Applies random modifications to the frame provided. Does not necessarily have to be a nested function,
-        but kept here for convenience.
-        """
-        # image = tf.image.random_crop
-        image = tf.image.random_flip_left_right(image)
-        return image, label
-
     # apply necessary conversions (normalization, random modifications, batching & caching) to the created datasets
     # see https://www.tensorflow.org/datasets/keras_example for batching and caching explanation
-    AUTOTUNE = tf.data.experimental.AUTOTUNE  # allows TF decide how to optimise dataset mapping below
+    AUTO = tf.data.experimental.AUTOTUNE  # allows TF decide how to optimise dataset mapping below
 
     train_dataset = train_dataset \
-        .map(random_modifications, num_parallel_calls=AUTOTUNE) \
-        .map(resize_and_rescale, num_parallel_calls=AUTOTUNE) \
+        .map(augment, num_parallel_calls=AUTO) \
+        .map(lambda x, y: (resize_and_rescale(x, fr_size=frame_size, mean=mean, std=std), y), num_parallel_calls=AUTO) \
         .cache() \
         .shuffle(1000) \
         .batch(batch_size) \
-        .prefetch(AUTOTUNE)
+        .prefetch(AUTO)
 
     validation_dataset = validation_dataset \
-        .map(resize_and_rescale, num_parallel_calls=AUTOTUNE) \
+        .map(lambda x, y: (resize_and_rescale(x, fr_size=frame_size, mean=mean, std=std), y), num_parallel_calls=AUTO) \
         .batch(batch_size) \
         .cache() \
-        .prefetch(AUTOTUNE)
+        .prefetch(AUTO)
 
     test_dataset = test_dataset \
-        .map(resize_and_rescale, num_parallel_calls=AUTOTUNE) \
+        .map(lambda x, y: (resize_and_rescale(x, fr_size=frame_size, mean=mean, std=std), y), num_parallel_calls=AUTO) \
         .batch(batch_size) \
         .cache() \
-        .prefetch(AUTOTUNE)
+        .prefetch(AUTO)
 
     return train_dataset, validation_dataset, test_dataset, artwork_list
+
+
+def resize_and_rescale(img, fr_size: int, mean: float, std: float):
+    """
+    Resizes frames to the desired shape and scale. See https://stackoverflow.com/a/58096430 for conversion explanation.
+    """
+    img = tf.image.resize(img, (fr_size, fr_size))
+    return (tf.cast(img, tf.float32) - mean) / std
+
+
+def augment(img, label):
+    """ Applies random modifications to the frame provided. """
+    if random.randint(0, 1):
+        img = tf.image.random_crop(img, size=[int(img.shape[0] * random.uniform(0.7, 0.9)),
+                                              int(img.shape[1] * random.uniform(0.7, 0.9)), 3])
+    img = tf.image.random_hue(img, 0.2)
+    img = tf.image.random_brightness(img, 0.2)
+    img = tf.image.random_flip_left_right(img)
+    return img, label
 
 
 def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int, generate_by: str = "artwork"):
