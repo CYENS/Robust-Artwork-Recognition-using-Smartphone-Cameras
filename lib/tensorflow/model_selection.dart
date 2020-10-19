@@ -31,6 +31,7 @@ class _ModelSelectionState extends State<ModelSelection> {
   var _history = [];
   var _recHistory = DefaultDict<String, List<double>>(() => []);
   var _currentTopInference = "Calculating...";
+  var _taverritiAlgo = DefaultDict<String, int>(() => 0);
 
   @override
   void setState(VoidCallback fn) {
@@ -79,12 +80,20 @@ class _ModelSelectionState extends State<ModelSelection> {
         _recHistory[element["label"]].add(element["confidence"]);
         _history.add(element);
       });
+
+      if (recognitions.length > 0) {
+        var topArtwork = recognitions.first["label"];
+        _taverritiAlgo[topArtwork] += 1;
+        _taverritiAlgo.keys.forEach((key) {
+          if (key != topArtwork) {
+            _taverritiAlgo[key] -= 1;
+          }
+        });
+        print(_taverritiAlgo);
+      }
+
       // calculate means every 5 inferences, ignore first 5
       if (_history.length % 5 == 0 && _history.length != 5) {
-        print("Number of results ${_history.length}");
-        _recHistory.forEach((key, value) {
-          print("$key $value");
-        });
         var means = <String, double>{
           for (var entry in _recHistory.entries)
             entry.key: entry.value.reduce((a, b) => a + b) / entry.value.length,

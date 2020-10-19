@@ -36,7 +36,7 @@ class SettingsPage extends StatelessWidget {
               title: "Recognition algorithm",
               settingKey: "key-recognition-algo",
               values: {
-                "taverriti": "Taverriti et al. 2016",
+                "taverriti": "Taverriti et al. (2016)",
                 "fiveFrameAverage": "5 frame inference average"
               },
               selected: "fiveFrameAverage",
