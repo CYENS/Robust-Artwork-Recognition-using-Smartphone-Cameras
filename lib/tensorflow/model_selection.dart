@@ -83,15 +83,16 @@ class _ModelSelectionState extends State<ModelSelection> {
       });
 
       if (recognitions.length > 0) {
-        var topArtwork = recognitions.first["label"];
-        // TODO does not take sensitivity into account, can simply add check here
-        _taverritiAlgo[topArtwork] += 1;
-        _taverritiAlgo.keys.forEach((key) {
-          if (key != topArtwork) {
-            _taverritiAlgo[key] -= 1;
-          }
-        });
-        print(_taverritiAlgo);
+        if (recognitions.first["confidence"] * 100 >= _preferredSensitivity) {
+          var topArtwork = recognitions.first["label"];
+          _taverritiAlgo[topArtwork] += 1;
+          _taverritiAlgo.keys.forEach((key) {
+            if (key != topArtwork) {
+              _taverritiAlgo[key] -= 1;
+            }
+          });
+          print(_taverritiAlgo);
+        }
       }
 
       if (_taverritiAlgo.length > 0) {
