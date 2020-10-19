@@ -24,10 +24,13 @@ class _ModelSelectionState extends State<ModelSelection> {
   int _imageHeight = 0;
   int _imageWidth = 0;
   int _inferenceTime = 0;
+  List<int> _inferenceTimeHistory = [];
+  double _fps = 0.0;
   String _model = "";
-  var _recHistory = Map();
-  var _recHistory2 = DefaultDict<double, List<String>>(() => []);
-  var _recHistory3 = DefaultDict<String, List<double>>(() => []);
+  double _preferredSensitivity = 0.0;
+  var _history = [];
+  var _recHistory = DefaultDict<String, List<double>>(() => []);
+  var _currentTopInference = "Calculating...";
 
   @override
   void setState(VoidCallback fn) {
@@ -54,42 +57,72 @@ class _ModelSelectionState extends State<ModelSelection> {
     print("$res loading model $_model, as specified in Settings");
   }
 
-  onSelect(model) {
+  onSelect(model, sensitivity) {
     setState(() {
-      String preferredModel = Settings.getValue("key-cnn-type", mobileNetNoArt);
-      _model = preferredModel;
+      _model = model;
+      _preferredSensitivity = sensitivity;
     });
     loadModelFromSettings();
   }
 
   setRecognitions(recognitions, imageHeight, imageWidth, inferenceTime) {
     setState(() {
-      _recHistory.addAll(Map<String, double>.fromIterable(
-        recognitions,
-        // each item in recognitions is a LinkedHashMap in the form of
-        // {confidence: 0.5562283396720886, index: 15, label: untitled_votsis}
-        key: (recognition) => recognition["label"],
-        value: (recognition) => recognition["confidence"],
-      ));
-      recognitions.forEach((element) {
-        _recHistory2[element["confidence"]].add(element["label"]);
-        _recHistory3[element["label"]].add(element["confidence"]);
-      });
-      _recHistory3.forEach((key, value) {
-        print("$key $value");
-      });
       _recognitions = recognitions;
       _imageHeight = imageHeight;
       _imageWidth = imageWidth;
       _inferenceTime = inferenceTime;
+      _inferenceTimeHistory.add(inferenceTime);
+
+      recognitions.forEach((element) {
+        // each item in recognitions is a LinkedHashMap in the form of
+        // {confidence: 0.5562283396720886, index: 15, label: untitled_votsis}
+        _recHistory[element["label"]].add(element["confidence"]);
+        _history.add(element);
+      });
+      // calculate means every 5 inferences, ignore first 5
+      if (_history.length % 5 == 0 && _history.length != 5) {
+        print("Number of results ${_history.length}");
+        _recHistory.forEach((key, value) {
+          print("$key $value");
+        });
+        var means = <String, double>{
+          for (var entry in _recHistory.entries)
+            entry.key: entry.value.reduce((a, b) => a + b) / entry.value.length,
+        };
+
+        var keysSortedByMean = means.keys.toList(growable: false)
+          ..sort((k1, k2) => means[k1].compareTo(means[k2]));
+
+        if (keysSortedByMean.length >= 1) {
+          var topInferenceMean = means[keysSortedByMean.last];
+          if (topInferenceMean >= (_preferredSensitivity / 100)) {
+            _currentTopInference =
+                "${keysSortedByMean.last} (${(topInferenceMean * 100).toStringAsFixed(2)}%)";
+          } else {
+            _currentTopInference = "N/A";
+          }
+        } else {
+          _currentTopInference = "N/A";
+        }
+
+        var fps = 1000 /
+            (_inferenceTimeHistory
+                    .sublist(_inferenceTimeHistory.length - 5)
+                    .reduce((a, b) => a + b) /
+                5);
+
+        if (fps != 0.0) _fps = fps;
+
+        _recHistory.clear();
+      }
     });
   }
 
   @override
   Widget build(BuildContext context) {
     String preferredModel = Settings.getValue("key-cnn-type", mobileNetNoArt);
-    _model = preferredModel;
-    loadModelFromSettings();
+    double sensitivity = Settings.getValue("key-cnn-sensitivity", 99.0);
+    onSelect(preferredModel, sensitivity);
     Size screen = MediaQuery.of(context).size;
     return Scaffold(
       body: _model == ""
@@ -116,7 +149,18 @@ class _ModelSelectionState extends State<ModelSelection> {
                   alignment: Alignment.bottomCenter,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text("Model used: $_model"),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          _currentTopInference,
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        Text("Model: $_model"),
+                        Text("Sensitivity: $_preferredSensitivity" +
+                            ", ${_fps != 0.0 ? "${_fps.toStringAsPrecision(2)}" : "N/A"} fps"),
+                      ],
+                    ),
                   ),
                 )
               ],

@@ -1,3 +1,14 @@
+## Version 0.7.0
+### 2010-10-19
+- First implementation of algorithm that allows the selection of the
+  correct artwork from the stream of CNN predictions (averaging the
+  predictions for 5 frames in a row); more implementations of algorithms
+  will follow, so their potential for use in the app can be evaluated
+- New settings option for setting the sensitivity of the CNN currently
+  used by the app, again mostly for testing purposes
+- Massive re-structuring of the Python scripts used in the training of
+  the CNNs
+
 ## Version 0.6.2
 ### 2010-10-14
 - The selection of the CNN type being used was moved to Settings,

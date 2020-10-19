@@ -3,6 +3,7 @@ import pickle
 import random
 from collections import defaultdict
 from pathlib import Path
+from typing import Tuple
 
 import cv2
 import numpy as np
@@ -305,6 +306,210 @@ def frame_counts(video_files_dir: Path):
           json.dumps(count_dict, indent=2))
 
     return count_dict
+
+
+def dataset_from_videos(files_dir: Path, dataset_csv_info_file: str, max_frames: int = 750, batch_size: int = 128,
+                        img_normalization_params: Tuple[float, float] = (0.0, 255.0), frame_size: int = 224,
+                        train_val_test_percentages: Tuple[int, int, int] = (70, 30, 0)):
+    """
+    Generates train, validation and test tf.data.Datasets from the provided video files.
+
+    :param files_dir: path of the directory containing the videos
+    :param dataset_csv_info_file: name of csv file containing information about the videos, must be located in files_dir
+    :param img_normalization_params: tuple of doubles (mean, standard_deviation) to use for normalizing the extracted
+     frames, e.g. if (0.0, 255.0) is provided, the frames are normalized to the range [0, 1], see this comment for
+     explanation of how to convert between the two https://stackoverflow.com/a/58096430
+    :param max_frames: total number of frames to extract for each artwork
+    :param frame_size: the size of the final resized square frames, this is dictated by the needs of the underlying NN
+     that will be used in the training
+    :param train_val_test_percentages: tuple specifying how to split the generated dataset into train, validation and
+     test datasets, the provided ints must add up to 100
+    :param batch_size: batch size for datasets
+    :return: a tuple of train, validation and test tf.data.Datasets, as well as a list of the artworks ids
+    """
+    assert sum(train_val_test_percentages) == 100, "Split percentages must add up to 100!"
+
+    dataset_info = pd.read_csv(files_dir / dataset_csv_info_file)
+
+    # make sure all files in csv are present
+    for _, row in dataset_info.iterrows():
+        assert (files_dir / row["file"]).is_file(), "One or more of the video files don't exist"
+
+    # sort artwork ids in alphabetical order, this is important as it determines how the CNN outputs its predictions
+    artwork_dict = {artwork_id: i for i, artwork_id in enumerate(sorted(dataset_info["id"].unique()))}
+    artwork_list = list(artwork_dict.keys())
+
+    # create dataset, output_shapes are set to (None, None, 3), since the extracted frames are not initially resized,
+    # to allow applying variations to the train dataset only below
+    dt = tf.data.Dataset.from_generator(lambda: frame_generator(files_dir, dataset_info, max_frames),
+                                        output_types=(tf.float32, tf.float32),
+                                        output_shapes=((None, None, 3), (len(artwork_list))))
+
+    # TODO calculate the datasets' sizes, perhaps print them, and also use them in the shuffling of the train dt below
+    #  can be calculated like so: (num of classes * max_frames) * % of dataset
+
+    # split into train, validation & test datasets
+    train, val, test = train_val_test_percentages
+    train_dataset, validation_and_test = split_dataset(dt, (val + test) / 100)
+    validation_dataset, test_dataset = split_dataset(validation_and_test, test / (val + test))
+
+    mean, std = img_normalization_params
+
+    # apply necessary conversions (normalization, random modifications, batching & caching) to the created datasets
+    # see https://www.tensorflow.org/datasets/keras_example for batching and caching explanation
+    AUTO = tf.data.experimental.AUTOTUNE  # allows TF decide how to optimise dataset mapping below
+
+    train_dataset = train_dataset \
+        .map(augment, num_parallel_calls=AUTO) \
+        .map(lambda x, y: (resize_and_rescale(x, fr_size=frame_size, mean=mean, std=std), y), num_parallel_calls=AUTO) \
+        .cache() \
+        .shuffle(1000) \
+        .batch(batch_size) \
+        .prefetch(AUTO)
+
+    validation_dataset = validation_dataset \
+        .map(lambda x, y: (resize_and_rescale(x, fr_size=frame_size, mean=mean, std=std), y), num_parallel_calls=AUTO) \
+        .batch(batch_size) \
+        .cache() \
+        .prefetch(AUTO)
+
+    test_dataset = test_dataset \
+        .map(lambda x, y: (resize_and_rescale(x, fr_size=frame_size, mean=mean, std=std), y), num_parallel_calls=AUTO) \
+        .batch(batch_size) \
+        .cache() \
+        .prefetch(AUTO)
+
+    return train_dataset, validation_dataset, test_dataset, artwork_list
+
+
+def resize_and_rescale(img, fr_size: int, mean: float, std: float):
+    """
+    Resizes frames to the desired shape and scale. See https://stackoverflow.com/a/58096430 for conversion explanation.
+    """
+    img = tf.image.resize(img, (fr_size, fr_size))
+    return (tf.cast(img, tf.float32) - mean) / std
+
+
+def augment(img, label):
+    """ Applies random modifications to the frame provided. """
+    if random.randint(0, 1):
+        img = tf.image.random_crop(img, size=[int(img.shape[0] * random.uniform(0.7, 0.9)),
+                                              int(img.shape[1] * random.uniform(0.7, 0.9)), 3])
+    img = tf.image.random_hue(img, 0.2)
+    img = tf.image.random_brightness(img, 0.2)
+    img = tf.image.random_flip_left_right(img)
+    return img, label
+
+
+def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int, generate_by: str = "artwork"):
+    """
+    Extracts frames from the video files provided, and can be used as an input to create Tensorflow Datasets.
+
+    Adapted from http://borg.csueastbay.edu/~grewe/CS663/Mat/LSTM/Exercise_VideoActivity_LSTM.html
+
+    :param files_dir: path of the directory containing the videos
+    :param dataset_info: pandas df containing the names of the videos and their corresponding labels
+    :param max_frames: the total number of frames to extract; if fewer frames than requested are available,
+     all frames for artwork/video will be extracted; if more are available, frames are extracted evenly from all
+     frames available
+    :param generate_by: whether to extract frames per artwork or per video, since an artwork may have multiple videos;
+     should be either "artwork" or "video" only, any other value is ignored
+    :return: frame generator
+    """
+    if generate_by not in ["artwork", "video"]:
+        generate_by = "artwork"
+
+    artwork_list = [artwork_id for artwork_id in sorted(dataset_info["id"].unique())]
+
+    # TODO read video orientation and rotate frames accordingly before yielding
+
+    if generate_by == "artwork":
+        for artwork_id in artwork_list:
+            videos_for_artwork = [files_dir / row["file"] for _, row in
+                                  dataset_info.loc[dataset_info["id"] == artwork_id].iterrows()]
+
+            total_frames_for_artwork = sum(
+                int(cv2.VideoCapture(str(v)).get(cv2.CAP_PROP_FRAME_COUNT)) for v in videos_for_artwork)
+
+            # convert label to categorical array (of type tf.float32)
+            label = tf.one_hot(artwork_list.index(artwork_id), len(artwork_list))
+
+            sample_every_n_frame = max(1, total_frames_for_artwork // max_frames)
+
+            current_frame = 0
+            max_fr = max_frames
+
+            for video_file in videos_for_artwork:
+                cap = cv2.VideoCapture(str(video_file))
+
+                while True:
+                    success, frame = cap.read()
+
+                    if not success:
+                        break
+
+                    if current_frame % sample_every_n_frame == 0:
+                        frame = frame[:, :, ::-1]  # openCv reads frames in BGR format, convert to RGB
+                        max_fr -= 1
+                        yield tf.cast(frame, tf.float32), label
+
+                        if max_fr <= 0:
+                            break
+
+                    current_frame += 1
+
+    elif generate_by == "video":
+        for _, row in dataset_info.iterrows():
+            video_file = files_dir / row["file"]
+
+            # label to categorical (type tf.float32)
+            label = tf.one_hot(artwork_list.index(row["id"]), len(artwork_list))
+
+            cap = cv2.VideoCapture(str(video_file))
+            num_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+            sample_every_n_frame = max(1, num_frames // max_frames)
+
+            current_frame = 0
+            max_fr = max_frames
+
+            while True:
+                success, frame = cap.read()
+                if not success:
+                    break
+
+                if current_frame % sample_every_n_frame == 0:
+                    frame = frame[:, :, ::-1]  # openCv reads frames in BGR format, convert to RGB
+                    max_fr -= 1
+                    yield tf.cast(frame, tf.float32), label
+
+                if max_fr == 0:
+                    break
+
+                current_frame += 1
+
+
+def split_dataset(dataset: tf.data.Dataset, validation_data_fraction: float):
+    """
+    Splits a dataset of type tf.data.Dataset into a training and validation dataset using given ratio. Fractions are
+    rounded up to two decimal places. From https://stackoverflow.com/a/59696126
+
+    :param dataset: the input dataset to split
+    :param validation_data_fraction: the fraction of the validation data as a float between 0 and 1
+    :return: a tuple of two tf.data.Datasets as (training, validation)
+    """
+    validation_data_percent = round(validation_data_fraction * 100)
+    if not (0 <= validation_data_percent <= 100):
+        raise ValueError("validation data fraction must be ∈ [0,1]")
+
+    dataset = dataset.enumerate()
+    train_dataset = dataset.filter(lambda f, data: f % 100 > validation_data_percent)
+    validation_dataset = dataset.filter(lambda f, data: f % 100 <= validation_data_percent)
+
+    # remove enumeration
+    train_dataset = train_dataset.map(lambda f, data: data)
+    validation_dataset = validation_dataset.map(lambda f, data: data)
+
+    return train_dataset, validation_dataset
 
 
 if __name__ == '__main__':
