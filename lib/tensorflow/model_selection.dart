@@ -40,6 +40,7 @@ class _ModelSelectionState extends State<ModelSelection> {
     // away from the widget, since TensorFlowCamera may use setRecognitions for
     // setting the results of its the last inference, that most likely will
     // arrive after user navigated away (setState after dispose)
+    // TODO where is dispose called?? if it is
     if (mounted) {
       super.setState(fn);
     }
@@ -48,6 +49,18 @@ class _ModelSelectionState extends State<ModelSelection> {
   @override
   void initState() {
     super.initState();
+    initModel();
+  }
+
+  initModel() {
+    // get preferred model and sensitivity from settings and load model
+    String preferredModel = Settings.getValue("key-cnn-type", mobileNetNoArt);
+    double sensitivity = Settings.getValue("key-cnn-sensitivity", 99.0);
+    setState(() {
+      _model = preferredModel;
+      _preferredSensitivity = sensitivity;
+    });
+    loadModelFromSettings();
   }
 
   loadModelFromSettings() async {
@@ -57,14 +70,6 @@ class _ModelSelectionState extends State<ModelSelection> {
       labels: model.labelsPath,
     );
     print("$res loading model $_model, as specified in Settings");
-  }
-
-  onSelect(model, sensitivity) {
-    setState(() {
-      _model = model;
-      _preferredSensitivity = sensitivity;
-    });
-    loadModelFromSettings();
   }
 
   setRecognitions(recognitions, imageHeight, imageWidth, inferenceTime) {
@@ -144,9 +149,6 @@ class _ModelSelectionState extends State<ModelSelection> {
 
   @override
   Widget build(BuildContext context) {
-    String preferredModel = Settings.getValue("key-cnn-type", mobileNetNoArt);
-    double sensitivity = Settings.getValue("key-cnn-sensitivity", 99.0);
-    onSelect(preferredModel, sensitivity);
     Size screen = MediaQuery.of(context).size;
     return Scaffold(
       body: _model == ""
