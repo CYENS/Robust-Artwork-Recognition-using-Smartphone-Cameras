@@ -29,9 +29,10 @@ class _ModelSelectionState extends State<ModelSelection> {
   String _model = "";
   double _preferredSensitivity = 0.0;
   var _history = [];
-  var _recHistory = DefaultDict<String, List<double>>(() => []);
-  var _currentTopInference = "Calculating...";
+  var _fiveFrameHistory = DefaultDict<String, List<double>>(() => []);
+  var _fiveFrameTopInference = "N/A";
   var _taverritiAlgo = DefaultDict<String, int>(() => 0);
+  var _taverritiTopInference = "N/A";
 
   @override
   void setState(VoidCallback fn) {
@@ -77,12 +78,13 @@ class _ModelSelectionState extends State<ModelSelection> {
       recognitions.forEach((element) {
         // each item in recognitions is a LinkedHashMap in the form of
         // {confidence: 0.5562283396720886, index: 15, label: untitled_votsis}
-        _recHistory[element["label"]].add(element["confidence"]);
+        _fiveFrameHistory[element["label"]].add(element["confidence"]);
         _history.add(element);
       });
 
       if (recognitions.length > 0) {
         var topArtwork = recognitions.first["label"];
+        // TODO does not take sensitivity into account, can simply add check here
         _taverritiAlgo[topArtwork] += 1;
         _taverritiAlgo.keys.forEach((key) {
           if (key != topArtwork) {
@@ -92,10 +94,22 @@ class _ModelSelectionState extends State<ModelSelection> {
         print(_taverritiAlgo);
       }
 
+      if (_taverritiAlgo.length > 0) {
+        var keysSortedByCount = _taverritiAlgo.keys.toList(growable: false)
+          ..sort((k1, k2) => _taverritiAlgo[k2].compareTo(_taverritiAlgo[k1]));
+        var topInferenceCount = _taverritiAlgo[keysSortedByCount.first];
+        if (topInferenceCount >= 20) {
+          _taverritiTopInference =
+              "${keysSortedByCount.first} (p=$topInferenceCount)";
+        } else {
+          _taverritiTopInference = "N/A";
+        }
+      }
+
       // calculate means every 5 inferences, ignore first 5
       if (_history.length % 5 == 0 && _history.length != 5) {
         var means = <String, double>{
-          for (var entry in _recHistory.entries)
+          for (var entry in _fiveFrameHistory.entries)
             entry.key: entry.value.reduce((a, b) => a + b) / entry.value.length,
         };
 
@@ -105,13 +119,13 @@ class _ModelSelectionState extends State<ModelSelection> {
         if (keysSortedByMean.length >= 1) {
           var topInferenceMean = means[keysSortedByMean.last];
           if (topInferenceMean >= (_preferredSensitivity / 100)) {
-            _currentTopInference =
+            _fiveFrameTopInference =
                 "${keysSortedByMean.last} (${(topInferenceMean * 100).toStringAsFixed(2)}%)";
           } else {
-            _currentTopInference = "N/A";
+            _fiveFrameTopInference = "N/A";
           }
         } else {
-          _currentTopInference = "N/A";
+          _fiveFrameTopInference = "N/A";
         }
 
         var fps = 1000 /
@@ -122,7 +136,7 @@ class _ModelSelectionState extends State<ModelSelection> {
 
         if (fps != 0.0) _fps = fps;
 
-        _recHistory.clear();
+        _fiveFrameHistory.clear();
       }
     });
   }
@@ -162,7 +176,11 @@ class _ModelSelectionState extends State<ModelSelection> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Text(
-                          _currentTopInference,
+                          "5 frame average: $_fiveFrameTopInference",
+                          style: TextStyle(fontSize: 20),
+                        ),
+                        Text(
+                          "Taverriti et al.: $_taverritiTopInference",
                           style: TextStyle(fontSize: 20),
                         ),
                         Text("Model: $_model"),
