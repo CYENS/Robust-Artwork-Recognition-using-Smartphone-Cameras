@@ -399,8 +399,6 @@ def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int
 
     artwork_list = [artwork_id for artwork_id in sorted(dataset_info["id"].unique())]
 
-    # TODO read video orientation and rotate frames accordingly before yielding
-
     if generate_by == "artwork":
         for artwork_id in artwork_list:
             videos_for_artwork = [files_dir / row["file"] for _, row in
@@ -420,7 +418,7 @@ def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int
             for video_file in videos_for_artwork:
                 cap = cv2.VideoCapture(str(video_file))
 
-                while True:
+                while max_fr > 0:
                     success, frame = cap.read()
 
                     if not success:
@@ -430,9 +428,6 @@ def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int
                         frame = frame[:, :, ::-1]  # openCv reads frames in BGR format, convert to RGB
                         max_fr -= 1
                         yield tf.cast(frame, tf.float32), label
-
-                        if max_fr <= 0:
-                            break
 
                     current_frame += 1
 
