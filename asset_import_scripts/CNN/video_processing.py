@@ -310,7 +310,7 @@ def dataset_from_videos(files_dir: Path, dataset_csv_info_file: str, max_frames:
     AUTO = tf.data.experimental.AUTOTUNE  # allows TF decide how to optimise dataset mapping below
 
     train_dataset = train_dataset \
-        .map(augment, num_parallel_calls=AUTO) \
+        .map(random_modifications, num_parallel_calls=AUTO) \
         .map(lambda x, y: (resize_and_rescale(x, fr_size=frame_size, mean=mean, std=std), y), num_parallel_calls=AUTO) \
         .cache() \
         .shuffle(1000) \
@@ -340,7 +340,7 @@ def resize_and_rescale(img, fr_size: int, mean: float, std: float):
     return (tf.cast(img, tf.float32) - mean) / std
 
 
-def augment(img, label):
+def random_modifications(img, label):
     """
     Applies random modifications to the frame provided. The modifications may include variation in brightness,
     horizontal flipping, and random cropping (or none of the previous, in which case the frame will be returned
@@ -353,7 +353,6 @@ def augment(img, label):
     img = tf.image.random_flip_left_right(img)
     img = random_random_crop(img)
     # img = tf.image.random_hue(img, 0.2)
-
     return img, label
 
 
@@ -361,7 +360,7 @@ def random_random_crop(img: tf.Tensor):
     """
     Randomly crops 50% of the provided frames. The cropped frames will have a random size corresponding to 70-90% of
     their original height, and 70-90% of their original width (the 2 percentages are generated independently). The 3rd
-    axis of the frame tensor, i.e. the image channels, is not modified).
+    axis of the frame tensor, i.e. the image channels, is not modified.
 
     NOTE the use of only tf.random functions below, regular Python random.random functions won't work with Tensorflow.
 
