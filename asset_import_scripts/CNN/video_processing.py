@@ -350,9 +350,9 @@ def random_modifications(img, label):
     :param label: the corresponding label of the frame, this is returned as is
     :return: the modified frame
     """
+    img = random_random_crop(img)
     img = tf.image.random_brightness(img, 0.2)
     img = tf.image.random_flip_left_right(img)
-    img = random_random_crop(img)
     # img = tf.image.random_hue(img, 0.2)
     return img, label
 
