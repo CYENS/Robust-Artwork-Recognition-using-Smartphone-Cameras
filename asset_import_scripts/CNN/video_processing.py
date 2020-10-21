@@ -334,7 +334,8 @@ def dataset_from_videos(files_dir: Path, dataset_csv_info_file: str, max_frames:
 
 def resize_and_rescale(img, fr_size: int, mean: float, std: float):
     """
-    Resizes frames to the desired shape and scale. See https://stackoverflow.com/a/58096430 for conversion explanation.
+    Resizes frames to the desired shape and scale. See https://stackoverflow.com/a/58096430 for scale conversion
+    explanation.
     """
     img = tf.image.resize(img, (fr_size, fr_size))
     return (tf.cast(img, tf.float32) - mean) / std
