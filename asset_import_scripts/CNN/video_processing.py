@@ -38,25 +38,28 @@ def get_video_files(video_dir: str, video_ext=None):
 
 
 def get_video_rotation(video_path: str):
-    """ Reads video rotation from video metadata.
+    """ Reads video rotation from video metadata using scikit-video.
 
-    Works well with .mp4 files, has trouble with .mov files due to different metadata structure.
+    Works well with .mp4 files, but has trouble with .mov files due to different metadata structure; .mov files also
+    often do not contain rotation information, but openCV seems to read frames from .mov files in the correct
+    orientation, so things balance out.
 
     :param video_path: path to the video file
-    :return: rotation of video in int degrees (e.g. 90, 180)
-    :raises AssertionError if rotation is not available, files doesn't exist, or file doesn't have metadata
+    :return: rotation of video in int degrees (e.g. 0, 90, 180)
     """
-    metadata = skvideo.io.ffprobe(video_path)
+    orientation = 0
     try:
+        metadata = skvideo.io.ffprobe(video_path)
+
         for tags in metadata["video"]["tag"]:
             # we get OrderedDicts here
             if tags["@key"] == "rotate":
-                return int(tags["@value"])
-        else:
-            raise AssertionError(f"Couldn't get rotation for {video_path}, either file doesn't exist, does not contain "
-                                 f"metadata, or rotation is not included in its metadata.")
-    except Exception as e:
-        raise e
+                orientation = int(tags["@value"])
+
+    except Exception:
+        pass
+
+    return orientation
 
 
 def extract_video_frames(video_path: Path, rotate: bool = True, resize: bool = True, frame_limiter: int = 1,
