@@ -395,7 +395,7 @@ def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int
      frames available
     :param generate_by: whether to extract frames per artwork or per video, since an artwork may have multiple videos;
      should be either "artwork" or "video" only, any other value is ignored
-    :return: frame generator
+    :return: frame generator of tuples (frame, label)
     """
     if generate_by not in ["artwork", "video"]:
         generate_by = "artwork"
@@ -421,6 +421,11 @@ def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int
             for video_file in videos_for_artwork:
                 cap = cv2.VideoCapture(str(video_file))
 
+                # read video orientation once, in case of error value will be 0
+                orientation = get_video_rotation(str(video_file))
+                # rot90() below rotates counter-clockwise, so by providing a negative k the frames are rotated clockwise
+                k = orientation // -90
+
                 while max_fr > 0:
                     success, frame = cap.read()
 
@@ -428,8 +433,13 @@ def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int
                         break
 
                     if current_frame % sample_every_n_frame == 0:
-                        frame = frame[:, :, ::-1]  # openCv reads frames in BGR format, convert to RGB
+                        # openCv reads frames in BGR format, convert to RGB
+                        frame = frame[:, :, ::-1]
+                        # rotate frame according to video orientation
+                        frame = tf.image.rot90(frame, k)
+
                         max_fr -= 1
+
                         yield tf.cast(frame, tf.float32), label
 
                     current_frame += 1
@@ -445,6 +455,9 @@ def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int
             num_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
             sample_every_n_frame = max(1, num_frames // max_frames)
 
+            orientation = get_video_rotation(str(video_file))
+            k = orientation // -90
+
             current_frame = 0
             max_fr = max_frames
 
@@ -454,8 +467,13 @@ def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int
                     break
 
                 if current_frame % sample_every_n_frame == 0:
-                    frame = frame[:, :, ::-1]  # openCv reads frames in BGR format, convert to RGB
+                    # openCv reads frames in BGR format, convert to RGB
+                    frame = frame[:, :, ::-1]
+                    # rotate frame according to video orientation
+                    frame = tf.image.rot90(frame, k)
+
                     max_fr -= 1
+
                     yield tf.cast(frame, tf.float32), label
 
                 if max_fr == 0:
