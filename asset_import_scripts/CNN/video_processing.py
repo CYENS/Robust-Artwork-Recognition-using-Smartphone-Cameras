@@ -2,13 +2,18 @@ import json
 import pickle
 import random
 from collections import defaultdict
+from datetime import datetime
 from pathlib import Path
 from typing import Tuple
 
 import cv2
 import numpy as np
 import pandas as pd
+import seaborn as sn
 import skvideo.io
+import tensorflow as tf
+from IPython.display import display, display_markdown
+from sklearn.metrics import classification_report, confusion_matrix
 from tqdm import tqdm
 
 
@@ -38,25 +43,28 @@ def get_video_files(video_dir: str, video_ext=None):
 
 
 def get_video_rotation(video_path: str):
-    """ Reads video rotation from video metadata.
+    """ Reads video rotation from video metadata using scikit-video.
 
-    Works well with .mp4 files, has trouble with .mov files due to different metadata structure.
+    Works well with .mp4 files, but has trouble with .mov files due to different metadata structure; .mov files also
+    often do not contain rotation information, but openCV seems to read frames from .mov files in the correct
+    orientation, so things balance out.
 
     :param video_path: path to the video file
-    :return: rotation of video in int degrees (e.g. 90, 180)
-    :raises AssertionError if rotation is not available, files doesn't exist, or file doesn't have metadata
+    :return: rotation of video in int degrees (e.g. 0, 90, 180)
     """
-    metadata = skvideo.io.ffprobe(video_path)
+    orientation = 0
     try:
+        metadata = skvideo.io.ffprobe(video_path)
+
         for tags in metadata["video"]["tag"]:
             # we get OrderedDicts here
             if tags["@key"] == "rotate":
-                return int(tags["@value"])
-        else:
-            raise AssertionError(f"Couldn't get rotation for {video_path}, either file doesn't exist, does not contain "
-                                 f"metadata, or rotation is not included in its metadata.")
-    except Exception as e:
-        raise e
+                orientation = int(tags["@value"])
+
+    except Exception:
+        pass
+
+    return orientation
 
 
 def extract_video_frames(video_path: Path, rotate: bool = True, resize: bool = True, frame_limiter: int = 1,
@@ -209,56 +217,6 @@ def unpickle():
         dataset = pickle.load(f)
 
 
-def frame_generator_by_artwork(video_files_dir: Path):
-    max_frames_per_artwork = 20
-    dataset = pd.read_csv(video_files_dir / "description_export2.csv")
-    artwork_dict = {artwork_id: i for i, artwork_id in
-                    enumerate(sorted(dataset["id"].unique()))}
-    num_classes = len(artwork_dict)
-    class_list = list(artwork_dict.keys())
-    for artwork_id in class_list:
-        print(artwork_id)
-        videos_for_artwork = [files_dir / row["file"] for _, row in dataset.loc[dataset["id"] == artwork_id].iterrows()]
-
-        assert all(v.is_file() for v in videos_for_artwork)
-
-        total_frames_for_artwork = sum(
-            int(cv2.VideoCapture(str(v)).get(cv2.CAP_PROP_FRAME_COUNT)) for v in videos_for_artwork)
-        print("total", total_frames_for_artwork)
-
-        sample_every_n_frame = max(1, total_frames_for_artwork // max_frames_per_artwork)
-
-        current_frame = 0
-        max_fr = max_frames_per_artwork
-
-        for video_file in videos_for_artwork:
-            print("video", video_file.name, int(cv2.VideoCapture(str(video_file)).get(cv2.CAP_PROP_FRAME_COUNT)))
-            cap = cv2.VideoCapture(str(video_file))
-            while True:
-                success, frame = cap.read()
-
-                if not success:
-                    print("not success, breaking")
-                    break
-
-                if current_frame % sample_every_n_frame == 0:
-                    # openCv reads frames in BGR format, convert to RGB
-                    # frame = frame[:, :, ::-1]
-
-                    # img = tf.image.resize(frame, (224,224))
-
-                    max_fr -= 1
-
-                    # yield  tf.cast(img, tf.float32) / 255., label
-                    yield f"{max_fr} {current_frame} {video_file}"
-
-                    if max_fr <= 0:
-                        print("max_fr reached, breaking")
-                        break
-
-                current_frame += 1
-
-
 def video_resolutions(video_files_dir: Path):
     dataset = pd.read_csv(video_files_dir / "description_export2.csv")
 
@@ -360,7 +318,7 @@ def dataset_from_videos(files_dir: Path, dataset_csv_info_file: str, max_frames:
     AUTO = tf.data.experimental.AUTOTUNE  # allows TF decide how to optimise dataset mapping below
 
     train_dataset = train_dataset \
-        .map(augment, num_parallel_calls=AUTO) \
+        .map(random_modifications, num_parallel_calls=AUTO) \
         .map(lambda x, y: (resize_and_rescale(x, fr_size=frame_size, mean=mean, std=std), y), num_parallel_calls=AUTO) \
         .cache() \
         .shuffle(1000) \
@@ -384,21 +342,49 @@ def dataset_from_videos(files_dir: Path, dataset_csv_info_file: str, max_frames:
 
 def resize_and_rescale(img, fr_size: int, mean: float, std: float):
     """
-    Resizes frames to the desired shape and scale. See https://stackoverflow.com/a/58096430 for conversion explanation.
+    Resizes frames to the desired shape and scale. See https://stackoverflow.com/a/58096430 for scale conversion
+    explanation.
     """
     img = tf.image.resize(img, (fr_size, fr_size))
     return (tf.cast(img, tf.float32) - mean) / std
 
 
-def augment(img, label):
-    """ Applies random modifications to the frame provided. """
-    if random.randint(0, 1):
-        img = tf.image.random_crop(img, size=[int(img.shape[0] * random.uniform(0.7, 0.9)),
-                                              int(img.shape[1] * random.uniform(0.7, 0.9)), 3])
-    img = tf.image.random_hue(img, 0.2)
+def random_modifications(img, label):
+    """
+    Applies random modifications to the frame provided. The modifications may include variation in brightness,
+    horizontal flipping, and random cropping (or none of the previous, in which case the frame will be returned
+    untouched).
+    :param img: the frame to be modified
+    :param label: the corresponding label of the frame, this is returned as is
+    :return: the modified frame
+    """
+    img = random_random_crop(img)
     img = tf.image.random_brightness(img, 0.2)
     img = tf.image.random_flip_left_right(img)
+    # img = tf.image.random_hue(img, 0.2)
     return img, label
+
+
+def random_random_crop(img: tf.Tensor):
+    """
+    Randomly crops 50% of the provided frames. The cropped frames will have a random size corresponding to 70-90% of
+    their original height, and 70-90% of their original width (the 2 percentages are generated independently). The 3rd
+    axis of the frame tensor, i.e. the image channels, is not modified.
+
+    NOTE the use of only tf.random functions below, regular Python random.random functions won't work with Tensorflow.
+
+    :param img: the frame to be cropped
+    :return: the cropped frame
+    """
+    # lambda function that returns a random boolean, so that random cropping is only applied to 50% of the frames
+    rnd_bool = lambda: tf.random.uniform(shape=[], minval=0, maxval=2, dtype=tf.int32) != 0
+
+    # lambda function that returns a random float in the range 0.7-0.9
+    rnd_pcnt = lambda: tf.random.uniform(shape=[], minval=0.7, maxval=0.9, dtype=tf.float32)
+
+    h, w = int(float(tf.shape(img)[0]) * rnd_pcnt()), int(float(tf.shape(img)[1]) * rnd_pcnt())
+
+    return tf.cond(rnd_bool(), lambda: tf.image.random_crop(img, size=[h, w, 3]), lambda: img)
 
 
 def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int, generate_by: str = "artwork"):
@@ -414,14 +400,12 @@ def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int
      frames available
     :param generate_by: whether to extract frames per artwork or per video, since an artwork may have multiple videos;
      should be either "artwork" or "video" only, any other value is ignored
-    :return: frame generator
+    :return: frame generator of tuples (frame, label)
     """
     if generate_by not in ["artwork", "video"]:
         generate_by = "artwork"
 
     artwork_list = [artwork_id for artwork_id in sorted(dataset_info["id"].unique())]
-
-    # TODO read video orientation and rotate frames accordingly before yielding
 
     if generate_by == "artwork":
         for artwork_id in artwork_list:
@@ -442,19 +426,26 @@ def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int
             for video_file in videos_for_artwork:
                 cap = cv2.VideoCapture(str(video_file))
 
-                while True:
+                # read video orientation once, in case of error value will be 0
+                orientation = get_video_rotation(str(video_file))
+                # rot90() below rotates counter-clockwise, so by providing a negative k the frames are rotated clockwise
+                k = orientation // -90
+
+                while max_fr > 0:
                     success, frame = cap.read()
 
                     if not success:
                         break
 
                     if current_frame % sample_every_n_frame == 0:
-                        frame = frame[:, :, ::-1]  # openCv reads frames in BGR format, convert to RGB
-                        max_fr -= 1
-                        yield tf.cast(frame, tf.float32), label
+                        # openCv reads frames in BGR format, convert to RGB
+                        frame = frame[:, :, ::-1]
+                        # rotate frame according to video orientation
+                        frame = tf.image.rot90(frame, k)
 
-                        if max_fr <= 0:
-                            break
+                        max_fr -= 1
+
+                        yield tf.cast(frame, tf.float32), label
 
                     current_frame += 1
 
@@ -469,6 +460,9 @@ def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int
             num_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
             sample_every_n_frame = max(1, num_frames // max_frames)
 
+            orientation = get_video_rotation(str(video_file))
+            k = orientation // -90
+
             current_frame = 0
             max_fr = max_frames
 
@@ -478,8 +472,13 @@ def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int
                     break
 
                 if current_frame % sample_every_n_frame == 0:
-                    frame = frame[:, :, ::-1]  # openCv reads frames in BGR format, convert to RGB
+                    # openCv reads frames in BGR format, convert to RGB
+                    frame = frame[:, :, ::-1]
+                    # rotate frame according to video orientation
+                    frame = tf.image.rot90(frame, k)
+
                     max_fr -= 1
+
                     yield tf.cast(frame, tf.float32), label
 
                 if max_fr == 0:
@@ -510,6 +509,171 @@ def split_dataset(dataset: tf.data.Dataset, validation_data_fraction: float):
     validation_dataset = validation_dataset.map(lambda f, data: data)
 
     return train_dataset, validation_dataset
+
+
+def train_evaluate_save(model, model_name: str, files_dir: Path, dataset_csv_info_file: str, max_frames: int = 750,
+                        img_normalization_params: Tuple[float, float] = (0.0, 255.0), frame_size: int = 224,
+                        batch_size: int = 128, train_val_test_percentages: Tuple[int, int, int] = (70, 20, 10),
+                        epochs=20):
+    """
+    Consolidates model training and evaluation, as well as presentation of the results. Additionally, the trained
+    model is saved to disk, both in its original form, as well as converted to the Tensorflow Lite format. All
+    relevant information about the model (evaluation results, plots, other stats) are save to disk as well.
+
+    :param model: the model to be trained
+    :param model_name: the preferred name for the model, used for naming the folder where the training results are saved
+    :param files_dir: path of the directory containing the videos
+    :param dataset_csv_info_file: name of csv file containing information about the videos, must be located in files_dir
+    :param max_frames: total number of frames to extract for each artwork
+    :param img_normalization_params: tuple of doubles (mean, standard_deviation) to use for normalizing the extracted
+     frames, e.g. if (0.0, 255.0) is provided, the frames are normalized to the range [0, 1], see this comment for
+     explanation of how to convert between the two https://stackoverflow.com/a/58096430
+    :param frame_size: the size of the final resized square frames, this is dictated by the needs of the underlying NN
+     that will be used in the training
+    :param batch_size: batch size for datasets
+    :param train_val_test_percentages: tuple specifying how to split the generated dataset into train, validation and
+     test datasets, the provided ints must add up to 100
+    :param epochs: the number of epochs to train the model
+    """
+    pd.options.display.float_format = '{:,.2f}'.format
+
+    # folder to save info about model
+    info_dir = base_dir / model_name / "model_info"
+    info_dir.mkdir(parents=True, exist_ok=True)
+
+    print("Generating/splitting dataset...", "\n", flush=True)
+    train_dt, val_dt, test_dt, artwork_list = dataset_from_videos(files_dir=files_dir, max_frames=max_frames,
+                                                                  dataset_csv_info_file=dataset_csv_info_file,
+                                                                  batch_size=batch_size, frame_size=frame_size,
+                                                                  train_val_test_percentages=train_val_test_percentages,
+                                                                  img_normalization_params=img_normalization_params)
+
+    print("Creating model...", "\n", flush=True)
+    model = model(len(artwork_list))
+
+    # saves model train history logs, which can be visualised with TensorBoard
+    log_dir = base_dir / "logs/fit" / f"{model_name}_{datetime.now().strftime('%Y%m%d%H%M')}"
+    tb_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
+
+    # train model
+    print("Training model...", "\n", flush=True)
+    model_train_info = model.fit(train_dt, epochs=epochs, validation_data=val_dt, callbacks=[tb_callback])
+    print("Finished training!", "\n", flush=True)
+
+    # save trained model to disk, also convert to Tensorflow Lite format
+    save_model(model, model_name, artwork_list)
+
+    # evaluation
+    evaluation = model.evaluate(test_dt)
+    eval_res = pd.DataFrame.from_dict({k: [v] for k, v in zip(["Test loss", "Test accuracy"], evaluation)})
+    eval_res.to_csv(info_dir / "evaluation_results.csv", index=False)
+    display_markdown("### Evaluation results", raw=True)
+    display(eval_res)
+
+    # model predictions
+    predicted_labels = model.predict(test_dt)
+    predicted_labels = np.argmax(predicted_labels, axis=1)
+
+    actual_labels = np.concatenate([label for _, label in test_dt], axis=0)
+    actual_labels = np.argmax(actual_labels, axis=1)  # labels are in categorical form (one_hot), convert them back
+
+    # classification report
+    report = classification_report(actual_labels, predicted_labels, target_names=artwork_list, output_dict=True)
+    report = pd.DataFrame(report)
+    report.to_csv(info_dir / "classification_report.csv")
+    display_markdown("### Classification report", raw=True)
+    display(report)
+
+    # plots
+    display_markdown("### Training history plots & confusion matrix", raw=True)
+    ep = np.array(model_train_info.epoch) + 1
+    fig, axes = plt.subplots(3, 1, figsize=(5, 15))
+
+    # training and validation accuracy plot
+    axes[0].plot(ep, model_train_info.history['accuracy'], "bo", label='Training accuracy')
+    axes[0].plot(ep, model_train_info.history['val_accuracy'], "b", label='Validation accuracy')
+    axes[0].set_xlabel("Epochs")
+    axes[0].set_ylabel("Training and validation accuracy")
+    axes[0].set_title("Training and validation accuracy")
+    axes[0].legend()
+    axes[0].tick_params(axis='both', which='major')
+
+    # training and validation loss plot
+    axes[1].plot(ep, model_train_info.history['loss'], "bo", label='Training loss', color="red")
+    axes[1].plot(ep, model_train_info.history['val_loss'], "b", label='Validation loss', color="red")
+    axes[1].set_xlabel("Epochs")
+    axes[1].set_ylabel("Training and validation loss")
+    axes[1].set_title("Training and validation loss")
+    axes[1].legend()
+    axes[1].tick_params(axis='both', which='major')
+
+    # confusion matrix
+    cm = confusion_matrix(actual_labels, predicted_labels)
+    df_cm = pd.DataFrame(cm, artwork_list, artwork_list)
+    df_cm.to_csv(info_dir / "confusion_matrix.csv")
+    sn.set(font_scale=.7)
+    sn.heatmap(df_cm, ax=axes[2], vmin=0, annot=True, cmap="YlGnBu", fmt="d", linewidths=0.1, linecolor="black")
+
+    # display and save plots to files
+    fig.savefig(info_dir / "graphs.svg", bbox_inches="tight")
+    fig.savefig(info_dir / "graphs.pdf", bbox_inches="tight")
+    plt.show()
+
+    # save training history
+    with open(info_dir / "train_history.json", "w+") as f:
+        json.dump(model_train_info.history, f, indent=4)
+
+    # save a few other details about the model
+    other_info = {
+        "batch_size": batch_size,
+        "epochs": epochs,
+        "frame_size": frame_size,
+        "img_normalization_params": img_normalization_params,
+        "model_name": model_name,
+        "train_val_test_percentages": train_val_test_percentages
+    }
+    with open(info_dir / "other_info.json", "w+") as f:
+        json.dump(other_info, f, indent=4)
+
+
+def save_model(trained_model, model_name: str, artwork_list: list):
+    """
+    Saves the provided model to disk, and also converts it to the Tensorflow Lite format.
+
+    :param trained_model: the trained model
+    :param model_name: name to be used when saving the model
+    :param artwork_list: list containing the artwork ids sorted according to the model outputs
+    """
+    # save model
+    print("Saving model to file...", flush=True)
+    saved_model_path = base_dir / model_name / "saved_model"
+    trained_model.save(saved_model_path)
+
+    # Convert model to tflite
+    # first convert to normal tflite
+    converter = tf.lite.TFLiteConverter.from_saved_model(str(saved_model_path))
+    tflite_model = converter.convert()
+
+    # second convert to quantized tflite
+    print("Converting to tflite format...", flush=True)
+    converter.optimizations = [tf.lite.Optimize.DEFAULT]
+    tflite_quant_model = converter.convert()
+
+    tflite_dir = base_dir / model_name / "tflite"
+    tflite_dir.mkdir(parents=True, exist_ok=True)
+
+    with tf.io.gfile.GFile(str(tflite_dir / f"{model_name}.tflite"), "wb") as f:
+        f.write(tflite_model)
+
+    with tf.io.gfile.GFile(str(tflite_dir / f"{model_name}_quant.tflite"), "wb") as f:
+        f.write(tflite_quant_model)
+
+    # save txt file with list of labels, ready for use in mobile device
+    labels_file = tflite_dir / f"{model_name}_labels.txt"
+    with open(labels_file, "w+") as f:
+        for label in list(artwork_list):
+            f.write(label + "\n")
+    print("Done!", flush=True)
 
 
 if __name__ == '__main__':
