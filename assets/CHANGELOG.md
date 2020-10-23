@@ -1,3 +1,10 @@
+## Version 0.7.1
+### 2010-10-23
+- Fixed bug that caused Tensorflow models to be re-loaded after every
+  inference
+- Implementation of one more algorithm that allows the selection of the
+  correct artwork from the stream of CNN predictions; more to follow
+
 ## Version 0.7.0
 ### 2010-10-19
 - First implementation of algorithm that allows the selection of the
