@@ -61,7 +61,7 @@ dev_dependencies:
   # temporarily necessary to fix the issue below, try removing in the future
   # https://github.com/simolus3/moor/issues/553
   # https://github.com/simolus3/moor/issues/777
-  analyzer: 0.39.14
+  analyzer: 0.39.17
 
 # The following section is specific to Flutter.
 flutter:
