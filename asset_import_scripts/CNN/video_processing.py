@@ -511,6 +511,26 @@ def train_evaluate_save(model, model_name: str, files_dir: Path, dataset_csv_inf
                         img_normalization_params: Tuple[float, float] = (0.0, 255.0), frame_size: int = 224,
                         batch_size: int = 128, train_val_test_percentages: Tuple[int, int, int] = (70, 20, 10),
                         epochs=20):
+    """
+    Consolidates model training and evaluation, as well as presentation of the results. Additionally, the trained
+    model is saved to disk, both in its original form, as well as converted to the Tensorflow Lite format. All
+    relevant information about the model (evaluation results, plots, other stats) are save to disk as well.
+
+    :param model: the model to be trained
+    :param model_name: the preferred name for the model, used for naming the folder where the training results are saved
+    :param files_dir: path of the directory containing the videos
+    :param dataset_csv_info_file: name of csv file containing information about the videos, must be located in files_dir
+    :param max_frames: total number of frames to extract for each artwork
+    :param img_normalization_params: tuple of doubles (mean, standard_deviation) to use for normalizing the extracted
+     frames, e.g. if (0.0, 255.0) is provided, the frames are normalized to the range [0, 1], see this comment for
+     explanation of how to convert between the two https://stackoverflow.com/a/58096430
+    :param frame_size: the size of the final resized square frames, this is dictated by the needs of the underlying NN
+     that will be used in the training
+    :param batch_size: batch size for datasets
+    :param train_val_test_percentages: tuple specifying how to split the generated dataset into train, validation and
+     test datasets, the provided ints must add up to 100
+    :param epochs: the number of epochs to train the model
+    """
     pd.options.display.float_format = '{:,.3f}'.format
 
     # folder to save info about model
@@ -533,6 +553,9 @@ def train_evaluate_save(model, model_name: str, files_dir: Path, dataset_csv_inf
     print("Training model...", "\n", flush=True)
     model_train_info = model.fit(train_dt, epochs=epochs, validation_data=val_dt, callbacks=[tb_callback])
     print("Finished training!", "\n", flush=True)
+
+    # save trained model to disk, also convert to Tensorflow Lite format
+    save_model(model, model_name, artwork_list)
 
     # evaluation
     evaluation = model.evaluate(test_dt)
@@ -608,6 +631,13 @@ def train_evaluate_save(model, model_name: str, files_dir: Path, dataset_csv_inf
 
 
 def save_model(trained_model, model_name: str, artwork_list: list):
+    """
+    Saves the provided model to disk, and also converts it to the Tensorflow Lite format.
+
+    :param trained_model: the trained model
+    :param model_name: name to be used when saving the model
+    :param artwork_list: list containing the artwork ids sorted according to the model outputs
+    """
     # save model
     print("Saving model to file...", flush=True)
     saved_model_path = base_dir / model_name / "saved_model"
