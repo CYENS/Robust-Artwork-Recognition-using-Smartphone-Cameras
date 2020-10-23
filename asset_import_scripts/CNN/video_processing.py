@@ -9,7 +9,10 @@ from typing import Tuple
 import cv2
 import numpy as np
 import pandas as pd
+import seaborn as sn
 import skvideo.io
+import tensorflow as tf
+from IPython.display import display, display_markdown
 from sklearn.metrics import classification_report, confusion_matrix
 from tqdm import tqdm
 
@@ -532,7 +535,7 @@ def train_evaluate_save(model, model_name: str, files_dir: Path, dataset_csv_inf
      test datasets, the provided ints must add up to 100
     :param epochs: the number of epochs to train the model
     """
-    pd.options.display.float_format = '{:,.3f}'.format
+    pd.options.display.float_format = '{:,.2f}'.format
 
     # folder to save info about model
     info_dir = base_dir / model_name / "model_info"
@@ -563,7 +566,7 @@ def train_evaluate_save(model, model_name: str, files_dir: Path, dataset_csv_inf
     # evaluation
     evaluation = model.evaluate(test_dt)
     eval_res = pd.DataFrame.from_dict({k: [v] for k, v in zip(["Test loss", "Test accuracy"], evaluation)})
-    eval_res.to_csv(info_dir / "evaluation_results.csv")
+    eval_res.to_csv(info_dir / "evaluation_results.csv", index=False)
     display_markdown("### Evaluation results", raw=True)
     display(eval_res)
 
