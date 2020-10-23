@@ -105,7 +105,7 @@ packages:
       name: camera
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.5.8+9"
+    version: "0.5.8+11"
   characters:
     dependency: transitive
     description:
@@ -276,7 +276,7 @@ packages:
       name: flutter_sheet_localization_generator
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.1"
+    version: "2.0.2"
   flutter_staggered_grid_view:
     dependency: "direct main"
     description:
@@ -412,7 +412,7 @@ packages:
       name: moor
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.3.1"
+    version: "3.4.0"
   moor_db_viewer:
     dependency: "direct main"
     description:
@@ -594,7 +594,7 @@ packages:
       name: recase
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.0.1"
+    version: "3.0.0"
   sensors:
     dependency: "direct main"
     description:
