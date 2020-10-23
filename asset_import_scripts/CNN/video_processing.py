@@ -9,6 +9,7 @@ import cv2
 import numpy as np
 import pandas as pd
 import skvideo.io
+from sklearn.metrics import classification_report, confusion_matrix
 from tqdm import tqdm
 
 
@@ -504,6 +505,106 @@ def split_dataset(dataset: tf.data.Dataset, validation_data_fraction: float):
     validation_dataset = validation_dataset.map(lambda f, data: data)
 
     return train_dataset, validation_dataset
+
+
+def train_evaluate_save(model, model_name: str, files_dir: Path, dataset_csv_info_file: str, max_frames: int = 750,
+                        img_normalization_params: Tuple[float, float] = (0.0, 255.0), frame_size: int = 224,
+                        batch_size: int = 128, train_val_test_percentages: Tuple[int, int, int] = (70, 20, 10),
+                        epochs=20):
+    pd.options.display.float_format = '{:,.3f}'.format
+
+    # folder to save info about model
+    info_dir = base_dir / model_name / "model_info"
+    info_dir.mkdir(parents=True, exist_ok=True)
+
+    print("Generating/splitting dataset...", "\n", flush=True)
+    train_dt, val_dt, test_dt, artwork_list = dataset_from_videos(files_dir=files_dir, max_frames=max_frames,
+                                                                  dataset_csv_info_file=dataset_csv_info_file,
+                                                                  batch_size=batch_size, frame_size=frame_size,
+                                                                  train_val_test_percentages=train_val_test_percentages,
+                                                                  img_normalization_params=img_normalization_params)
+
+    print("Creating model...", "\n", flush=True)
+    model = model(len(artwork_list))
+
+    # saves model train history logs, which can be visualised with TensorBoard
+    tb_callback = create_tensorboard_callback(model_name)
+
+    print("Training model...", "\n", flush=True)
+    model_train_info = model.fit(train_dt, epochs=epochs, validation_data=val_dt, callbacks=[tb_callback])
+    print("Finished training!", "\n", flush=True)
+
+    # evaluation
+    evaluation = model.evaluate(test_dt)
+    eval_res = pd.DataFrame.from_dict({k: [v] for k, v in zip(["Test loss", "Test accuracy"], evaluation)})
+    eval_res.to_csv(info_dir / "evaluation_results.csv")
+    display_markdown("### Evaluation results", raw=True)
+    display(eval_res)
+
+    # model predictions
+    predicted_labels = model.predict(test_dt)
+    predicted_labels = np.argmax(predicted_labels, axis=1)
+
+    actual_labels = np.concatenate([label for _, label in test_dt], axis=0)
+    actual_labels = np.argmax(actual_labels, axis=1)  # labels are in categorical form (one_hot), convert them back
+
+    # classification report
+    report = classification_report(actual_labels, predicted_labels, target_names=artwork_list, output_dict=True)
+    report = pd.DataFrame(report)
+    report.to_csv(info_dir / "classification_report.csv")
+    display_markdown("### Classification report", raw=True)
+    display(report)
+
+    # plots
+    display_markdown("### Training history plots & confusion matrix", raw=True)
+    ep = np.array(model_train_info.epoch) + 1
+    fig, axes = plt.subplots(3, 1, figsize=(5, 15))
+
+    # training and validation accuracy plot
+    axes[0].plot(ep, model_train_info.history['accuracy'], "bo", label='Training accuracy')
+    axes[0].plot(ep, model_train_info.history['val_accuracy'], "b", label='Validation accuracy')
+    axes[0].set_xlabel("Epochs")
+    axes[0].set_ylabel("Training and validation accuracy")
+    axes[0].set_title("Training and validation accuracy")
+    axes[0].legend()
+    axes[0].tick_params(axis='both', which='major')
+
+    # training and validation loss plot
+    axes[1].plot(ep, model_train_info.history['loss'], "bo", label='Training loss', color="red")
+    axes[1].plot(ep, model_train_info.history['val_loss'], "b", label='Validation loss', color="red")
+    axes[1].set_xlabel("Epochs")
+    axes[1].set_ylabel("Training and validation loss")
+    axes[1].set_title("Training and validation loss")
+    axes[1].legend()
+    axes[1].tick_params(axis='both', which='major')
+
+    # confusion matrix
+    cm = confusion_matrix(actual_labels, predicted_labels)
+    df_cm = pd.DataFrame(cm, artwork_list, artwork_list)
+    df_cm.to_csv(info_dir / "confusion_matrix.csv")
+    sn.set(font_scale=.7)
+    sn.heatmap(df_cm, ax=axes[2], vmin=0, annot=True, cmap="YlGnBu", fmt="d", linewidths=0.1, linecolor="black")
+
+    # display and save plots to files
+    fig.savefig(info_dir / "graphs.svg", bbox_inches="tight")
+    fig.savefig(info_dir / "graphs.pdf", bbox_inches="tight")
+    plt.show()
+
+    # save training history
+    with open(info_dir / "train_history.json", "w+") as f:
+        json.dump(model_train_info.history, f, indent=4)
+
+    # save a few other details about the model
+    other_info = {
+        "batch_size": batch_size,
+        "epochs": epochs,
+        "frame_size": frame_size,
+        "img_normalization_params": img_normalization_params,
+        "model_name": model_name,
+        "train_val_test_percentages": train_val_test_percentages
+    }
+    with open(info_dir / "other_info.json", "w+") as f:
+        json.dump(other_info, f, indent=4)
 
 
 if __name__ == '__main__':
