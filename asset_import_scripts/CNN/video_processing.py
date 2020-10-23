@@ -2,6 +2,7 @@ import json
 import pickle
 import random
 from collections import defaultdict
+from datetime import datetime
 from pathlib import Path
 from typing import Tuple
 
@@ -548,8 +549,10 @@ def train_evaluate_save(model, model_name: str, files_dir: Path, dataset_csv_inf
     model = model(len(artwork_list))
 
     # saves model train history logs, which can be visualised with TensorBoard
-    tb_callback = create_tensorboard_callback(model_name)
+    log_dir = base_dir / "logs/fit" / f"{model_name}_{datetime.now().strftime('%Y%m%d%H%M')}"
+    tb_callback = tf.keras.callbacks.TensorBoard(log_dir=log_dir, histogram_freq=1)
 
+    # train model
     print("Training model...", "\n", flush=True)
     model_train_info = model.fit(train_dt, epochs=epochs, validation_data=val_dt, callbacks=[tb_callback])
     print("Finished training!", "\n", flush=True)
