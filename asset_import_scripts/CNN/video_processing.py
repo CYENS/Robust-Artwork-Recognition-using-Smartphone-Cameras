@@ -607,6 +607,39 @@ def train_evaluate_save(model, model_name: str, files_dir: Path, dataset_csv_inf
         json.dump(other_info, f, indent=4)
 
 
+def save_model(trained_model, model_name: str, artwork_list: list):
+    # save model
+    print("Saving model to file...", flush=True)
+    saved_model_path = base_dir / model_name / "saved_model"
+    trained_model.save(saved_model_path)
+
+    # Convert model to tflite
+    # first convert to normal tflite
+    converter = tf.lite.TFLiteConverter.from_saved_model(str(saved_model_path))
+    tflite_model = converter.convert()
+
+    # second convert to quantized tflite
+    print("Converting to tflite format...", flush=True)
+    converter.optimizations = [tf.lite.Optimize.DEFAULT]
+    tflite_quant_model = converter.convert()
+
+    tflite_dir = base_dir / model_name / "tflite"
+    tflite_dir.mkdir(parents=True, exist_ok=True)
+
+    with tf.io.gfile.GFile(str(tflite_dir / f"{model_name}.tflite"), "wb") as f:
+        f.write(tflite_model)
+
+    with tf.io.gfile.GFile(str(tflite_dir / f"{model_name}_quant.tflite"), "wb") as f:
+        f.write(tflite_quant_model)
+
+    # save txt file with list of labels, ready for use in mobile device
+    labels_file = tflite_dir / f"{model_name}_labels.txt"
+    with open(labels_file, "w+") as f:
+        for label in list(artwork_list):
+            f.write(label + "\n")
+    print("Done!", flush=True)
+
+
 if __name__ == '__main__':
     files_dir = Path("/home/marios/Downloads/contemporary_art_video_files")
     # processed = video_processing(files_dir)
