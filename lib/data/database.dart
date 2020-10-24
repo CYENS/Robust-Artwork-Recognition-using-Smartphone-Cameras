@@ -56,6 +56,10 @@ class Artworks extends Table {
 // TODO add current locale
 }
 
+/// Table for [ArtworkTranslation]s in database. Each [ArtworkTranslation]
+/// holds copies of translatable fields from an [Artwork] in a particular
+/// locale; these are then joined in database queries to produce fully
+/// translated artwork objects.
 class ArtworkTranslations extends Table {
   TextColumn get id =>
       text().customConstraint("NULL REFERENCES artworks(id)")();
@@ -91,6 +95,10 @@ class Artists extends Table {
   TextColumn get biography => text().nullable()();
 }
 
+/// Table for [ArtistTranslation]s in database. Each [ArtistTranslation]
+/// holds copies of translatable fields from an [Artist] in a particular
+/// locale; these are then joined in database queries to produce fully
+/// translated artwork objects.
 class ArtistTranslations extends Table {
   TextColumn get id => text().customConstraint("NULL REFERENCES artists(id)")();
 
@@ -158,8 +166,8 @@ class AppDatabase extends _$AppDatabase {
                             parseItemTranslations(parsedEntry, languageCode));
                         into(artistTranslations)
                             .insertOnConflictUpdate(translatedEntry);
-                        print(
-                            "Created entry for language $languageCode for artist with id ${artist.id}");
+                        print("Created entry for language $languageCode for "
+                            "artist with id ${artist.id}");
                       });
                     }));
 
@@ -175,8 +183,8 @@ class AppDatabase extends _$AppDatabase {
                             parseItemTranslations(parsedEntry, languageCode));
                         into(artworkTranslations)
                             .insertOnConflictUpdate(translatedEntry);
-                        print(
-                            "Created entry for language $languageCode for artwork with id ${artwork.id}");
+                        print("Created entry for language $languageCode for "
+                            "artwork with id ${artwork.id}");
                       });
                     }));
           }
