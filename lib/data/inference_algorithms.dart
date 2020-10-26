@@ -3,17 +3,19 @@ import 'package:modern_art_app/utils/utils.dart';
 
 abstract class InferenceAlgorithm {
   final startTime = DateTime.now();
-  final noResult = "no result";
+  final noResult = "";
   List history;
   List<int> inferenceTimeHistory;
   double _fps = 0.0;
-  String topInference = "";
+  String _topInference = "";
 
   String get fps => "$_fps fps";
 
-  bool hasResult() => topInference != "";
+  bool hasResult() => _topInference != "";
 
-  // InferenceAlgorithm(): topInference = noResult;
+  void setTopInference(String value) => _topInference = value;
+
+  void resetTopInference() => _topInference = noResult;
 
   /// should always call _updateHistories() first
   void updateRecognitions(List<dynamic> recognitions, int inferenceTime);
@@ -76,9 +78,9 @@ class AverageProbabilityAlgo extends InferenceAlgorithm {
       // if topMean is equal or larger than sensitivitySetting, set topInference
       _topMean = means[idsSortedByMean.first];
       if (_topMean >= (sensitivitySetting / 100)) {
-        topInference = idsSortedByMean.first;
+        setTopInference(idsSortedByMean.first);
       } else {
-        topInference = "";
+        resetTopInference();
       }
 
       _sortByID.clear();
@@ -131,9 +133,9 @@ class SeidenaryAlgo extends InferenceAlgorithm {
       // if _topCounter is equal or larger than P, set topInference
       _topCounter = _taverritiAlgo[idsSortedByCount.first];
       if (_topCounter >= P) {
-        topInference = idsSortedByCount.first;
+        setTopInference(idsSortedByCount.first);
       } else {
-        topInference = "";
+        resetTopInference();
       }
     }
   }
