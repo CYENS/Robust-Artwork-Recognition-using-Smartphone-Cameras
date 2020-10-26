@@ -16,9 +16,7 @@ abstract class InferenceAlgorithm {
   // InferenceAlgorithm(): topInference = noResult;
 
   /// should always call _updateHistories() first
-  void updateRecognitions(List<dynamic> recognitions, int inferenceTime) {
-    _updateHistories(recognitions, inferenceTime);
-  }
+  void updateRecognitions(List<dynamic> recognitions, int inferenceTime);
 
   void _updateHistories(List<dynamic> recognitions, int inferenceTime) {
     // for now recognitions will only contain 1 element (1 inference from CNN,
@@ -41,10 +39,6 @@ abstract class InferenceAlgorithm {
     }
   }
 
-  void _calculateResults();
-
-  // String topInference();
-
   ViewingsCompanion topInferenceAsViewingsCompanion();
 }
 
@@ -59,7 +53,7 @@ class AverageProbabilityAlgo extends InferenceAlgorithm {
 
   @override
   void updateRecognitions(List<dynamic> recognitions, int inferenceTime) {
-    super.updateRecognitions(recognitions, inferenceTime);
+    _updateHistories(recognitions, inferenceTime);
 
     if (history.length >= windowLength) {
       // sort probabilities of the last windowLength recognitions by artworkId
@@ -89,17 +83,6 @@ class AverageProbabilityAlgo extends InferenceAlgorithm {
 
       _sortByID.clear();
     }
-  }
-
-  @override
-  ViewingsCompanion toViewingsCompanion() {
-    // TODO: implement toViewingsCompanion
-    throw UnimplementedError();
-  }
-
-  @override
-  void _calculateResults() {
-    // TODO: implement _calculateResults
   }
 
   @override
