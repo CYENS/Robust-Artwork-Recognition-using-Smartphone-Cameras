@@ -150,7 +150,7 @@ LazyDatabase _openConnection() {
       ArtistTranslations,
       Viewings,
     ],
-    daos: [ArtworksDao, ArtistsDao])
+    daos: [ArtworksDao, ArtistsDao, ViewingsDao])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
