@@ -91,3 +91,56 @@ class AverageProbabilityAlgo extends InferenceAlgorithm {
     throw UnimplementedError();
   }
 }
+
+/// 4th algorithm, based loosely on Seidenary et al. 2017..
+class SeidenaryAlgo extends InferenceAlgorithm {
+  final int P;
+  final double sensitivitySetting;
+  var _taverritiAlgo = DefaultDict<String, int>(() => 0);
+  int _topCounter = 0;
+
+  SeidenaryAlgo({this.P, this.sensitivitySetting = 0.0});
+
+  @override
+  void updateRecognitions(List recognitions, int inferenceTime) {
+    _updateHistories(recognitions, inferenceTime);
+
+    if (recognitions.length > 0) {
+      // here if sensitivitySetting is not specified, every inference counts,
+      // otherwise inferences with lower values are not counted
+      if (recognitions.first["confidence"] * 100 >= sensitivitySetting) {
+        // add 1 to the top inference of this round
+        var topArtwork = recognitions.first["label"];
+        _taverritiAlgo[topArtwork] += 1;
+        // subtract 1 for all other previous inferences
+        _taverritiAlgo.keys.forEach((key) {
+          if (key != topArtwork) {
+            _taverritiAlgo[key] -= 1;
+          }
+        });
+      }
+    }
+
+    _topCounter = 0;
+
+    if (_taverritiAlgo.length > 0) {
+      // sort artworkIds by count, largest to smallest
+      var idsSortedByCount = _taverritiAlgo.keys.toList(growable: false)
+        ..sort((k1, k2) => _taverritiAlgo[k2].compareTo(_taverritiAlgo[k1]));
+
+      // if _topCounter is equal or larger than P, set topInference
+      _topCounter = _taverritiAlgo[idsSortedByCount.first];
+      if (_topCounter >= P) {
+        topInference = idsSortedByCount.first;
+      } else {
+        topInference = "";
+      }
+    }
+  }
+
+  @override
+  ViewingsCompanion topInferenceAsViewingsCompanion() {
+    // TODO: implement topInferenceAsViewingsCompanion
+    throw UnimplementedError();
+  }
+}
