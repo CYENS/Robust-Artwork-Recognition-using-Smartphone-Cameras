@@ -61,7 +61,7 @@ class _TensorFlowCameraState extends State<TensorFlowCamera> {
                 imageWidth: img.width,
                 imageMean: 0,
                 imageStd: 255.0,
-                numResults: 2,
+                numResults: 1,
               ).then((recognitions) {
                 int endTime = new DateTime.now().millisecondsSinceEpoch;
                 var inferenceTime = endTime - startTime;
@@ -79,7 +79,7 @@ class _TensorFlowCameraState extends State<TensorFlowCamera> {
                 }).toList(),
                 imageHeight: img.height,
                 imageWidth: img.width,
-                numResults: 2,
+                numResults: 1,
               ).then((recognitions) {
                 int endTime = new DateTime.now().millisecondsSinceEpoch;
                 var inferenceTime = endTime - startTime;
@@ -96,7 +96,7 @@ class _TensorFlowCameraState extends State<TensorFlowCamera> {
                 }).toList(),
                 imageHeight: img.height,
                 imageWidth: img.width,
-                numResults: 2,
+                numResults: 1,
               ).then((recognitions) {
                 int endTime = new DateTime.now().millisecondsSinceEpoch;
                 var inferenceTime = endTime - startTime;
