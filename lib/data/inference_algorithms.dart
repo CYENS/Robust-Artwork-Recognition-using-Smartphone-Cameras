@@ -98,7 +98,7 @@ class AverageProbabilityAlgo extends InferenceAlgorithm {
 class SeidenaryAlgo extends InferenceAlgorithm {
   final int P;
   final double sensitivitySetting;
-  var _taverritiAlgo = DefaultDict<String, int>(() => 0);
+  var _counters = DefaultDict<String, int>(() => 0);
   int _topCounter = 0;
 
   SeidenaryAlgo({this.P, this.sensitivitySetting = 0.0});
@@ -113,11 +113,11 @@ class SeidenaryAlgo extends InferenceAlgorithm {
       if (recognitions.first["confidence"] * 100 >= sensitivitySetting) {
         // add 1 to the top inference of this round
         var topArtwork = recognitions.first["label"];
-        _taverritiAlgo[topArtwork] += 1;
+        _counters[topArtwork] += 1;
         // subtract 1 for all other previous inferences
-        _taverritiAlgo.keys.forEach((key) {
+        _counters.keys.forEach((key) {
           if (key != topArtwork) {
-            _taverritiAlgo[key] -= 1;
+            _counters[key] -= 1;
           }
         });
       }
@@ -125,13 +125,13 @@ class SeidenaryAlgo extends InferenceAlgorithm {
 
     _topCounter = 0;
 
-    if (_taverritiAlgo.length > 0) {
+    if (_counters.length > 0) {
       // sort artworkIds by count, largest to smallest
-      var idsSortedByCount = _taverritiAlgo.keys.toList(growable: false)
-        ..sort((k1, k2) => _taverritiAlgo[k2].compareTo(_taverritiAlgo[k1]));
+      var idsSortedByCount = _counters.keys.toList(growable: false)
+        ..sort((k1, k2) => _counters[k2].compareTo(_counters[k1]));
 
       // if _topCounter is equal or larger than P, set topInference
-      _topCounter = _taverritiAlgo[idsSortedByCount.first];
+      _topCounter = _counters[idsSortedByCount.first];
       if (_topCounter >= P) {
         setTopInference(idsSortedByCount.first);
       } else {
