@@ -1300,6 +1300,397 @@ class $ArtistTranslationsTable extends ArtistTranslations
   }
 }
 
+class Viewing extends DataClass implements Insertable<Viewing> {
+  final int id;
+  final String cnnModelUsed;
+  final DateTime startTime;
+  final DateTime endTime;
+  final int totalTime;
+  final String artworkId;
+  Viewing(
+      {@required this.id,
+      @required this.cnnModelUsed,
+      @required this.startTime,
+      @required this.endTime,
+      @required this.totalTime,
+      @required this.artworkId});
+  factory Viewing.fromData(Map<String, dynamic> data, GeneratedDatabase db,
+      {String prefix}) {
+    final effectivePrefix = prefix ?? '';
+    final intType = db.typeSystem.forDartType<int>();
+    final stringType = db.typeSystem.forDartType<String>();
+    final dateTimeType = db.typeSystem.forDartType<DateTime>();
+    return Viewing(
+      id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
+      cnnModelUsed: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}cnn_model_used']),
+      startTime: dateTimeType
+          .mapFromDatabaseResponse(data['${effectivePrefix}start_time']),
+      endTime: dateTimeType
+          .mapFromDatabaseResponse(data['${effectivePrefix}end_time']),
+      totalTime:
+          intType.mapFromDatabaseResponse(data['${effectivePrefix}total_time']),
+      artworkId: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}artwork_id']),
+    );
+  }
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (!nullToAbsent || id != null) {
+      map['id'] = Variable<int>(id);
+    }
+    if (!nullToAbsent || cnnModelUsed != null) {
+      map['cnn_model_used'] = Variable<String>(cnnModelUsed);
+    }
+    if (!nullToAbsent || startTime != null) {
+      map['start_time'] = Variable<DateTime>(startTime);
+    }
+    if (!nullToAbsent || endTime != null) {
+      map['end_time'] = Variable<DateTime>(endTime);
+    }
+    if (!nullToAbsent || totalTime != null) {
+      map['total_time'] = Variable<int>(totalTime);
+    }
+    if (!nullToAbsent || artworkId != null) {
+      map['artwork_id'] = Variable<String>(artworkId);
+    }
+    return map;
+  }
+
+  ViewingsCompanion toCompanion(bool nullToAbsent) {
+    return ViewingsCompanion(
+      id: id == null && nullToAbsent ? const Value.absent() : Value(id),
+      cnnModelUsed: cnnModelUsed == null && nullToAbsent
+          ? const Value.absent()
+          : Value(cnnModelUsed),
+      startTime: startTime == null && nullToAbsent
+          ? const Value.absent()
+          : Value(startTime),
+      endTime: endTime == null && nullToAbsent
+          ? const Value.absent()
+          : Value(endTime),
+      totalTime: totalTime == null && nullToAbsent
+          ? const Value.absent()
+          : Value(totalTime),
+      artworkId: artworkId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(artworkId),
+    );
+  }
+
+  factory Viewing.fromJson(Map<String, dynamic> json,
+      {ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return Viewing(
+      id: serializer.fromJson<int>(json['id']),
+      cnnModelUsed: serializer.fromJson<String>(json['cnnModelUsed']),
+      startTime: serializer.fromJson<DateTime>(json['startTime']),
+      endTime: serializer.fromJson<DateTime>(json['endTime']),
+      totalTime: serializer.fromJson<int>(json['totalTime']),
+      artworkId: serializer.fromJson<String>(json['artworkId']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer serializer}) {
+    serializer ??= moorRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'cnnModelUsed': serializer.toJson<String>(cnnModelUsed),
+      'startTime': serializer.toJson<DateTime>(startTime),
+      'endTime': serializer.toJson<DateTime>(endTime),
+      'totalTime': serializer.toJson<int>(totalTime),
+      'artworkId': serializer.toJson<String>(artworkId),
+    };
+  }
+
+  Viewing copyWith(
+          {int id,
+          String cnnModelUsed,
+          DateTime startTime,
+          DateTime endTime,
+          int totalTime,
+          String artworkId}) =>
+      Viewing(
+        id: id ?? this.id,
+        cnnModelUsed: cnnModelUsed ?? this.cnnModelUsed,
+        startTime: startTime ?? this.startTime,
+        endTime: endTime ?? this.endTime,
+        totalTime: totalTime ?? this.totalTime,
+        artworkId: artworkId ?? this.artworkId,
+      );
+  @override
+  String toString() {
+    return (StringBuffer('Viewing(')
+          ..write('id: $id, ')
+          ..write('cnnModelUsed: $cnnModelUsed, ')
+          ..write('startTime: $startTime, ')
+          ..write('endTime: $endTime, ')
+          ..write('totalTime: $totalTime, ')
+          ..write('artworkId: $artworkId')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => $mrjf($mrjc(
+      id.hashCode,
+      $mrjc(
+          cnnModelUsed.hashCode,
+          $mrjc(
+              startTime.hashCode,
+              $mrjc(endTime.hashCode,
+                  $mrjc(totalTime.hashCode, artworkId.hashCode))))));
+  @override
+  bool operator ==(dynamic other) =>
+      identical(this, other) ||
+      (other is Viewing &&
+          other.id == this.id &&
+          other.cnnModelUsed == this.cnnModelUsed &&
+          other.startTime == this.startTime &&
+          other.endTime == this.endTime &&
+          other.totalTime == this.totalTime &&
+          other.artworkId == this.artworkId);
+}
+
+class ViewingsCompanion extends UpdateCompanion<Viewing> {
+  final Value<int> id;
+  final Value<String> cnnModelUsed;
+  final Value<DateTime> startTime;
+  final Value<DateTime> endTime;
+  final Value<int> totalTime;
+  final Value<String> artworkId;
+  const ViewingsCompanion({
+    this.id = const Value.absent(),
+    this.cnnModelUsed = const Value.absent(),
+    this.startTime = const Value.absent(),
+    this.endTime = const Value.absent(),
+    this.totalTime = const Value.absent(),
+    this.artworkId = const Value.absent(),
+  });
+  ViewingsCompanion.insert({
+    this.id = const Value.absent(),
+    @required String cnnModelUsed,
+    @required DateTime startTime,
+    @required DateTime endTime,
+    @required int totalTime,
+    @required String artworkId,
+  })  : cnnModelUsed = Value(cnnModelUsed),
+        startTime = Value(startTime),
+        endTime = Value(endTime),
+        totalTime = Value(totalTime),
+        artworkId = Value(artworkId);
+  static Insertable<Viewing> custom({
+    Expression<int> id,
+    Expression<String> cnnModelUsed,
+    Expression<DateTime> startTime,
+    Expression<DateTime> endTime,
+    Expression<int> totalTime,
+    Expression<String> artworkId,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (cnnModelUsed != null) 'cnn_model_used': cnnModelUsed,
+      if (startTime != null) 'start_time': startTime,
+      if (endTime != null) 'end_time': endTime,
+      if (totalTime != null) 'total_time': totalTime,
+      if (artworkId != null) 'artwork_id': artworkId,
+    });
+  }
+
+  ViewingsCompanion copyWith(
+      {Value<int> id,
+      Value<String> cnnModelUsed,
+      Value<DateTime> startTime,
+      Value<DateTime> endTime,
+      Value<int> totalTime,
+      Value<String> artworkId}) {
+    return ViewingsCompanion(
+      id: id ?? this.id,
+      cnnModelUsed: cnnModelUsed ?? this.cnnModelUsed,
+      startTime: startTime ?? this.startTime,
+      endTime: endTime ?? this.endTime,
+      totalTime: totalTime ?? this.totalTime,
+      artworkId: artworkId ?? this.artworkId,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (cnnModelUsed.present) {
+      map['cnn_model_used'] = Variable<String>(cnnModelUsed.value);
+    }
+    if (startTime.present) {
+      map['start_time'] = Variable<DateTime>(startTime.value);
+    }
+    if (endTime.present) {
+      map['end_time'] = Variable<DateTime>(endTime.value);
+    }
+    if (totalTime.present) {
+      map['total_time'] = Variable<int>(totalTime.value);
+    }
+    if (artworkId.present) {
+      map['artwork_id'] = Variable<String>(artworkId.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ViewingsCompanion(')
+          ..write('id: $id, ')
+          ..write('cnnModelUsed: $cnnModelUsed, ')
+          ..write('startTime: $startTime, ')
+          ..write('endTime: $endTime, ')
+          ..write('totalTime: $totalTime, ')
+          ..write('artworkId: $artworkId')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $ViewingsTable extends Viewings with TableInfo<$ViewingsTable, Viewing> {
+  final GeneratedDatabase _db;
+  final String _alias;
+  $ViewingsTable(this._db, [this._alias]);
+  final VerificationMeta _idMeta = const VerificationMeta('id');
+  GeneratedIntColumn _id;
+  @override
+  GeneratedIntColumn get id => _id ??= _constructId();
+  GeneratedIntColumn _constructId() {
+    return GeneratedIntColumn('id', $tableName, false,
+        hasAutoIncrement: true, declaredAsPrimaryKey: true);
+  }
+
+  final VerificationMeta _cnnModelUsedMeta =
+      const VerificationMeta('cnnModelUsed');
+  GeneratedTextColumn _cnnModelUsed;
+  @override
+  GeneratedTextColumn get cnnModelUsed =>
+      _cnnModelUsed ??= _constructCnnModelUsed();
+  GeneratedTextColumn _constructCnnModelUsed() {
+    return GeneratedTextColumn(
+      'cnn_model_used',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _startTimeMeta = const VerificationMeta('startTime');
+  GeneratedDateTimeColumn _startTime;
+  @override
+  GeneratedDateTimeColumn get startTime => _startTime ??= _constructStartTime();
+  GeneratedDateTimeColumn _constructStartTime() {
+    return GeneratedDateTimeColumn(
+      'start_time',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _endTimeMeta = const VerificationMeta('endTime');
+  GeneratedDateTimeColumn _endTime;
+  @override
+  GeneratedDateTimeColumn get endTime => _endTime ??= _constructEndTime();
+  GeneratedDateTimeColumn _constructEndTime() {
+    return GeneratedDateTimeColumn(
+      'end_time',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _totalTimeMeta = const VerificationMeta('totalTime');
+  GeneratedIntColumn _totalTime;
+  @override
+  GeneratedIntColumn get totalTime => _totalTime ??= _constructTotalTime();
+  GeneratedIntColumn _constructTotalTime() {
+    return GeneratedIntColumn(
+      'total_time',
+      $tableName,
+      false,
+    );
+  }
+
+  final VerificationMeta _artworkIdMeta = const VerificationMeta('artworkId');
+  GeneratedTextColumn _artworkId;
+  @override
+  GeneratedTextColumn get artworkId => _artworkId ??= _constructArtworkId();
+  GeneratedTextColumn _constructArtworkId() {
+    return GeneratedTextColumn('artwork_id', $tableName, false,
+        $customConstraints: 'NULL REFERENCES artworks(id)');
+  }
+
+  @override
+  List<GeneratedColumn> get $columns =>
+      [id, cnnModelUsed, startTime, endTime, totalTime, artworkId];
+  @override
+  $ViewingsTable get asDslTable => this;
+  @override
+  String get $tableName => _alias ?? 'viewings';
+  @override
+  final String actualTableName = 'viewings';
+  @override
+  VerificationContext validateIntegrity(Insertable<Viewing> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id'], _idMeta));
+    }
+    if (data.containsKey('cnn_model_used')) {
+      context.handle(
+          _cnnModelUsedMeta,
+          cnnModelUsed.isAcceptableOrUnknown(
+              data['cnn_model_used'], _cnnModelUsedMeta));
+    } else if (isInserting) {
+      context.missing(_cnnModelUsedMeta);
+    }
+    if (data.containsKey('start_time')) {
+      context.handle(_startTimeMeta,
+          startTime.isAcceptableOrUnknown(data['start_time'], _startTimeMeta));
+    } else if (isInserting) {
+      context.missing(_startTimeMeta);
+    }
+    if (data.containsKey('end_time')) {
+      context.handle(_endTimeMeta,
+          endTime.isAcceptableOrUnknown(data['end_time'], _endTimeMeta));
+    } else if (isInserting) {
+      context.missing(_endTimeMeta);
+    }
+    if (data.containsKey('total_time')) {
+      context.handle(_totalTimeMeta,
+          totalTime.isAcceptableOrUnknown(data['total_time'], _totalTimeMeta));
+    } else if (isInserting) {
+      context.missing(_totalTimeMeta);
+    }
+    if (data.containsKey('artwork_id')) {
+      context.handle(_artworkIdMeta,
+          artworkId.isAcceptableOrUnknown(data['artwork_id'], _artworkIdMeta));
+    } else if (isInserting) {
+      context.missing(_artworkIdMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  Viewing map(Map<String, dynamic> data, {String tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : null;
+    return Viewing.fromData(data, _db, prefix: effectivePrefix);
+  }
+
+  @override
+  $ViewingsTable createAlias(String alias) {
+    return $ViewingsTable(_db, alias);
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(SqlTypeSystem.defaultInstance, e);
   $ArtworksTable _artworks;
@@ -1312,6 +1703,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   $ArtistTranslationsTable _artistTranslations;
   $ArtistTranslationsTable get artistTranslations =>
       _artistTranslations ??= $ArtistTranslationsTable(this);
+  $ViewingsTable _viewings;
+  $ViewingsTable get viewings => _viewings ??= $ViewingsTable(this);
   ArtworksDao _artworksDao;
   ArtworksDao get artworksDao =>
       _artworksDao ??= ArtworksDao(this as AppDatabase);
@@ -1321,5 +1714,5 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities =>
-      [artworks, artworkTranslations, artists, artistTranslations];
+      [artworks, artworkTranslations, artists, artistTranslations, viewings];
 }
