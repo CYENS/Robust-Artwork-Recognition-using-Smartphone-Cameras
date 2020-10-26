@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
+import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/tensorflow/tensorflow_camera.dart';
 import 'package:modern_art_app/utils/utils.dart';
 import 'package:tflite/tflite.dart';
@@ -40,7 +41,7 @@ class _ModelSelectionState extends State<ModelSelection> {
     // away from the widget, since TensorFlowCamera may use setRecognitions for
     // setting the results of its the last inference, that most likely will
     // arrive after user navigated away (setState after dispose)
-    // TODO where is dispose called?? if it is
+    // dispose is called in tensorflow_camera
     if (mounted) {
       super.setState(fn);
     }
@@ -144,6 +145,14 @@ class _ModelSelectionState extends State<ModelSelection> {
 
         _fiveFrameHistory.clear();
       }
+
+      print(ViewingsCompanion.insert(
+        cnnModelUsed: _model,
+        startTime: DateTime.now(),
+        endTime: DateTime.now(),
+        totalTime: _inferenceTime,
+        artworkId: _fiveFrameTopInference,
+      ));
     });
   }
 
