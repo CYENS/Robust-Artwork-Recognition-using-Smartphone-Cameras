@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:modern_art_app/data/artists_dao.dart';
 import 'package:modern_art_app/data/artworks_dao.dart';
 import 'package:modern_art_app/data/data_processing.dart';
+import 'package:modern_art_app/data/viewings_dao.dart';
 import 'package:modern_art_app/lang/localization.dart';
 import 'package:moor/ffi.dart';
 import 'package:moor/moor.dart';
@@ -142,15 +143,17 @@ LazyDatabase _openConnection() {
 ///
 /// During the first use of [AppDatabase], it is automatically populated from a
 /// Json file with the necessary information in assets.
-@UseMoor(
-    tables: [
-      Artworks,
-      ArtworkTranslations,
-      Artists,
-      ArtistTranslations,
-      Viewings,
-    ],
-    daos: [ArtworksDao, ArtistsDao, ViewingsDao])
+@UseMoor(tables: [
+  Artworks,
+  ArtworkTranslations,
+  Artists,
+  ArtistTranslations,
+  Viewings,
+], daos: [
+  ArtworksDao,
+  ArtistsDao,
+  ViewingsDao,
+])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
@@ -161,8 +164,7 @@ class AppDatabase extends _$AppDatabase {
   int get schemaVersion => 1;
 
   @override
-  MigrationStrategy get migration =>
-      MigrationStrategy(
+  MigrationStrategy get migration => MigrationStrategy(
         beforeOpen: (details) async {
           /// Enables foreign keys in the db.
           await customStatement("PRAGMA foreign_keys = ON");
@@ -178,39 +180,37 @@ class AppDatabase extends _$AppDatabase {
             // TODO make logic into function that accepts generics, since it's the same code repeated twice
             // populate artists and artistTranslations tables
             await getLocalJsonItemList(artistsJsonPath)
-                .then((artistEntries) =>
-                artistEntries.forEach((entry) {
-                  var parsedEntry = parseItemMap(entry);
-                  var artist = Artist.fromJson(parsedEntry);
-                  into(artists).insertOnConflictUpdate(artist);
-                  print("Created entry for artist with id ${artist.id}");
-                  languageCodes.forEach((languageCode) {
-                    var translatedEntry = ArtistTranslation.fromJson(
-                        parseItemTranslations(parsedEntry, languageCode));
-                    into(artistTranslations)
-                        .insertOnConflictUpdate(translatedEntry);
-                    print("Created entry for language $languageCode for "
-                        "artist with id ${artist.id}");
-                  });
-                }));
+                .then((artistEntries) => artistEntries.forEach((entry) {
+                      var parsedEntry = parseItemMap(entry);
+                      var artist = Artist.fromJson(parsedEntry);
+                      into(artists).insertOnConflictUpdate(artist);
+                      print("Created entry for artist with id ${artist.id}");
+                      languageCodes.forEach((languageCode) {
+                        var translatedEntry = ArtistTranslation.fromJson(
+                            parseItemTranslations(parsedEntry, languageCode));
+                        into(artistTranslations)
+                            .insertOnConflictUpdate(translatedEntry);
+                        print("Created entry for language $languageCode for "
+                            "artist with id ${artist.id}");
+                      });
+                    }));
 
             // populate artworks and artworkTranslations tables
             await getLocalJsonItemList(artworksJsonPath)
-                .then((artworkEntries) =>
-                artworkEntries.forEach((entry) {
-                  var parsedEntry = parseItemMap(entry);
-                  var artwork = Artwork.fromJson(parsedEntry);
-                  into(artworks).insertOnConflictUpdate(artwork);
-                  print("Created entry for artwork with id ${artwork.id}");
-                  languageCodes.forEach((languageCode) {
-                    var translatedEntry = ArtworkTranslation.fromJson(
-                        parseItemTranslations(parsedEntry, languageCode));
-                    into(artworkTranslations)
-                        .insertOnConflictUpdate(translatedEntry);
-                    print("Created entry for language $languageCode for "
-                        "artwork with id ${artwork.id}");
-                  });
-                }));
+                .then((artworkEntries) => artworkEntries.forEach((entry) {
+                      var parsedEntry = parseItemMap(entry);
+                      var artwork = Artwork.fromJson(parsedEntry);
+                      into(artworks).insertOnConflictUpdate(artwork);
+                      print("Created entry for artwork with id ${artwork.id}");
+                      languageCodes.forEach((languageCode) {
+                        var translatedEntry = ArtworkTranslation.fromJson(
+                            parseItemTranslations(parsedEntry, languageCode));
+                        into(artworkTranslations)
+                            .insertOnConflictUpdate(translatedEntry);
+                        print("Created entry for language $languageCode for "
+                            "artwork with id ${artwork.id}");
+                      });
+                    }));
           }
         },
       );

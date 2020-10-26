@@ -1705,6 +1705,14 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       _artistTranslations ??= $ArtistTranslationsTable(this);
   $ViewingsTable _viewings;
   $ViewingsTable get viewings => _viewings ??= $ViewingsTable(this);
+  ArtworksDao _artworksDao;
+  ArtworksDao get artworksDao =>
+      _artworksDao ??= ArtworksDao(this as AppDatabase);
+  ArtistsDao _artistsDao;
+  ArtistsDao get artistsDao => _artistsDao ??= ArtistsDao(this as AppDatabase);
+  ViewingsDao _viewingsDao;
+  ViewingsDao get viewingsDao =>
+      _viewingsDao ??= ViewingsDao(this as AppDatabase);
   @override
   Iterable<TableInfo> get allTables => allSchemaEntities.whereType<TableInfo>();
   @override
