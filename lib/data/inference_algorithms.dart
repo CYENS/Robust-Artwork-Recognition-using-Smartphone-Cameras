@@ -185,11 +185,11 @@ class WindowMajorityAlgo extends InferenceAlgorithm {
 /// Resembles First-past-the-post voting
 /// https://en.wikipedia.org/wiki/First-past-the-post_voting
 class FirstPastThePostAlgo extends InferenceAlgorithm {
-  final double sensitivitySetting;
+  final double sensitivity;
   final int countThreshold;
   var _countsByID = DefaultDict<String, int>(() => 0);
 
-  FirstPastThePostAlgo({this.countThreshold, this.sensitivitySetting = 0.0});
+  FirstPastThePostAlgo({this.countThreshold, this.sensitivity = 0.0});
 
   @override
   void updateRecognitions(List recognitions, int inferenceTime) {
@@ -200,7 +200,7 @@ class FirstPastThePostAlgo extends InferenceAlgorithm {
       double recProbability = recognition["confidence"];
       // here if sensitivitySetting is not specified, every inference counts,
       // otherwise inferences with lower values are not counted
-      if (recProbability >= (sensitivitySetting / 100)) {
+      if (recProbability >= (sensitivity / 100)) {
         _countsByID[recognition["label"]] += 1;
       }
     });
@@ -211,18 +211,20 @@ class FirstPastThePostAlgo extends InferenceAlgorithm {
 
     var entries = _countsByID.entries.toList();
 
-    // check if we have any that exceed the threshold
-    if (_countsByID.length == 1 && entries[0].value >= countThreshold) {
-      // case of only one id that exceeds threshold
-      setTopInference(entries[0].key);
-    } else if (_countsByID.length > 1 &&
-        entries[0].value >= countThreshold &&
-        entries[0].value != entries[1].value) {
-      // case of multiple ids with no ties between the top 2, with the top
-      // count exceeding threshold
-      setTopInference(entries[0].key);
+    // check the first artwork's count exceeds the count threshold
+    if (entries[0].value >= countThreshold) {
+      if (_countsByID.length == 1) {
+        // case of only one artwork that exceeds threshold
+        setTopInference(entries[0].key);
+      } else if (entries[0].value != entries[1].value) {
+        // case of multiple artworks with no ties between the top 2
+        setTopInference(entries[0].key);
+      } else {
+        // there is a tie in counts, wait for next round
+        resetTopInference();
+      }
     } else {
-      //  no winner yet
+      // no winner yet
       resetTopInference();
     }
   }
@@ -231,6 +233,21 @@ class FirstPastThePostAlgo extends InferenceAlgorithm {
   ViewingsCompanion topInferenceAsViewingsCompanion() {
     // TODO: implement topInferenceAsViewingsCompanion
     throw UnimplementedError();
+  }
+
+  @override
+  String get topInferenceFormatted {
+    if (hasResult()) {
+      // if we continue counting after the first top inference is chosen, the
+      // top inference may change, and the return value below will no longer be
+      // "correct", but in normal circumstances the app will not reach such a
+      // scenario, since it will pick the first result and stop counting
+      return _topInference +
+          " (First to reach count of $countThreshold - current "
+              "count ${_countsByID[_topInference]}";
+    } else {
+      return noResult;
+    }
   }
 }
 
