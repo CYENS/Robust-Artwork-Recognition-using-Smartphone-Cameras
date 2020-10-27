@@ -117,7 +117,8 @@ class WindowMajorityAlgo extends InferenceAlgorithm {
       });
 
       // sort artworkIds by their counts, largest to smallest
-      _countsByID = _countsByID.sortedByValue((count) => count);
+      _countsByID =
+          _countsByID.sortedByValue((count) => count, order: Order.desc);
 
       _topCount = 0;
 
