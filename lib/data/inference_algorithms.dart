@@ -52,7 +52,22 @@ abstract class InferenceAlgorithm {
     }
   }
 
-  ViewingsCompanion topInferenceAsViewingsCompanion();
+  ViewingsCompanion topInferenceAsViewingsCompanion() {
+    // TODO throw when _topInference is "no_artwork", or maybe make an entry in db with it and restart inferring
+    var endTime = DateTime.now();
+    ViewingsCompanion.insert(
+      artworkId: _topInference,
+      startTime: startTime,
+      endTime: endTime,
+      totalTime:
+          endTime.millisecondsSinceEpoch - startTime.millisecondsSinceEpoch,
+      algorithmUsed: this.runtimeType.toString(),
+      additionalInfo: _additionalDetailsForViewing(),
+    );
+  }
+
+  // store information such as artworkScore, sensitivity, windowLength, threshold
+  String _additionalDetailsForViewing();
 }
 
 /// 1st algorithm: averages the probabilities of all appearances of each artwork
@@ -118,12 +133,6 @@ class WindowAverageAlgo extends InferenceAlgorithm {
   }
 
   @override
-  ViewingsCompanion topInferenceAsViewingsCompanion() {
-    // TODO: implement topInferenceAsViewingsCompanion
-    throw UnimplementedError();
-  }
-
-  @override
   String get topInferenceFormatted {
     if (hasResult()) {
       return _topInference + " (${(_topMean * 100).toStringAsPrecision(2)}%)";
@@ -181,12 +190,6 @@ class WindowHighestCountAlgo extends InferenceAlgorithm {
 
       _countsByID.clear();
     }
-  }
-
-  @override
-  ViewingsCompanion topInferenceAsViewingsCompanion() {
-    // TODO: implement topInferenceAsViewingsCompanion
-    throw UnimplementedError();
   }
 
   @override
@@ -252,12 +255,6 @@ class FirstPastThePostAlgo extends InferenceAlgorithm {
       // no winner yet
       resetTopInference();
     }
-  }
-
-  @override
-  ViewingsCompanion topInferenceAsViewingsCompanion() {
-    // TODO: implement topInferenceAsViewingsCompanion
-    throw UnimplementedError();
   }
 
   @override
@@ -334,12 +331,6 @@ class SeidenaryAlgo extends InferenceAlgorithm {
         resetTopInference();
       }
     }
-  }
-
-  @override
-  ViewingsCompanion topInferenceAsViewingsCompanion() {
-    // TODO: implement topInferenceAsViewingsCompanion
-    throw UnimplementedError();
   }
 
   @override
