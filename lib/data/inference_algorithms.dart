@@ -55,7 +55,11 @@ abstract class InferenceAlgorithm {
   ViewingsCompanion topInferenceAsViewingsCompanion();
 }
 
-/// 1st algorithm.
+/// 1st algorithm: averages the probabilities of all appearances of each artwork
+/// in a sliding window of length [windowLength] over the stream of predictions
+/// by the model. If the artwork with the highest mean exceeds the [sensitivity]
+/// threshold, it is chosen as the "winner". In case of ties in artwork top
+/// means, no winner is chosen and the algorithm proceeds to the next window.
 class WindowAverageAlgo extends InferenceAlgorithm {
   final double sensitivity;
   final int windowLength;
