@@ -140,6 +140,13 @@ class WindowAverageAlgo extends InferenceAlgorithm {
       return noResult;
     }
   }
+
+  @override
+  String _additionalDetailsForViewing() => {
+        "topMean": _topMean,
+        "sensitivity": sensitivity,
+        "windowLength": windowLength,
+      }.toString();
 }
 
 /// 2nd algorithm: tallies the number of appearances of each artwork in a
@@ -202,6 +209,13 @@ class WindowHighestCountAlgo extends InferenceAlgorithm {
       return noResult;
     }
   }
+
+  @override
+  String _additionalDetailsForViewing() => {
+        "topCount": _countsByID[_topInference],
+        "sensitivity": sensitivitySetting,
+        "windowLength": windowLength,
+      }.toString();
 }
 
 /// 3rd algorithm: keep count of all predictions for each artwork, and pick as
@@ -271,6 +285,13 @@ class FirstPastThePostAlgo extends InferenceAlgorithm {
       return noResult;
     }
   }
+
+  @override
+  String _additionalDetailsForViewing() => {
+        "topCount": _countsByID[_topInference],
+        "sensitivity": sensitivity,
+        "countThreshold": countThreshold,
+      }.toString();
 }
 
 /// 4th algorithm: based loosely on the Persistence algorithm used by
@@ -341,4 +362,11 @@ class SeidenaryAlgo extends InferenceAlgorithm {
       return noResult;
     }
   }
+
+  @override
+  String _additionalDetailsForViewing() => {
+        "topCount (p)": _counters[_topInference],
+        "sensitivity": sensitivity,
+        "P": P,
+      }.toString();
 }
