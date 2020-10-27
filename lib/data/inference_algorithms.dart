@@ -180,10 +180,12 @@ class WindowMajorityAlgo extends InferenceAlgorithm {
   }
 }
 
-/// 3rd algorithm: count all inferences for each artwork prediction, and pick
-/// as "winner" the first artwork to reach [countThreshold].
-/// Resembles First-past-the-post voting
-/// https://en.wikipedia.org/wiki/First-past-the-post_voting
+/// 3rd algorithm: keep count of all predictions for each artwork, and pick as
+/// "winner" the first artwork to reach [countThreshold]. If [sensitivity] is
+/// specified, only those predictions that equal or exceed it are counted.
+///
+/// Resembles [First-past-the-post voting](https://en.wikipedia.org/wiki/First-past-the-post_voting),
+/// hence the name.
 class FirstPastThePostAlgo extends InferenceAlgorithm {
   final double sensitivity;
   final int countThreshold;
