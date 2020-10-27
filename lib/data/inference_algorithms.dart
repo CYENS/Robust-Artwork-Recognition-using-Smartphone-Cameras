@@ -1,4 +1,5 @@
 import 'package:modern_art_app/data/database.dart';
+import 'package:modern_art_app/utils/extensions.dart';
 import 'package:modern_art_app/utils/utils.dart';
 
 abstract class InferenceAlgorithm {
@@ -84,6 +85,58 @@ class WindowAverageAlgo extends InferenceAlgorithm {
       }
 
       _sortByID.clear();
+    }
+  }
+
+  @override
+  ViewingsCompanion topInferenceAsViewingsCompanion() {
+    // TODO: implement topInferenceAsViewingsCompanion
+    throw UnimplementedError();
+  }
+}
+
+/// 2nd algorithm
+class WindowMajorityAlgo extends InferenceAlgorithm {
+  final double sensitivitySetting;
+  final int windowLength;
+  int _topCount = 0;
+  var _countsByID = DefaultDict<String, int>(() => 0);
+
+  WindowMajorityAlgo({this.windowLength, this.sensitivitySetting = 0.0});
+
+  @override
+  void updateRecognitions(List recognitions, int inferenceTime) {
+    _updateHistories(recognitions, inferenceTime);
+
+    // here the sensitivity setting is not taken into account as is
+
+    if (history.length >= windowLength) {
+      // count the occurrences of the last windowLength recognitions by artworkId
+      history.sublist(history.length - windowLength).forEach((recognition) {
+        _countsByID[recognition["label"]] += 1;
+      });
+
+      // sort artworkIds by their counts, largest to smallest
+      _countsByID = _countsByID.sortedByValue((count) => count);
+
+      _topCount = 0;
+
+      var topEntry = _countsByID.entries.toList()[0];
+
+      if (_countsByID.length == 1) {
+        // if only one id in map, set it as top
+        setTopInference(topEntry.key);
+        _topCount = topEntry.value;
+      } else if (topEntry.value != _countsByID.values.toList()[1]) {
+        // check if there are no ties between first and second artworkIds
+        setTopInference(topEntry.key);
+        _topCount = topEntry.value;
+      } else {
+        // in case of tie, wait for next round to decide
+        resetTopInference();
+      }
+
+      _countsByID.clear();
     }
   }
 
