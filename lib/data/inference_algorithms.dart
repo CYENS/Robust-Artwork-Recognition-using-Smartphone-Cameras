@@ -127,14 +127,20 @@ class WindowAverageAlgo extends InferenceAlgorithm {
   }
 }
 
-/// 2nd algorithm
-class WindowMajorityAlgo extends InferenceAlgorithm {
+/// 2nd algorithm: tallies the number of appearances of each artwork in a
+/// sliding window of length [windowLength] over the stream of predictions by
+/// the model. The artwork with the highest count is chosen as the "winner". In
+/// case of ties in artwork top counts, no winner is chosen and the algorithm
+/// proceeds to the next window.
+///
+/// We could improve this algorithm by only accepting as winner the artwork
+/// that has a majority count, i.e. more than half, in the window.
+class WindowHighestCountAlgo extends InferenceAlgorithm {
   final double sensitivitySetting;
   final int windowLength;
-  int _topCount = 0;
   var _countsByID = DefaultDict<String, int>(() => 0);
 
-  WindowMajorityAlgo({this.windowLength, this.sensitivitySetting = 0.0});
+  WindowHighestCountAlgo({this.windowLength, this.sensitivitySetting = 0.0});
 
   @override
   void updateRecognitions(List recognitions, int inferenceTime) {
@@ -152,20 +158,16 @@ class WindowMajorityAlgo extends InferenceAlgorithm {
       _countsByID =
           _countsByID.sortedByValue((count) => count, order: Order.desc);
 
-      _topCount = 0;
-
       var topEntry = _countsByID.entries.toList()[0];
 
       if (_countsByID.length == 1) {
-        // if only one id in map, set it as top
+        // if there is only one artwork in map, set it as top
         setTopInference(topEntry.key);
-        _topCount = topEntry.value;
       } else if (topEntry.value != _countsByID.values.toList()[1]) {
-        // check if there are no ties between first and second artworkIds
+        // if there are no ties between first and second artworks, set first as top
         setTopInference(topEntry.key);
-        _topCount = topEntry.value;
       } else {
-        // in case of tie, wait for next round to decide
+        // in case of a tie, wait for next round to decide
         resetTopInference();
       }
 
@@ -177,6 +179,17 @@ class WindowMajorityAlgo extends InferenceAlgorithm {
   ViewingsCompanion topInferenceAsViewingsCompanion() {
     // TODO: implement topInferenceAsViewingsCompanion
     throw UnimplementedError();
+  }
+
+  @override
+  String get topInferenceFormatted {
+    if (hasResult()) {
+      return _topInference +
+          " (count of ${_countsByID[_topInference]} in last "
+              "$windowLength inferences)";
+    } else {
+      return noResult;
+    }
   }
 }
 
