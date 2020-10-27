@@ -148,7 +148,59 @@ class WindowMajorityAlgo extends InferenceAlgorithm {
   }
 }
 
-/// 4th algorithm, based loosely on Seidenary et al. 2017..
+/// 3rd algorithm: count all inferences for each artwork prediction, and pick
+/// as "winner" the first artwork to reach [countThreshold].
+/// Resembles First-past-the-post voting
+/// https://en.wikipedia.org/wiki/First-past-the-post_voting
+class FirstPastThePostAlgo extends InferenceAlgorithm {
+  final double sensitivitySetting;
+  final int countThreshold;
+  var _countsByID = DefaultDict<String, int>(() => 0);
+
+  FirstPastThePostAlgo({this.countThreshold, this.sensitivitySetting = 0.0});
+
+  @override
+  void updateRecognitions(List recognitions, int inferenceTime) {
+    _updateHistories(recognitions, inferenceTime);
+
+    // keep count of each inference per artworkId
+    recognitions.forEach((recognition) {
+      double recProbability = recognition["confidence"];
+      // here if sensitivitySetting is not specified, every inference counts,
+      // otherwise inferences with lower values are not counted
+      if (recProbability >= (sensitivitySetting / 100)) {
+        _countsByID[recognition["label"]] += 1;
+      }
+    });
+
+    // sort artworkIds by their counts, largest to smallest
+    _countsByID =
+        _countsByID.sortedByValue((count) => count, order: Order.desc);
+
+    var entries = _countsByID.entries.toList();
+
+    // check if we have any that exceed the threshold
+    if (_countsByID.length == 1 && entries[0].value >= countThreshold) {
+      // case of only one id that exceeds threshold
+      setTopInference(entries[0].key);
+    } else if (_countsByID.length >= 1 &&
+        entries[0].value != entries[1].value) {
+      // case of multiple ids with no ties between the top 2
+      setTopInference(entries[0].key);
+    } else {
+      //  no winner yet
+      resetTopInference();
+    }
+  }
+
+  @override
+  ViewingsCompanion topInferenceAsViewingsCompanion() {
+    // TODO: implement topInferenceAsViewingsCompanion
+    throw UnimplementedError();
+  }
+}
+
+/// 4th algorithm, based loosely on algo by Seidenary et al. 2017..
 class SeidenaryAlgo extends InferenceAlgorithm {
   final int P;
   final double sensitivitySetting;
