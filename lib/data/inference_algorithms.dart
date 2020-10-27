@@ -87,7 +87,7 @@ class WindowAverageAlgo extends InferenceAlgorithm {
 
       var entries = meansByID.entries.toList();
 
-      // check if we have any artwordId that exceeds the sensitivity
+      // check if the first artwork's probability exceeds the sensitivity
       if (entries[0].value >= sensitivity / 100) {
         if (meansByID.length == 1) {
           // case of only one id
