@@ -119,22 +119,17 @@ class Viewings extends Table {
   TextColumn get artworkId =>
       text().customConstraint("NULL REFERENCES artworks(id)")();
 
-  // This could be either probability or count, so type is specified as text
-  TextColumn get artworkScore => text().nullable()();
-
   TextColumn get cnnModelUsed => text().nullable()();
 
-  TextColumn get algorithmUsed => text().nullable()();
-
-  RealColumn get sensitivity => real().nullable()();
-
-  IntColumn get threshold => integer().nullable()();
+  TextColumn get algorithmUsed => text()();
 
   DateTimeColumn get startTime => dateTime()();
 
   DateTimeColumn get endTime => dateTime()();
 
   IntColumn get totalTime => integer()();
+
+  TextColumn get additionalInfo => text()();
 }
 
 LazyDatabase _openConnection() {

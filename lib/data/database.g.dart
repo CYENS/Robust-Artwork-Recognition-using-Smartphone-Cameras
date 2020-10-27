@@ -1303,52 +1303,43 @@ class $ArtistTranslationsTable extends ArtistTranslations
 class Viewing extends DataClass implements Insertable<Viewing> {
   final int id;
   final String artworkId;
-  final String artworkScore;
   final String cnnModelUsed;
   final String algorithmUsed;
-  final double sensitivity;
-  final int threshold;
   final DateTime startTime;
   final DateTime endTime;
   final int totalTime;
+  final String additionalInfo;
   Viewing(
       {@required this.id,
       @required this.artworkId,
-      this.artworkScore,
       this.cnnModelUsed,
-      this.algorithmUsed,
-      this.sensitivity,
-      this.threshold,
+      @required this.algorithmUsed,
       @required this.startTime,
       @required this.endTime,
-      @required this.totalTime});
+      @required this.totalTime,
+      @required this.additionalInfo});
   factory Viewing.fromData(Map<String, dynamic> data, GeneratedDatabase db,
       {String prefix}) {
     final effectivePrefix = prefix ?? '';
     final intType = db.typeSystem.forDartType<int>();
     final stringType = db.typeSystem.forDartType<String>();
-    final doubleType = db.typeSystem.forDartType<double>();
     final dateTimeType = db.typeSystem.forDartType<DateTime>();
     return Viewing(
       id: intType.mapFromDatabaseResponse(data['${effectivePrefix}id']),
       artworkId: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}artwork_id']),
-      artworkScore: stringType
-          .mapFromDatabaseResponse(data['${effectivePrefix}artwork_score']),
       cnnModelUsed: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}cnn_model_used']),
       algorithmUsed: stringType
           .mapFromDatabaseResponse(data['${effectivePrefix}algorithm_used']),
-      sensitivity: doubleType
-          .mapFromDatabaseResponse(data['${effectivePrefix}sensitivity']),
-      threshold:
-          intType.mapFromDatabaseResponse(data['${effectivePrefix}threshold']),
       startTime: dateTimeType
           .mapFromDatabaseResponse(data['${effectivePrefix}start_time']),
       endTime: dateTimeType
           .mapFromDatabaseResponse(data['${effectivePrefix}end_time']),
       totalTime:
           intType.mapFromDatabaseResponse(data['${effectivePrefix}total_time']),
+      additionalInfo: stringType
+          .mapFromDatabaseResponse(data['${effectivePrefix}additional_info']),
     );
   }
   @override
@@ -1360,20 +1351,11 @@ class Viewing extends DataClass implements Insertable<Viewing> {
     if (!nullToAbsent || artworkId != null) {
       map['artwork_id'] = Variable<String>(artworkId);
     }
-    if (!nullToAbsent || artworkScore != null) {
-      map['artwork_score'] = Variable<String>(artworkScore);
-    }
     if (!nullToAbsent || cnnModelUsed != null) {
       map['cnn_model_used'] = Variable<String>(cnnModelUsed);
     }
     if (!nullToAbsent || algorithmUsed != null) {
       map['algorithm_used'] = Variable<String>(algorithmUsed);
-    }
-    if (!nullToAbsent || sensitivity != null) {
-      map['sensitivity'] = Variable<double>(sensitivity);
-    }
-    if (!nullToAbsent || threshold != null) {
-      map['threshold'] = Variable<int>(threshold);
     }
     if (!nullToAbsent || startTime != null) {
       map['start_time'] = Variable<DateTime>(startTime);
@@ -1384,6 +1366,9 @@ class Viewing extends DataClass implements Insertable<Viewing> {
     if (!nullToAbsent || totalTime != null) {
       map['total_time'] = Variable<int>(totalTime);
     }
+    if (!nullToAbsent || additionalInfo != null) {
+      map['additional_info'] = Variable<String>(additionalInfo);
+    }
     return map;
   }
 
@@ -1393,21 +1378,12 @@ class Viewing extends DataClass implements Insertable<Viewing> {
       artworkId: artworkId == null && nullToAbsent
           ? const Value.absent()
           : Value(artworkId),
-      artworkScore: artworkScore == null && nullToAbsent
-          ? const Value.absent()
-          : Value(artworkScore),
       cnnModelUsed: cnnModelUsed == null && nullToAbsent
           ? const Value.absent()
           : Value(cnnModelUsed),
       algorithmUsed: algorithmUsed == null && nullToAbsent
           ? const Value.absent()
           : Value(algorithmUsed),
-      sensitivity: sensitivity == null && nullToAbsent
-          ? const Value.absent()
-          : Value(sensitivity),
-      threshold: threshold == null && nullToAbsent
-          ? const Value.absent()
-          : Value(threshold),
       startTime: startTime == null && nullToAbsent
           ? const Value.absent()
           : Value(startTime),
@@ -1417,6 +1393,9 @@ class Viewing extends DataClass implements Insertable<Viewing> {
       totalTime: totalTime == null && nullToAbsent
           ? const Value.absent()
           : Value(totalTime),
+      additionalInfo: additionalInfo == null && nullToAbsent
+          ? const Value.absent()
+          : Value(additionalInfo),
     );
   }
 
@@ -1426,14 +1405,12 @@ class Viewing extends DataClass implements Insertable<Viewing> {
     return Viewing(
       id: serializer.fromJson<int>(json['id']),
       artworkId: serializer.fromJson<String>(json['artworkId']),
-      artworkScore: serializer.fromJson<String>(json['artworkScore']),
       cnnModelUsed: serializer.fromJson<String>(json['cnnModelUsed']),
       algorithmUsed: serializer.fromJson<String>(json['algorithmUsed']),
-      sensitivity: serializer.fromJson<double>(json['sensitivity']),
-      threshold: serializer.fromJson<int>(json['threshold']),
       startTime: serializer.fromJson<DateTime>(json['startTime']),
       endTime: serializer.fromJson<DateTime>(json['endTime']),
       totalTime: serializer.fromJson<int>(json['totalTime']),
+      additionalInfo: serializer.fromJson<String>(json['additionalInfo']),
     );
   }
   @override
@@ -1442,53 +1419,45 @@ class Viewing extends DataClass implements Insertable<Viewing> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'artworkId': serializer.toJson<String>(artworkId),
-      'artworkScore': serializer.toJson<String>(artworkScore),
       'cnnModelUsed': serializer.toJson<String>(cnnModelUsed),
       'algorithmUsed': serializer.toJson<String>(algorithmUsed),
-      'sensitivity': serializer.toJson<double>(sensitivity),
-      'threshold': serializer.toJson<int>(threshold),
       'startTime': serializer.toJson<DateTime>(startTime),
       'endTime': serializer.toJson<DateTime>(endTime),
       'totalTime': serializer.toJson<int>(totalTime),
+      'additionalInfo': serializer.toJson<String>(additionalInfo),
     };
   }
 
   Viewing copyWith(
           {int id,
           String artworkId,
-          String artworkScore,
           String cnnModelUsed,
           String algorithmUsed,
-          double sensitivity,
-          int threshold,
           DateTime startTime,
           DateTime endTime,
-          int totalTime}) =>
+          int totalTime,
+          String additionalInfo}) =>
       Viewing(
         id: id ?? this.id,
         artworkId: artworkId ?? this.artworkId,
-        artworkScore: artworkScore ?? this.artworkScore,
         cnnModelUsed: cnnModelUsed ?? this.cnnModelUsed,
         algorithmUsed: algorithmUsed ?? this.algorithmUsed,
-        sensitivity: sensitivity ?? this.sensitivity,
-        threshold: threshold ?? this.threshold,
         startTime: startTime ?? this.startTime,
         endTime: endTime ?? this.endTime,
         totalTime: totalTime ?? this.totalTime,
+        additionalInfo: additionalInfo ?? this.additionalInfo,
       );
   @override
   String toString() {
     return (StringBuffer('Viewing(')
           ..write('id: $id, ')
           ..write('artworkId: $artworkId, ')
-          ..write('artworkScore: $artworkScore, ')
           ..write('cnnModelUsed: $cnnModelUsed, ')
           ..write('algorithmUsed: $algorithmUsed, ')
-          ..write('sensitivity: $sensitivity, ')
-          ..write('threshold: $threshold, ')
           ..write('startTime: $startTime, ')
           ..write('endTime: $endTime, ')
-          ..write('totalTime: $totalTime')
+          ..write('totalTime: $totalTime, ')
+          ..write('additionalInfo: $additionalInfo')
           ..write(')'))
         .toString();
   }
@@ -1499,121 +1468,103 @@ class Viewing extends DataClass implements Insertable<Viewing> {
       $mrjc(
           artworkId.hashCode,
           $mrjc(
-              artworkScore.hashCode,
+              cnnModelUsed.hashCode,
               $mrjc(
-                  cnnModelUsed.hashCode,
+                  algorithmUsed.hashCode,
                   $mrjc(
-                      algorithmUsed.hashCode,
+                      startTime.hashCode,
                       $mrjc(
-                          sensitivity.hashCode,
-                          $mrjc(
-                              threshold.hashCode,
-                              $mrjc(
-                                  startTime.hashCode,
-                                  $mrjc(endTime.hashCode,
-                                      totalTime.hashCode))))))))));
+                          endTime.hashCode,
+                          $mrjc(totalTime.hashCode,
+                              additionalInfo.hashCode))))))));
   @override
   bool operator ==(dynamic other) =>
       identical(this, other) ||
       (other is Viewing &&
           other.id == this.id &&
           other.artworkId == this.artworkId &&
-          other.artworkScore == this.artworkScore &&
           other.cnnModelUsed == this.cnnModelUsed &&
           other.algorithmUsed == this.algorithmUsed &&
-          other.sensitivity == this.sensitivity &&
-          other.threshold == this.threshold &&
           other.startTime == this.startTime &&
           other.endTime == this.endTime &&
-          other.totalTime == this.totalTime);
+          other.totalTime == this.totalTime &&
+          other.additionalInfo == this.additionalInfo);
 }
 
 class ViewingsCompanion extends UpdateCompanion<Viewing> {
   final Value<int> id;
   final Value<String> artworkId;
-  final Value<String> artworkScore;
   final Value<String> cnnModelUsed;
   final Value<String> algorithmUsed;
-  final Value<double> sensitivity;
-  final Value<int> threshold;
   final Value<DateTime> startTime;
   final Value<DateTime> endTime;
   final Value<int> totalTime;
+  final Value<String> additionalInfo;
   const ViewingsCompanion({
     this.id = const Value.absent(),
     this.artworkId = const Value.absent(),
-    this.artworkScore = const Value.absent(),
     this.cnnModelUsed = const Value.absent(),
     this.algorithmUsed = const Value.absent(),
-    this.sensitivity = const Value.absent(),
-    this.threshold = const Value.absent(),
     this.startTime = const Value.absent(),
     this.endTime = const Value.absent(),
     this.totalTime = const Value.absent(),
+    this.additionalInfo = const Value.absent(),
   });
   ViewingsCompanion.insert({
     this.id = const Value.absent(),
     @required String artworkId,
-    this.artworkScore = const Value.absent(),
     this.cnnModelUsed = const Value.absent(),
-    this.algorithmUsed = const Value.absent(),
-    this.sensitivity = const Value.absent(),
-    this.threshold = const Value.absent(),
+    @required String algorithmUsed,
     @required DateTime startTime,
     @required DateTime endTime,
     @required int totalTime,
+    @required String additionalInfo,
   })  : artworkId = Value(artworkId),
+        algorithmUsed = Value(algorithmUsed),
         startTime = Value(startTime),
         endTime = Value(endTime),
-        totalTime = Value(totalTime);
+        totalTime = Value(totalTime),
+        additionalInfo = Value(additionalInfo);
   static Insertable<Viewing> custom({
     Expression<int> id,
     Expression<String> artworkId,
-    Expression<String> artworkScore,
     Expression<String> cnnModelUsed,
     Expression<String> algorithmUsed,
-    Expression<double> sensitivity,
-    Expression<int> threshold,
     Expression<DateTime> startTime,
     Expression<DateTime> endTime,
     Expression<int> totalTime,
+    Expression<String> additionalInfo,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (artworkId != null) 'artwork_id': artworkId,
-      if (artworkScore != null) 'artwork_score': artworkScore,
       if (cnnModelUsed != null) 'cnn_model_used': cnnModelUsed,
       if (algorithmUsed != null) 'algorithm_used': algorithmUsed,
-      if (sensitivity != null) 'sensitivity': sensitivity,
-      if (threshold != null) 'threshold': threshold,
       if (startTime != null) 'start_time': startTime,
       if (endTime != null) 'end_time': endTime,
       if (totalTime != null) 'total_time': totalTime,
+      if (additionalInfo != null) 'additional_info': additionalInfo,
     });
   }
 
   ViewingsCompanion copyWith(
       {Value<int> id,
       Value<String> artworkId,
-      Value<String> artworkScore,
       Value<String> cnnModelUsed,
       Value<String> algorithmUsed,
-      Value<double> sensitivity,
-      Value<int> threshold,
       Value<DateTime> startTime,
       Value<DateTime> endTime,
-      Value<int> totalTime}) {
+      Value<int> totalTime,
+      Value<String> additionalInfo}) {
     return ViewingsCompanion(
       id: id ?? this.id,
       artworkId: artworkId ?? this.artworkId,
-      artworkScore: artworkScore ?? this.artworkScore,
       cnnModelUsed: cnnModelUsed ?? this.cnnModelUsed,
       algorithmUsed: algorithmUsed ?? this.algorithmUsed,
-      sensitivity: sensitivity ?? this.sensitivity,
-      threshold: threshold ?? this.threshold,
       startTime: startTime ?? this.startTime,
       endTime: endTime ?? this.endTime,
       totalTime: totalTime ?? this.totalTime,
+      additionalInfo: additionalInfo ?? this.additionalInfo,
     );
   }
 
@@ -1626,20 +1577,11 @@ class ViewingsCompanion extends UpdateCompanion<Viewing> {
     if (artworkId.present) {
       map['artwork_id'] = Variable<String>(artworkId.value);
     }
-    if (artworkScore.present) {
-      map['artwork_score'] = Variable<String>(artworkScore.value);
-    }
     if (cnnModelUsed.present) {
       map['cnn_model_used'] = Variable<String>(cnnModelUsed.value);
     }
     if (algorithmUsed.present) {
       map['algorithm_used'] = Variable<String>(algorithmUsed.value);
-    }
-    if (sensitivity.present) {
-      map['sensitivity'] = Variable<double>(sensitivity.value);
-    }
-    if (threshold.present) {
-      map['threshold'] = Variable<int>(threshold.value);
     }
     if (startTime.present) {
       map['start_time'] = Variable<DateTime>(startTime.value);
@@ -1650,6 +1592,9 @@ class ViewingsCompanion extends UpdateCompanion<Viewing> {
     if (totalTime.present) {
       map['total_time'] = Variable<int>(totalTime.value);
     }
+    if (additionalInfo.present) {
+      map['additional_info'] = Variable<String>(additionalInfo.value);
+    }
     return map;
   }
 
@@ -1658,14 +1603,12 @@ class ViewingsCompanion extends UpdateCompanion<Viewing> {
     return (StringBuffer('ViewingsCompanion(')
           ..write('id: $id, ')
           ..write('artworkId: $artworkId, ')
-          ..write('artworkScore: $artworkScore, ')
           ..write('cnnModelUsed: $cnnModelUsed, ')
           ..write('algorithmUsed: $algorithmUsed, ')
-          ..write('sensitivity: $sensitivity, ')
-          ..write('threshold: $threshold, ')
           ..write('startTime: $startTime, ')
           ..write('endTime: $endTime, ')
-          ..write('totalTime: $totalTime')
+          ..write('totalTime: $totalTime, ')
+          ..write('additionalInfo: $additionalInfo')
           ..write(')'))
         .toString();
   }
@@ -1693,20 +1636,6 @@ class $ViewingsTable extends Viewings with TableInfo<$ViewingsTable, Viewing> {
         $customConstraints: 'NULL REFERENCES artworks(id)');
   }
 
-  final VerificationMeta _artworkScoreMeta =
-      const VerificationMeta('artworkScore');
-  GeneratedTextColumn _artworkScore;
-  @override
-  GeneratedTextColumn get artworkScore =>
-      _artworkScore ??= _constructArtworkScore();
-  GeneratedTextColumn _constructArtworkScore() {
-    return GeneratedTextColumn(
-      'artwork_score',
-      $tableName,
-      true,
-    );
-  }
-
   final VerificationMeta _cnnModelUsedMeta =
       const VerificationMeta('cnnModelUsed');
   GeneratedTextColumn _cnnModelUsed;
@@ -1731,33 +1660,7 @@ class $ViewingsTable extends Viewings with TableInfo<$ViewingsTable, Viewing> {
     return GeneratedTextColumn(
       'algorithm_used',
       $tableName,
-      true,
-    );
-  }
-
-  final VerificationMeta _sensitivityMeta =
-      const VerificationMeta('sensitivity');
-  GeneratedRealColumn _sensitivity;
-  @override
-  GeneratedRealColumn get sensitivity =>
-      _sensitivity ??= _constructSensitivity();
-  GeneratedRealColumn _constructSensitivity() {
-    return GeneratedRealColumn(
-      'sensitivity',
-      $tableName,
-      true,
-    );
-  }
-
-  final VerificationMeta _thresholdMeta = const VerificationMeta('threshold');
-  GeneratedIntColumn _threshold;
-  @override
-  GeneratedIntColumn get threshold => _threshold ??= _constructThreshold();
-  GeneratedIntColumn _constructThreshold() {
-    return GeneratedIntColumn(
-      'threshold',
-      $tableName,
-      true,
+      false,
     );
   }
 
@@ -1797,18 +1700,30 @@ class $ViewingsTable extends Viewings with TableInfo<$ViewingsTable, Viewing> {
     );
   }
 
+  final VerificationMeta _additionalInfoMeta =
+      const VerificationMeta('additionalInfo');
+  GeneratedTextColumn _additionalInfo;
+  @override
+  GeneratedTextColumn get additionalInfo =>
+      _additionalInfo ??= _constructAdditionalInfo();
+  GeneratedTextColumn _constructAdditionalInfo() {
+    return GeneratedTextColumn(
+      'additional_info',
+      $tableName,
+      false,
+    );
+  }
+
   @override
   List<GeneratedColumn> get $columns => [
         id,
         artworkId,
-        artworkScore,
         cnnModelUsed,
         algorithmUsed,
-        sensitivity,
-        threshold,
         startTime,
         endTime,
-        totalTime
+        totalTime,
+        additionalInfo
       ];
   @override
   $ViewingsTable get asDslTable => this;
@@ -1830,12 +1745,6 @@ class $ViewingsTable extends Viewings with TableInfo<$ViewingsTable, Viewing> {
     } else if (isInserting) {
       context.missing(_artworkIdMeta);
     }
-    if (data.containsKey('artwork_score')) {
-      context.handle(
-          _artworkScoreMeta,
-          artworkScore.isAcceptableOrUnknown(
-              data['artwork_score'], _artworkScoreMeta));
-    }
     if (data.containsKey('cnn_model_used')) {
       context.handle(
           _cnnModelUsedMeta,
@@ -1847,16 +1756,8 @@ class $ViewingsTable extends Viewings with TableInfo<$ViewingsTable, Viewing> {
           _algorithmUsedMeta,
           algorithmUsed.isAcceptableOrUnknown(
               data['algorithm_used'], _algorithmUsedMeta));
-    }
-    if (data.containsKey('sensitivity')) {
-      context.handle(
-          _sensitivityMeta,
-          sensitivity.isAcceptableOrUnknown(
-              data['sensitivity'], _sensitivityMeta));
-    }
-    if (data.containsKey('threshold')) {
-      context.handle(_thresholdMeta,
-          threshold.isAcceptableOrUnknown(data['threshold'], _thresholdMeta));
+    } else if (isInserting) {
+      context.missing(_algorithmUsedMeta);
     }
     if (data.containsKey('start_time')) {
       context.handle(_startTimeMeta,
@@ -1875,6 +1776,14 @@ class $ViewingsTable extends Viewings with TableInfo<$ViewingsTable, Viewing> {
           totalTime.isAcceptableOrUnknown(data['total_time'], _totalTimeMeta));
     } else if (isInserting) {
       context.missing(_totalTimeMeta);
+    }
+    if (data.containsKey('additional_info')) {
+      context.handle(
+          _additionalInfoMeta,
+          additionalInfo.isAcceptableOrUnknown(
+              data['additional_info'], _additionalInfoMeta));
+    } else if (isInserting) {
+      context.missing(_additionalInfoMeta);
     }
     return context;
   }
