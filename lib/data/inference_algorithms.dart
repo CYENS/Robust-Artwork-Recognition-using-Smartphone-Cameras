@@ -45,13 +45,13 @@ abstract class InferenceAlgorithm {
 }
 
 /// 1st algorithm.
-class AverageProbabilityAlgo extends InferenceAlgorithm {
+class WindowAverageAlgo extends InferenceAlgorithm {
   final double sensitivitySetting;
   final int windowLength;
   double _topMean = 0.0;
   var _sortByID = DefaultDict<String, List<double>>(() => []);
 
-  AverageProbabilityAlgo({this.sensitivitySetting, this.windowLength});
+  WindowAverageAlgo({this.sensitivitySetting, this.windowLength});
 
   @override
   void updateRecognitions(List<dynamic> recognitions, int inferenceTime) {
