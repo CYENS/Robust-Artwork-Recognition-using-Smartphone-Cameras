@@ -370,3 +370,15 @@ class SeidenaryAlgo extends InferenceAlgorithm {
         "P": P,
       }.toString();
 }
+
+const firstAlgorithm = "1 - Window average probability";
+const secondAlgorithm = "2 - Window highest count";
+const thirdAlgorithm = "3 - First past the post";
+const fourthAlgorithm = "4 - Seidenary et al. 2017 Persistence";
+
+const algorithmList = [
+  firstAlgorithm,
+  secondAlgorithm,
+  thirdAlgorithm,
+  fourthAlgorithm
+];
