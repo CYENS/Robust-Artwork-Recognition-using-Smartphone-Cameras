@@ -57,12 +57,12 @@ abstract class InferenceAlgorithm {
 
 /// 1st algorithm.
 class WindowAverageAlgo extends InferenceAlgorithm {
-  final double sensitivitySetting;
+  final double sensitivity;
   final int windowLength;
   double _topMean = 0.0;
-  var _sortByID = DefaultDict<String, List<double>>(() => []);
+  var _probsByID = DefaultDict<String, List<double>>(() => []);
 
-  WindowAverageAlgo({this.sensitivitySetting, this.windowLength});
+  WindowAverageAlgo({this.sensitivity, this.windowLength});
 
   @override
   void updateRecognitions(List<dynamic> recognitions, int inferenceTime) {
@@ -71,30 +71,43 @@ class WindowAverageAlgo extends InferenceAlgorithm {
     if (history.length >= windowLength) {
       // sort probabilities of the last windowLength recognitions by artworkId
       history.sublist(history.length - windowLength).forEach((recognition) {
-        _sortByID[recognition["label"]].add(recognition["confidence"]);
+        _probsByID[recognition["label"]].add(recognition["confidence"]);
       });
 
       // get mean probability for each artworkId
-      var means = <String, double>{
-        for (var id in _sortByID.entries)
+      var meansByID = <String, double>{
+        for (var id in _probsByID.entries)
           id.key: id.value.reduce((a, b) => a + b) / id.value.length
       };
 
       // sort artworkIds by mean, largest to smallest
-      var idsSortedByMean = means.keys.toList(growable: false)
-        ..sort((k1, k2) => means[k2].compareTo(means[k1]));
+      meansByID = meansByID.sortedByValue((mean) => mean, order: Order.desc);
 
       _topMean = 0.0;
 
-      // if topMean is equal or larger than sensitivitySetting, set topInference
-      _topMean = means[idsSortedByMean.first];
-      if (_topMean >= (sensitivitySetting / 100)) {
-        setTopInference(idsSortedByMean.first);
+      var entries = meansByID.entries.toList();
+
+      // check if we have any artwordId that exceeds the sensitivity
+      if (entries[0].value >= sensitivity / 100) {
+        if (meansByID.length == 1) {
+          // case of only one id
+          setTopInference(entries[0].key);
+          _topMean = entries[0].value;
+        } else if (meansByID.length > 1 &&
+            entries[0].value != entries[1].value) {
+          // case of multiple ids with no ties between the top 2
+          setTopInference(entries[0].key);
+          _topMean = entries[0].value;
+        } else {
+          // there is a tie in means, wait for next round
+          resetTopInference();
+        }
       } else {
+        // no winner yet
         resetTopInference();
       }
 
-      _sortByID.clear();
+      _probsByID.clear();
     }
   }
 
