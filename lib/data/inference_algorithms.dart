@@ -116,6 +116,15 @@ class WindowAverageAlgo extends InferenceAlgorithm {
     // TODO: implement topInferenceAsViewingsCompanion
     throw UnimplementedError();
   }
+
+  @override
+  String get topInferenceFormatted {
+    if (hasResult()) {
+      return _topInference + ", ${(_topMean * 100).toStringAsPrecision(2)}%";
+    } else {
+      return noResult;
+    }
+  }
 }
 
 /// 2nd algorithm
