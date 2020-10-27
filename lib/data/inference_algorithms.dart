@@ -10,6 +10,16 @@ abstract class InferenceAlgorithm {
   double _fps = 0.0;
   String _topInference = "";
 
+  String get topInference {
+    if (hasResult()) {
+      return _topInference;
+    } else {
+      return noResult;
+    }
+  }
+
+  String get topInferenceFormatted;
+
   String get fps => "$_fps fps";
 
   bool hasResult() => _topInference != "";
