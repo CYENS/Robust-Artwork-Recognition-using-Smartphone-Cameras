@@ -45,8 +45,8 @@ abstract class InferenceAlgorithm {
   void _updateFps() {
     if (inferenceTimeHistory.length >= 5) {
       double meanInferenceTime = inferenceTimeHistory
-          .sublist(inferenceTimeHistory.length - 5)
-          .reduce((a, b) => a + b) /
+              .sublist(inferenceTimeHistory.length - 5)
+              .reduce((a, b) => a + b) /
           5;
       _fps = 1000 / meanInferenceTime;
     }
@@ -159,8 +159,8 @@ class WindowHighestCountAlgo extends InferenceAlgorithm {
       // sort artworkIds by their counts, largest to smallest
       // sortedCounts is of type LinkedHashMap, that guarantees preserving key
       // insertion order
-      var sortedCounts = _countsByID.sortedByValue((count) => count,
-          order: Order.desc);
+      var sortedCounts =
+          _countsByID.sortedByValue((count) => count, order: Order.desc);
 
       var topEntry = sortedCounts.entries.toList()[0];
 
@@ -227,8 +227,8 @@ class FirstPastThePostAlgo extends InferenceAlgorithm {
     // sort artworkIds by their counts, largest to smallest
     // sortedCounts is of type LinkedHashMap, that guarantees preserving key
     // insertion order
-    var sortedCounts = _countsByID.sortedByValue((count) => count,
-        order: Order.desc);
+    var sortedCounts =
+        _countsByID.sortedByValue((count) => count, order: Order.desc);
 
     var entries = sortedCounts.entries.toList();
 
@@ -272,14 +272,18 @@ class FirstPastThePostAlgo extends InferenceAlgorithm {
   }
 }
 
-/// 4th algorithm, based loosely on algo by Seidenary et al. 2017..
+/// 4th algorithm: based loosely on the Persistence algorithm used by
+/// Seidenary et al. 2017. The artwork whose prediction counter exceeds [P]
+/// is chosen as  the winner. Similar to the 3rd algorithm
+/// [FirstPastThePostAlgo], but also decrements the counters of previous
+/// predictions when a new prediction is different. If [sensitivity] is
+/// specified, only those predictions that equal or exceed it are counted.
 class SeidenaryAlgo extends InferenceAlgorithm {
   final int P;
-  final double sensitivitySetting;
+  final double sensitivity;
   var _counters = DefaultDict<String, int>(() => 0);
-  int _topCounter = 0;
 
-  SeidenaryAlgo({this.P, this.sensitivitySetting = 0.0});
+  SeidenaryAlgo({this.P, this.sensitivity = 0.0});
 
   @override
   void updateRecognitions(List recognitions, int inferenceTime) {
@@ -288,11 +292,11 @@ class SeidenaryAlgo extends InferenceAlgorithm {
     if (recognitions.length > 0) {
       // here if sensitivitySetting is not specified, every inference counts,
       // otherwise inferences with lower values are not counted
-      if (recognitions.first["confidence"] * 100 >= sensitivitySetting) {
+      if (recognitions.first["confidence"] * 100 >= sensitivity) {
         // add 1 to the top inference of this round
         var topArtwork = recognitions.first["label"];
         _counters[topArtwork] += 1;
-        // subtract 1 for all other previous inferences
+        // subtract 1 from all other previous inferences
         _counters.keys.forEach((key) {
           if (key != topArtwork) {
             _counters[key] -= 1;
@@ -301,18 +305,28 @@ class SeidenaryAlgo extends InferenceAlgorithm {
       }
     }
 
-    _topCounter = 0;
+    if (_counters.isNotEmpty) {
+      // sort artwork counters by their counts, largest to smallest
+      // sortedCounters is converted to LinkedHashMap here, that guarantees
+      // preserving key insertion order
+      var sortedCounters = _counters.sortedByValue((count) => count);
 
-    if (_counters.length > 0) {
-      // sort artworkIds by count, largest to smallest
-      var idsSortedByCount = _counters.keys.toList(growable: false)
-        ..sort((k1, k2) => _counters[k2].compareTo(_counters[k1]));
+      var entries = sortedCounters.entries.toList();
 
-      // if _topCounter is equal or larger than P, set topInference
-      _topCounter = _counters[idsSortedByCount.first];
-      if (_topCounter >= P) {
-        setTopInference(idsSortedByCount.first);
+      // check if the first counter exceeds P
+      if (entries[0].value >= P) {
+        if (sortedCounters.length == 1) {
+          // case of only one counter that exceeds threshold
+          setTopInference(entries[0].key);
+        } else if (entries[0].value != entries[1].value) {
+          // case of multiple counters with no ties between the top 2
+          setTopInference(entries[0].key);
+        } else {
+          // there is a tie in counters, wait for next round
+          resetTopInference();
+        }
       } else {
+        // no winner yet
         resetTopInference();
       }
     }
@@ -322,5 +336,14 @@ class SeidenaryAlgo extends InferenceAlgorithm {
   ViewingsCompanion topInferenceAsViewingsCompanion() {
     // TODO: implement topInferenceAsViewingsCompanion
     throw UnimplementedError();
+  }
+
+  @override
+  String get topInferenceFormatted {
+    if (hasResult()) {
+      return _topInference + " (p=${_counters[_topInference]})";
+    } else {
+      return noResult;
+    }
   }
 }
