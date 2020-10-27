@@ -81,6 +81,8 @@ class WindowAverageAlgo extends InferenceAlgorithm {
       };
 
       // sort artworkIds by mean, largest to smallest
+      // meansByID is converted to LinkedHashMap here, that guarantees
+      // preserving key insertion order
       meansByID = meansByID.sortedByValue((mean) => mean, order: Order.desc);
 
       _topMean = 0.0;
@@ -155,6 +157,8 @@ class WindowHighestCountAlgo extends InferenceAlgorithm {
       });
 
       // sort artworkIds by their counts, largest to smallest
+      // _countsByID is converted to LinkedHashMap here, that guarantees
+      // preserving key insertion order
       _countsByID =
           _countsByID.sortedByValue((count) => count, order: Order.desc);
 
@@ -221,6 +225,8 @@ class FirstPastThePostAlgo extends InferenceAlgorithm {
     });
 
     // sort artworkIds by their counts, largest to smallest
+    // _countsByID is converted to LinkedHashMap here, that guarantees
+    // preserving key insertion order
     _countsByID =
         _countsByID.sortedByValue((count) => count, order: Order.desc);
 
