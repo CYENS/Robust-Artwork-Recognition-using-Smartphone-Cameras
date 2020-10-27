@@ -45,8 +45,8 @@ abstract class InferenceAlgorithm {
   void _updateFps() {
     if (inferenceTimeHistory.length >= 5) {
       double meanInferenceTime = inferenceTimeHistory
-              .sublist(inferenceTimeHistory.length - 5)
-              .reduce((a, b) => a + b) /
+          .sublist(inferenceTimeHistory.length - 5)
+          .reduce((a, b) => a + b) /
           5;
       _fps = 1000 / meanInferenceTime;
     }
@@ -157,17 +157,17 @@ class WindowHighestCountAlgo extends InferenceAlgorithm {
       });
 
       // sort artworkIds by their counts, largest to smallest
-      // _countsByID is converted to LinkedHashMap here, that guarantees
-      // preserving key insertion order
-      _countsByID =
-          _countsByID.sortedByValue((count) => count, order: Order.desc);
+      // sortedCounts is of type LinkedHashMap, that guarantees preserving key
+      // insertion order
+      var sortedCounts = _countsByID.sortedByValue((count) => count,
+          order: Order.desc);
 
-      var topEntry = _countsByID.entries.toList()[0];
+      var topEntry = sortedCounts.entries.toList()[0];
 
-      if (_countsByID.length == 1) {
+      if (sortedCounts.length == 1) {
         // if there is only one artwork in map, set it as top
         setTopInference(topEntry.key);
-      } else if (topEntry.value != _countsByID.values.toList()[1]) {
+      } else if (topEntry.value != sortedCounts.values.toList()[1]) {
         // if there are no ties between first and second artworks, set first as top
         setTopInference(topEntry.key);
       } else {
@@ -225,16 +225,16 @@ class FirstPastThePostAlgo extends InferenceAlgorithm {
     });
 
     // sort artworkIds by their counts, largest to smallest
-    // _countsByID is converted to LinkedHashMap here, that guarantees
-    // preserving key insertion order
-    _countsByID =
-        _countsByID.sortedByValue((count) => count, order: Order.desc);
+    // sortedCounts is of type LinkedHashMap, that guarantees preserving key
+    // insertion order
+    var sortedCounts = _countsByID.sortedByValue((count) => count,
+        order: Order.desc);
 
-    var entries = _countsByID.entries.toList();
+    var entries = sortedCounts.entries.toList();
 
     // check the first artwork's count exceeds the count threshold
     if (entries[0].value >= countThreshold) {
-      if (_countsByID.length == 1) {
+      if (sortedCounts.length == 1) {
         // case of only one artwork that exceeds threshold
         setTopInference(entries[0].key);
       } else if (entries[0].value != entries[1].value) {
