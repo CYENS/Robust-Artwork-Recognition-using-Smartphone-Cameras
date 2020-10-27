@@ -193,9 +193,11 @@ class FirstPastThePostAlgo extends InferenceAlgorithm {
     if (_countsByID.length == 1 && entries[0].value >= countThreshold) {
       // case of only one id that exceeds threshold
       setTopInference(entries[0].key);
-    } else if (_countsByID.length >= 1 &&
+    } else if (_countsByID.length > 1 &&
+        entries[0].value >= countThreshold &&
         entries[0].value != entries[1].value) {
-      // case of multiple ids with no ties between the top 2
+      // case of multiple ids with no ties between the top 2, with the top
+      // count exceeding threshold
       setTopInference(entries[0].key);
     } else {
       //  no winner yet
