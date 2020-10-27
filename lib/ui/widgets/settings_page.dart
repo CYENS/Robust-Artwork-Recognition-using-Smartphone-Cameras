@@ -8,8 +8,12 @@ import 'package:moor_db_viewer/moor_db_viewer.dart';
 import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
   @override
+  _SettingsPageState createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     final strings = context.strings();
     return SettingsScreen(
