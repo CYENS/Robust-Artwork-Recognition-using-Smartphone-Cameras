@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 
 import '../lang/localization.dart';
@@ -47,3 +49,18 @@ extension CustomStringMethods on String {
     return this.toUpperCase();
   }
 }
+
+extension MapExt<T, U> on Map<T, U> {
+  Map<T, U> sortedByValue(Comparable value(U u), {Order order = Order.asc}) {
+    final entries = this.entries.toList();
+
+    if (order == Order.asc) {
+      entries.sort((a, b) => value(a.value).compareTo(value(b.value)));
+    } else {
+      entries.sort((a, b) => value(b.value).compareTo(value(a.value)));
+    }
+    return LinkedHashMap<T, U>.fromEntries(entries);
+  }
+}
+
+enum Order { asc, desc }
