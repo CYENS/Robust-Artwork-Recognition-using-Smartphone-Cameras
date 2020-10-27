@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:flutter_whatsnew/flutter_whatsnew.dart';
 import 'package:modern_art_app/data/database.dart';
+import 'package:modern_art_app/data/inference_algorithms.dart';
 import 'package:modern_art_app/tensorflow/models.dart';
 import 'package:modern_art_app/utils/extensions.dart';
 import 'package:moor_db_viewer/moor_db_viewer.dart';
@@ -39,11 +40,12 @@ class _SettingsPageState extends State<SettingsPage> {
             RadioModalSettingsTile<String>(
               title: "Recognition algorithm",
               settingKey: "key-recognition-algo",
-              values: {
-                "taverriti": "Taverriti et al. (2016)",
-                "fiveFrameAverage": "5 frame inference average"
-              },
-              selected: "fiveFrameAverage",
+              values: Map<String, String>.fromIterable(
+                algorithmList,
+                key: (key) => key,
+                value: (key) => key,
+              ),
+              selected: firstAlgorithm,
               onChange: (value) {
                 debugPrint("key-recognition-algo: $value");
               },
