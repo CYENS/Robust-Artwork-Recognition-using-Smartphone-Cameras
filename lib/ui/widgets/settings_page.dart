@@ -118,6 +118,16 @@ class _SettingsPageState extends State<SettingsPage> {
   }
 }
 
+/// Returns the default values for the settings of each algorithm used.
+Map<String, num> _defaultSettings(String modelName) {
+  return {
+    firstAlgorithm: {keyCnnSensitivity: 99.0, keyWinThreshP: 5},
+    secondAlgorithm: {keyCnnSensitivity: 90.0, keyWinThreshP: 10},
+    thirdAlgorithm: {keyCnnSensitivity: 90.0, keyWinThreshP: 10},
+    fourthAlgorithm: {keyCnnSensitivity: 90.0, keyWinThreshP: 20},
+  }[modelName];
+}
+
 String _getIntSettingName() {
   var currentAlgo = Settings.getValue(keyRecognitionAlgo, firstAlgorithm);
   if ([firstAlgorithm, secondAlgorithm].contains(currentAlgo)) {
