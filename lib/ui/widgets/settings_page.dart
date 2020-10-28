@@ -15,6 +15,7 @@ const String keyCnnModel = "keyCnnModel";
 const String keyRecognitionAlgo = "recognitionAlgorithm";
 const String keyCnnSensitivity = "keyCnnSensitivity";
 const String keyWinThreshP = "keyWinThreshP";
+const String keyWinThreshPName = "keyWinThreshPName";
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -23,6 +24,7 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
+    // TODO check if settings are set on first launch
     final strings = context.strings();
     return SettingsScreen(
       title: strings.stngs.title,
@@ -65,7 +67,7 @@ class _SettingsPageState extends State<SettingsPage> {
               },
             ),
             SliderSettingsTile(
-              title: _getIntSettingName(),
+              title: _getCurrentWinThreshPName(),
               settingKey: keyWinThreshP,
               defaultValue: 5,
               min: 5,
@@ -119,22 +121,34 @@ class _SettingsPageState extends State<SettingsPage> {
 }
 
 /// Returns the default values for the settings of each algorithm used.
-Map<String, num> _defaultSettings(String modelName) {
+Map<String, dynamic> _defaultSettings(String algorithmName) {
   return {
-    firstAlgorithm: {keyCnnSensitivity: 99.0, keyWinThreshP: 5},
-    secondAlgorithm: {keyCnnSensitivity: 90.0, keyWinThreshP: 10},
-    thirdAlgorithm: {keyCnnSensitivity: 90.0, keyWinThreshP: 10},
-    fourthAlgorithm: {keyCnnSensitivity: 90.0, keyWinThreshP: 20},
-  }[modelName];
+    firstAlgorithm: {
+      keyCnnSensitivity: 99.0,
+      keyWinThreshP: 5,
+      keyWinThreshPName: "Window length",
+    },
+    secondAlgorithm: {
+      keyCnnSensitivity: 90.0,
+      keyWinThreshP: 10,
+      keyWinThreshPName: "Window length",
+    },
+    thirdAlgorithm: {
+      keyCnnSensitivity: 90.0,
+      keyWinThreshP: 10,
+      keyWinThreshPName: "Count threshold"
+    },
+    fourthAlgorithm: {
+      keyCnnSensitivity: 90.0,
+      keyWinThreshP: 20,
+      keyWinThreshPName: "P",
+    },
+  }[algorithmName];
 }
 
-String _getIntSettingName() {
+/// Returns the actual name for the 2nd setting (besides sensitivity) of each
+/// of the recognition algorithms.
+String _getCurrentWinThreshPName() {
   var currentAlgo = Settings.getValue(keyRecognitionAlgo, firstAlgorithm);
-  if ([firstAlgorithm, secondAlgorithm].contains(currentAlgo)) {
-    return "Window length";
-  } else if (currentAlgo == thirdAlgorithm) {
-    return "Count threshold";
-  } else {
-    return "P";
-  }
+  return _defaultSettings(currentAlgo)[keyWinThreshPName];
 }
