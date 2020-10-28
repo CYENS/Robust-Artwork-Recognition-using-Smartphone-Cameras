@@ -38,6 +38,13 @@ const Map<String, TfLiteModel> tfLiteModels = {
       labelsPath: "MobileNet_No_Art_labels.txt"),
 };
 
+/// Map with tfLiteModels names, used in settings to allow selection of model.
+final tfLiteModelNames = Map<String, String>.fromIterable(
+  tfLiteModels.keys,
+  key: (key) => key,
+  value: (key) => key,
+);
+
 /// Class for holding information about the TfLite models bundled with the app,
 /// specifically the file paths to the model itself, as well as to the text
 /// files with the model's list of labels.

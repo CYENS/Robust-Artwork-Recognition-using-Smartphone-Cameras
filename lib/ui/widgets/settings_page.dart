@@ -33,11 +33,7 @@ class _SettingsPageState extends State<SettingsPage> {
             RadioModalSettingsTile<String>(
               title: "CNN type used",
               settingKey: keyCnnModel,
-              values: Map<String, String>.fromIterable(
-                tfLiteModels.keys,
-                key: (key) => key,
-                value: (key) => key,
-              ),
+              values: tfLiteModelNames,
               selected: mobileNetNoArt,
               onChange: (value) {
                 debugPrint("$keyCnnModel: $value");
