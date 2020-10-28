@@ -9,6 +9,13 @@ import 'package:moor_db_viewer/moor_db_viewer.dart';
 import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
 
+// All settings keys are specified here, to avoid mistakes typing them
+// manually every time.
+const String keyCnnModel = "keyCnnModel";
+const String keyRecognitionAlgo = "recognitionAlgorithm";
+const String keyCnnSensitivity = "keyCnnSensitivity";
+const String keyWinThreshP = "keyWinThreshP";
+
 class SettingsPage extends StatefulWidget {
   @override
   _SettingsPageState createState() => _SettingsPageState();
@@ -25,8 +32,7 @@ class _SettingsPageState extends State<SettingsPage> {
           children: [
             RadioModalSettingsTile<String>(
               title: "CNN type used",
-              // TODO make keys constants in utils perhaps
-              settingKey: "key-cnn-type",
+              settingKey: keyCnnModel,
               values: Map<String, String>.fromIterable(
                 tfLiteModels.keys,
                 key: (key) => key,
@@ -34,12 +40,12 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               selected: mobileNetNoArt,
               onChange: (value) {
-                debugPrint("key-cnn-type: $value");
+                debugPrint("$keyCnnModel: $value");
               },
             ),
             RadioModalSettingsTile<String>(
               title: "Recognition algorithm",
-              settingKey: "key-recognition-algo",
+              settingKey: keyRecognitionAlgo,
               values: Map<String, String>.fromIterable(
                 algorithmList,
                 key: (key) => key,
@@ -47,30 +53,30 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
               selected: firstAlgorithm,
               onChange: (value) {
-                debugPrint("key-recognition-algo: $value");
+                debugPrint("$keyRecognitionAlgo: $value");
                 setState(() {});
               },
             ),
             SliderSettingsTile(
               title: "CNN sensitivity",
-              settingKey: "key-cnn-sensitivity",
+              settingKey: keyCnnSensitivity,
               defaultValue: 99,
               min: 98,
               max: 100,
               step: 0.2,
               onChange: (value) {
-                debugPrint("key-cnn-sensitivity: $value");
+                debugPrint("$keyCnnSensitivity: $value");
               },
             ),
             SliderSettingsTile(
               title: _getIntSettingName(),
-              settingKey: "key-win-thresh-p",
+              settingKey: keyWinThreshP,
               defaultValue: 5,
               min: 5,
               max: 50,
               step: 1,
               onChange: (value) {
-                debugPrint("key-cnn-sensitivity: $value");
+                debugPrint("$keyWinThreshP: $value");
               },
             )
           ],
@@ -117,7 +123,7 @@ class _SettingsPageState extends State<SettingsPage> {
 }
 
 String _getIntSettingName() {
-  var currentAlgo = Settings.getValue("key-recognition-algo", firstAlgorithm);
+  var currentAlgo = Settings.getValue(keyRecognitionAlgo, firstAlgorithm);
   if ([firstAlgorithm, secondAlgorithm].contains(currentAlgo)) {
     return "Window length";
   } else if (currentAlgo == thirdAlgorithm) {
