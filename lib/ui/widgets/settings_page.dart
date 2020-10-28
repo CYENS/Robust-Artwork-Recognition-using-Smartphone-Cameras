@@ -26,96 +26,102 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     // TODO check if settings are set on first launch
     final strings = context.strings();
-    return SettingsScreen(
-      title: strings.stngs.title,
-      children: [
-        SettingsGroup(
-          title: "Computer Vision options",
-          children: [
-            RadioModalSettingsTile<String>(
-              title: "CNN type used",
-              settingKey: keyCnnModel,
-              values: tfLiteModelNames,
-              selected: mobileNetNoArt,
-              onChange: (value) {
-                debugPrint("$keyCnnModel: $value");
-              },
-            ),
-            RadioModalSettingsTile<String>(
-              title: "Recognition algorithm",
-              settingKey: keyRecognitionAlgo,
-              values: Map<String, String>.fromIterable(
-                algorithmList,
-                key: (key) => key,
-                value: (key) => key,
+    return Container(
+      key: UniqueKey(),
+      child: SettingsScreen(
+        title: strings.stngs.title,
+        children: [
+          SettingsGroup(
+            title: "Computer Vision options",
+            children: [
+              RadioModalSettingsTile<String>(
+                title: "CNN type used",
+                settingKey: keyCnnModel,
+                values: tfLiteModelNames,
+                selected: mobileNetNoArt,
+                onChange: (value) {
+                  debugPrint("$keyCnnModel: $value");
+                },
               ),
-              selected: firstAlgorithm,
-              onChange: (value) {
-                debugPrint("$keyRecognitionAlgo: $value");
-                setState(() {});
-              },
-            ),
-            SliderSettingsTile(
-              title: "CNN sensitivity",
-              settingKey: keyCnnSensitivity,
-              defaultValue: 99,
-              min: 98,
-              max: 100,
-              step: 0.2,
-              onChange: (value) {
-                debugPrint("$keyCnnSensitivity: $value");
-              },
-            ),
-            SliderSettingsTile(
-              title: _getCurrentWinThreshPName(),
-              settingKey: keyWinThreshP,
-              defaultValue: 5,
-              min: 5,
-              max: 50,
-              step: 1,
-              onChange: (value) {
-                debugPrint("$keyWinThreshP: $value");
-              },
-            )
-          ],
-        ),
-        SettingsGroup(
-          title: strings.stngs.groupAbout,
-          children: [
-            SimpleSettingsTile(
-              title: strings.stngs.stng.appInfo,
-              subtitle: strings.stngs.stng.appInfoSummary,
-              onTap: () {
-                PackageInfo.fromPlatform()
-                    .then((packageInfo) => showAboutDialog(
-                          context: context,
-                          applicationName: packageInfo.appName,
-                          applicationVersion: packageInfo.version,
-                        ));
-              },
-            ),
-            SimpleSettingsTile(
-              title: strings.stngs.stng.changelog,
-              subtitle: strings.stngs.stng.changelogSummary,
-              onTap: () {
-                print("tapped");
-                return WhatsNewPage.changelog(
-                  title: Text("whats new"),
-                  buttonText: Text("null"),
-                  // path: "/assets/CHANGELOG.md",
-                );
-              },
-            ),
-            SimpleSettingsTile(
-              title: "App database browser",
-              subtitle: "Shows all tables and items in the app's database",
-              onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) =>
-                      MoorDbViewer(Provider.of<AppDatabase>(context)))),
-            ),
-          ],
-        )
-      ],
+              RadioModalSettingsTile<String>(
+                title: "Recognition algorithm",
+                settingKey: keyRecognitionAlgo,
+                values: Map<String, String>.fromIterable(
+                  algorithmList,
+                  key: (key) => key,
+                  value: (key) => key,
+                ),
+                selected: firstAlgorithm,
+                onChange: (value) {
+                  debugPrint("$keyRecognitionAlgo: $value");
+                  // reset values for algorithm settings every time a new
+                  // algorithm is chosen
+                  _setDefaultAlgorithmSettings(value);
+                  setState(() {});
+                },
+              ),
+              SliderSettingsTile(
+                title: "CNN sensitivity",
+                settingKey: keyCnnSensitivity,
+                defaultValue: 99.0,
+                min: 0.0,
+                max: 100.0,
+                step: 0.2,
+                onChange: (value) {
+                  debugPrint("$keyCnnSensitivity: $value");
+                },
+              ),
+              SliderSettingsTile(
+                title: _getCurrentWinThreshPName(),
+                settingKey: keyWinThreshP,
+                defaultValue: 5,
+                min: 5,
+                max: 50,
+                step: 1,
+                onChange: (value) {
+                  debugPrint("$keyWinThreshP: $value");
+                },
+              )
+            ],
+          ),
+          SettingsGroup(
+            title: strings.stngs.groupAbout,
+            children: [
+              SimpleSettingsTile(
+                title: strings.stngs.stng.appInfo,
+                subtitle: strings.stngs.stng.appInfoSummary,
+                onTap: () {
+                  PackageInfo.fromPlatform()
+                      .then((packageInfo) => showAboutDialog(
+                            context: context,
+                            applicationName: packageInfo.appName,
+                            applicationVersion: packageInfo.version,
+                          ));
+                },
+              ),
+              SimpleSettingsTile(
+                title: strings.stngs.stng.changelog,
+                subtitle: strings.stngs.stng.changelogSummary,
+                onTap: () {
+                  print("tapped");
+                  return WhatsNewPage.changelog(
+                    title: Text("whats new"),
+                    buttonText: Text("null"),
+                    // path: "/assets/CHANGELOG.md",
+                  );
+                },
+              ),
+              SimpleSettingsTile(
+                title: "App database browser",
+                subtitle: "Shows all tables and items in the app's database",
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) =>
+                        MoorDbViewer(Provider.of<AppDatabase>(context)))),
+              ),
+            ],
+          )
+        ],
+      ),
     );
   }
 }
