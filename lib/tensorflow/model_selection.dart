@@ -35,7 +35,7 @@ class _ModelSelectionState extends State<ModelSelection> {
   var _fiveFrameTopInference = "N/A";
   var _taverritiAlgo = DefaultDict<String, int>(() => 0);
   var _taverritiTopInference = "N/A";
-  var algo;
+  var currentAlgorithm;
 
   @override
   void setState(VoidCallback fn) {
@@ -69,7 +69,7 @@ class _ModelSelectionState extends State<ModelSelection> {
     setState(() {
       _model = preferredModel;
       _preferredSensitivity = sensitivity;
-      algo = algos[preferredAlgorithm](sensitivity, winThreshP);
+      currentAlgorithm = algos[preferredAlgorithm](sensitivity, winThreshP);
     });
     loadModelFromSettings();
   }
@@ -91,9 +91,9 @@ class _ModelSelectionState extends State<ModelSelection> {
       _inferenceTime = inferenceTime;
       _inferenceTimeHistory.add(inferenceTime);
 
-      algo.updateRecognitions(recognitions, inferenceTime);
+      currentAlgorithm.updateRecognitions(recognitions, inferenceTime);
       print(
-          "${algo.fps}, hasResult: ${algo.topInferenceFormatted != ""}, topInferenceFormatted ${algo.topInferenceFormatted}");
+          "${currentAlgorithm.fps}, hasResult: ${currentAlgorithm.topInferenceFormatted != ""}, topInferenceFormatted ${currentAlgorithm.topInferenceFormatted}");
 
       recognitions.forEach((element) {
         // each item in recognitions is a LinkedHashMap in the form of
