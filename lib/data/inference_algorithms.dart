@@ -280,7 +280,7 @@ class FirstPastThePostAlgo extends InferenceAlgorithm {
       // scenario, since it will pick the first result and stop counting
       return _topInference +
           " (First to reach count of $countThreshold - current "
-              "count ${_countsByID[_topInference]}";
+              "count ${_countsByID[_topInference]})";
     } else {
       return noResult;
     }
@@ -382,3 +382,23 @@ const algorithmList = [
   thirdAlgorithm,
   fourthAlgorithm
 ];
+
+final algos = <String, Function(double sensitivity, int winThreshP)>{
+  firstAlgorithm: (double sensitivity, int winThreshP) => WindowAverageAlgo(
+        sensitivity: sensitivity,
+        windowLength: winThreshP,
+      ),
+  secondAlgorithm: (double sensitivity, int winThreshP) =>
+      WindowHighestCountAlgo(
+        sensitivitySetting: sensitivity,
+        windowLength: winThreshP,
+      ),
+  thirdAlgorithm: (double sensitivity, int winThreshP) => FirstPastThePostAlgo(
+        sensitivity: sensitivity,
+        countThreshold: winThreshP,
+      ),
+  fourthAlgorithm: (double sensitivity, int winThreshP) => SeidenaryAlgo(
+        sensitivity: sensitivity,
+        P: winThreshP,
+      )
+};
