@@ -3,8 +3,9 @@ import 'dart:math' as math;
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
-import 'package:modern_art_app/data/database.dart';
+import 'package:modern_art_app/data/inference_algorithms.dart';
 import 'package:modern_art_app/tensorflow/tensorflow_camera.dart';
+import 'package:modern_art_app/ui/widgets/settings_page.dart';
 import 'package:modern_art_app/utils/utils.dart';
 import 'package:tflite/tflite.dart';
 
@@ -34,6 +35,7 @@ class _ModelSelectionState extends State<ModelSelection> {
   var _fiveFrameTopInference = "N/A";
   var _taverritiAlgo = DefaultDict<String, int>(() => 0);
   var _taverritiTopInference = "N/A";
+  var algo;
 
   @override
   void setState(VoidCallback fn) {
@@ -54,12 +56,20 @@ class _ModelSelectionState extends State<ModelSelection> {
   }
 
   initModel() {
-    // get preferred model and sensitivity from settings and load model
-    String preferredModel = Settings.getValue("key-cnn-type", mobileNetNoArt);
-    double sensitivity = Settings.getValue("key-cnn-sensitivity", 99.0);
+    // get preferred model, algorithm, sensitivity and winThreshP from settings
+    // and load model and algorithm
+    String preferredModel = Settings.getValue(keyCnnModel, mobileNetNoArt);
+    double sensitivity = Settings.getValue(keyCnnSensitivity, 99.0);
+    String preferredAlgorithm =
+        Settings.getValue(keyRecognitionAlgo, firstAlgorithm);
+    // keyWinThreshP's value is stored as double, have to make sure it is
+    // converted to int here
+    int winThreshP = Settings.getValue(keyWinThreshP, 5.0).round();
+
     setState(() {
       _model = preferredModel;
       _preferredSensitivity = sensitivity;
+      algo = algos[preferredAlgorithm](sensitivity, winThreshP);
     });
     loadModelFromSettings();
   }
@@ -80,6 +90,10 @@ class _ModelSelectionState extends State<ModelSelection> {
       _imageWidth = imageWidth;
       _inferenceTime = inferenceTime;
       _inferenceTimeHistory.add(inferenceTime);
+
+      algo.updateRecognitions(recognitions, inferenceTime);
+      print(
+          "${algo.fps}, hasResult: ${algo.topInferenceFormatted != ""}, topInferenceFormatted ${algo.topInferenceFormatted}");
 
       recognitions.forEach((element) {
         // each item in recognitions is a LinkedHashMap in the form of
@@ -145,14 +159,6 @@ class _ModelSelectionState extends State<ModelSelection> {
 
         _fiveFrameHistory.clear();
       }
-
-      print(ViewingsCompanion.insert(
-        cnnModelUsed: _model,
-        startTime: DateTime.now(),
-        endTime: DateTime.now(),
-        totalTime: _inferenceTime,
-        artworkId: _fiveFrameTopInference,
-      ));
     });
   }
 
