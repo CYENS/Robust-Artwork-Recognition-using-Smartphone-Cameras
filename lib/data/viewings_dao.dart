@@ -5,8 +5,12 @@ part 'viewings_dao.g.dart';
 
 /// Data access object for [Viewing] database related operations.
 @UseDao(tables: [Viewings])
-class ViewingsDao extends DatabaseAccessor<AppDatabase> with _$ViewingsDaoMixin {
+class ViewingsDao extends DatabaseAccessor<AppDatabase>
+    with _$ViewingsDaoMixin {
   ViewingsDao(AppDatabase db) : super(db);
 
-  Future insertTask(Viewing viewing) => into(viewings).insert(viewing);
+  /// Inserts a [ViewingsCompanion] into the database; used for keeping track
+  /// of which artworks the user saw and in which order.
+  Future insertTask(ViewingsCompanion viewing) =>
+      into(viewings).insert(viewing);
 }
