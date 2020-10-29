@@ -371,17 +371,11 @@ class SeidenaryAlgo extends InferenceAlgorithm {
       }.toString();
 }
 
+// Variables with descriptions of algorithms, to be used elsewhere in the app
 const firstAlgorithm = "1 - Window average probability";
 const secondAlgorithm = "2 - Window highest count";
 const thirdAlgorithm = "3 - First past the post";
 const fourthAlgorithm = "4 - Seidenary et al. 2017 Persistence";
-
-const algorithmList = [
-  firstAlgorithm,
-  secondAlgorithm,
-  thirdAlgorithm,
-  fourthAlgorithm
-];
 
 /// All algorithms mapped as functions, so they can be easily initialised
 /// without may if-else statements.

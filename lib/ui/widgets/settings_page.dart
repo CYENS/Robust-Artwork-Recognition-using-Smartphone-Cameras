@@ -47,7 +47,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 title: "Recognition algorithm",
                 settingKey: keyRecognitionAlgo,
                 values: Map<String, String>.fromIterable(
-                  algorithmList,
+                  allAlgorithms.keys,
                   key: (key) => key,
                   value: (key) => key,
                 ),
