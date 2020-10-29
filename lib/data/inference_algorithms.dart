@@ -110,7 +110,7 @@ abstract class InferenceAlgorithm {
   /// Note: [ViewingsCompanion] is used instead of [Viewing], since it allows
   /// omitting the Viewing's id field, which is autoincremented by the moor
   /// library.
-  ViewingsCompanion topInferenceAsViewingsCompanion() {
+  ViewingsCompanion resultAsDbObject() {
     // TODO throw when _topInference is "no_artwork", or maybe make an entry in db with it and restart inferring
     var endTime = DateTime.now();
     return ViewingsCompanion.insert(

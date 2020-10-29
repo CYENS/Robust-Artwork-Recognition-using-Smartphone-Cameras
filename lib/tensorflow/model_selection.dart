@@ -108,7 +108,7 @@ class _ModelSelectionState extends State<ModelSelection> {
         if (currentAlgorithm.topInference != "no_artwork") {
           // get top inference as an object ready to insert in db
           ViewingsCompanion vc =
-              currentAlgorithm.topInferenceAsViewingsCompanion();
+              currentAlgorithm.resultAsDbObject();
           // add current model to object
           vc = vc.copyWith(cnnModelUsed: Value(_model));
           viewingsDao.insertTask(vc);
