@@ -1,3 +1,11 @@
+## Version 0.8.0
+### 2010-10-29
+- Implementation of a total of 4 algorithms that allow the selection of
+  the correct artwork from the stream of CNN predictions; these will be
+  used for testing the optimal combination of model/algorithm that gives
+  the most reliable results
+- Major changes to the underlying structure of the app's database
+
 ## Version 0.7.1
 ### 2010-10-23
 - Fixed bug that caused Tensorflow models to be re-loaded after every

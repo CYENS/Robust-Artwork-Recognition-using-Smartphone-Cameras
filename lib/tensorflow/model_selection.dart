@@ -3,8 +3,14 @@ import 'dart:math' as math;
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
+import 'package:modern_art_app/data/database.dart';
+import 'package:modern_art_app/data/inference_algorithms.dart';
+import 'package:modern_art_app/data/viewings_dao.dart';
 import 'package:modern_art_app/tensorflow/tensorflow_camera.dart';
+import 'package:modern_art_app/ui/widgets/settings_page.dart';
 import 'package:modern_art_app/utils/utils.dart';
+import 'package:moor/moor.dart' hide Column;
+import 'package:provider/provider.dart';
 import 'package:tflite/tflite.dart';
 
 import 'bbox.dart';
@@ -25,7 +31,7 @@ class _ModelSelectionState extends State<ModelSelection> {
   int _imageWidth = 0;
   int _inferenceTime = 0;
   List<int> _inferenceTimeHistory = [];
-  double _fps = 0.0;
+  String _fps = "";
   String _model = "";
   double _preferredSensitivity = 0.0;
   var _history = [];
@@ -33,6 +39,11 @@ class _ModelSelectionState extends State<ModelSelection> {
   var _fiveFrameTopInference = "N/A";
   var _taverritiAlgo = DefaultDict<String, int>(() => 0);
   var _taverritiTopInference = "N/A";
+  bool addedViewing = false;
+  var currentAlgorithm;
+  String _currentRes = "";
+  String _currentAlgo = "";
+  ViewingsDao viewingsDao;
 
   @override
   void setState(VoidCallback fn) {
@@ -40,7 +51,7 @@ class _ModelSelectionState extends State<ModelSelection> {
     // away from the widget, since TensorFlowCamera may use setRecognitions for
     // setting the results of its the last inference, that most likely will
     // arrive after user navigated away (setState after dispose)
-    // TODO where is dispose called?? if it is
+    // dispose is called in tensorflow_camera
     if (mounted) {
       super.setState(fn);
     }
@@ -53,12 +64,22 @@ class _ModelSelectionState extends State<ModelSelection> {
   }
 
   initModel() {
-    // get preferred model and sensitivity from settings and load model
-    String preferredModel = Settings.getValue("key-cnn-type", mobileNetNoArt);
-    double sensitivity = Settings.getValue("key-cnn-sensitivity", 99.0);
+    // get preferred model, algorithm, sensitivity and winThreshP from settings
+    // and load model and algorithm
+    String preferredModel = Settings.getValue(keyCnnModel, mobileNetNoArt);
+    double sensitivity = Settings.getValue(keyCnnSensitivity, 99.0);
+    String preferredAlgorithm =
+        Settings.getValue(keyRecognitionAlgo, firstAlgorithm);
+    // keyWinThreshP's value is stored as double, have to make sure it is
+    // converted to int here
+    int winThreshP = Settings.getValue(keyWinThreshP, 5.0).round();
+
     setState(() {
       _model = preferredModel;
       _preferredSensitivity = sensitivity;
+      currentAlgorithm =
+          allAlgorithms[preferredAlgorithm](sensitivity, winThreshP);
+      _currentAlgo = preferredAlgorithm;
     });
     loadModelFromSettings();
   }
@@ -79,6 +100,24 @@ class _ModelSelectionState extends State<ModelSelection> {
       _imageWidth = imageWidth;
       _inferenceTime = inferenceTime;
       _inferenceTimeHistory.add(inferenceTime);
+
+      currentAlgorithm.updateRecognitions(recognitions, inferenceTime);
+      _currentRes = currentAlgorithm.topInferenceFormatted;
+      _fps = currentAlgorithm.fps;
+      if (currentAlgorithm.hasResult() && !addedViewing) {
+        if (currentAlgorithm.topInference != "no_artwork") {
+          // get top inference as an object ready to insert in db
+          ViewingsCompanion vc =
+              currentAlgorithm.resultAsDbObject();
+          // add current model to object
+          vc = vc.copyWith(cnnModelUsed: Value(_model));
+          viewingsDao.insertTask(vc);
+          print("Added VIEWING: $vc");
+          addedViewing = true;
+        } else {
+          print("Not adding VIEWING no_artwork");
+        }
+      }
 
       recognitions.forEach((element) {
         // each item in recognitions is a LinkedHashMap in the form of
@@ -134,14 +173,6 @@ class _ModelSelectionState extends State<ModelSelection> {
           _fiveFrameTopInference = "N/A";
         }
 
-        var fps = 1000 /
-            (_inferenceTimeHistory
-                    .sublist(_inferenceTimeHistory.length - 5)
-                    .reduce((a, b) => a + b) /
-                5);
-
-        if (fps != 0.0) _fps = fps;
-
         _fiveFrameHistory.clear();
       }
     });
@@ -150,6 +181,7 @@ class _ModelSelectionState extends State<ModelSelection> {
   @override
   Widget build(BuildContext context) {
     Size screen = MediaQuery.of(context).size;
+    viewingsDao = Provider.of<ViewingsDao>(context);
     return Scaffold(
       body: _model == ""
           // here check if model was loaded properly (see res in loadFrom...())
@@ -179,16 +211,15 @@ class _ModelSelectionState extends State<ModelSelection> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Text(
-                          "5 frame average: $_fiveFrameTopInference",
-                          style: TextStyle(fontSize: 20),
+                          "Result: $_currentRes",
+                          style: TextStyle(fontSize: 18),
                         ),
                         Text(
-                          "Taverriti et al.: $_taverritiTopInference",
-                          style: TextStyle(fontSize: 20),
+                          "Current algorithm: $_currentAlgo",
+                          style: TextStyle(fontSize: 16),
                         ),
                         Text("Model: $_model"),
-                        Text("Sensitivity: $_preferredSensitivity" +
-                            ", ${_fps != 0.0 ? "${_fps.toStringAsPrecision(2)}" : "N/A"} fps"),
+                        Text("Sensitivity: $_preferredSensitivity" + ", $_fps"),
                       ],
                     ),
                   ),

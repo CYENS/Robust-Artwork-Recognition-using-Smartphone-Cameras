@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:modern_art_app/data/artists_dao.dart';
 import 'package:modern_art_app/data/artworks_dao.dart';
 import 'package:modern_art_app/data/data_processing.dart';
+import 'package:modern_art_app/data/viewings_dao.dart';
 import 'package:modern_art_app/lang/localization.dart';
 import 'package:moor/ffi.dart';
 import 'package:moor/moor.dart';
@@ -56,6 +57,10 @@ class Artworks extends Table {
 // TODO add current locale
 }
 
+/// Table for [ArtworkTranslation]s in database. Each [ArtworkTranslation]
+/// holds copies of translatable fields from an [Artwork] in a particular
+/// locale; these are then joined in database queries to produce fully
+/// translated artwork objects.
 class ArtworkTranslations extends Table {
   TextColumn get id =>
       text().customConstraint("NULL REFERENCES artworks(id)")();
@@ -91,6 +96,10 @@ class Artists extends Table {
   TextColumn get biography => text().nullable()();
 }
 
+/// Table for [ArtistTranslation]s in database. Each [ArtistTranslation]
+/// holds copies of translatable fields from an [Artist] in a particular
+/// locale; these are then joined in database queries to produce fully
+/// translated artwork objects.
 class ArtistTranslations extends Table {
   TextColumn get id => text().customConstraint("NULL REFERENCES artists(id)")();
 
@@ -102,6 +111,25 @@ class ArtistTranslations extends Table {
 
   @override
   Set<Column> get primaryKey => {id, languageCode};
+}
+
+class Viewings extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  TextColumn get artworkId =>
+      text().customConstraint("NULL REFERENCES artworks(id)")();
+
+  TextColumn get cnnModelUsed => text().nullable()();
+
+  TextColumn get algorithmUsed => text()();
+
+  DateTimeColumn get startTime => dateTime()();
+
+  DateTimeColumn get endTime => dateTime()();
+
+  IntColumn get totalTime => integer()();
+
+  TextColumn get additionalInfo => text()();
 }
 
 LazyDatabase _openConnection() {
@@ -119,9 +147,17 @@ LazyDatabase _openConnection() {
 ///
 /// During the first use of [AppDatabase], it is automatically populated from a
 /// Json file with the necessary information in assets.
-@UseMoor(
-    tables: [Artworks, ArtworkTranslations, Artists, ArtistTranslations],
-    daos: [ArtworksDao, ArtistsDao])
+@UseMoor(tables: [
+  Artworks,
+  ArtworkTranslations,
+  Artists,
+  ArtistTranslations,
+  Viewings,
+], daos: [
+  ArtworksDao,
+  ArtistsDao,
+  ViewingsDao,
+])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
@@ -158,8 +194,8 @@ class AppDatabase extends _$AppDatabase {
                             parseItemTranslations(parsedEntry, languageCode));
                         into(artistTranslations)
                             .insertOnConflictUpdate(translatedEntry);
-                        print(
-                            "Created entry for language $languageCode for artist with id ${artist.id}");
+                        print("Created entry for language $languageCode for "
+                            "artist with id ${artist.id}");
                       });
                     }));
 
@@ -175,8 +211,8 @@ class AppDatabase extends _$AppDatabase {
                             parseItemTranslations(parsedEntry, languageCode));
                         into(artworkTranslations)
                             .insertOnConflictUpdate(translatedEntry);
-                        print(
-                            "Created entry for language $languageCode for artwork with id ${artwork.id}");
+                        print("Created entry for language $languageCode for "
+                            "artwork with id ${artwork.id}");
                       });
                     }));
           }

@@ -33,6 +33,7 @@ class MyApp extends StatelessWidget {
       providers: [
         Provider(create: (_) => db.artistsDao),
         Provider(create: (_) => db.artworksDao),
+        Provider(create: (_) => db.viewingsDao),
         Provider(create: (_) => db),
       ],
       child: MaterialApp(
