@@ -2,14 +2,32 @@ import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/utils/extensions.dart';
 import 'package:modern_art_app/utils/utils.dart';
 
+/// A common supertype class to facilitate the implementation of all
+/// inference algorithms used in the app.
 abstract class InferenceAlgorithm {
+  /// Records the time when the algorithm is first initialised, to allow
+  /// calculation of the total time needed to reach a decision.
   final startTime = DateTime.now();
+
+  /// Variable that indicates that no result is available yet.
   final noResult = "";
+
+  /// List that holds a history of all model inferences so far.
   List history = [];
+
+  /// List that holds a history of all inference durations so far, in
+  /// milliseconds; used mostly for calculating how many frames are analysed
+  /// per second (FPS).
   List<int> inferenceTimeHistory = [];
+
+  /// Number of frames analysed per second.
   double _fps = 0.0;
+
+  /// Current artwork picked by the algorithm as the most likely inference.
   String _topInference = "";
 
+  /// Returns the artwork picked by the algorithm as the most likely inference;
+  /// if the algorithm has not decided yet this will be an empty string.
   String get topInference {
     if (hasResult()) {
       return _topInference;
@@ -18,9 +36,13 @@ abstract class InferenceAlgorithm {
     }
   }
 
+  /// Returns the result by algorithm in a formatted string; must be
+  /// implemented by all classes extending [InferenceAlgorithm].
   String get topInferenceFormatted;
 
-  String get fps => "$_fps fps";
+  /// Returns the number of frames analysed by the algorithm per second, as a
+  /// formatted string.
+  String get fps => "${_fps.toStringAsPrecision(2)} fps";
 
   bool hasResult() => _topInference != "";
 
@@ -55,7 +77,7 @@ abstract class InferenceAlgorithm {
   ViewingsCompanion topInferenceAsViewingsCompanion() {
     // TODO throw when _topInference is "no_artwork", or maybe make an entry in db with it and restart inferring
     var endTime = DateTime.now();
-    ViewingsCompanion.insert(
+    return ViewingsCompanion.insert(
       artworkId: _topInference,
       startTime: startTime,
       endTime: endTime,
