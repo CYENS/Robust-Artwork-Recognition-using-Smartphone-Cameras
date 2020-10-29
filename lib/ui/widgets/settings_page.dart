@@ -131,8 +131,7 @@ class _SettingsPageState extends State<SettingsPage> {
 void _setDefaultAlgorithmSettings(String algorithmName) {
   var defValues = _defaultSettings(algorithmName);
   Settings.setValue<double>(keyCnnSensitivity, defValues[keyCnnSensitivity]);
-  // have to make sure set an int value for keyWinThreshP
-  Settings.setValue<int>(keyWinThreshP, defValues[keyWinThreshP].round());
+  Settings.setValue<double>(keyWinThreshP, defValues[keyWinThreshP]);
 }
 
 /// Returns the default values for the settings of each algorithm used.
@@ -140,22 +139,22 @@ Map<String, dynamic> _defaultSettings(String algorithmName) {
   return {
     firstAlgorithm: {
       keyCnnSensitivity: 99.0,
-      keyWinThreshP: 5,
+      keyWinThreshP: 5.0,
       keyWinThreshPName: "Window length",
     },
     secondAlgorithm: {
       keyCnnSensitivity: 90.0,
-      keyWinThreshP: 10,
+      keyWinThreshP: 10.0,
       keyWinThreshPName: "Window length",
     },
     thirdAlgorithm: {
       keyCnnSensitivity: 90.0,
-      keyWinThreshP: 10,
+      keyWinThreshP: 10.0,
       keyWinThreshPName: "Count threshold"
     },
     fourthAlgorithm: {
       keyCnnSensitivity: 90.0,
-      keyWinThreshP: 20,
+      keyWinThreshP: 20.0,
       keyWinThreshPName: "P",
     },
   }[algorithmName];
