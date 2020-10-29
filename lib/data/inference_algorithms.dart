@@ -5,8 +5,8 @@ import 'package:modern_art_app/utils/utils.dart';
 abstract class InferenceAlgorithm {
   final startTime = DateTime.now();
   final noResult = "";
-  List history;
-  List<int> inferenceTimeHistory;
+  List history = [];
+  List<int> inferenceTimeHistory = [];
   double _fps = 0.0;
   String _topInference = "";
 
