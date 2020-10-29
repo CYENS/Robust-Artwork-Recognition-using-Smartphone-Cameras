@@ -26,6 +26,20 @@ abstract class InferenceAlgorithm {
   /// Current artwork picked by the algorithm as the most likely inference.
   String _topInference = "";
 
+  /// All classes extending [InferenceAlgorithm] must implement this method and
+  /// provide the logic of how the identity of the most likely artwork should
+  /// be inferred. The inputs required are a list of [recognitions] for each frame
+  /// analysis, as provided by the output of the current TFlite CNN model used,
+  /// and the [inferenceTime] in milliseconds for the analysis.
+  ///
+  /// If no editing of [recognitions] or [inferenceTime]s is required, the
+  /// convenience method [_updateHistories()] can called to automatically
+  /// process the information.
+  ///
+  /// When the provided logic reaches a decision, the [_topInference] should be
+  /// set using [setTopInference] or [resetTopInference].
+  void updateRecognitions(List<dynamic> recognitions, int inferenceTime);
+
   /// Returns the artwork picked by the algorithm as the most likely inference;
   /// if the algorithm has not decided yet this will be an empty string.
   String get topInference {
@@ -44,15 +58,19 @@ abstract class InferenceAlgorithm {
   /// formatted string.
   String get fps => "${_fps.toStringAsPrecision(2)} fps";
 
+  /// Indicates whether the algorithm reached a decision about the current
+  /// artwork identity or not.
   bool hasResult() => _topInference != "";
 
+  /// Sets the current [value] of the top inference by the algorithm.
   void setTopInference(String value) => _topInference = value;
 
+  /// Resets the value of the top inference to [noResult] (an empty string).
   void resetTopInference() => _topInference = noResult;
 
-  /// should always call _updateHistories() first
-  void updateRecognitions(List<dynamic> recognitions, int inferenceTime);
-
+  /// Convenience method that automatically adds the provided [recognitions]
+  /// and [inferenceTime]s into the lists [history] and [inferenceTimeHistory]
+  /// respectively.
   void _updateHistories(List<dynamic> recognitions, int inferenceTime) {
     // for now recognitions will only contain 1 element (1 inference from CNN,
     // this is specified in tensorflow_camera), could change this in the future
@@ -64,6 +82,9 @@ abstract class InferenceAlgorithm {
     _updateFps();
   }
 
+  /// Calculates the rate at which the algorithm processes each frames, in
+  /// frames per second (FPS). Should be called after each update of the
+  /// [inferenceTimeHistory] list.
   void _updateFps() {
     if (inferenceTimeHistory.length >= 5) {
       double meanInferenceTime = inferenceTimeHistory
@@ -74,6 +95,21 @@ abstract class InferenceAlgorithm {
     }
   }
 
+  /// Creates a [ViewingsCompanion] object for the current top inference, ready
+  /// to be inserted into the database (to keep track of the order in which the
+  /// user visited each artwork, and how much time each inference took). The
+  /// time each inference took is calculated when this method is called.
+  ///
+  /// The [cnnModelUsed] field of the object should be specified after the
+  /// creation of the object, since that information is not available here.
+  ///
+  /// Any other information specific to a class that extends
+  /// [InferenceAlgorithm] that needs to be saved in the database entry can be
+  /// specified in the [_additionalDetailsToSave] method.
+  ///
+  /// Note: [ViewingsCompanion] is used instead of [Viewing], since it allows
+  /// omitting the Viewing's id field, which is autoincremented by the moor
+  /// library.
   ViewingsCompanion topInferenceAsViewingsCompanion() {
     // TODO throw when _topInference is "no_artwork", or maybe make an entry in db with it and restart inferring
     var endTime = DateTime.now();
@@ -84,12 +120,16 @@ abstract class InferenceAlgorithm {
       totalTime:
           endTime.millisecondsSinceEpoch - startTime.millisecondsSinceEpoch,
       algorithmUsed: this.runtimeType.toString(),
-      additionalInfo: _additionalDetailsForViewing(),
+      additionalInfo: _additionalDetailsToSave(),
     );
   }
 
-  // store information such as artworkScore, sensitivity, windowLength, threshold
-  String _additionalDetailsForViewing();
+  /// Should be implemented by classes extending [InferenceAlgorithm], and
+  /// should return a string with any details specific to the extending class
+  /// that need to be saved in the database as part of the [ViewingsCompanion]
+  /// object; the string can be anything, but a consistent format should be
+  /// chosen to allow for easier manipulation later if needed.
+  String _additionalDetailsToSave();
 }
 
 /// 1st algorithm: averages the probabilities of all appearances of each artwork
@@ -164,7 +204,7 @@ class WindowAverageAlgo extends InferenceAlgorithm {
   }
 
   @override
-  String _additionalDetailsForViewing() => {
+  String _additionalDetailsToSave() => {
         "topMean": _topMean,
         "sensitivity": sensitivity,
         "windowLength": windowLength,
@@ -233,7 +273,7 @@ class WindowHighestCountAlgo extends InferenceAlgorithm {
   }
 
   @override
-  String _additionalDetailsForViewing() => {
+  String _additionalDetailsToSave() => {
         "topCount": _countsByID[_topInference],
         "sensitivity": sensitivitySetting,
         "windowLength": windowLength,
@@ -309,7 +349,7 @@ class FirstPastThePostAlgo extends InferenceAlgorithm {
   }
 
   @override
-  String _additionalDetailsForViewing() => {
+  String _additionalDetailsToSave() => {
         "topCount": _countsByID[_topInference],
         "sensitivity": sensitivity,
         "countThreshold": countThreshold,
@@ -386,7 +426,7 @@ class SeidenaryAlgo extends InferenceAlgorithm {
   }
 
   @override
-  String _additionalDetailsForViewing() => {
+  String _additionalDetailsToSave() => {
         "topCount (p)": _counters[_topInference],
         "sensitivity": sensitivity,
         "P": P,
