@@ -383,7 +383,9 @@ const algorithmList = [
   fourthAlgorithm
 ];
 
-final algos = <String, Function(double sensitivity, int winThreshP)>{
+/// All algorithms mapped as functions, so they can be easily initialised
+/// without may if-else statements.
+final allAlgorithms = <String, Function(double sensitivity, int winThreshP)>{
   firstAlgorithm: (double sensitivity, int winThreshP) => WindowAverageAlgo(
         sensitivity: sensitivity,
         windowLength: winThreshP,

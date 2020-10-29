@@ -69,7 +69,7 @@ class _ModelSelectionState extends State<ModelSelection> {
     setState(() {
       _model = preferredModel;
       _preferredSensitivity = sensitivity;
-      currentAlgorithm = algos[preferredAlgorithm](sensitivity, winThreshP);
+      currentAlgorithm = allAlgorithms[preferredAlgorithm](sensitivity, winThreshP);
     });
     loadModelFromSettings();
   }
