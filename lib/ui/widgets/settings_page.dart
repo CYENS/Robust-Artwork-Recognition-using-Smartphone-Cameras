@@ -62,6 +62,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 },
               ),
               SliderSettingsTile(
+                leading: Icon(Icons.adjust),
                 title: "CNN sensitivity",
                 settingKey: keyCnnSensitivity,
                 defaultValue: 99.0,
@@ -73,6 +74,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 },
               ),
               SliderSettingsTile(
+                leading: Icon(Icons.multiline_chart),
                 title: _getCurrentWinThreshPName(),
                 settingKey: keyWinThreshP,
                 defaultValue: 5,
