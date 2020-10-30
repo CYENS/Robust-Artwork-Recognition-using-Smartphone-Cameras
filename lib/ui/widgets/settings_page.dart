@@ -16,6 +16,7 @@ const String keyRecognitionAlgo = "recognitionAlgorithm";
 const String keyCnnSensitivity = "keyCnnSensitivity";
 const String keyWinThreshP = "keyWinThreshP";
 const String keyWinThreshPName = "keyWinThreshPName";
+const String keyNavigateToDetails = "keyNavigateToDetails";
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -81,6 +82,12 @@ class _SettingsPageState extends State<SettingsPage> {
                 onChange: (value) {
                   debugPrint("$keyWinThreshP: $value");
                 },
+              ),
+              SwitchSettingsTile(
+                leading: Icon(Icons.navigation),
+                title: "Navigate to recognised artworks' details",
+                settingKey: keyNavigateToDetails,
+                defaultValue: false,
               )
             ],
           ),
