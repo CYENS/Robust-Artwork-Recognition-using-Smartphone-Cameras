@@ -1,6 +1,9 @@
 import 'dart:collection';
+import 'dart:io';
 
 import 'package:modern_art_app/data/database.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 
 /// Formats an [Artist]'s lifespan properly, returning only year of birth if
 /// they are alive, or their lifespan otherwise.
@@ -45,4 +48,19 @@ class DefaultDict<K, V> extends MapBase<K, V> {
 
   @override
   V remove(Object key) => _map.remove(key);
+}
+
+/// Returns a file path for a json file to be saved in the temporary directory.
+Future<String> getTempFilePath() async {
+  Directory tempDir = await getTemporaryDirectory();
+  String appDocumentsPath = tempDir.path;
+  return join(appDocumentsPath, "${DateTime.now().toIso8601String()}.json");
+}
+
+/// Saves the provided [text] string as a JSON file in the temporary directory.
+/// Returns the file path of the saved JSON file.
+Future<String> saveToJsonFile(String text) async {
+  File file = File(await getTempFilePath());
+  file.writeAsString(text);
+  return file.path;
 }

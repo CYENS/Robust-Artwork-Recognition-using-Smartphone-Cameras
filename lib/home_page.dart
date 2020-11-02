@@ -37,11 +37,11 @@ class _HomePageState extends State<HomePage> {
       bottomNavigationBar: BottomNavigationBar(
         items: [
           BottomNavigationBarItem(
-              icon: Icon(Icons.home), title: Text(strings.nav.explore)),
+              icon: Icon(Icons.home), label: strings.nav.explore),
           BottomNavigationBarItem(
-              icon: Icon(Icons.camera), title: Text(strings.nav.identify)),
+              icon: Icon(Icons.camera), label: strings.nav.identify),
           BottomNavigationBarItem(
-              icon: Icon(Icons.settings), title: Text(strings.stngs.title)),
+              icon: Icon(Icons.settings), label: strings.stngs.title),
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,

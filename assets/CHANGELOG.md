@@ -1,3 +1,9 @@
+## Version 0.8.1
+### 2010-11-02
+- Added option to automatically navigate to the recognised artwork's
+  details
+- New setting for exporting list of recognitions and the timings of each
+
 ## Version 0.8.0
 ### 2010-10-29
 - Implementation of a total of 4 algorithms that allow the selection of

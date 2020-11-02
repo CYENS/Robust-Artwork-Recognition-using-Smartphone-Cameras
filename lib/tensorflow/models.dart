@@ -18,9 +18,9 @@ const String mobileNetNoArtQuant =
 
 /// Map containing information about all TfLite models bundled with the app.
 const Map<String, TfLiteModel> tfLiteModels = {
-  vgg19: TfLiteModel(
-      modelPath: "cnn224RGB_VGG19.tflite",
-      labelsPath: "cnn224RGB_VGG19_labels.txt"),
+  // vgg19: TfLiteModel(
+  //     modelPath: "cnn224RGB_VGG19.tflite",
+  //     labelsPath: "cnn224RGB_VGG19_labels.txt"),
   vgg19Quant: TfLiteModel(
       modelPath: "cnn224RGB_VGG19_quant.tflite",
       labelsPath: "cnn224RGB_VGG19_labels.txt"),

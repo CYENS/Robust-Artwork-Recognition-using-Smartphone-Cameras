@@ -1,13 +1,18 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:flutter_whatsnew/flutter_whatsnew.dart';
 import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/data/inference_algorithms.dart';
+import 'package:modern_art_app/data/viewings_dao.dart';
 import 'package:modern_art_app/tensorflow/models.dart';
 import 'package:modern_art_app/utils/extensions.dart';
+import 'package:modern_art_app/utils/utils.dart';
 import 'package:moor_db_viewer/moor_db_viewer.dart';
 import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
+import 'package:share/share.dart';
 
 // All settings keys are specified here, to avoid mistakes typing them
 // manually every time.
@@ -16,6 +21,7 @@ const String keyRecognitionAlgo = "recognitionAlgorithm";
 const String keyCnnSensitivity = "keyCnnSensitivity";
 const String keyWinThreshP = "keyWinThreshP";
 const String keyWinThreshPName = "keyWinThreshPName";
+const String keyNavigateToDetails = "keyNavigateToDetails";
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -26,6 +32,7 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget build(BuildContext context) {
     // TODO check if settings are set on first launch
     final strings = context.strings();
+    ViewingsDao viewingsDao = Provider.of<ViewingsDao>(context);
     return Container(
       key: UniqueKey(),
       child: SettingsScreen(
@@ -61,6 +68,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 },
               ),
               SliderSettingsTile(
+                leading: Icon(Icons.adjust),
                 title: "CNN sensitivity",
                 settingKey: keyCnnSensitivity,
                 defaultValue: 99.0,
@@ -72,6 +80,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 },
               ),
               SliderSettingsTile(
+                leading: Icon(Icons.multiline_chart),
                 title: _getCurrentWinThreshPName(),
                 settingKey: keyWinThreshP,
                 defaultValue: 5,
@@ -81,7 +90,42 @@ class _SettingsPageState extends State<SettingsPage> {
                 onChange: (value) {
                   debugPrint("$keyWinThreshP: $value");
                 },
+              ),
+              SwitchSettingsTile(
+                leading: Icon(Icons.navigation),
+                title: "Navigate to recognised artworks' details",
+                settingKey: keyNavigateToDetails,
+                defaultValue: false,
               )
+            ],
+          ),
+          SettingsGroup(
+            title: "Database",
+            children: [
+              SimpleSettingsTile(
+                title: "App database browser",
+                subtitle: "Shows all tables and items in the app's database",
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) =>
+                        MoorDbViewer(Provider.of<AppDatabase>(context)))),
+              ),
+              SimpleSettingsTile(
+                title: "Export recognition history",
+                subtitle:
+                    "Allows exporting & sharing the recognition history so far",
+                onTap: () async {
+                  viewingsDao.allViewingEntries.then((viewings) {
+                    String viewingsInStr = jsonEncode(viewings);
+                    print(viewingsInStr);
+                    // write to file
+                    saveToJsonFile(viewingsInStr).then((jsonFile) {
+                      print(jsonFile);
+                      // share saved json file via share dialog
+                      Share.shareFiles([jsonFile], subject: "Viewings history");
+                    });
+                  });
+                },
+              ),
             ],
           ),
           SettingsGroup(
@@ -110,13 +154,6 @@ class _SettingsPageState extends State<SettingsPage> {
                     // path: "/assets/CHANGELOG.md",
                   );
                 },
-              ),
-              SimpleSettingsTile(
-                title: "App database browser",
-                subtitle: "Shows all tables and items in the app's database",
-                onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) =>
-                        MoorDbViewer(Provider.of<AppDatabase>(context)))),
               ),
             ],
           )
