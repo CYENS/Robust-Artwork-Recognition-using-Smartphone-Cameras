@@ -3,10 +3,12 @@ import 'dart:math' as math;
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
+import 'package:modern_art_app/data/artworks_dao.dart';
 import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/data/inference_algorithms.dart';
 import 'package:modern_art_app/data/viewings_dao.dart';
 import 'package:modern_art_app/tensorflow/tensorflow_camera.dart';
+import 'package:modern_art_app/ui/widgets/artwork_details_page.dart';
 import 'package:modern_art_app/ui/widgets/settings_page.dart';
 import 'package:moor/moor.dart' hide Column;
 import 'package:provider/provider.dart';
@@ -116,6 +118,22 @@ class _ModelSelectionState extends State<ModelSelection> {
           viewingsDao.insertTask(vc);
           print("Added VIEWING: $vc");
           addedViewing = true;
+          // optionally navigate to artwork details when a recognition occurs
+          // TODO navigating to details is flawed here, since it leaves tflite
+          //  running in the background; a proper implementation must be able
+          //  to somehow dispose of the TensorFlowCamera widget before
+          //  navigating to details
+          if (_navigateToDetails) {
+            Provider.of<ArtworksDao>(context, listen: false)
+                .getArtworkById(artworkId: currentAlgorithm.topInference)
+                .then((artwork) {
+              return Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ArtworkDetailsPage(artwork: artwork)));
+            });
+          }
         } else {
           print("Not adding VIEWING no_artwork");
         }
