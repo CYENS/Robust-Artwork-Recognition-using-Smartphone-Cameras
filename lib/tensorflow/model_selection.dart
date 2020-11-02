@@ -33,6 +33,7 @@ class _ModelSelectionState extends State<ModelSelection> {
   String _fps = "";
   String _model = "";
   double _preferredSensitivity = 0.0;
+  bool _navigateToDetails = false;
 
   bool addedViewing = false;
   var currentAlgorithm;
@@ -65,9 +66,14 @@ class _ModelSelectionState extends State<ModelSelection> {
     double sensitivity = Settings.getValue(keyCnnSensitivity, 99.0);
     String preferredAlgorithm =
         Settings.getValue(keyRecognitionAlgo, firstAlgorithm);
+
     // keyWinThreshP's value is stored as double, have to make sure it is
     // converted to int here
     int winThreshP = Settings.getValue(keyWinThreshP, 5.0).round();
+
+    // determine from settings whether to automatically navigate to an artwork's
+    // details when a recognition occurs
+    bool navigateToDetails = Settings.getValue(keyNavigateToDetails, false);
 
     setState(() {
       _model = preferredModel;
@@ -75,6 +81,7 @@ class _ModelSelectionState extends State<ModelSelection> {
       currentAlgorithm =
           allAlgorithms[preferredAlgorithm](sensitivity, winThreshP);
       _currentAlgo = preferredAlgorithm;
+      _navigateToDetails = navigateToDetails;
     });
     loadModelFromSettings();
   }
