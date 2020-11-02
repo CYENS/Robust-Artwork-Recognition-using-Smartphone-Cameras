@@ -15,6 +15,9 @@ const String vgg19ZeroOneMultiQuant = "VGG19 - 0, 1, or Multiple (Quantized)";
 const String mobileNetNoArt = "MobileNet - No Artwork category";
 const String mobileNetNoArtQuant =
     "MobileNet - No Artwork category (Quantized)";
+const String mobNetNoArt800 = "MobileNet 800 - No Artwork category";
+const String mobNetNoArt800Quant =
+    "MobileNet 800 - No Artwork category (Quantized)";
 
 /// Map containing information about all TfLite models bundled with the app.
 const Map<String, TfLiteModel> tfLiteModels = {
@@ -35,6 +38,12 @@ const Map<String, TfLiteModel> tfLiteModels = {
       labelsPath: "MobileNet_No_Art_labels.txt"),
   mobileNetNoArtQuant: TfLiteModel(
       modelPath: "MobileNet_No_Art_quant.tflite",
+      labelsPath: "MobileNet_No_Art_labels.txt"),
+  mobNetNoArt800: TfLiteModel(
+      modelPath: "MobNetNoArt800Frames.tflite",
+      labelsPath: "MobileNet_No_Art_labels.txt"),
+  mobNetNoArt800Quant: TfLiteModel(
+      modelPath: "MobNetNoArt800Frames_quant.tflite",
       labelsPath: "MobileNet_No_Art_labels.txt"),
 };
 

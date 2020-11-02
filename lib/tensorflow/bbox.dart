@@ -177,9 +177,13 @@ class BBox extends StatelessWidget {
         vgg19ZeroOneMultiQuant,
         mobileNetNoArt,
         mobileNetNoArtQuant,
+        mobNetNoArt800,
+        mobNetNoArt800Quant,
       ].contains(model)
           ? _renderStrings()
-          : model == posenet ? _renderKeypoints() : _renderBoxes(),
+          : model == posenet
+              ? _renderKeypoints()
+              : _renderBoxes(),
     );
   }
 }
