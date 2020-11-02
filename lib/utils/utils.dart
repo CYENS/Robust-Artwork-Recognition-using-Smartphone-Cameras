@@ -50,9 +50,17 @@ class DefaultDict<K, V> extends MapBase<K, V> {
   V remove(Object key) => _map.remove(key);
 }
 
-/// Returns a file path located in the temporary directory.
+/// Returns a file path for a json file to be saved in the temporary directory.
 Future<String> getTempFilePath() async {
   Directory tempDir = await getTemporaryDirectory();
   String appDocumentsPath = tempDir.path;
-  return join(appDocumentsPath, "${DateTime.now()}.txt");
+  return join(appDocumentsPath, "${DateTime.now().toIso8601String()}.json");
+}
+
+/// Saves the provided [text] string as a JSON file in the temporary directory.
+/// Returns the file path of the saved JSON file.
+Future<String> saveToJsonFile(String text) async {
+  File file = File(await getTempFilePath());
+  file.writeAsString(text);
+  return file.path;
 }
