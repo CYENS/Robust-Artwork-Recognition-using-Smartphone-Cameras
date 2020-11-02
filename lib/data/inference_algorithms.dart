@@ -315,21 +315,23 @@ class FirstPastThePostAlgo extends InferenceAlgorithm {
 
     var entries = sortedCounts.entries.toList();
 
-    // check the first artwork's count exceeds the count threshold
-    if (entries[0].value >= countThreshold) {
-      if (sortedCounts.length == 1) {
-        // case of only one artwork that exceeds threshold
-        setTopInference(entries[0].key);
-      } else if (entries[0].value != entries[1].value) {
-        // case of multiple artworks with no ties between the top 2
-        setTopInference(entries[0].key);
+    if (entries.isNotEmpty) {
+      // check the first artwork's count exceeds the count threshold
+      if (entries[0].value >= countThreshold) {
+        if (sortedCounts.length == 1) {
+          // case of only one artwork that exceeds threshold
+          setTopInference(entries[0].key);
+        } else if (entries[0].value != entries[1].value) {
+          // case of multiple artworks with no ties between the top 2
+          setTopInference(entries[0].key);
+        } else {
+          // there is a tie in counts, wait for next round
+          resetTopInference();
+        }
       } else {
-        // there is a tie in counts, wait for next round
+        // no winner yet
         resetTopInference();
       }
-    } else {
-      // no winner yet
-      resetTopInference();
     }
   }
 
