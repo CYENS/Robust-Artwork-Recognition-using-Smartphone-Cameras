@@ -12,6 +12,7 @@ import 'package:modern_art_app/utils/utils.dart';
 import 'package:moor_db_viewer/moor_db_viewer.dart';
 import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
+import 'package:share/share.dart';
 
 // All settings keys are specified here, to avoid mistakes typing them
 // manually every time.
@@ -109,15 +110,19 @@ class _SettingsPageState extends State<SettingsPage> {
                         MoorDbViewer(Provider.of<AppDatabase>(context)))),
               ),
               SimpleSettingsTile(
-                title: "Export & share recognition history",
-                subtitle: "Export",
+                title: "Export recognition history",
+                subtitle:
+                    "Allows exporting & sharing the recognition history so far",
                 onTap: () async {
                   viewingsDao.allViewingEntries.then((viewings) {
                     String viewingsInStr = jsonEncode(viewings);
                     print(viewingsInStr);
-                    //  write to file
-                    saveToJsonFile(viewingsInStr)
-                        .then((jsonFile) => print(jsonFile));
+                    // write to file
+                    saveToJsonFile(viewingsInStr).then((jsonFile) {
+                      print(jsonFile);
+                      // share saved json file via share dialog
+                      Share.shareFiles([jsonFile], subject: "Viewings history");
+                    });
                   });
                 },
               ),
