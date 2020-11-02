@@ -1,6 +1,9 @@
 import 'dart:collection';
+import 'dart:io';
 
 import 'package:modern_art_app/data/database.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 
 /// Formats an [Artist]'s lifespan properly, returning only year of birth if
 /// they are alive, or their lifespan otherwise.
@@ -45,4 +48,11 @@ class DefaultDict<K, V> extends MapBase<K, V> {
 
   @override
   V remove(Object key) => _map.remove(key);
+}
+
+/// Returns a file path located in the temporary directory.
+Future<String> getTempFilePath() async {
+  Directory tempDir = await getTemporaryDirectory();
+  String appDocumentsPath = tempDir.path;
+  return join(appDocumentsPath, "${DateTime.now()}.txt");
 }
