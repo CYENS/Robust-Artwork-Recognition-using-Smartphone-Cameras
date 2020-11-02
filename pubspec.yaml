@@ -26,6 +26,7 @@ dependencies:
   flutter:
     sdk: flutter
   camera: ^0.5.8+11
+  convex_bottom_bar: ^2.6.0
   cupertino_icons: ^1.0.0
   flutter_lorem: ^1.1.0
   #  flutter_markdown: ^0.4.4
