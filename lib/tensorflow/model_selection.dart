@@ -8,7 +8,6 @@ import 'package:modern_art_app/data/inference_algorithms.dart';
 import 'package:modern_art_app/data/viewings_dao.dart';
 import 'package:modern_art_app/tensorflow/tensorflow_camera.dart';
 import 'package:modern_art_app/ui/widgets/settings_page.dart';
-import 'package:modern_art_app/utils/utils.dart';
 import 'package:moor/moor.dart' hide Column;
 import 'package:provider/provider.dart';
 import 'package:tflite/tflite.dart';
@@ -30,15 +29,11 @@ class _ModelSelectionState extends State<ModelSelection> {
   int _imageHeight = 0;
   int _imageWidth = 0;
   int _inferenceTime = 0;
-  List<int> _inferenceTimeHistory = [];
+
   String _fps = "";
   String _model = "";
   double _preferredSensitivity = 0.0;
-  var _history = [];
-  var _fiveFrameHistory = DefaultDict<String, List<double>>(() => []);
-  var _fiveFrameTopInference = "N/A";
-  var _taverritiAlgo = DefaultDict<String, int>(() => 0);
-  var _taverritiTopInference = "N/A";
+
   bool addedViewing = false;
   var currentAlgorithm;
   String _currentRes = "";
@@ -99,16 +94,16 @@ class _ModelSelectionState extends State<ModelSelection> {
       _imageHeight = imageHeight;
       _imageWidth = imageWidth;
       _inferenceTime = inferenceTime;
-      _inferenceTimeHistory.add(inferenceTime);
 
+      // each item in recognitions is a LinkedHashMap in the form of
+      // {confidence: 0.5562283396720886, index: 15, label: untitled_votsis}
       currentAlgorithm.updateRecognitions(recognitions, inferenceTime);
       _currentRes = currentAlgorithm.topInferenceFormatted;
       _fps = currentAlgorithm.fps;
       if (currentAlgorithm.hasResult() && !addedViewing) {
         if (currentAlgorithm.topInference != "no_artwork") {
           // get top inference as an object ready to insert in db
-          ViewingsCompanion vc =
-              currentAlgorithm.resultAsDbObject();
+          ViewingsCompanion vc = currentAlgorithm.resultAsDbObject();
           // add current model to object
           vc = vc.copyWith(cnnModelUsed: Value(_model));
           viewingsDao.insertTask(vc);
@@ -117,63 +112,6 @@ class _ModelSelectionState extends State<ModelSelection> {
         } else {
           print("Not adding VIEWING no_artwork");
         }
-      }
-
-      recognitions.forEach((element) {
-        // each item in recognitions is a LinkedHashMap in the form of
-        // {confidence: 0.5562283396720886, index: 15, label: untitled_votsis}
-        _fiveFrameHistory[element["label"]].add(element["confidence"]);
-        _history.add(element);
-      });
-
-      if (recognitions.length > 0) {
-        if (recognitions.first["confidence"] * 100 >= _preferredSensitivity) {
-          var topArtwork = recognitions.first["label"];
-          _taverritiAlgo[topArtwork] += 1;
-          _taverritiAlgo.keys.forEach((key) {
-            if (key != topArtwork) {
-              _taverritiAlgo[key] -= 1;
-            }
-          });
-          print(_taverritiAlgo);
-        }
-      }
-
-      if (_taverritiAlgo.length > 0) {
-        var keysSortedByCount = _taverritiAlgo.keys.toList(growable: false)
-          ..sort((k1, k2) => _taverritiAlgo[k2].compareTo(_taverritiAlgo[k1]));
-        var topInferenceCount = _taverritiAlgo[keysSortedByCount.first];
-        if (topInferenceCount >= 20) {
-          _taverritiTopInference =
-              "${keysSortedByCount.first} (p=$topInferenceCount)";
-        } else {
-          _taverritiTopInference = "N/A";
-        }
-      }
-
-      // calculate means every 5 inferences, ignore first 5
-      if (_history.length % 5 == 0 && _history.length != 5) {
-        var means = <String, double>{
-          for (var entry in _fiveFrameHistory.entries)
-            entry.key: entry.value.reduce((a, b) => a + b) / entry.value.length,
-        };
-
-        var keysSortedByMean = means.keys.toList(growable: false)
-          ..sort((k1, k2) => means[k1].compareTo(means[k2]));
-
-        if (keysSortedByMean.length >= 1) {
-          var topInferenceMean = means[keysSortedByMean.last];
-          if (topInferenceMean >= (_preferredSensitivity / 100)) {
-            _fiveFrameTopInference =
-                "${keysSortedByMean.last} (${(topInferenceMean * 100).toStringAsFixed(2)}%)";
-          } else {
-            _fiveFrameTopInference = "N/A";
-          }
-        } else {
-          _fiveFrameTopInference = "N/A";
-        }
-
-        _fiveFrameHistory.clear();
       }
     });
   }
