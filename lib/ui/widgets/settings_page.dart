@@ -8,6 +8,7 @@ import 'package:modern_art_app/data/inference_algorithms.dart';
 import 'package:modern_art_app/data/viewings_dao.dart';
 import 'package:modern_art_app/tensorflow/models.dart';
 import 'package:modern_art_app/utils/extensions.dart';
+import 'package:modern_art_app/utils/utils.dart';
 import 'package:moor_db_viewer/moor_db_viewer.dart';
 import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
@@ -110,12 +111,13 @@ class _SettingsPageState extends State<SettingsPage> {
               SimpleSettingsTile(
                 title: "Export & share recognition history",
                 subtitle: "Export",
-                onTap: () {
+                onTap: () async {
                   viewingsDao.allViewingEntries.then((viewings) {
-                    viewings.forEach((viewing) {
-                      print(viewing.toJson());
-                    });
-                    print(jsonEncode(viewings));
+                    String viewingsInStr = jsonEncode(viewings);
+                    print(viewingsInStr);
+                    //  write to file
+                    saveToJsonFile(viewingsInStr)
+                        .then((jsonFile) => print(jsonFile));
                   });
                 },
               ),
