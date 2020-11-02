@@ -13,4 +13,7 @@ class ViewingsDao extends DatabaseAccessor<AppDatabase>
   /// of which artworks the user saw and in which order.
   Future insertTask(ViewingsCompanion viewing) =>
       into(viewings).insert(viewing);
+
+  /// Gets a list of all viewing entries in the db.
+  Future<List<Viewing>> get allViewingEntries => select(viewings).get();
 }
