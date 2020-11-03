@@ -178,7 +178,9 @@ class BBox extends StatelessWidget {
         mobileNetNoArt,
         mobileNetNoArtQuant,
         mobNetNoArt800,
-        mobNetNoArt800Quant,
+        mobNetNoArt500Quant_4,
+        mobNetNoArt700New,
+        mobNetNoArt500_4,
       ].contains(model)
           ? _renderStrings()
           : model == posenet

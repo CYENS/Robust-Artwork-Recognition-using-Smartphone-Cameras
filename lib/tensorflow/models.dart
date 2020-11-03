@@ -16,8 +16,10 @@ const String mobileNetNoArt = "MobileNet - No Artwork category";
 const String mobileNetNoArtQuant =
     "MobileNet - No Artwork category (Quantized)";
 const String mobNetNoArt800 = "MobileNet 800 - No Artwork category";
-const String mobNetNoArt800Quant =
-    "MobileNet 800 - No Artwork category (Quantized)";
+const mobNetNoArt700New =  "MobileNet 700 - Updated layers - No Artwork category";
+const mobNetNoArt500_4 =  "MobileNet 500 - V.4 - No Artwork category";
+const String mobNetNoArt500Quant_4 =
+    "MobileNet 500 - V.4 - No Artwork category (Quantized)";
 
 /// Map containing information about all TfLite models bundled with the app.
 const Map<String, TfLiteModel> tfLiteModels = {
@@ -42,8 +44,14 @@ const Map<String, TfLiteModel> tfLiteModels = {
   mobNetNoArt800: TfLiteModel(
       modelPath: "MobNetNoArt800Frames.tflite",
       labelsPath: "MobileNet_No_Art_labels.txt"),
-  mobNetNoArt800Quant: TfLiteModel(
-      modelPath: "MobNetNoArt800Frames_quant.tflite",
+  mobNetNoArt700New: TfLiteModel(
+      modelPath: "MobNetNoArt700Frames.tflite",
+      labelsPath: "MobileNet_No_Art_labels.txt"),
+  mobNetNoArt500_4: TfLiteModel(
+      modelPath: "MobNetNoArt500Frames_4.tflite",
+      labelsPath: "MobileNet_No_Art_labels.txt"),
+  mobNetNoArt500Quant_4: TfLiteModel(
+      modelPath: "MobNetNoArt500Frames_4_quant.tflite",
       labelsPath: "MobileNet_No_Art_labels.txt"),
 };
 
