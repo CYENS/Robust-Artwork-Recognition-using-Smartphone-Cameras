@@ -1,3 +1,8 @@
+## Version 0.8.2
+### 2010-11-04
+- Added 3 more CNNs for testing
+- Bug fixes
+
 ## Version 0.8.1
 ### 2010-11-02
 - Added option to automatically navigate to the recognised artwork's
