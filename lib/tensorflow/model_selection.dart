@@ -10,6 +10,7 @@ import 'package:modern_art_app/data/viewings_dao.dart';
 import 'package:modern_art_app/tensorflow/tensorflow_camera.dart';
 import 'package:modern_art_app/ui/widgets/artwork_details_page.dart';
 import 'package:modern_art_app/ui/widgets/settings_page.dart';
+import 'package:modern_art_app/utils/extensions.dart';
 import 'package:moor/moor.dart' hide Column;
 import 'package:provider/provider.dart';
 import 'package:tflite/tflite.dart';
@@ -125,7 +126,9 @@ class _ModelSelectionState extends State<ModelSelection> {
           //  navigating to details
           if (_navigateToDetails) {
             Provider.of<ArtworksDao>(context, listen: false)
-                .getArtworkById(artworkId: currentAlgorithm.topInference)
+                .getArtworkById(
+                    artworkId: currentAlgorithm.topInference,
+                    languageCode: context.locale().languageCode)
                 .then((artwork) {
               return Navigator.push(
                   context,

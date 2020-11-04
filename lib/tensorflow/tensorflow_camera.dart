@@ -67,8 +67,15 @@ class _TensorFlowCameraState extends State<TensorFlowCamera> {
 
                 isDetecting = false;
               });
-            } else if ([mobilenet, mobileNetNoArt, mobileNetNoArtQuant]
-                .contains(widget.model)) {
+            } else if ([
+              mobilenet,
+              mobileNetNoArt,
+              mobileNetNoArtQuant,
+              mobNetNoArt800,
+              mobNetNoArt500Quant_4,
+              mobNetNoArt700New,
+              mobNetNoArt500_4,
+            ].contains(widget.model)) {
               Tflite.runModelOnFrame(
                 bytesList: img.planes.map((plane) {
                   return plane.bytes;
