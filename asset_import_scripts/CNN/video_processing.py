@@ -390,7 +390,8 @@ def random_random_crop(img: tf.Tensor):
 def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int, generate_by: str = "artwork",
                     extract_every_n_frames: int = None):
     """
-    Extracts frames from the video files provided, and can be used as an input to create Tensorflow Datasets.
+    Generator that extracts frames from the video files provided, and can be used as an input to create Tensorflow
+    Datasets.
 
     Adapted from http://borg.csueastbay.edu/~grewe/CS663/Mat/LSTM/Exercise_VideoActivity_LSTM.html
 
