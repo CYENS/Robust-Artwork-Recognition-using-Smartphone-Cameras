@@ -387,7 +387,8 @@ def random_random_crop(img: tf.Tensor):
     return tf.cond(rnd_bool(), lambda: tf.image.random_crop(img, size=[h, w, 3]), lambda: img)
 
 
-def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int, generate_by: str = "artwork"):
+def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int, generate_by: str = "artwork",
+                    extract_every_n_frames: int = None):
     """
     Extracts frames from the video files provided, and can be used as an input to create Tensorflow Datasets.
 
@@ -399,7 +400,14 @@ def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int
      all frames for artwork/video will be extracted; if more are available, frames are extracted evenly from all
      frames available
     :param generate_by: whether to extract frames per artwork or per video, since an artwork may have multiple videos;
-     should be either "artwork" or "video" only, any other value is ignored
+     should be either "artwork" or "video" only, any other value is ignored and the default value "artwork" is used
+    :param extract_every_n_frames: optional - forces the extraction of frames to occur at the provided interval, until
+     either max_frames is reached, or the available frames run out; can be used to simulate how the CNN analysis of
+     frames occurs on mobile devices, where the currently available frame is send for analysis, and only when that
+     analysis is finished the currently available frame is selected for analysis; the interval between two analyses
+     can vary depending on device and the CNN used, but can be anywhere between 200ms to a few seconds; for example, if
+     we assume 30fps video and 200ms intervals for each analysis, only 1 out of every 6 frames will be analysed,
+     and so a value of 6 would be suitable for extract_every_n_frames in that case
     :return: frame generator of tuples (frame, label)
     """
     if generate_by not in ["artwork", "video"]:
@@ -415,10 +423,13 @@ def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int
             total_frames_for_artwork = sum(
                 int(cv2.VideoCapture(str(v)).get(cv2.CAP_PROP_FRAME_COUNT)) for v in videos_for_artwork)
 
+            # if extract_every_n_frames is not explicitly provided, calculate it here based on total available frames
+            # and max_frames required
+            if extract_every_n_frames is None:
+                extract_every_n_frames = max(1, total_frames_for_artwork // max_frames)
+
             # convert label to categorical array (of type tf.float32)
             label = tf.one_hot(artwork_list.index(artwork_id), len(artwork_list))
-
-            sample_every_n_frame = max(1, total_frames_for_artwork // max_frames)
 
             current_frame = 0
             max_fr = max_frames
@@ -437,7 +448,7 @@ def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int
                     if not success:
                         break
 
-                    if current_frame % sample_every_n_frame == 0:
+                    if current_frame % extract_every_n_frames == 0:
                         # openCv reads frames in BGR format, convert to RGB
                         frame = frame[:, :, ::-1]
                         # rotate frame according to video orientation
@@ -458,7 +469,11 @@ def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int
 
             cap = cv2.VideoCapture(str(video_file))
             num_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-            sample_every_n_frame = max(1, num_frames // max_frames)
+
+            # if extract_every_n_frames is not explicitly provided, calculate it here based on total available frames
+            # and max_frames required
+            if extract_every_n_frames is None:
+                extract_every_n_frames = max(1, num_frames // max_frames)
 
             orientation = get_video_rotation(str(video_file))
             k = orientation // -90
@@ -471,7 +486,7 @@ def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int
                 if not success:
                     break
 
-                if current_frame % sample_every_n_frame == 0:
+                if current_frame % extract_every_n_frames == 0:
                     # openCv reads frames in BGR format, convert to RGB
                     frame = frame[:, :, ::-1]
                     # rotate frame according to video orientation
