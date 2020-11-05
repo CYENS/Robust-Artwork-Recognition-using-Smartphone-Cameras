@@ -50,6 +50,17 @@ android {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig signingConfigs.debug
+
+            // adding the 2 lines below fixes this issue in Android 6.0 (?):
+            // https://github.com/flutter/flutter/issues/56019
+            // but then this problem shows up:
+            // https://github.com/shaqian/flutter_tflite/issues/149
+            // which unless it's fixed by the library (or here locally?), won't allow tflite to
+            // work on < Android 7.0
+            // they also increase the release apk size, so they are kept commented out for now
+
+//            minifyEnabled false
+//            shrinkResources false
         }
     }
 
