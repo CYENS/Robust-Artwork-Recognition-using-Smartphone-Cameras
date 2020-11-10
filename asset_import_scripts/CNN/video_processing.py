@@ -426,8 +426,9 @@ def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int
 
             # if extract_every_n_frames is not explicitly provided, calculate it here based on total available frames
             # and max_frames required
-            if extract_every_n_frames is None:
-                extract_every_n_frames = max(1, total_frames_for_artwork // max_frames)
+            extract_every_n_frames_artwork = extract_every_n_frames
+            if extract_every_n_frames_artwork is None:
+                extract_every_n_frames_artwork = max(1, total_frames_for_artwork // max_frames)
 
             # convert label to categorical array (of type tf.float32)
             label = tf.one_hot(artwork_list.index(artwork_id), len(artwork_list))
@@ -449,7 +450,7 @@ def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int
                     if not success:
                         break
 
-                    if current_frame % extract_every_n_frames == 0:
+                    if current_frame % extract_every_n_frames_artwork == 0:
                         # openCv reads frames in BGR format, convert to RGB
                         frame = frame[:, :, ::-1]
                         # rotate frame according to video orientation
@@ -473,8 +474,9 @@ def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int
 
             # if extract_every_n_frames is not explicitly provided, calculate it here based on total available frames
             # and max_frames required
-            if extract_every_n_frames is None:
-                extract_every_n_frames = max(1, num_frames // max_frames)
+            extract_every_n_frames_video = extract_every_n_frames
+            if extract_every_n_frames_video is None:
+                extract_every_n_frames_video = max(1, num_frames // max_frames)
 
             orientation = get_video_rotation(str(video_file))
             k = orientation // -90
@@ -487,7 +489,7 @@ def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int
                 if not success:
                     break
 
-                if current_frame % extract_every_n_frames == 0:
+                if current_frame % extract_every_n_frames_video == 0:
                     # openCv reads frames in BGR format, convert to RGB
                     frame = frame[:, :, ::-1]
                     # rotate frame according to video orientation
