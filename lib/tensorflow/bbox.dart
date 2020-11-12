@@ -77,9 +77,9 @@ class BBox extends StatelessWidget {
     }
 
     List<Widget> _renderStrings() {
-      double offset = -screenWidth / 5 / 1.3;
+      double offset = -10;
       return results.map((re) {
-        offset = offset + screenWidth / 5;
+        offset = offset + 30;
         return Positioned(
           left: 10,
           top: offset,
