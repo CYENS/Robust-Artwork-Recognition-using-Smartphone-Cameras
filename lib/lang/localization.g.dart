@@ -6,67 +6,69 @@ part of 'localization.dart';
 // SheetLocalizationGenerator
 // **************************************************************************
 
+// ignore_for_file: camel_case_types
+
 class AppLocalizations {
-  AppLocalizations(this.locale) : this.labels = languages[locale];
+  AppLocalizations(this.locale) : labels = languages[locale];
 
   final Locale locale;
 
   static final Map<Locale, AppLocalizations_Labels> languages = {
-    Locale.fromSubtags(languageCode: "en"): AppLocalizations_Labels(
-      artworks: "Artworks",
-      artists: "Artists",
-      artworkOfTheWeek: "Artwork of the week",
-      pointTheCamera: "Point the camera to an artwork",
-      biography: "Short biography",
-      artworksBy: "Artworks by",
-      description: "Description",
-      galleryName: "State Gallery of Contemporary Art",
-      artistDetails: "Artist details",
-      artworkDetails: "Artwork details",
+    Locale.fromSubtags(languageCode: 'en'): AppLocalizations_Labels(
+      artworks: 'Artworks',
+      artists: 'Artists',
+      artworkOfTheWeek: 'Artwork of the week',
+      pointTheCamera: 'Point the camera to an artwork',
+      biography: 'Short biography',
+      artworksBy: 'Artworks by',
+      description: 'Description',
+      galleryName: 'State Gallery of Contemporary Art',
+      artistDetails: 'Artist details',
+      artworkDetails: 'Artwork details',
       nav: AppLocalizations_Labels_Nav(
-        explore: "Explore",
-        identify: "Identify artwork",
+        explore: 'Explore',
+        identify: 'Identify artwork',
       ),
       button: AppLocalizations_Labels_Button(
-        more: "more",
+        more: 'more',
       ),
       stngs: AppLocalizations_Labels_Stngs(
-        title: "Settings",
-        groupAbout: "About",
+        title: 'Settings',
+        groupAbout: 'About',
         stng: AppLocalizations_Labels_Stngs_Stng(
-          appInfo: "App information",
-          appInfoSummary: "App version & Open source libraries",
-          changelog: "Changelog",
-          changelogSummary: "Timeline of changes in the app",
+          appInfo: 'App information',
+          appInfoSummary: 'App version & Open source libraries',
+          changelog: 'Changelog',
+          changelogSummary: 'Timeline of changes in the app',
         ),
       ),
     ),
-    Locale.fromSubtags(languageCode: "el"): AppLocalizations_Labels(
-      artworks: "Εργα τέχνης",
-      artists: "Καλλιτέχνες",
-      artworkOfTheWeek: "Έργο τέχνης της εβδομάδας",
-      pointTheCamera: "Στρέψτε την κάμερα σε ένα έργο τέχνης",
-      biography: "Σύντομο βιογραφικό",
-      artworksBy: "Έργα τέχνης από",
-      description: "Περιγραφή",
-      galleryName: "Κρατική Πινακοθήκη Σύγχρονης Τέχνης",
-      artistDetails: "Στοιχεία καλλιτέχνη/ιδας",
-      artworkDetails: "Στοιχεία έργου τέχνης",
+    Locale.fromSubtags(languageCode: 'el'): AppLocalizations_Labels(
+      artworks: 'Εργα τέχνης',
+      artists: 'Καλλιτέχνες',
+      artworkOfTheWeek: 'Έργο τέχνης της εβδομάδας',
+      pointTheCamera: 'Στρέψτε την κάμερα σε ένα έργο τέχνης',
+      biography: 'Σύντομο βιογραφικό',
+      artworksBy: 'Έργα τέχνης από',
+      description: 'Περιγραφή',
+      galleryName: 'Κρατική Πινακοθήκη Σύγχρονης Τέχνης',
+      artistDetails: 'Στοιχεία καλλιτέχνη/ιδας',
+      artworkDetails: 'Στοιχεία έργου τέχνης',
       nav: AppLocalizations_Labels_Nav(
-        explore: "Εξερευνήστε",
-        identify: "Αναγνώριση έργου τέχνης",
+        explore: 'Εξερευνήστε',
+        identify: 'Αναγνώριση έργου τέχνης',
       ),
       button: AppLocalizations_Labels_Button(
-        more: "περισσότερα",
+        more: 'περισσότερα',
       ),
       stngs: AppLocalizations_Labels_Stngs(
-        title: "Ρυθμίσεις",
-        groupAbout: "Σχετικά",
+        title: 'Ρυθμίσεις',
+        groupAbout: 'Σχετικά',
         stng: AppLocalizations_Labels_Stngs_Stng(
-          appInfo: "Πληροφορίες για την εφαρμογή",
-          appInfoSummary: "Εκδοση εφαρμογής & Βιβλιοθήκες ανοιχτού κώδικα",
-          changelog: "Ιστορικό αλλαγών",
-          changelogSummary: "Ιστορικό αλλαγών στην εφαρμογή",
+          appInfo: 'Πληροφορίες για την εφαρμογή',
+          appInfoSummary: 'Εκδοση εφαρμογής & Βιβλιοθήκες ανοιχτού κώδικα',
+          changelog: 'Ιστορικό αλλαγών',
+          changelogSummary: 'Ιστορικό αλλαγών στην εφαρμογή',
         ),
       ),
     ),
