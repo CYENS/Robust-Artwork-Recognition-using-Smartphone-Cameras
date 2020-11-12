@@ -161,14 +161,16 @@ class _ModelSelectionState extends State<ModelSelection> {
                   setRecognitions,
                   _model,
                 ),
-                BBox(
-                    _recognitions == null ? [] : _recognitions,
-                    math.max(_imageHeight, _imageWidth),
-                    math.min(_imageHeight, _imageWidth),
-                    screen.height,
-                    screen.width,
-                    _model,
-                    _inferenceTime),
+                SafeArea(
+                  child: BBox(
+                      _recognitions == null ? [] : _recognitions,
+                      math.max(_imageHeight, _imageWidth),
+                      math.min(_imageHeight, _imageWidth),
+                      screen.height,
+                      screen.width,
+                      _model,
+                      _inferenceTime),
+                ),
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: Padding(
