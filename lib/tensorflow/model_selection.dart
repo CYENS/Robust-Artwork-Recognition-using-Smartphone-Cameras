@@ -176,16 +176,26 @@ class _ModelSelectionState extends State<ModelSelection> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
+                        Settings.getValue(keyDisplayExtraInfo, true)
+                            ? Column(
+                                children: [
+                                  Text(
+                                    "Result: $_currentRes",
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                  Text(
+                                    "Current algorithm: $_currentAlgo",
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                  Text("Model: $_model"),
+                                  Text("Sensitivity: $_preferredSensitivity"),
+                                ],
+                              )
+                            : Container(),
                         Text(
-                          "Result: $_currentRes",
-                          style: TextStyle(fontSize: 18),
+                          _fps,
+                          style: TextStyle(fontSize: 20),
                         ),
-                        Text(
-                          "Current algorithm: $_currentAlgo",
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        Text("Model: $_model"),
-                        Text("Sensitivity: $_preferredSensitivity" + ", $_fps"),
                       ],
                     ),
                   ),
