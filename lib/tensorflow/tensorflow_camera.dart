@@ -71,9 +71,9 @@ class _TensorFlowCameraState extends State<TensorFlowCamera> {
               mobilenet,
               mobileNetNoArt,
               mobileNetNoArtQuant,
-              mobNetNoArt800,
+              inceptionV3NoArt500,
               mobNetNoArt500Quant_4,
-              mobNetNoArt700New,
+              inceptionV3NoArt500Quant,
               mobNetNoArt500_4,
             ].contains(widget.model)) {
               Tflite.runModelOnFrame(
