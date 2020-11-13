@@ -1,6 +1,7 @@
 import json
 import pickle
 import random
+import subprocess
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
@@ -692,6 +693,14 @@ def save_model(trained_model, model_name: str, artwork_list: list):
         for label in list(artwork_list):
             f.write(label + "\n")
     print("Done!", flush=True)
+
+
+def remove_audio_from_videos(video_dir: Path, video_ext: str = ".mp4"):
+    # for running in all files straight from cli
+    # command = f'for file in {video_dir}; do ffmpeg -i "$file" -c:v copy -an "$file_na.mp4"; done'
+    for vid in video_dir.glob(f"*{video_ext}"):
+        subprocess.call(f"ffmpeg -i {vid} -c:v copy -an {Path(vid.parent / (vid.stem + '_na' + video_ext))}",
+                        shell=True)
 
 
 if __name__ == '__main__':
