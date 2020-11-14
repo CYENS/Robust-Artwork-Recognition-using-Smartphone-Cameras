@@ -26,52 +26,48 @@ def save_vlc_timestamp(clip_type: str):
     # return status information is in xml form
     root = ET.fromstring(r.text)
 
-    percent = root.find("position").text  # current position in percent
-    length = root.find("length").text  # length of the video in seconds
-
     video_name = ""  # filename of current video
     for i in root.find("information"):
-        if i.attrib == {'name': 'meta'}:
+        if i.attrib == {"name": "meta"}:
             video_name = i[0].text
             break
     if video_name == "":
         print("Couldn't get current video filename!")
         raise SystemExit
 
-    info = [video_name, percent, length]
+    percent = root.find("position").text  # current position as a percentage
+    vid_length = root.find("length").text  # length of the video in seconds
+    timestamp = str(int(vid_length) * float(percent))
 
+    info = [video_name, timestamp, percent, vid_length, clip_type]
+
+    # resulting csv will be saved in the same folder as this script
     cur_path = Path(os.path.realpath(__file__)).parent
-
     csv_path = cur_path / "positions.csv"
     if not csv_path.is_file():
         # create csv file and print header
         with open(csv_path, "a") as f:
-            f.write("filename,start,end,artworkID,type\n")
+            f.write("filename,timestamp,percent,vid_length,clip_type\n")
 
     with open(csv_path, "a") as f:
         f.write(",".join(info) + "\n")
-    # print(root[0].get("position"))
-    # for i in root:
-    #     print(i)
-    print(os.path.realpath(__file__))
 
 
 def main():
     parser = OptionParser()
-
-    parser.add_option("-o",
+    parser.add_option("-t",
                       dest="type",
-                      help="Split or chunk size in bytes (approximate)",
+                      help="Type of video clip the timestamp to be saved refers to",
                       type="choice",
                       action="store",
                       choices=["f", "d", "u", "l", "r"],
                       default="f"
                       )
     options, args = parser.parse_args()
-    print(options)
-    save_vlc_timestamp(options.type)
+
     # TODO just save times with one of the choices above, and then the lengths can be calculated by finding max and
     #  min of choice e.g. f
+    save_vlc_timestamp(options.type)
 
 
 if __name__ == '__main__':
