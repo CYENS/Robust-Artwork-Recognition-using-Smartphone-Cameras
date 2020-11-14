@@ -47,8 +47,7 @@ def save_vlc_timestamp(clip_type: str):
     info = [video_name, timestamp, percent, vid_length, clip_type]
 
     # resulting csv will be saved in the same folder as this script
-    cur_path = Path(os.path.realpath(__file__)).parent
-    csv_path = cur_path / "positions.csv"
+    csv_path = get_script_path() / "positions.csv"
     if not csv_path.is_file():
         # create csv file and print header
         with open(csv_path, "a") as f:
@@ -60,6 +59,40 @@ def save_vlc_timestamp(clip_type: str):
     notify(f"Saved {round(float(timestamp), 2)} timestamp for {clip_type}-{video_name}")
 
 
+def get_script_path():
+    return Path(os.path.realpath(__file__)).parent
+
+
+def change_current(option: str):
+    if option not in ["distance", "artwork"]:
+        raise SystemExit
+
+    f_name = get_script_path() / f"{option}.txt"
+
+    with open(f_name, "a+") as f:
+        # increment file by one character, does not matter which
+        f.write("0")
+    notify(f"Current {option}: {get_current(option)}")
+
+
+def get_current(option: str):
+    distances = ["1m", "1.5m", "2.5m"]
+    artworkIDs = ["2-3_sfikas", "armament_phinikarides", "ascent_ladommatos", "autumn_chrysochos", "crucified_savvides",
+                  "game_of_shapes_chrysochos", "ground_plan_hadjida", "no_artwork", "presence_votsis",
+                  "secession_bargilly", "the_cyclist_votsis", "the_great_greek_encyclopaedia_makrides",
+                  "the_observer_kyriakou", "throne_ii_chrysochos", "untitled_hadjida", "untitled_kouroussis",
+                  "untitled_votsis"]
+
+    f_name = get_script_path() / f"{option}.txt"
+
+    with open(f_name, "r") as f:
+        current = f.read()
+        if option == "distance":
+            return distances[len(current) % len(distances)]
+        elif option == "artwork":
+            return artworkIDs[len(current) % len(artworkIDs)]
+
+
 def notify(msg: str):
     subprocess.Popen(['notify-send', msg])
 
@@ -68,17 +101,20 @@ def main():
     parser = OptionParser()
     parser.add_option("-t",
                       dest="type",
-                      help="Type of video clip the timestamp to be saved refers to",
+                      help="Type of video clip the timestamp to be saved refers to; if artwork or distance is "
+                           "specified, the corresponding variable is incremented.",
                       type="choice",
                       action="store",
-                      choices=["f", "d", "u", "l", "r"],
+                      choices=["f", "d", "u", "l", "r", "artwork", "distance"],
                       default="f"
                       )
-    options, args = parser.parse_args()
 
-    # TODO just save times with one of the choices above, and then the lengths can be calculated by finding max and
-    #  min of choice e.g. f
-    save_vlc_timestamp(options.type)
+    options, args = parser.parse_args()
+    notify(options.type)
+    if options.type in "fdulr":
+        save_vlc_timestamp(options.type)
+    elif options.type in ["artwork", "distance"]:
+        change_current(options.type)
 
 
 if __name__ == '__main__':
