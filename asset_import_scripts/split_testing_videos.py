@@ -11,7 +11,7 @@ def save_vlc_timestamp(clip_type: str):
     """
     Requests status information from VLC for current video, and saves timestamp information for later splitting of
     the video. This script was used to mark the positions of required clips from the testing videos, which were later
-    used to automatically divide them to the desired clips using Ffmpeg.
+    used to automatically divide them to the desired clips using FFmpeg.
 
     :param clip_type: the type of the clip the current timestamp refers to; in this case it should refer to Forward,
      Downward, Upward, Left, and Right with the corresponding letters [f, d, u, l, r]
@@ -58,15 +58,25 @@ def save_vlc_timestamp(clip_type: str):
 
 
 def get_script_path():
+    """
+    :return: the path that this script is currently located
+    """
     return Path(os.path.realpath(__file__)).parent
 
 
 def change_current(option: str):
+    """
+    Can be used to set the current artwork and distance, this works by simply appending characters in a txt file and
+    counting their number to determine the current artwork and distance.
+
+    :param option: should be either "distance" or "artwork"
+    """
     if option not in ["distance", "artwork"]:
         raise SystemExit
 
     f_name = get_script_path() / f"{option}.txt"
 
+    # if the file does not exist, creating it seems not to work?
     with open(f_name, "a+") as f:
         # increment file by one character, does not matter which; this series of characters' length is calculated,
         # and based on it the current distance/artwork is set
@@ -75,6 +85,13 @@ def change_current(option: str):
 
 
 def get_current(option: str):
+    """
+    Can be used to get the current artwork and distance for two correspoding text files, these must be already
+    present, and can be created by using change_current().
+
+    :param option: should be either "distance" or "artwork"
+    :return: the current artwork or distance as requested
+    """
     distances = ["1m", "1.5m", "2.5m"]
     artworkIDs = ["2-3_sfikas", "armament_phinikarides", "ascent_ladommatos", "autumn_chrysochos", "crucified_savvides",
                   "game_of_shapes_chrysochos", "ground_plan_hadjida", "no_artwork", "presence_votsis",
@@ -93,10 +110,58 @@ def get_current(option: str):
 
 
 def notify(msg: str):
+    """
+    Shows a simple text notification in Ubuntu.
+
+    :param msg: the message to be shown in the notification
+    """
     subprocess.Popen(['notify-send', msg])
 
 
 def main():
+    """
+    The videos that were used to test the CNN models and the recognition algorithms were taken in the form: 10s
+    forward, 5s downwards, 5s upwards, 5s left, 5s right (this order was sometimes slightly different), 3 times for
+    each artwork at 3 distances, 1m, 1.5m, and 2.5m; and so this script was used to automate the marking of the exact
+    boundaries of these clips in each video, so they could be programmatically be cut using FFmpeg.
+
+    The script is meant to be used from the command line while the video is playing in VLC, and accepts an argument
+    -t like so:
+
+    `python3 path/to/script/split_testing_videos.py -t f`
+
+    The argument accepts any of ["f", "d", "u", "l", "r", "artwork", "distance"], with the letters corresponding to
+    the 5 directions, forward, downwards... etc. When the command is executed as shown above, it would mark the
+    current position of the currently playing video as "forward"; two such marks should be made for the start and end
+    of each direction (though if "forward" starts at 0:00 it can be skipped).
+
+    Before any marks are made, the "distance" and "artwork" variables should be set by calling the command with the
+    those two strings (not both at once!) - this simply iterates through all possible values until the desired value is
+    reached (they can also be manually set by editing their corresponding files, see the change_current() function
+    for explanations).
+
+    To make the process fast, the execution of the script can be bound to a few keyboard shortcuts, so the script can
+    be called while watching the video. For example, in Linux (Ubuntu), I used the following shortcuts (they can be
+    set by going to Settings->Keyboard Shortcuts):
+
+    - Shift+Ctrl+F: `python3 path/to/script/split_testing_videos.py -t f`
+    - Shift+Ctrl+D: `python3 path/to/script/split_testing_videos.py -t d`
+    - etc.
+
+    The results are saved in a .csv file in the same folder as the script.
+
+    The script makes use of the VLC HTTP requests feature, which had to be enabled in the program's settings,
+    see these links for details:
+
+    - https://wiki.videolan.org/VLC_HTTP_requests/
+    - https://wiki.videolan.org/Documentation:Modules/http_intf/
+
+    The notification functionality is specific to Ubuntu, so it should be replaced or adjusted to work in other OSs,
+    see this link for more information/alternatives: https://askubuntu.com/questions/108764/how-do-i-send-text-messages-to-the-notification-bubbles
+
+    Make sure to quit VLC after every video (Ctrl+Q works), since otherwise VLC seems to report values from the
+    previous video if its not exited properly.
+    """
     parser = OptionParser()
     parser.add_option("-t",
                       dest="type",
