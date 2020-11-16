@@ -47,7 +47,7 @@ def save_vlc_timestamp(clip_type: str):
     info = [video_name, timestamp, percent, vid_length, get_current("artwork"), get_current("distance"), clip_type]
 
     # resulting csv will be saved in the same folder as this script
-    csv_path = get_script_path() / "positions.csv"
+    csv_path = get_script_path() / "clip_timestamps.csv"
     if not csv_path.is_file():
         # create csv file and print header
         with open(csv_path, "a") as f:
@@ -228,5 +228,5 @@ def main():
 
 
 if __name__ == '__main__':
-    # main()
-    process_results(get_script_path() / "positions.csv")
+    # process_results(get_script_path() / "clip_timestamps.csv")
+    main()
