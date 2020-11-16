@@ -1,6 +1,8 @@
+import csv
 import os
 import subprocess
 import xml.etree.ElementTree as ET
+from collections import defaultdict
 from optparse import OptionParser
 from pathlib import Path
 
@@ -118,6 +120,35 @@ def notify(msg: str):
     subprocess.Popen(['notify-send', msg])
 
 
+def process_results(results_csv: Path):
+    with open(results_csv) as f:
+        g = {'filename': 'VID_20201113_114521.mp4', 'timestamp': '35.69400072097776', 'percent': '0.99150002002716',
+             'vid_length': '36', 'artworkID': 'crucified_savvides', 'distance': '2.5m', 'clip_type': 'r'}
+        res = csv.DictReader(f)
+
+        res_sorted = defaultdict(list)
+
+        # sort timestamps according to their corresponding videos, distances, and clip types
+        for r in res:
+            res_sorted[(r["filename"], r["artworkID"], r["distance"], r["clip_type"], r["vid_length"])].append(
+                float(r["timestamp"]))
+
+        # make sure that no more than 2 timestamps are present for each combination
+        assert all(len(v) in [1, 2] for v in res_sorted.values())
+
+        for k, v in res_sorted.items():
+            filename, artwork_id, distance, clip_type, vid_length = k
+            if len(v) == 1:
+                # only "f" clips are allowed to have 1 timestamp, the other being the start of the video, 0.0
+                assert clip_type == "f"
+                v.append(0.0)
+                v.sort()
+
+            # make sure no timestamp exceeds the vid_length
+            assert max(v) <= int(vid_length)
+            print(k, v)
+
+
 def main():
     """
     The videos that were used to test the CNN models and the recognition algorithms were taken in the form: 10s
@@ -182,4 +213,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    # main()
+    process_results(get_script_path() / "positions.csv")
