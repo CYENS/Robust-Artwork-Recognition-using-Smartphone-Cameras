@@ -2,6 +2,42 @@ import csv
 from collections import defaultdict
 from pathlib import Path
 
+from CNN.testing.ffmpeg_split import split_by_manifest
+
+
+def split_video(testing_videos_csv: Path, testing_videos_dir: Path):
+    clips_path = testing_videos_dir / "clips"
+    clips_path.mkdir(exist_ok=True)
+
+    with open(testing_videos_csv, "r") as f:
+        clips_csv = csv.DictReader(f)
+
+        clips_per_video = defaultdict(list)
+
+        for clip in clips_csv:
+            clips_per_video[clip["filename"]].append(clip)
+
+        header = ["start_time", "length", "rename_to"]
+
+        for video, clips in clips_per_video.items():
+            clips = [{"start_time": c["start"], "length": c["length"],
+                      "rename_to": f"{c['artworkID']}_{c['distance']}_{c['clipType']}.mp4"} for c in clips]
+
+            video_file = testing_videos_dir / video
+            assert video_file.is_file()
+            video = str(video)
+            # write manifest as csv file
+            manifest = clips_path / f"{video.split('.')[0]}_clips.csv"
+            with open(manifest, "w+") as g:
+                writer = csv.DictWriter(g, fieldnames=header)
+                writer.writeheader()
+                writer.writerows(clips)
+
+            split_by_manifest(str(video_file), str(manifest))
+
+            manifest.unlink()
+            break
+
 
 def process_results(results_csv: Path):
     """
@@ -52,8 +88,7 @@ def process_results(results_csv: Path):
 
 
 def main():
-    # process_results(get_script_path() / "clip_timestamps.csv")
-    pass
+    split_video(Path.cwd() / "testing_videos.csv", Path("/media/marios/DataUbuntu1/TestingVideos"))
 
 
 if __name__ == '__main__':
