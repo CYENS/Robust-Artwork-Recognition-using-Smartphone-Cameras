@@ -4,9 +4,13 @@ from pathlib import Path
 
 
 def process_results(results_csv: Path):
+    """
+    Processes the resulting csv file produced by the mark_clip_timestamp.py script, by consolidating the start and
+    end of each clip into one row; the results are written to a new csv file in the same directory.
+
+    :param results_csv: the csv file created using mark_clip_timestamp.py
+    """
     with open(results_csv) as f:
-        g = {'filename': 'VID_20201113_114521.mp4', 'timestamp': '35.69400072097776', 'percent': '0.99150002002716',
-             'vid_length': '36', 'artworkID': 'crucified_savvides', 'distance': '2.5m', 'clip_type': 'r'}
         res = csv.DictReader(f)
 
         res_sorted = defaultdict(list)
