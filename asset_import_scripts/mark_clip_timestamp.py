@@ -190,8 +190,8 @@ def main():
     be called while watching the video. For example, in Linux (Ubuntu), I used the following shortcuts (they can be
     set by going to Settings->Keyboard Shortcuts):
 
-    - Shift+Ctrl+F: `python3 path/to/script/split_testing_videos.py -t f`
-    - Shift+Ctrl+D: `python3 path/to/script/split_testing_videos.py -t d`
+    - Shift+Ctrl+F: `python3 path/to/script/mark_clip_timestamp.py -t f`
+    - Shift+Ctrl+D: `python3 path/to/script/mark_clip_timestamp.py -t d`
     - etc.
 
     The results are saved in a .csv file in the same folder as the script.
