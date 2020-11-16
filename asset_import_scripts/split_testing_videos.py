@@ -136,6 +136,10 @@ def process_results(results_csv: Path):
         # make sure that no more than 2 timestamps are present for each combination
         assert all(len(v) in [1, 2] for v in res_sorted.values())
 
+        clip_type_conversions = {"f": "forward", "d": "downwards", "u": "upwards", "l": "left", "r": "right"}
+
+        for_excel_video_descriptions = []
+
         for k, v in res_sorted.items():
             filename, artwork_id, distance, clip_type, vid_length = k
             if len(v) == 1:
@@ -146,7 +150,18 @@ def process_results(results_csv: Path):
 
             # make sure no timestamp exceeds the vid_length
             assert max(v) <= int(vid_length)
-            print(k, v)
+
+            start, end = v
+
+            for_excel_video_descriptions.append({"filename": filename, "artworkID": artwork_id, "distance": distance,
+                                                 "clipType": clip_type_conversions[clip_type], "start": start,
+                                                 "end": end, "length": end - start})
+
+        with open(results_csv.parent / "testing_videos.csv", "w") as csv_file:
+            header = ["filename", "artworkID", "distance", "clipType", "start", "end", "length"]
+            writer = csv.DictWriter(csv_file, fieldnames=header)
+            writer.writeheader()
+            writer.writerows(for_excel_video_descriptions)
 
 
 def main():
