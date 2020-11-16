@@ -10,8 +10,8 @@ import requests
 def save_vlc_timestamp(clip_type: str):
     """
     Requests status information from VLC for current video, and saves timestamp information for later splitting of
-    the video. This script was used to mark the positions of required clips from the testing videos, which was later
-    used to automatically divide them in the desired clips with Ffmpeg.
+    the video. This script was used to mark the positions of required clips from the testing videos, which were later
+    used to automatically divide them to the desired clips using Ffmpeg.
 
     :param clip_type: the type of the clip the current timestamp refers to; in this case it should refer to Forward,
      Downward, Upward, Left, and Right with the corresponding letters [f, d, u, l, r]
@@ -20,9 +20,7 @@ def save_vlc_timestamp(clip_type: str):
         notify("Clip type provided is not acceptable, should be one of [f, d, u, l, r]")
         raise SystemExit
 
-    # TODO have dict with file-artwork name associations, so can append the artwork here
-
-    # request to VLC
+    # request status from VLC
     r = requests.get("http://127.0.0.1:8080/requests/status.xml", auth=("", "abc"))
     if r.status_code != 200:
         notify(f"Problem requesting information from VLC, status code: {r.status_code}")
@@ -44,14 +42,14 @@ def save_vlc_timestamp(clip_type: str):
     vid_length = root.find("length").text  # length of the video in seconds
     timestamp = str(int(vid_length) * float(percent))
 
-    info = [video_name, timestamp, percent, vid_length, clip_type]
+    info = [video_name, timestamp, percent, vid_length, get_current("artwork"), get_current("distance"), clip_type]
 
     # resulting csv will be saved in the same folder as this script
     csv_path = get_script_path() / "positions.csv"
     if not csv_path.is_file():
         # create csv file and print header
         with open(csv_path, "a") as f:
-            f.write("filename,timestamp,percent,vid_length,clip_type\n")
+            f.write("filename,timestamp,percent,vid_length,artworkID,distance,clip_type\n")
 
     with open(csv_path, "a") as f:
         f.write(",".join(info) + "\n")
@@ -70,7 +68,8 @@ def change_current(option: str):
     f_name = get_script_path() / f"{option}.txt"
 
     with open(f_name, "a+") as f:
-        # increment file by one character, does not matter which
+        # increment file by one character, does not matter which; this series of characters' length is calculated,
+        # and based on it the current distance/artwork is set
         f.write("0")
     notify(f"Current {option}: {get_current(option)}")
 
@@ -110,7 +109,7 @@ def main():
                       )
 
     options, args = parser.parse_args()
-    notify(options.type)
+
     if options.type in "fdulr":
         save_vlc_timestamp(options.type)
     elif options.type in ["artwork", "distance"]:
