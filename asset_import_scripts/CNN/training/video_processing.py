@@ -14,6 +14,7 @@ import seaborn as sn
 import skvideo.io
 import tensorflow as tf
 from IPython.display import display, display_markdown
+from matplotlib import pyplot as plt
 from sklearn.metrics import classification_report, confusion_matrix
 from tqdm import tqdm
 
@@ -410,7 +411,8 @@ def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int
      can vary depending on device and the CNN used, but can be anywhere between 200ms to a few seconds; for example, if
      we assume 30fps video and 200ms intervals for each analysis, only 1 out of every 6 frames will be analysed,
      and so a value of 6 would be suitable for extract_every_n_frames in that case
-    :return: frame generator of tuples (frame, label)
+    :return: frame generator of tuples (frame, label) when generate_by="artwork", else tuples of
+     (frame, label, video_name) when generate_by="video"
     """
     if generate_by not in ["artwork", "video"]:
         generate_by = "artwork"
@@ -465,7 +467,8 @@ def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int
 
     elif generate_by == "video":
         for _, row in dataset_info.iterrows():
-            video_file = files_dir / row["file"]
+            video_name = row["file"]
+            video_file = files_dir / video_name
 
             # label to categorical (type tf.float32)
             label = tf.one_hot(artwork_list.index(row["id"]), len(artwork_list))
@@ -498,7 +501,7 @@ def frame_generator(files_dir: Path, dataset_info: pd.DataFrame, max_frames: int
 
                     max_fr -= 1
 
-                    yield tf.cast(frame, tf.float32), label
+                    yield tf.cast(frame, tf.float32), label, video_name
 
                 if max_fr == 0:
                     break
