@@ -5,6 +5,12 @@ from pathlib import Path
 
 
 def split_video(testing_videos_csv: Path, testing_videos_dir: Path):
+    """
+    Extracts clips listed in the provided csv file.
+
+    :param testing_videos_csv: csv file containing information about the clips to be extracted
+    :param testing_videos_dir: directory where the original videos are located
+    """
     clips_path = testing_videos_dir / "clips"
     clips_path.mkdir(exist_ok=True)
 
@@ -23,6 +29,7 @@ def split_video(testing_videos_csv: Path, testing_videos_dir: Path):
             for clip in clips:
                 (clips_path / clip["artworkID"]).mkdir(exist_ok=True)
 
+                # FFmpeg command to extract clips from original videos
                 ffmpeg_split_cmd = ["ffmpeg",
                                     "-i", str(video_file),  # input file path
                                     "-c:v copy",  # copy video codec (use same as original video)
@@ -33,6 +40,7 @@ def split_video(testing_videos_csv: Path, testing_videos_dir: Path):
                                     str(clips_path / clip["artworkID"] / clip["clip_name"])  # output file path
                                     ]
 
+                # call FFmpeg from the command line
                 subprocess.call(" ".join(ffmpeg_split_cmd), shell=True)
 
 
