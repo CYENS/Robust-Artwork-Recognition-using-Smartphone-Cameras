@@ -57,7 +57,7 @@ def process_results(results_csv: Path):
 
         clip_type_conversions = {"f": "forward", "d": "downwards", "u": "upwards", "l": "left", "r": "right"}
 
-        for_excel_video_descriptions = []
+        processed_csv = []
 
         for k, v in res_sorted.items():
             filename, artwork_id, distance, clip_type, vid_length = k
@@ -72,19 +72,27 @@ def process_results(results_csv: Path):
 
             start, end = v
 
-            for_excel_video_descriptions.append({"filename": filename, "artworkID": artwork_id, "distance": distance,
-                                                 "clipType": clip_type_conversions[clip_type], "start": start,
-                                                 "end": end, "length": end - start})
+            clip_type = clip_type_conversions[clip_type]
+
+            # create name for clip
+            clip_name = "_".join([artwork_id, distance, clip_type]) + Path(filename).suffix
+
+            processed_csv.append({"clip_name": clip_name, "filename": filename, "artworkID": artwork_id,
+                                  "distance": distance, "clipType": clip_type, "start": start,
+                                  "end": end, "length": end - start})
+
+            processed_csv.sort(key=lambda x: x["artworkID"])
 
         with open(results_csv.parent / "testing_videos.csv", "w") as csv_file:
-            header = ["filename", "artworkID", "distance", "clipType", "start", "end", "length"]
+            header = ["clip_name", "filename", "artworkID", "distance", "clipType", "start", "end", "length"]
             writer = csv.DictWriter(csv_file, fieldnames=header)
             writer.writeheader()
-            writer.writerows(for_excel_video_descriptions)
+            writer.writerows(processed_csv)
 
 
 def main():
-    split_video(Path.cwd() / "testing_videos.csv", Path("/media/marios/DataUbuntu1/TestingVideos"))
+    process_results(Path.cwd() / "clip_timestamps.csv")
+    # split_video(Path.cwd() / "testing_videos.csv", Path("/media/marios/DataUbuntu1/TestingVideos"))
 
 
 if __name__ == '__main__':
