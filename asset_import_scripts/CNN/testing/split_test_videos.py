@@ -1,8 +1,7 @@
 import csv
+import subprocess
 from collections import defaultdict
 from pathlib import Path
-
-from CNN.testing.ffmpeg_split import split_by_manifest
 
 
 def split_video(testing_videos_csv: Path, testing_videos_dir: Path):
@@ -14,29 +13,26 @@ def split_video(testing_videos_csv: Path, testing_videos_dir: Path):
 
         clips_per_video = defaultdict(list)
 
-        for clip in clips_csv:
-            clips_per_video[clip["filename"]].append(clip)
-
-        header = ["start_time", "length", "rename_to"]
+        for c in clips_csv:
+            clips_per_video[c["filename"]].append(c)
 
         for video, clips in clips_per_video.items():
-            clips = [{"start_time": c["start"], "length": c["length"],
-                      "rename_to": f"{c['artworkID']}_{c['distance']}_{c['clipType']}.mp4"} for c in clips]
-
             video_file = testing_videos_dir / video
             assert video_file.is_file()
-            video = str(video)
-            # write manifest as csv file
-            manifest = clips_path / f"{video.split('.')[0]}_clips.csv"
-            with open(manifest, "w+") as g:
-                writer = csv.DictWriter(g, fieldnames=header)
-                writer.writeheader()
-                writer.writerows(clips)
 
-            split_by_manifest(str(video_file), str(manifest))
-
-            manifest.unlink()
-            break
+            for clip in clips:
+                clip_name = f"{clip['artworkID']}_{clip['distance']}_{clip['clipType']}.mp4"
+                (clips_path / clip['artworkID']).mkdir(exist_ok=True)
+                ffmpeg_split_cmd = ["ffmpeg",
+                                    "-i", str(video_file),  # input file
+                                    "-c:v copy",  # copy video codec (use same as original video)
+                                    "-an",  # remove audio
+                                    "-y",  # overwrite output files without asking
+                                    "-ss", clip["start"],  # start position of clip
+                                    "-t", clip["length"],  # clip length
+                                    str(clips_path / clip['artworkID'] / clip_name)  # output file
+                                    ]
+                subprocess.call(" ".join(ffmpeg_split_cmd), shell=True)
 
 
 def process_results(results_csv: Path):
