@@ -21,17 +21,18 @@ def split_video(testing_videos_csv: Path, testing_videos_dir: Path):
             assert video_file.is_file()
 
             for clip in clips:
-                clip_name = f"{clip['artworkID']}_{clip['distance']}_{clip['clipType']}.mp4"
-                (clips_path / clip['artworkID']).mkdir(exist_ok=True)
+                (clips_path / clip["artworkID"]).mkdir(exist_ok=True)
+
                 ffmpeg_split_cmd = ["ffmpeg",
-                                    "-i", str(video_file),  # input file
+                                    "-i", str(video_file),  # input file path
                                     "-c:v copy",  # copy video codec (use same as original video)
                                     "-an",  # remove audio
                                     "-y",  # overwrite output files without asking
                                     "-ss", clip["start"],  # start position of clip
                                     "-t", clip["length"],  # clip length
-                                    str(clips_path / clip['artworkID'] / clip_name)  # output file
+                                    str(clips_path / clip["artworkID"] / clip["clip_name"])  # output file path
                                     ]
+
                 subprocess.call(" ".join(ffmpeg_split_cmd), shell=True)
 
 
@@ -91,8 +92,8 @@ def process_results(results_csv: Path):
 
 
 def main():
-    process_results(Path.cwd() / "clip_timestamps.csv")
-    # split_video(Path.cwd() / "testing_videos.csv", Path("/media/marios/DataUbuntu1/TestingVideos"))
+    # process_results(Path.cwd() / "clip_timestamps.csv")
+    split_video(Path.cwd() / "testing_videos.csv", Path("/media/marios/DataUbuntu1/TestingVideos"))
 
 
 if __name__ == '__main__':
