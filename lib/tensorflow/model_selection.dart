@@ -130,7 +130,7 @@ class _ModelSelectionState extends State<ModelSelection> {
                     artworkId: currentAlgorithm.topInference,
                     languageCode: context.locale().languageCode)
                 .then((artwork) {
-              return Navigator.push(
+              Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
