@@ -290,105 +290,6 @@ def frame_counts(video_files_dir: Path):
     return count_dict
 
 
-def dataset_from_videos(files_dir: Path, dataset_csv_info_file: str,
-                        max_frames: int = 750, batch_size: int = 128,
-                        img_normalization_params: Tuple[float, float] = (
-                                0.0, 255.0), frame_size: int = 224,
-                        train_val_test_percentages: Tuple[int, int, int] = (
-                                70, 30, 0)):
-    """
-    Generates train, validation and test tf.data.Datasets from the provided
-    video files.
-
-    :param files_dir: path of the directory containing the videos
-    :param dataset_csv_info_file: name of csv file containing information about
-     the videos, must be located in files_dir
-    :param img_normalization_params: tuple of doubles (mean, standard_deviation)
-     to use for normalizing the extracted frames, e.g. if (0.0, 255.0) is
-     provided, the frames are normalized to the range [0, 1], see this comment
-     for explanation of how to convert between the two
-     https://stackoverflow.com/a/58096430
-    :param max_frames: total number of frames to extract for each artwork
-    :param frame_size: the size of the final resized square frames, this is
-     dictated by the needs of the underlying NN that will be used
-    :param train_val_test_percentages: tuple specifying how to split the
-     generated dataset into train, validation and test datasets, the provided
-     ints must add up to 100
-    :param batch_size: batch size for datasets
-    :return: a tuple of train, validation and test tf.data.Datasets, as well
-     as a list of the artworks ids
-    """
-    assert sum(
-        train_val_test_percentages) == 100, "Percentages must add up to 100!"
-
-    dataset_info = pd.read_csv(files_dir / dataset_csv_info_file)
-
-    # make sure all files in csv are present
-    for _, row in dataset_info.iterrows():
-        assert (files_dir / row[
-            "file"]).is_file(), "One or more of the video files don't exist"
-
-    # sort artwork ids in alphabetical order, this is important as it
-    # determines how the CNN outputs its predictions
-    artwork_dict = {artwork_id: i for i, artwork_id in
-                    enumerate(sorted(dataset_info["id"].unique()))}
-    artwork_list = list(artwork_dict.keys())
-
-    # create dataset, output_shapes are set to (None, None, 3), since the
-    # extracted frames are not initially resized,
-    # to allow applying variations to the train dataset only below
-    dt = tf.data.Dataset.from_generator(
-        lambda: frame_generator(files_dir, dataset_info, max_frames),
-        output_types=(tf.float32, tf.float32),
-        output_shapes=((None, None, 3), (len(artwork_list))))
-
-    # TODO calculate the datasets' sizes, perhaps print them, and also use them
-    #  in the shuffling of the train dt below can be calculated like so:
-    #  (num of classes * max_frames) * % of dataset
-
-    # split into train, validation & test datasets
-    train, val, test = train_val_test_percentages
-    train_dataset, validation_and_test = split_dataset(dt, (val + test) / 100)
-    validation_dataset, test_dataset = split_dataset(validation_and_test,
-                                                     test / (val + test))
-
-    mean, std = img_normalization_params
-
-    # apply necessary conversions (normalization, random modifications,
-    # batching & caching) to the created datasets
-    # see https://www.tensorflow.org/datasets/keras_example for batching and
-    # caching explanation
-    AUTO = tf.data.experimental.AUTOTUNE  # auto-optimise dataset mapping below
-
-    train_dataset = train_dataset \
-        .map(random_modifications, num_parallel_calls=AUTO) \
-        .map(lambda x, y: (
-        resize_and_rescale(x, fr_size=frame_size, mean=mean, std=std), y),
-             num_parallel_calls=AUTO) \
-        .cache() \
-        .shuffle(1000) \
-        .batch(batch_size) \
-        .prefetch(AUTO)
-
-    validation_dataset = validation_dataset \
-        .map(lambda x, y: (
-        resize_and_rescale(x, fr_size=frame_size, mean=mean, std=std), y),
-             num_parallel_calls=AUTO) \
-        .batch(batch_size) \
-        .cache() \
-        .prefetch(AUTO)
-
-    test_dataset = test_dataset \
-        .map(lambda x, y: (
-        resize_and_rescale(x, fr_size=frame_size, mean=mean, std=std), y),
-             num_parallel_calls=AUTO) \
-        .batch(batch_size) \
-        .cache() \
-        .prefetch(AUTO)
-
-    return train_dataset, validation_dataset, test_dataset, artwork_list
-
-
 def frame_generator(files_dir: Path, dataset_info: pd.DataFrame,
                     max_frames: int, generate_by: str = "artwork",
                     extract_every_n_frames: int = None):
@@ -621,6 +522,105 @@ def split_dataset(dataset: tf.data.Dataset, validation_data_fraction: float):
     validation_dataset = validation_dataset.map(lambda f, data: data)
 
     return train_dataset, validation_dataset
+
+
+def dataset_from_videos(files_dir: Path, dataset_csv_info_file: str,
+                        max_frames: int = 750, batch_size: int = 128,
+                        img_normalization_params: Tuple[float, float] = (
+                                0.0, 255.0), frame_size: int = 224,
+                        train_val_test_percentages: Tuple[int, int, int] = (
+                                70, 30, 0)):
+    """
+    Generates train, validation and test tf.data.Datasets from the provided
+    video files.
+
+    :param files_dir: path of the directory containing the videos
+    :param dataset_csv_info_file: name of csv file containing information about
+     the videos, must be located in files_dir
+    :param img_normalization_params: tuple of doubles (mean, standard_deviation)
+     to use for normalizing the extracted frames, e.g. if (0.0, 255.0) is
+     provided, the frames are normalized to the range [0, 1], see this comment
+     for explanation of how to convert between the two
+     https://stackoverflow.com/a/58096430
+    :param max_frames: total number of frames to extract for each artwork
+    :param frame_size: the size of the final resized square frames, this is
+     dictated by the needs of the underlying NN that will be used
+    :param train_val_test_percentages: tuple specifying how to split the
+     generated dataset into train, validation and test datasets, the provided
+     ints must add up to 100
+    :param batch_size: batch size for datasets
+    :return: a tuple of train, validation and test tf.data.Datasets, as well
+     as a list of the artworks ids
+    """
+    assert sum(
+        train_val_test_percentages) == 100, "Percentages must add up to 100!"
+
+    dataset_info = pd.read_csv(files_dir / dataset_csv_info_file)
+
+    # make sure all files in csv are present
+    for _, row in dataset_info.iterrows():
+        assert (files_dir / row[
+            "file"]).is_file(), "One or more of the video files don't exist"
+
+    # sort artwork ids in alphabetical order, this is important as it
+    # determines how the CNN outputs its predictions
+    artwork_dict = {artwork_id: i for i, artwork_id in
+                    enumerate(sorted(dataset_info["id"].unique()))}
+    artwork_list = list(artwork_dict.keys())
+
+    # create dataset, output_shapes are set to (None, None, 3), since the
+    # extracted frames are not initially resized,
+    # to allow applying variations to the train dataset only below
+    dt = tf.data.Dataset.from_generator(
+        lambda: frame_generator(files_dir, dataset_info, max_frames),
+        output_types=(tf.float32, tf.float32),
+        output_shapes=((None, None, 3), (len(artwork_list))))
+
+    # TODO calculate the datasets' sizes, perhaps print them, and also use them
+    #  in the shuffling of the train dt below can be calculated like so:
+    #  (num of classes * max_frames) * % of dataset
+
+    # split into train, validation & test datasets
+    train, val, test = train_val_test_percentages
+    train_dataset, validation_and_test = split_dataset(dt, (val + test) / 100)
+    validation_dataset, test_dataset = split_dataset(validation_and_test,
+                                                     test / (val + test))
+
+    mean, std = img_normalization_params
+
+    # apply necessary conversions (normalization, random modifications,
+    # batching & caching) to the created datasets
+    # see https://www.tensorflow.org/datasets/keras_example for batching and
+    # caching explanation
+    AUTO = tf.data.experimental.AUTOTUNE  # auto-optimise dataset mapping below
+
+    train_dataset = train_dataset \
+        .map(random_modifications, num_parallel_calls=AUTO) \
+        .map(lambda x, y: (
+        resize_and_rescale(x, fr_size=frame_size, mean=mean, std=std), y),
+             num_parallel_calls=AUTO) \
+        .cache() \
+        .shuffle(1000) \
+        .batch(batch_size) \
+        .prefetch(AUTO)
+
+    validation_dataset = validation_dataset \
+        .map(lambda x, y: (
+        resize_and_rescale(x, fr_size=frame_size, mean=mean, std=std), y),
+             num_parallel_calls=AUTO) \
+        .batch(batch_size) \
+        .cache() \
+        .prefetch(AUTO)
+
+    test_dataset = test_dataset \
+        .map(lambda x, y: (
+        resize_and_rescale(x, fr_size=frame_size, mean=mean, std=std), y),
+             num_parallel_calls=AUTO) \
+        .batch(batch_size) \
+        .cache() \
+        .prefetch(AUTO)
+
+    return train_dataset, validation_dataset, test_dataset, artwork_list
 
 
 def train_evaluate_save(model, model_name: str, files_dir: Path,
