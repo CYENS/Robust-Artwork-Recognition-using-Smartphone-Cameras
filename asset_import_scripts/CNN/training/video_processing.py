@@ -2,7 +2,7 @@ import json
 import pickle
 import random
 import subprocess
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 from datetime import datetime
 from pathlib import Path
 from typing import Tuple
@@ -581,6 +581,18 @@ def random_random_crop(img: tf.Tensor):
     return tf.cond(rnd_bool(),
                    lambda: tf.image.random_crop(img, size=[h, w, 3]),
                    lambda: img)
+
+
+def sort_dict_by_value(d: dict, reverse: bool = False):
+    """
+    Sorts the provided dictionary by its values, returning an OrderedDict.
+
+    :param d: the dictionary to be sorted
+    :param reverse: whether to reverse the order of values; if False, the
+     values will be in ascending order, and if True the reverse
+    """
+    return OrderedDict(
+        sorted(d.items(), key=lambda item: item[1], reverse=reverse))
 
 
 def split_dataset(dataset: tf.data.Dataset, validation_data_fraction: float):
