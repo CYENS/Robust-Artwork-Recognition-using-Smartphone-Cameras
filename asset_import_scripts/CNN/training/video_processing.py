@@ -389,63 +389,6 @@ def dataset_from_videos(files_dir: Path, dataset_csv_info_file: str,
     return train_dataset, validation_dataset, test_dataset, artwork_list
 
 
-def resize_and_rescale(img, fr_size: int, mean: float, std: float):
-    """
-    Resizes frames to the desired shape and scale. See
-    https://stackoverflow.com/a/58096430 for scale conversion explanation.
-    """
-    img = tf.image.resize(img, (fr_size, fr_size))
-    return (tf.cast(img, tf.float32) - mean) / std
-
-
-def random_modifications(img, label):
-    """
-    Applies random modifications to the frame provided. The modifications may
-    include variation in brightness, horizontal flipping, and random cropping
-    (or none of the previous, in which case the frame will be returned
-    untouched).
-
-    :param img: the frame to be modified
-    :param label: the corresponding label of the frame, this is returned as is
-    :return: the modified frame
-    """
-    img = random_random_crop(img)
-    img = tf.image.random_brightness(img, 0.2)
-    img = tf.image.random_flip_left_right(img)
-    # img = tf.image.random_hue(img, 0.2)
-    return img, label
-
-
-def random_random_crop(img: tf.Tensor):
-    """
-    Randomly crops 50% of the provided frames. The cropped frames will have a
-    random size corresponding to 70-90% of their original height, and 70-90% of
-    their original width (the 2 percentages are generated independently). The
-    3rd axis of the frame tensor, i.e. the image channels, is not modified.
-
-    NOTE the use of only tf.random functions below, regular Python
-    random.random functions won't work with Tensorflow.
-
-    :param img: the frame to be cropped
-    :return: the cropped frame
-    """
-    # lambda function that returns a random boolean, so that random cropping
-    # is only applied to 50% of the frames
-    rnd_bool = lambda: tf.random.uniform(shape=[], minval=0, maxval=2,
-                                         dtype=tf.int32) != 0
-
-    # lambda function that returns a random float in the range 0.7-0.9
-    rnd_pcnt = lambda: tf.random.uniform(shape=[], minval=0.7, maxval=0.9,
-                                         dtype=tf.float32)
-
-    h, w = int(float(tf.shape(img)[0]) * rnd_pcnt()), int(
-        float(tf.shape(img)[1]) * rnd_pcnt())
-
-    return tf.cond(rnd_bool(),
-                   lambda: tf.image.random_crop(img, size=[h, w, 3]),
-                   lambda: img)
-
-
 def frame_generator(files_dir: Path, dataset_info: pd.DataFrame,
                     max_frames: int, generate_by: str = "artwork",
                     extract_every_n_frames: int = None):
@@ -581,6 +524,63 @@ def frame_generator(files_dir: Path, dataset_info: pd.DataFrame,
                     break
 
                 current_frame += 1
+
+
+def resize_and_rescale(img, fr_size: int, mean: float, std: float):
+    """
+    Resizes frames to the desired shape and scale. See
+    https://stackoverflow.com/a/58096430 for scale conversion explanation.
+    """
+    img = tf.image.resize(img, (fr_size, fr_size))
+    return (tf.cast(img, tf.float32) - mean) / std
+
+
+def random_modifications(img, label):
+    """
+    Applies random modifications to the frame provided. The modifications may
+    include variation in brightness, horizontal flipping, and random cropping
+    (or none of the previous, in which case the frame will be returned
+    untouched).
+
+    :param img: the frame to be modified
+    :param label: the corresponding label of the frame, this is returned as is
+    :return: the modified frame
+    """
+    img = random_random_crop(img)
+    img = tf.image.random_brightness(img, 0.2)
+    img = tf.image.random_flip_left_right(img)
+    # img = tf.image.random_hue(img, 0.2)
+    return img, label
+
+
+def random_random_crop(img: tf.Tensor):
+    """
+    Randomly crops 50% of the provided frames. The cropped frames will have a
+    random size corresponding to 70-90% of their original height, and 70-90% of
+    their original width (the 2 percentages are generated independently). The
+    3rd axis of the frame tensor, i.e. the image channels, is not modified.
+
+    NOTE the use of only tf.random functions below, regular Python
+    random.random functions won't work with Tensorflow.
+
+    :param img: the frame to be cropped
+    :return: the cropped frame
+    """
+    # lambda function that returns a random boolean, so that random cropping
+    # is only applied to 50% of the frames
+    rnd_bool = lambda: tf.random.uniform(shape=[], minval=0, maxval=2,
+                                         dtype=tf.int32) != 0
+
+    # lambda function that returns a random float in the range 0.7-0.9
+    rnd_pcnt = lambda: tf.random.uniform(shape=[], minval=0.7, maxval=0.9,
+                                         dtype=tf.float32)
+
+    h, w = int(float(tf.shape(img)[0]) * rnd_pcnt()), int(
+        float(tf.shape(img)[1]) * rnd_pcnt())
+
+    return tf.cond(rnd_bool(),
+                   lambda: tf.image.random_crop(img, size=[h, w, 3]),
+                   lambda: img)
 
 
 def split_dataset(dataset: tf.data.Dataset, validation_data_fraction: float):
