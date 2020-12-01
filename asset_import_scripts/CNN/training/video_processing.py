@@ -1,3 +1,4 @@
+import functools
 import json
 import pickle
 import random
@@ -825,6 +826,29 @@ def remove_audio_from_videos(video_dir: Path, video_ext: str = ".mp4"):
             f"ffmpeg -i {vid} -c:v copy "
             f"-an {Path(vid.parent / (vid.stem + '_na' + video_ext))}",
             shell=True)
+
+
+@functools.lru_cache(maxsize=128)
+def get_visitor_overlay():
+    return Image.open(files_dir / "Xoio_people_0023.png")
+
+
+def add_visitors(img, visitor_height: float):
+    if type(img) is tf.python.framework.ops.EagerTensor:
+        bg = Image.fromarray(img.numpy().copy().astype(np.uint8))
+    elif type(img) is np.ndarray:
+        bg = Image.fromarray(img.copy().astype(np.uint8))
+    else:
+        bg = img
+
+    fg = get_visitor_overlay()
+    # resize visitor image to a percentage of the provided img's height
+    fg = fg.resize((int((bg.height / fg.height) * fg.width * visitor_height),
+                    int(bg.height * visitor_height)))
+
+    bg.paste(fg, (0, int(bg.height - fg.height)), fg.convert('RGBA'))
+
+    return np.array(bg)
 
 
 def vary_brightness(img, brightness_factor: float):
