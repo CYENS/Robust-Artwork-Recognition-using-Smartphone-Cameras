@@ -14,6 +14,7 @@ import seaborn as sn
 import skvideo.io
 import tensorflow as tf
 from IPython.display import display, display_markdown
+from PIL import Image, ImageEnhance
 from matplotlib import pyplot as plt
 from sklearn.metrics import classification_report, confusion_matrix
 from tqdm import tqdm
@@ -824,6 +825,22 @@ def remove_audio_from_videos(video_dir: Path, video_ext: str = ".mp4"):
             f"ffmpeg -i {vid} -c:v copy "
             f"-an {Path(vid.parent / (vid.stem + '_na' + video_ext))}",
             shell=True)
+
+
+def vary_brightness(img, brightness_factor: float):
+    assert brightness_factor >= 0, "brightness_factor should not be negative!"
+
+    if type(img) is tf.python.framework.ops.EagerTensor:
+        img = Image.fromarray(img.numpy().copy().astype(np.uint8))
+    elif type(img) is np.ndarray:
+        img = Image.fromarray(img.copy().astype(np.uint8))
+
+    # adjust img brightness
+    img_brightness_obj = ImageEnhance.Brightness(img)
+    # here a factor of 1 returns the original image, 0 a black image
+    img = img_brightness_obj.enhance(brightness_factor)
+
+    return np.array(img)
 
 
 if __name__ == '__main__':
