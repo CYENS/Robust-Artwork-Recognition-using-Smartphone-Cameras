@@ -880,7 +880,6 @@ def make_cnn_predictions(cnn_path: Path, max_predictions: int,
 
         # infer for all provided altering functions
         for func_name, func in frame_altering_funcs.items():
-
             fr = func(frame)
 
             interpreter.set_tensor(input_details[0]['index'],
@@ -916,6 +915,15 @@ def make_cnn_predictions(cnn_path: Path, max_predictions: int,
         dt.to_csv(f)
 
     return dt
+
+
+@functools.lru_cache(maxsize=1000)
+def get_clip_info(clip_name: str, video_csv_info: Path):
+    dt = pd.read_csv(video_csv_info)
+    info = dt.loc[dt['clip_name'] == clip_name]
+    assert info.shape[0] == 1  # there should only be one row here
+    info = info.iloc[0]  # convert to a Series
+    return info
 
 
 @functools.lru_cache(maxsize=128)
