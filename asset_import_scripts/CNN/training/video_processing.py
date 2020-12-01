@@ -828,6 +828,96 @@ def remove_audio_from_videos(video_dir: Path, video_ext: str = ".mp4"):
             shell=True)
 
 
+def make_cnn_predictions(cnn_path: Path, max_predictions: int,
+                         video_csv_info: Path, videos_dir: Path,
+                         output_dir: Path, frame_altering_funcs: dict = None,
+                         include_missing_ids: bool = True):
+    """
+    Makes CNN predictions with the provided Tflite CNN(s).
+    """
+    if frame_altering_funcs is None:
+        # if no function is provided to alter the frames, they are used as is
+        frame_altering_funcs = {"original": lambda im: im}
+
+    dataset = pd.read_csv(video_csv_info)
+
+    # modify dataset so that it conforms to the frame_generator requirements
+    dt_info = dataset.rename(columns={'clip_name': 'file', 'artworkID': 'id'})
+
+    artwork_list = sorted(dataset["artworkID"].unique())
+
+    if include_missing_ids:
+        # add temporarily missing artwork
+        artwork_list.extend(["no_artwork",
+                             "the_great_greek_encyclopaedia_makrides"])
+        artwork_list = sorted(set(artwork_list))
+
+    number_of_videos = dataset.shape[0]
+
+    # short functions to manipulate frames and their labels
+    convert_img = lambda img: tf.cast(img, tf.int32)
+    convert_lbl = lambda label: artwork_list[np.argmax(label)]
+
+    assert cnn_path.is_file()  # make sure the cnn file exists
+
+    output_dir = output_dir / cnn_path.stem
+    output_dir.mkdir(exist_ok=True)
+
+    # load tflite model
+    interpreter = tf.lite.Interpreter(model_path=str(cnn_path))
+    interpreter.allocate_tensors()
+    input_details = interpreter.get_input_details()
+    output_details = interpreter.get_output_details()
+
+    predictions, pred_num = defaultdict(list), defaultdict(list)
+
+    t = tqdm(total=max_predictions * number_of_videos)
+
+    for frame, label, clip_name in frame_generator(videos_dir, dt_info,
+                                                   max_frames=max_predictions,
+                                                   generate_by="video"):
+        true_index = np.argmax(label)
+
+        # infer for all provided altering functions
+        for func_name, func in frame_altering_funcs.items():
+
+            fr = func(frame)
+
+            interpreter.set_tensor(input_details[0]['index'],
+                                   resize_and_rescale(fr, 224, 0.0, 255.0)
+                                   .numpy().reshape(1, 224, 224, 3)
+                                   .astype("float32"))
+
+            interpreter.invoke()
+
+            # The function `get_tensor()` returns a copy of the tensor data.
+            # Use `tensor()` in order to get a pointer to the tensor.
+            output_data = interpreter.get_tensor(output_details[0]['index'])[0]
+
+            pred_index = np.argmax(output_data)
+
+            predictions[clip_name].append(
+                {"confidence": float(output_data[pred_index].item()),
+                 "index": int(pred_index), "label": artwork_list[pred_index]})
+            pred_num[clip_name].append(int(true_index == pred_index))
+            print(artwork_list[pred_index] in clip_name, clip_name,
+                  artwork_list[pred_index])
+        t.update()
+
+    t.close()
+
+    with open(output_dir / "pred_str.json", "w") as f:
+        json.dump(predictions, f, indent=4)
+    with open(output_dir / "pred_num.json", "w") as f:
+        json.dump(pred_num, f, indent=4)
+
+    dt = dataset.join(pd.DataFrame(pred_num).T, on="clip_name")
+    with open(output_dir / "dt.csv", "w+") as f:
+        dt.to_csv(f)
+
+    return dt
+
+
 @functools.lru_cache(maxsize=128)
 def get_visitor_overlay():
     return Image.open(files_dir / "Xoio_people_0023.png")
