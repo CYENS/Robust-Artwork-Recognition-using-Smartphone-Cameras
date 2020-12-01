@@ -833,7 +833,16 @@ def make_cnn_predictions(cnn_path: Path, max_predictions: int,
                          output_dir: Path, frame_altering_funcs: dict = None,
                          include_missing_ids: bool = True):
     """
-    Makes CNN predictions with the provided Tflite CNN(s).
+    Makes CNN predictions with the provided Tflite CNN.
+
+    :param cnn_path:
+    :param max_predictions:
+    :param video_csv_info:
+    :param videos_dir:
+    :param output_dir:
+    :param frame_altering_funcs:
+    :param include_missing_ids:
+    :return:
     """
     if frame_altering_funcs is None:
         # if no function is provided to alter the frames, they are used as is
@@ -854,10 +863,6 @@ def make_cnn_predictions(cnn_path: Path, max_predictions: int,
 
     number_of_videos = dataset.shape[0]
 
-    # short functions to manipulate frames and their labels
-    convert_img = lambda img: tf.cast(img, tf.int32)
-    convert_lbl = lambda label: artwork_list[np.argmax(label)]
-
     assert cnn_path.is_file()  # make sure the cnn file exists
 
     output_dir = output_dir / cnn_path.stem
@@ -869,7 +874,7 @@ def make_cnn_predictions(cnn_path: Path, max_predictions: int,
     input_details = interpreter.get_input_details()
     output_details = interpreter.get_output_details()
 
-    predictions, pred_num = defaultdict(list), defaultdict(list)
+    predictions, predictions_binary = defaultdict(list), defaultdict(list)
 
     t = tqdm(total=max_predictions * number_of_videos)
 
@@ -877,6 +882,9 @@ def make_cnn_predictions(cnn_path: Path, max_predictions: int,
                                                    max_frames=max_predictions,
                                                    generate_by="video"):
         true_index = np.argmax(label)
+
+        info = get_clip_info(clip_name, video_csv_info)
+        info = info.loc[["artworkID", "distance", "clipType"]].to_list()
 
         # infer for all provided altering functions
         for func_name, func in frame_altering_funcs.items():
@@ -895,26 +903,30 @@ def make_cnn_predictions(cnn_path: Path, max_predictions: int,
 
             pred_index = np.argmax(output_data)
 
-            predictions[clip_name].append(
+            pred_info = tuple(info + [func_name])  # to use as key in res dicts
+
+            predictions[pred_info].append(
                 {"confidence": float(output_data[pred_index].item()),
                  "index": int(pred_index), "label": artwork_list[pred_index]})
-            pred_num[clip_name].append(int(true_index == pred_index))
+
+            predictions_binary[pred_info].append(int(true_index == pred_index))
+
             print(artwork_list[pred_index] in clip_name, clip_name,
                   artwork_list[pred_index])
         t.update()
 
     t.close()
 
-    with open(output_dir / "pred_str.json", "w") as f:
+    with open(output_dir / "predictions.json", "w") as f:
         json.dump(predictions, f, indent=4)
-    with open(output_dir / "pred_num.json", "w") as f:
-        json.dump(pred_num, f, indent=4)
+    with open(output_dir / "predictions_binary.json", "w") as f:
+        json.dump(predictions_binary, f, indent=4)
 
-    dt = dataset.join(pd.DataFrame(pred_num).T, on="clip_name")
-    with open(output_dir / "dt.csv", "w+") as f:
-        dt.to_csv(f)
+    # dt = dataset.join(pd.DataFrame(predictions_binary).T, on="clip_name")
+    # with open(output_dir / "dt.csv", "w+") as f:
+    #     dt.to_csv(f)
 
-    return dt
+    return predictions_binary
 
 
 @functools.lru_cache(maxsize=1000)
