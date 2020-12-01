@@ -835,14 +835,20 @@ def make_cnn_predictions(cnn_path: Path, max_predictions: int,
     """
     Makes CNN predictions with the provided Tflite CNN.
 
-    :param cnn_path:
-    :param max_predictions:
-    :param video_csv_info:
-    :param videos_dir:
-    :param output_dir:
-    :param frame_altering_funcs:
-    :param include_missing_ids:
-    :return:
+    :param cnn_path: path to the tflite model
+    :param max_predictions: number of predictions to make per video; if the
+     number is higher than the available frames, the prediction number will be
+     equal to the number available frames
+    :param video_csv_info: path to a csv file with info about all videos
+    :param videos_dir: path to the directory that contains the videos
+    :param output_dir: path to the directory to save the results
+    :param frame_altering_funcs: dict of functions to be used to alter the
+     extracted frames before predictions; if it not specified, the frames are
+     used as is
+    :param include_missing_ids: whether to add any missing ids in the artwork
+     list (necessary since the test videos do not contain videos for the
+     "no_artwork" category)
+    :return: dict of lists of recognitions for each video/func combination
     """
     if frame_altering_funcs is None:
         # if no function is provided to alter the frames, they are used as is
@@ -914,7 +920,6 @@ def make_cnn_predictions(cnn_path: Path, max_predictions: int,
             print(artwork_list[pred_index] in clip_name, clip_name,
                   artwork_list[pred_index])
         t.update()
-
     t.close()
 
     with open(output_dir / "predictions.json", "w") as f:
