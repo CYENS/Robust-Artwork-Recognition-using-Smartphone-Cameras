@@ -943,6 +943,18 @@ def get_clip_info(clip_name: str, video_csv_info: Path):
     return info
 
 
+class ClipInfo(object):
+    def __init__(self, video_csv_info: Path):
+        self.dt = pd.read_csv(video_csv_info)
+
+    @functools.lru_cache(maxsize=1000)
+    def get_clip_info(self, clip_name: str):
+        info = self.dt.loc[self.dt['clip_name'] == clip_name]
+        assert info.shape[0] == 1  # there should only be one row here
+        info = info.iloc[0]  # convert to a Series
+        return info
+
+
 @functools.lru_cache(maxsize=128)
 def get_visitor_overlay():
     return Image.open(files_dir / "Xoio_people_0023.png")
