@@ -1,16 +1,16 @@
 ## Version 0.8.2
-### 2010-11-04
+### 2020-11-04
 - Added 3 more CNNs for testing
 - Bug fixes
 
 ## Version 0.8.1
-### 2010-11-02
+### 2020-11-02
 - Added option to automatically navigate to the recognised artwork's
   details
 - New setting for exporting list of recognitions and the timings of each
 
 ## Version 0.8.0
-### 2010-10-29
+### 2020-10-29
 - Implementation of a total of 4 algorithms that allow the selection of
   the correct artwork from the stream of CNN predictions; these will be
   used for testing the optimal combination of model/algorithm that gives
@@ -18,14 +18,14 @@
 - Major changes to the underlying structure of the app's database
 
 ## Version 0.7.1
-### 2010-10-23
+### 2020-10-23
 - Fixed bug that caused Tensorflow models to be re-loaded after every
   inference
 - Implementation of one more algorithm that allows the selection of the
   correct artwork from the stream of CNN predictions; more to follow
 
 ## Version 0.7.0
-### 2010-10-19
+### 2020-10-19
 - First implementation of algorithm that allows the selection of the
   correct artwork from the stream of CNN predictions (averaging the
   predictions for 5 frames in a row); more implementations of algorithms
@@ -36,14 +36,14 @@
   the CNNs
 
 ## Version 0.6.2
-### 2010-10-14
+### 2020-10-14
 - The selection of the CNN type being used was moved to Settings,
   instead of as a list of buttons in the "Identify artwork" screen
 - Preparation for implementing artwork auto-detection logic (i.e. how to
   decide which of the CNN inferred artworks is the correct one)
 
 ## Version 0.6.1
-### 2010-10-13
+### 2020-10-13
 - Added new artwork recognition CNNs based on MobileNet, they are much
   faster, smaller in size, and have comparable accuracy with the
   previous VGG19 based CNNs
@@ -51,7 +51,7 @@
 - Improved Artwork/Artist detail pages
 
 ## Version 0.6.0
-### 2010-10-12
+### 2020-10-12
 - All artwork and artist entries updated with actual descriptions and
   biographies
 - High resolution images of the artworks added
@@ -61,57 +61,57 @@
   detect if 0, 1 or 1+ artworks are present in the frame
 
 ## Version 0.5.0
-### 2010-09-29
+### 2020-09-29
 - The app's database is now fully internationalised for both Greek and
   English
 
 ## Version 0.4.4
-### 2010-09-25
+### 2020-09-25
 - App now shows small images of the recognised artworks next to the
   Tensorflow inferences
 - Preparation for internationalisation of the app's database schema
 - Bug fixes
 
 ## Version 0.4.3
-### 2010-09-23
+### 2020-09-23
 - Added ability to navigate from Tensorflow inferences to artwork detail
   pages
 - Updated artwork/artist detail pages
 - Added more translations to Greek
 
 ## Version 0.4.2
-### 2010-09-22
+### 2020-09-22
 - Updated app database with actual artworks from the Gallery (13
   paintings and 3 sculptures)
 - Removed older placeholder artworks
 
 ## Version 0.4.1
-### 2010-09-17
+### 2020-09-17
 - The Convolutional Neural Network can now detect an additional 3
   sculptures in the Gallery
 
 ## Version 0.4.0
-### 2010-09-15
+### 2020-09-15
 - The app now incorporates a Convolutional Neural Network (based on
   VGG19) capable of detecting 13 artworks in the Gallery; more artworks
   will be added in future updates
 
 ## Version 0.3.0
-### 2010-09-11
+### 2020-09-11
 - Translated app to Greek
 - Bug fixes
 
 ## Version 0.2.0
-### 2010-09-07
+### 2020-09-07
 - Added Settings page
 - New tile in Explore page showing featured artwork
 
 ## Version 0.1.1
-### 2010-09-04
+### 2020-09-04
 - The app's database is now auto-populated on first app launch
 
 ## Version 0.1.0
-### 2010-09-02
+### 2020-09-02
 - First minor version
 - Overhaul of pages showing details for Artists and Artworks
   - Artist detail page now includes a list of all artworks by Artist
@@ -119,53 +119,53 @@
 - More database improvements
 
 ## Version 0.0.10
-### 2010-09-01
+### 2020-09-01
 - Added new page showing artist details
 - General database improvements
 
 ## Version 0.0.9
-### 2010-08-27
+### 2020-08-27
 - App database now fully functional
 - App is able to update it's database from a remote backend
 - UI updates
 
 ## Version 0.0.8
-### 2010-08-25
+### 2020-08-25
 - Incorporated database into app
 - More UI tweaks
 
 ## Version 0.0.7
-### 2010-08-24
+### 2020-08-24
 - Added Bottom Navigation Bar to Home page
 - Removed AppBar in Home page
 
 ## Version 0.0.6
-### 2010-08-20
+### 2020-08-20
 - Added widget with list of painters on main screen
 - UI redesign
 - Major codebase restructuring
 
 ## Version 0.0.5
-### 2010-08-19
+### 2020-08-19
 - Added widget with list of paintings on main screen
 - Bug fixes
 
 ## Version 0.0.4
-### 2010-08-17
+### 2020-08-17
 - Added widget with list of paintings, as well as widget showing
   individual painting details
 - Initial stages of incorporating a database into the app
 
 ## Version 0.0.3
-### 2010-08-11
+### 2020-08-11
 - Added Tensorflow integration and demo widget showing its use
 
 ## Version 0.0.2
-### 2010-08-10
+### 2020-08-10
 - Added painting details screen
 - New home screen
 
 ## Version 0.0.1
-### 2010-08-08
+### 2020-08-08
 - First version, adds support for accessing and using the camera to take
   and display photos
