@@ -22,6 +22,7 @@ const String keyCnnSensitivity = "keyCnnSensitivity";
 const String keyWinThreshP = "keyWinThreshP";
 const String keyWinThreshPName = "keyWinThreshPName";
 const String keyNavigateToDetails = "keyNavigateToDetails";
+const String keyDisplayExtraInfo = "keyDisplayExtraInfo";
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -96,7 +97,13 @@ class _SettingsPageState extends State<SettingsPage> {
                 title: "Navigate to recognised artworks' details",
                 settingKey: keyNavigateToDetails,
                 defaultValue: false,
-              )
+              ),
+              SwitchSettingsTile(
+                leading: Icon(Icons.list_alt_outlined),
+                title: "Display model & algorithm information in camera view",
+                settingKey: keyDisplayExtraInfo,
+                defaultValue: true,
+              ),
             ],
           ),
           SettingsGroup(

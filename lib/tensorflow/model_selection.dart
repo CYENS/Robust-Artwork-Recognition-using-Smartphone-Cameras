@@ -130,7 +130,7 @@ class _ModelSelectionState extends State<ModelSelection> {
                     artworkId: currentAlgorithm.topInference,
                     languageCode: context.locale().languageCode)
                 .then((artwork) {
-              return Navigator.push(
+              Navigator.push(
                   context,
                   MaterialPageRoute(
                       builder: (context) =>
@@ -161,14 +161,16 @@ class _ModelSelectionState extends State<ModelSelection> {
                   setRecognitions,
                   _model,
                 ),
-                BBox(
-                    _recognitions == null ? [] : _recognitions,
-                    math.max(_imageHeight, _imageWidth),
-                    math.min(_imageHeight, _imageWidth),
-                    screen.height,
-                    screen.width,
-                    _model,
-                    _inferenceTime),
+                SafeArea(
+                  child: BBox(
+                      _recognitions == null ? [] : _recognitions,
+                      math.max(_imageHeight, _imageWidth),
+                      math.min(_imageHeight, _imageWidth),
+                      screen.height,
+                      screen.width,
+                      _model,
+                      _inferenceTime),
+                ),
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: Padding(
@@ -176,16 +178,26 @@ class _ModelSelectionState extends State<ModelSelection> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
+                        Settings.getValue(keyDisplayExtraInfo, true)
+                            ? Column(
+                                children: [
+                                  Text(
+                                    "Result: $_currentRes",
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                  Text(
+                                    "Current algorithm: $_currentAlgo",
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                  Text("Model: $_model"),
+                                  Text("Sensitivity: $_preferredSensitivity"),
+                                ],
+                              )
+                            : Container(),
                         Text(
-                          "Result: $_currentRes",
-                          style: TextStyle(fontSize: 18),
+                          _fps,
+                          style: TextStyle(fontSize: 20),
                         ),
-                        Text(
-                          "Current algorithm: $_currentAlgo",
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        Text("Model: $_model"),
-                        Text("Sensitivity: $_preferredSensitivity" + ", $_fps"),
                       ],
                     ),
                   ),

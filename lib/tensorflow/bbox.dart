@@ -77,9 +77,9 @@ class BBox extends StatelessWidget {
     }
 
     List<Widget> _renderStrings() {
-      double offset = -screenWidth / 5 / 1.3;
+      double offset = -10;
       return results.map((re) {
-        offset = offset + screenWidth / 5;
+        offset = offset + 30;
         return Positioned(
           left: 10,
           top: offset,
@@ -177,9 +177,9 @@ class BBox extends StatelessWidget {
         vgg19ZeroOneMultiQuant,
         mobileNetNoArt,
         mobileNetNoArtQuant,
-        mobNetNoArt800,
+        inceptionV3NoArt500,
         mobNetNoArt500Quant_4,
-        mobNetNoArt700New,
+        inceptionV3NoArt500Quant,
         mobNetNoArt500_4,
       ].contains(model)
           ? _renderStrings()
