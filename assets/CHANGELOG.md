@@ -1,3 +1,8 @@
+## Version 0.9.0
+### 2021-01-05
+- Multiple changes in included CNNs
+- Many bug fixes
+
 ## Version 0.8.2
 ### 2020-11-04
 - Added 3 more CNNs for testing
@@ -5,7 +10,7 @@
 
 ## Version 0.8.1
 ### 2020-11-02
-- Added option to automatically navigate to the recognised artwork's
+- Added option to automatically navigate to a recognised artwork's
   details
 - New setting for exporting list of recognitions and the timings of each
 
