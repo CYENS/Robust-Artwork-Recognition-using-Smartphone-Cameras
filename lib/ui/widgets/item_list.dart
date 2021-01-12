@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/ui/widgets/item_row.dart';
 import 'package:modern_art_app/ui/widgets/item_tile.dart';
@@ -38,7 +39,8 @@ class ListHorizontal extends StatelessWidget {
                 },
               );
             }
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+                child: SpinKitRotatingPlain(color: Colors.white, size: 50.0));
           },
         ),
       ),
