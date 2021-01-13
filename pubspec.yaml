@@ -62,6 +62,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   moor_generator: ^3.3.1
+  test: ^1.15.7
   # temporarily necessary to fix the issue below, try removing in the future
   # https://github.com/simolus3/moor/issues/553
   # https://github.com/simolus3/moor/issues/777
