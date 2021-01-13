@@ -46,7 +46,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 title: "CNN type used",
                 settingKey: keyCnnModel,
                 values: tfLiteModelNames,
-                selected: mobileNetNoArt,
+                selected: mobNetNoArt500_4,
                 onChange: (value) {
                   debugPrint("$keyCnnModel: $value");
                 },
