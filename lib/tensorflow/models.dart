@@ -27,30 +27,30 @@ const Map<String, TfLiteModel> tfLiteModels = {
   // vgg19: TfLiteModel(
   //     modelPath: "cnn224RGB_VGG19.tflite",
   //     labelsPath: "cnn224RGB_VGG19_labels.txt"),
-  vgg19Quant: TfLiteModel(
-      modelPath: "cnn224RGB_VGG19_quant.tflite",
-      labelsPath: "cnn224RGB_VGG19_labels.txt"),
-  // vgg19NoArtQuant: TfLiteModel(
-  //     modelPath: "VGG_with_no_art_quant.tflite",
-  //     labelsPath: "VGG_with_no_art_labels.txt"),
-  vgg19ZeroOneMultiQuant: TfLiteModel(
-      modelPath: "VGG19ZeroOneMultiple1500Frames_quant.tflite",
-      labelsPath: "VGG19ZeroOneMultiple1500Frames_labels.txt"),
-  mobileNetNoArt: TfLiteModel(
-      modelPath: "MobileNet_No_Art.tflite",
+  // vgg19Quant: TfLiteModel(
+  //     modelPath: "cnn224RGB_VGG19_quant.tflite",
+  //     labelsPath: "cnn224RGB_VGG19_labels.txt"),
+  vgg19NoArtQuant: TfLiteModel(
+      modelPath: "VGG_with_no_art_quant.tflite",
       labelsPath: "MobileNet_No_Art_labels.txt"),
-  mobileNetNoArtQuant: TfLiteModel(
-      modelPath: "MobileNet_No_Art_quant.tflite",
-      labelsPath: "MobileNet_No_Art_labels.txt"),
+  // vgg19ZeroOneMultiQuant: TfLiteModel(
+  //     modelPath: "VGG19ZeroOneMultiple1500Frames_quant.tflite",
+  //     labelsPath: "VGG19ZeroOneMultiple1500Frames_labels.txt"),
+  // mobileNetNoArt: TfLiteModel(
+  //     modelPath: "MobileNet_No_Art.tflite",
+  //     labelsPath: "MobileNet_No_Art_labels.txt"),
+  // mobileNetNoArtQuant: TfLiteModel(
+  //     modelPath: "MobileNet_No_Art_quant.tflite",
+  //     labelsPath: "MobileNet_No_Art_labels.txt"),
   mobNetNoArt500_4: TfLiteModel(
       modelPath: "MobNetNoArt500Frames_4.tflite",
       labelsPath: "MobileNet_No_Art_labels.txt"),
-  mobNetNoArt500Quant_4: TfLiteModel(
-      modelPath: "MobNetNoArt500Frames_4_quant.tflite",
-      labelsPath: "MobileNet_No_Art_labels.txt"),
-  inceptionV3NoArt500: TfLiteModel(
-      modelPath: "InceptionV3NoArt500Frames.tflite",
-      labelsPath: "MobileNet_No_Art_labels.txt"),
+  // mobNetNoArt500Quant_4: TfLiteModel(
+  //     modelPath: "MobNetNoArt500Frames_4_quant.tflite",
+  //     labelsPath: "MobileNet_No_Art_labels.txt"),
+  // inceptionV3NoArt500: TfLiteModel(
+  //     modelPath: "InceptionV3NoArt500Frames.tflite",
+  //     labelsPath: "MobileNet_No_Art_labels.txt"),
   inceptionV3NoArt500Quant: TfLiteModel(
       modelPath: "InceptionV3NoArt500Frames_quant.tflite",
       labelsPath: "MobileNet_No_Art_labels.txt"),
