@@ -14,7 +14,14 @@ def get_json(sheet_number):
     return requests.get(url)
 
 
-def main():
+def get_json_assets():
+    """
+    Gets artwork and artist information from the Google sheet that contains the
+    information. The information is saved as a JSON file in the app's asset
+    folder, and is used to populated the app's database during first launch.
+    The script processes the downloaded JSON file and removes personal
+    information before saving it.
+    """
     json_types, sheet_numbers = ["artworks", "artists"], [6, 7]
 
     for json_type, sheet_number in zip(json_types, sheet_numbers):
@@ -38,4 +45,4 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    get_json_assets()
