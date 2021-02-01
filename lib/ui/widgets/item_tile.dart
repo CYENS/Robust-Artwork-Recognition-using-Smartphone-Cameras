@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:modern_art_app/data/database.dart';
-import 'package:modern_art_app/ui/widgets/artist_details_page.dart';
-import 'package:modern_art_app/ui/widgets/artwork_details_page.dart';
+import 'package:modern_art_app/ui/pages/artist_details_page.dart';
+import 'package:modern_art_app/ui/pages/artwork_details_page.dart';
 import 'package:modern_art_app/utils/utils.dart';
 
 /// Displays the provided image at [imagePath] in a tile with rounded corners.

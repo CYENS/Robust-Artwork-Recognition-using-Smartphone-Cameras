@@ -1,3 +1,11 @@
+## Version 0.9.1
+### 2021-02-01
+- Added new app icon, based on the painting by Vera Hadjida "Untitled" (1973)
+- Added missing artist photos
+- Removed unneeded request for microphone permission on Android
+- Remove all but 3 CNNs, MobileNetV2 based CNN is now the default
+- Library updates
+
 ## Version 0.9.0
 ### 2021-01-05
 - Multiple changes in included CNNs

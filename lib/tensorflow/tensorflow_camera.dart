@@ -33,6 +33,11 @@ class _TensorFlowCameraState extends State<TensorFlowCamera> {
       controller = new CameraController(
         widget.cameras[0],
         ResolutionPreset.high,
+        // we don't need audio in the app, so by passing false below, the
+        // microphone permission is not requested from the user (on Android,
+        // on iOS the permission has to be manually specified, which was not
+        // done for this app)
+        enableAudio: false,
       );
       controller.initialize().then((_) {
         if (!mounted) {

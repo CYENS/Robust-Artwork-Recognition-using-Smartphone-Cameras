@@ -46,7 +46,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 title: "CNN type used",
                 settingKey: keyCnnModel,
                 values: tfLiteModelNames,
-                selected: mobileNetNoArt,
+                selected: mobNetNoArt500_4,
                 onChange: (value) {
                   debugPrint("$keyCnnModel: $value");
                 },
@@ -145,8 +145,23 @@ class _SettingsPageState extends State<SettingsPage> {
                   PackageInfo.fromPlatform()
                       .then((packageInfo) => showAboutDialog(
                             context: context,
+                            applicationIcon: const SizedBox(
+                              width: 80,
+                              height: 80,
+                              child: Image(
+                                image: AssetImage(
+                                    'assets/app_launcher_icons/hadjida_untitled_app_icon_square_android_adaptive.png'),
+                              ),
+                            ),
                             applicationName: packageInfo.appName,
-                            applicationVersion: packageInfo.version,
+                            applicationVersion:
+                                "App version: " + packageInfo.version,
+                            children: [
+                              Text(
+                                  "App for the State Gallery of Contemporary Cypriot Art."),
+                              Text(""),
+                              Text("Made by the BIO-SCENT MRG at RISE Ltd."),
+                            ],
                           ));
                 },
               ),
