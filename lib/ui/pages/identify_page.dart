@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 
@@ -58,6 +60,24 @@ class _IdentifyPageState extends State<IdentifyPage> {
       return Container();
     }
 
-    return CameraPreview(_controller);
+    // the following logic does not work properly when camera preview is in
+    // landscape, see this issue https://github.com/flutter/flutter/issues/29951
+    // todo fix preview orientation issue
+    var tmp = MediaQuery.of(context).size;
+    var screenH = math.max(tmp.height, tmp.width);
+    var screenW = math.min(tmp.height, tmp.width);
+    tmp = _controller.value.previewSize;
+    var previewH = math.max(tmp.height, tmp.width);
+    var previewW = math.min(tmp.height, tmp.width);
+    var screenRatio = screenH / screenW;
+    var previewRatio = previewH / previewW;
+
+    return OverflowBox(
+      maxHeight:
+          screenRatio > previewRatio ? screenH : screenW / previewW * previewH,
+      maxWidth:
+          screenRatio > previewRatio ? screenH / previewH * previewW : screenW,
+      child: CameraPreview(_controller),
+    );
   }
 }
