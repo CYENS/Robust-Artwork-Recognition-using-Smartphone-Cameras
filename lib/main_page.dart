@@ -17,6 +17,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   final _navigatorKey = GlobalKey<NavigatorState>();
+  int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +29,7 @@ class _MainPageState extends State<MainPage> {
         onGenerateRoute: (RouteSettings settings) {
           WidgetBuilder builder;
           // route names
+          // todo move route names into a list? map?
           switch (settings.name) {
             case "/":
               builder = (BuildContext context) => ExplorePage();
@@ -49,6 +51,7 @@ class _MainPageState extends State<MainPage> {
         },
       ),
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
         items: [
           BottomNavigationBarItem(
               icon: Icon(Icons.home), label: strings.nav.explore),
@@ -69,6 +72,9 @@ class _MainPageState extends State<MainPage> {
               _navigatorKey.currentState.pushNamed("/");
               break;
           }
+          setState(() {
+            _currentIndex = index;
+          });
         },
       ),
     );
