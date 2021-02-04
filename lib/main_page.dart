@@ -66,10 +66,10 @@ class _MainPageState extends State<MainPage> {
               _navigatorKey.currentState.pushNamed("/");
               break;
             case 1:
-              _navigatorKey.currentState.pushNamed("/");
+              _navigatorKey.currentState.pushNamed("/identify");
               break;
             case 2:
-              _navigatorKey.currentState.pushNamed("/");
+              _navigatorKey.currentState.pushNamed("/settings");
               break;
           }
           setState(() {
