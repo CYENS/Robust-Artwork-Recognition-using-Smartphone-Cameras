@@ -2,6 +2,14 @@ import 'dart:math' as math;
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_settings_screens/flutter_settings_screens.dart';
+import 'package:modern_art_app/data/artworks_dao.dart';
+import 'package:modern_art_app/tensorflow/models.dart';
+import 'package:modern_art_app/ui/pages/artwork_details_page.dart';
+import 'package:modern_art_app/ui/pages/settings_page.dart';
+import 'package:modern_art_app/utils/extensions.dart';
+import 'package:provider/provider.dart';
+import 'package:tflite/tflite.dart';
 
 class IdentifyPage extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -14,12 +22,46 @@ class IdentifyPage extends StatefulWidget {
 
 class _IdentifyPageState extends State<IdentifyPage> {
   CameraController _controller;
-  bool isDetecting = false;
+  bool _busy = false;
+  String _model = "";
+
+  // initTfLiteModel() {
+  //   String preferredModel = Settings.getValue(keyCnnModel, mobileNetNoArt);
+  //   setState(() => _model = preferredModel);
+  //   loadModel();
+  // }
+
+  Future loadModel() async {
+    print("LOADING MODEL++++++++++++++++++++++++++++++");
+    Tflite.close();
+    String preferredModel = Settings.getValue(keyCnnModel, mobileNetNoArt);
+    TfLiteModel model = tfLiteModels[preferredModel];
+    String result = await Tflite.loadModel(
+      // todo modelPath is called on null on first launch, before getting camera permission?
+      model: model.modelPath,
+      labels: model.labelsPath,
+    );
+    setState(() => _model = preferredModel);
+    print("$result loading model $_model, as specified in Settings");
+  }
 
   @override
   void initState() {
     super.initState();
 
+    _busy = true;
+
+    // Steps that have to happen:
+    // - init model
+    // - init camera controller (this on first launch triggers asking for camera permission?)
+    // Which order should they happen in?
+
+    // initTfLiteModel();
+    loadModel().then((_) => setState(() {
+          _busy = false;
+        }));
+
+    // todo here should make sure the model was initialized?
     if (widget.cameras == null || widget.cameras.length < 1) {
       print("No camera found!");
     } else {
@@ -37,10 +79,49 @@ class _IdentifyPageState extends State<IdentifyPage> {
       _controller.initialize().then((_) {
         // check that the user has not navigated away
         if (!mounted) {
+          // todo if setState is overridden like in model_selection, this may be unnecessary?
           return;
         }
 
         setState(() {});
+
+        _controller.startImageStream((CameraImage img) {
+          print("NEW FRAME...............................");
+          if (!_busy) {
+            _busy = true;
+
+            Tflite.runModelOnFrame(
+              bytesList: img.planes.map((plane) => plane.bytes).toList(),
+              imageHeight: img.height,
+              imageWidth: img.width,
+              imageMean: 127.5,
+              imageStd: 127.5,
+              numResults: 1,
+            ).then((recognitions) {
+              print("Inference for ${recognitions[0]['label']}");
+              if (recognitions[0]['label'] != "no_artwork") {
+                _busy = true;
+                if (_controller.value.isStreamingImages) {
+                  _controller.stopImageStream();
+                }
+                _controller.dispose();
+                Tflite.close();
+                Provider.of<ArtworksDao>(context, listen: false)
+                    .getArtworkById(
+                        artworkId: recognitions[0]['label'],
+                        languageCode: context.locale().languageCode)
+                    .then((artwork) => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  ArtworkDetailsPage(artwork: artwork)),
+                        ));
+              }
+            });
+
+            _busy = false;
+          }
+        });
       });
     }
   }
@@ -49,8 +130,19 @@ class _IdentifyPageState extends State<IdentifyPage> {
   void dispose() {
     // dispose controller when user navigates away
     _controller?.dispose();
+    // Tflite?.close();
     print("camera controller disposed");
     super.dispose();
+  }
+
+  @override
+  void setState(VoidCallback fn) {
+    // checks that page is still mounted before calling setState, to avoid
+    // "setState after dispose" errors
+    if (mounted) {
+      print("SET STATE!!!!!!!!!!!!!!!!!!!!!");
+      super.setState(fn);
+    }
   }
 
   @override
