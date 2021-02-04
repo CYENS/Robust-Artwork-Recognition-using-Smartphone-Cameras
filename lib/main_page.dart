@@ -23,32 +23,41 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     final strings = context.strings();
     return Scaffold(
-      body: Navigator(
-        key: _navigatorKey,
-        initialRoute: "/",
-        onGenerateRoute: (RouteSettings settings) {
-          WidgetBuilder builder;
-          // route names
-          // todo move route names into a list? map?
-          switch (settings.name) {
-            case "/":
-              builder = (BuildContext context) => ExplorePage();
-              break;
-            case "/identify":
-              builder =
-                  (BuildContext context) => ModelSelection(widget.cameras);
-              break;
-            case "/settings":
-              builder = (BuildContext context) => SettingsPage();
-              break;
-            default:
-              throw Exception("Invalid route: ${settings.name}");
+      body: WillPopScope(
+        onWillPop: () async {
+          if (_navigatorKey.currentState.canPop()) {
+            _navigatorKey.currentState.pop();
+            return false;
           }
-          return MaterialPageRoute(
-            builder: builder,
-            settings: settings,
-          );
+          return true;
         },
+        child: Navigator(
+          key: _navigatorKey,
+          initialRoute: "/",
+          onGenerateRoute: (RouteSettings settings) {
+            WidgetBuilder builder;
+            // route names
+            // todo move route names into a list? map?
+            switch (settings.name) {
+              case "/":
+                builder = (BuildContext context) => ExplorePage();
+                break;
+              case "/identify":
+                builder =
+                    (BuildContext context) => ModelSelection(widget.cameras);
+                break;
+              case "/settings":
+                builder = (BuildContext context) => SettingsPage();
+                break;
+              default:
+                throw Exception("Invalid route: ${settings.name}");
+            }
+            return MaterialPageRoute(
+              builder: builder,
+              settings: settings,
+            );
+          },
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
