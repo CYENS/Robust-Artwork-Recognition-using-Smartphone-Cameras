@@ -1,4 +1,5 @@
 import 'package:camera/camera.dart';
+import 'package:convex_bottom_bar/convex_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:modern_art_app/tensorflow/model_selection.dart';
 import 'package:modern_art_app/ui/pages/explore_page.dart';
@@ -59,15 +60,14 @@ class _MainPageState extends State<MainPage> {
           },
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
+      bottomNavigationBar: ConvexAppBar(
+        style: TabStyle.fixed,
+        backgroundColor: ThemeData.dark().primaryColor,
+        initialActiveIndex: _currentIndex,
         items: [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.home), label: strings.nav.explore),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.camera), label: strings.nav.identify),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.settings), label: strings.stngs.title),
+          TabItem(icon: Icon(Icons.home), title: strings.nav.explore),
+          TabItem(icon: Icon(Icons.camera), title: strings.nav.identify),
+          TabItem(icon: Icon(Icons.settings), title: strings.stngs.title),
         ],
         onTap: (index) {
           switch (index) {
