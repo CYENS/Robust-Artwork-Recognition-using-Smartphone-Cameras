@@ -22,6 +22,7 @@ class IdentifyPage extends StatefulWidget {
 
 class _IdentifyPageState extends State<IdentifyPage> {
   CameraController _controller;
+  bool _cameraOn = true;
   bool _busy = false;
   String _model = "";
 
@@ -100,12 +101,15 @@ class _IdentifyPageState extends State<IdentifyPage> {
             ).then((recognitions) {
               print("Inference for ${recognitions[0]['label']}");
               if (recognitions[0]['label'] != "no_artwork") {
-                _busy = true;
+                setState(() {
+                  _busy = true;
+                  _cameraOn = false;
+                });
                 if (_controller.value.isStreamingImages) {
                   _controller.stopImageStream();
                 }
-                _controller.dispose();
-                Tflite.close();
+                // _controller.dispose();
+                // Tflite.close();
                 Provider.of<ArtworksDao>(context, listen: false)
                     .getArtworkById(
                         artworkId: recognitions[0]['label'],
@@ -115,7 +119,14 @@ class _IdentifyPageState extends State<IdentifyPage> {
                           MaterialPageRoute(
                               builder: (context) =>
                                   ArtworkDetailsPage(artwork: artwork)),
-                        ));
+                        ).then((value) => setState(() {
+                              print("back to tensorflow");
+                              _cameraOn = true;
+                              _busy = false;
+                              if (!_controller.value.isStreamingImages) {
+                                _controller.startImageStream((image) => null);
+                              }
+                            })));
               }
             });
 
@@ -147,8 +158,9 @@ class _IdentifyPageState extends State<IdentifyPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (_controller == null || !_controller.value.isInitialized) {
+    if (_controller == null || !_controller.value.isInitialized || !_cameraOn) {
       // todo show error message to user here
+      print("show container!!!!!!");
       return Container();
     }
 
