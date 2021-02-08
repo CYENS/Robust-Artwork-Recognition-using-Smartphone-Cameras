@@ -38,7 +38,7 @@ class _ModelSelectionState extends State<ModelSelection> {
   double _preferredSensitivity = 0.0;
   bool _navigateToDetails = false;
 
-  bool addedViewing = false;
+  // bool addedViewing = false;
   var currentAlgorithm;
   String _currentRes = "";
   String _currentAlgo = "";
@@ -110,7 +110,9 @@ class _ModelSelectionState extends State<ModelSelection> {
       currentAlgorithm.updateRecognitions(recognitions, inferenceTime);
       _currentRes = currentAlgorithm.topInferenceFormatted;
       _fps = currentAlgorithm.fps;
-      if (currentAlgorithm.hasResult() && !addedViewing) {
+      if (currentAlgorithm.hasResult()) {
+        _model = "";
+        // && !addedViewing
         if (currentAlgorithm.topInference != "no_artwork") {
           // get top inference as an object ready to insert in db
           ViewingsCompanion vc = currentAlgorithm.resultAsDbObject();
@@ -118,7 +120,7 @@ class _ModelSelectionState extends State<ModelSelection> {
           vc = vc.copyWith(cnnModelUsed: Value(_model));
           viewingsDao.insertTask(vc);
           print("Added VIEWING: $vc");
-          addedViewing = true;
+          // addedViewing = true;
           if (_navigateToDetails) {
             // navigate to artwork details
             Provider.of<ArtworksDao>(context, listen: false)
