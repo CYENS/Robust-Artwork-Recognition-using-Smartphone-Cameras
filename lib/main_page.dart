@@ -17,6 +17,8 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  // the HeroController is needed for enabling Hero animations in the custom
+  // Navigator below, see this answer https://stackoverflow.com/a/60729122
   HeroController _heroController;
   final _navigatorKey = GlobalKey<NavigatorState>();
   int _currentIndex = 0;
@@ -36,6 +38,8 @@ class _MainPageState extends State<MainPage> {
     final strings = context.strings();
     return Scaffold(
       body: WillPopScope(
+        // wrapping the Navigator with a WillPopScope enables the correct
+        // handling of the back button on Android
         onWillPop: () async {
           if (_navigatorKey.currentState.canPop()) {
             _navigatorKey.currentState.pop();
