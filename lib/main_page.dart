@@ -17,8 +17,19 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  HeroController _heroController;
   final _navigatorKey = GlobalKey<NavigatorState>();
   int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _heroController = HeroController(createRectTween: _createRectTween);
+  }
+
+  RectTween _createRectTween(Rect begin, Rect end) {
+    return MaterialRectArcTween(begin: begin, end: end);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +45,7 @@ class _MainPageState extends State<MainPage> {
         },
         child: Navigator(
           key: _navigatorKey,
+          observers: [_heroController],
           initialRoute: "/",
           onGenerateRoute: (RouteSettings settings) {
             WidgetBuilder builder;
