@@ -28,9 +28,18 @@ class ArtworkDetailsPage extends StatelessWidget {
               onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => ItemZoomPage(
-                            fileName: getArtworkFilename(artwork),
-                            heroTag: customHeroTag ?? artwork.name,
+                      builder: (context) => Scaffold(
+                            appBar: AppBar(
+                              // empty app bar so the back button is shown in
+                              // the zoom page
+                              backgroundColor: ThemeData.dark()
+                                  .primaryColor
+                                  .withOpacity(0.2),
+                            ),
+                            body: ItemZoomPage(
+                              fileName: getArtworkFilename(artwork),
+                              heroTag: customHeroTag ?? artwork.name,
+                            ),
                           ))),
               child: Hero(
                 tag: customHeroTag ?? artwork.name,
