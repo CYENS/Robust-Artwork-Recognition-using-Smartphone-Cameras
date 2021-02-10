@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
-import 'package:flutter_whatsnew/flutter_whatsnew.dart';
 import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/data/inference_algorithms.dart';
 import 'package:modern_art_app/data/viewings_dao.dart';
 import 'package:modern_art_app/tensorflow/models.dart';
+import 'package:modern_art_app/ui/pages/changelog_page.dart';
 import 'package:modern_art_app/utils/extensions.dart';
 import 'package:modern_art_app/utils/utils.dart';
 import 'package:moor_db_viewer/moor_db_viewer.dart';
@@ -169,11 +169,14 @@ class _SettingsPageState extends State<SettingsPage> {
                 title: strings.stngs.stng.changelog,
                 subtitle: strings.stngs.stng.changelogSummary,
                 onTap: () {
-                  print("tapped");
-                  return WhatsNewPage.changelog(
-                    title: Text("whats new"),
-                    buttonText: Text("null"),
-                    // path: "/assets/CHANGELOG.md",
+                  // here the root navigator is used, so that the changelog is
+                  // displayed on top of the rest of the UI (and the NavBar)
+                  Navigator.of(context, rootNavigator: true).push(
+                    MaterialPageRoute(
+                      builder: (context) => ChangeLogPage(
+                        changelogAssetsPath: "assets/CHANGELOG.md",
+                      ),
+                    ),
                   );
                 },
               ),
