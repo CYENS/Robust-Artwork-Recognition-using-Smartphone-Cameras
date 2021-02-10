@@ -17,10 +17,17 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  // the HeroController is needed for enabling Hero animations in the custom
-  // Navigator below, see this answer https://stackoverflow.com/a/60729122
+  /// The HeroController is needed for enabling Hero animations in the custom
+  /// Navigator below, see this post https://stackoverflow.com/a/60729122
   HeroController _heroController;
+
+  /// The global [_navigatorKey] is necessary so that the nav bar can push
+  /// routes to the navigator (the nav bar is located above/in another branch
+  /// of the widget hierarchy from the navigator, and thus in another context,
+  /// and so it cannot access the navigator using the usual
+  /// Navigator.of(context) methods.
   final _navigatorKey = GlobalKey<NavigatorState>();
+
   int _currentIndex = 0;
 
   @override
@@ -29,6 +36,7 @@ class _MainPageState extends State<MainPage> {
     _heroController = HeroController(createRectTween: _createRectTween);
   }
 
+  /// Used for enabling Hero animations in the custom Navigator.
   RectTween _createRectTween(Rect begin, Rect end) {
     return MaterialRectArcTween(begin: begin, end: end);
   }
@@ -88,7 +96,10 @@ class _MainPageState extends State<MainPage> {
         onTap: (index) {
           switch (index) {
             case 0:
-              _navigatorKey.currentState.pushNamed("/");
+              // when the Explore tab is selected, remove everything else from
+              // the navigator's stack
+              _navigatorKey.currentState
+                  .pushNamedAndRemoveUntil("/", (_) => false);
               break;
             case 1:
               _navigatorKey.currentState.pushNamed("/identify");
