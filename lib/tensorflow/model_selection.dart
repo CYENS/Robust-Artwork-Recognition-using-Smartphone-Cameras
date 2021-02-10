@@ -110,11 +110,11 @@ class _ModelSelectionState extends State<ModelSelection> {
       currentAlgorithm.updateRecognitions(recognitions, inferenceTime);
       _currentRes = currentAlgorithm.topInferenceFormatted;
       _fps = currentAlgorithm.fps;
-      if (currentAlgorithm.hasResult()) {
-        _model = "";
+      if (currentAlgorithm.hasResult() && _navigateToDetails) {
         // && !addedViewing
         if (currentAlgorithm.topInference != "no_artwork") {
           // get top inference as an object ready to insert in db
+          _model = "";
           ViewingsCompanion vc = currentAlgorithm.resultAsDbObject();
           // add current model to object
           vc = vc.copyWith(cnnModelUsed: Value(_model));
