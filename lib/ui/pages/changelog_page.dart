@@ -34,8 +34,23 @@ class _ChangeLogPageState extends State<ChangeLogPage> {
       ),
       body: _changelog.isEmpty
           ? Center(child: CircularProgressIndicator())
-          : Markdown(
-              data: _changelog,
+          : SafeArea(
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: Markdown(data: _changelog),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomCenter,
+                    child: RaisedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text("CLOSE"),
+                    ),
+                  )
+                ],
+              ),
             ),
     );
   }
