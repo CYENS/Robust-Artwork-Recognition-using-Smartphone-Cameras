@@ -38,7 +38,7 @@ class _ModelSelectionState extends State<ModelSelection> {
   double _preferredSensitivity = 0.0;
   bool _navigateToDetails = false;
 
-  bool addedViewing = false;
+  // bool addedViewing = false;
   var currentAlgorithm;
   String _currentRes = "";
   String _currentAlgo = "";
@@ -110,31 +110,34 @@ class _ModelSelectionState extends State<ModelSelection> {
       currentAlgorithm.updateRecognitions(recognitions, inferenceTime);
       _currentRes = currentAlgorithm.topInferenceFormatted;
       _fps = currentAlgorithm.fps;
-      if (currentAlgorithm.hasResult() && !addedViewing) {
+      if (currentAlgorithm.hasResult() && _navigateToDetails) {
+        // && !addedViewing
         if (currentAlgorithm.topInference != "no_artwork") {
           // get top inference as an object ready to insert in db
+          _model = "";
           ViewingsCompanion vc = currentAlgorithm.resultAsDbObject();
           // add current model to object
           vc = vc.copyWith(cnnModelUsed: Value(_model));
           viewingsDao.insertTask(vc);
           print("Added VIEWING: $vc");
-          addedViewing = true;
-          // optionally navigate to artwork details when a recognition occurs
-          // TODO navigating to details is flawed here, since it leaves tflite
-          //  running in the background; a proper implementation must be able
-          //  to somehow dispose of the TensorFlowCamera widget before
-          //  navigating to details
+          // addedViewing = true;
           if (_navigateToDetails) {
+            // navigate to artwork details
             Provider.of<ArtworksDao>(context, listen: false)
                 .getArtworkById(
                     artworkId: currentAlgorithm.topInference,
                     languageCode: context.locale().languageCode)
                 .then((artwork) {
+              // set model to empty here, so that the camera stream stops
+              _model = "";
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          ArtworkDetailsPage(artwork: artwork)));
+                context,
+                MaterialPageRoute(
+                    builder: (context) => ArtworkDetailsPage(artwork: artwork)),
+              ).then((_) {
+                // re-initialize model when user is back to this screen
+                return initModel();
+              });
             });
           }
         } else {

@@ -1,3 +1,9 @@
+## Version 0.10.0
+### 2021-02-10
+- App navigation completely redesigned, using a new NavBar with a prominent "Identify artwork" 
+  button
+- Artwork identification is now more reliable 
+
 ## Version 0.9.1
 ### 2021-02-01
 - Added new app icon, based on the painting by Vera Hadjida "Untitled" (1973)

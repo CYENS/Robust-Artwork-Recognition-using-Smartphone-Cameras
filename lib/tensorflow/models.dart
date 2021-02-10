@@ -69,7 +69,7 @@ final tfLiteModelNames = Map<String, String>.fromIterable(
 class TfLiteModel {
   /// Prefix to the assets directory that contains the models, so it can be
   /// easily updated in the future if needed.
-  static String modelAssetsPath = "assets/tflite/";
+  static String _modelAssetsPath = "assets/tflite/";
 
   final String _modelPath;
 
@@ -80,8 +80,8 @@ class TfLiteModel {
         _labelsPath = labelsPath;
 
   /// Returns the full path to the model's file.
-  String get modelPath => modelAssetsPath + _modelPath;
+  String get modelPath => _modelAssetsPath + _modelPath;
 
   /// Returns the full path to the model's labels.
-  String get labelsPath => modelAssetsPath + _labelsPath;
+  String get labelsPath => _modelAssetsPath + _labelsPath;
 }
