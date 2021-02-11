@@ -107,19 +107,18 @@ class _SettingsPageState extends State<SettingsPage> {
             ],
           ),
           SettingsGroup(
-            title: "Database",
+            title: strings.stngs.groupDatabase.customToUpperCase(),
             children: [
               SimpleSettingsTile(
-                title: "App database browser",
-                subtitle: "Shows all tables and items in the app's database",
+                title: strings.stngs.stng.databaseBrowser,
+                subtitle: strings.stngs.stng.databaseBrowserSummary,
                 onTap: () => Navigator.of(context).push(MaterialPageRoute(
                     builder: (context) =>
                         MoorDbViewer(Provider.of<AppDatabase>(context)))),
               ),
               SimpleSettingsTile(
-                title: "Export recognition history",
-                subtitle:
-                    "Allows exporting & sharing the recognition history so far",
+                title: strings.stngs.stng.historyExport,
+                subtitle: strings.stngs.stng.historyExportSummary,
                 onTap: () async {
                   viewingsDao.allViewingEntries.then((viewings) {
                     String viewingsInStr = jsonEncode(viewings);
@@ -136,7 +135,7 @@ class _SettingsPageState extends State<SettingsPage> {
             ],
           ),
           SettingsGroup(
-            title: strings.stngs.groupAbout,
+            title: strings.stngs.groupAbout.customToUpperCase(),
             children: [
               SimpleSettingsTile(
                 title: strings.stngs.stng.appInfo,
@@ -153,14 +152,13 @@ class _SettingsPageState extends State<SettingsPage> {
                                     'assets/app_launcher_icons/hadjida_untitled_app_icon_square_android_adaptive.png'),
                               ),
                             ),
-                            applicationName: packageInfo.appName,
+                            applicationName: strings.galleryName,
                             applicationVersion:
-                                "App version: " + packageInfo.version,
+                                "${strings.stngs.stng.appVersion}: ${packageInfo.version}",
                             children: [
-                              Text(
-                                  "App for the State Gallery of Contemporary Cypriot Art."),
+                              Text(strings.stngs.stng.appDescription),
                               Text(""),
-                              Text("Made by the BIO-SCENT MRG at RISE Ltd."),
+                              Text(strings.stngs.stng.appMadeBy),
                             ],
                           ));
                 },
