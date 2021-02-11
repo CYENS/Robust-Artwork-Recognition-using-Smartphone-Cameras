@@ -34,12 +34,15 @@ class ExplorePage extends StatelessWidget {
                   StretchMode.zoomBackground,
                   StretchMode.blurBackground,
                 ],
-                title: AutoSizeText(
-                  strings.galleryName.customToUpperCase(),
-                  style: GoogleFonts.openSansCondensed(fontSize: 28),
-                  textAlign: TextAlign.end,
-                  maxFontSize: 30,
-                  maxLines: 2,
+                title: Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: AutoSizeText(
+                    strings.galleryName.customToUpperCase(),
+                    style: GoogleFonts.openSansCondensed(fontSize: 28),
+                    textAlign: TextAlign.end,
+                    maxFontSize: 30,
+                    maxLines: 2,
+                  ),
                 ),
                 centerTitle: true,
                 background: Stack(
