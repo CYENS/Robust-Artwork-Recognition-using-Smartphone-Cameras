@@ -20,7 +20,7 @@ part 'localization.g.dart';
 ///
 /// In case the commands above report conflicts, append
 /// `--delete-conflicting-outputs` and re-run.
-@SheetLocalization(docId, i18nSheetID, 15)
+@SheetLocalization(docId, i18nSheetID, 16)
 // The number is the generated version, and must be incremented each time the
 // GSheet is updated, to regenerate a new version of the labels.
 class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -40,6 +40,10 @@ class AppLocalizations {
         stng: AppLocalizations_Labels_Stngs_Stng(
           appInfo: 'App information',
           appInfoSummary: 'App version & Open source libraries',
+          appDescription:
+              'App for the State Gallery of Contemporary Cypriot Art.',
+          appMadeBy: 'Made by the BIO-SCENT MRG at RISE Centre of Excellence.',
+          appVersion: 'App version',
           changelog: 'Changelog',
           changelogSummary: 'Timeline of changes in the app',
           databaseBrowser: 'App database browser',
@@ -77,6 +81,11 @@ class AppLocalizations {
         stng: AppLocalizations_Labels_Stngs_Stng(
           appInfo: 'Πληροφορίες για την εφαρμογή',
           appInfoSummary: 'Εκδοση εφαρμογής & Βιβλιοθήκες ανοιχτού κώδικα',
+          appDescription:
+              'Εφαρμογή για την Κρατική Πινακοθήκη Σύγχρονης Κυπριακής Τέχνης.',
+          appMadeBy:
+              'Δημιουργία του BIO-SCENT MRG στο RISE Centre of Excellence.',
+          appVersion: 'Έκδοση εφαρμογής',
           changelog: 'Ιστορικό αλλαγών',
           changelogSummary: 'Ιστορικό αλλαγών στην εφαρμογή',
           databaseBrowser: 'Περιήγηση βάσης δεδομένων εφαρμογής',
@@ -84,7 +93,7 @@ class AppLocalizations {
               'Όλοι οι πίνακες και αντικείμενα στην βάση δεδομένων της εφαρμογής',
           historyExport: 'Εξαγωγή ιστορικού αναγνωρίσεων',
           historyExportSummary:
-              'Επιτρέπει την εξαγωγή και κοινοποίηση του ιστορικού αναγνωρίσεων έργων τέχνης μέχρι τώρα',
+              'Επιτρέπει την εξαγωγή και κοινοποίηση του ιστορικού αναγνώρισης έργων τέχνης μέχρι τώρα',
         ),
       ),
     ),
@@ -138,6 +147,9 @@ class AppLocalizations_Labels_Stngs_Stng {
   const AppLocalizations_Labels_Stngs_Stng(
       {this.appInfo,
       this.appInfoSummary,
+      this.appDescription,
+      this.appMadeBy,
+      this.appVersion,
       this.changelog,
       this.changelogSummary,
       this.databaseBrowser,
@@ -148,6 +160,12 @@ class AppLocalizations_Labels_Stngs_Stng {
   final String appInfo;
 
   final String appInfoSummary;
+
+  final String appDescription;
+
+  final String appMadeBy;
+
+  final String appVersion;
 
   final String changelog;
 
@@ -167,6 +185,12 @@ class AppLocalizations_Labels_Stngs_Stng {
         return appInfo;
       case 'appInfoSummary':
         return appInfoSummary;
+      case 'appDescription':
+        return appDescription;
+      case 'appMadeBy':
+        return appMadeBy;
+      case 'appVersion':
+        return appVersion;
       case 'changelog':
         return changelog;
       case 'changelogSummary':
