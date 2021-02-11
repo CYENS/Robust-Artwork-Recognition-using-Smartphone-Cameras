@@ -22,6 +22,7 @@ class ArtistDetailsPage extends StatelessWidget {
         title: Text(context.strings().artistDetails),
       ),
       body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
