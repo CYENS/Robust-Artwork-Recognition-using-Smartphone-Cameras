@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:modern_art_app/utils/extensions.dart';
 
 class ChangeLogPage extends StatefulWidget {
   final String changelogAssetsPath;
@@ -28,9 +29,10 @@ class _ChangeLogPageState extends State<ChangeLogPage> {
   @override
   Widget build(BuildContext context) {
     // todo convert to strings here so it's internationalized
+    final strings = context.strings();
     return Scaffold(
       appBar: AppBar(
-        title: Text("Changelog"),
+        title: Text(strings.stngs.stng.changelog),
       ),
       body: _changelog.isEmpty
           ? Center(child: CircularProgressIndicator())
