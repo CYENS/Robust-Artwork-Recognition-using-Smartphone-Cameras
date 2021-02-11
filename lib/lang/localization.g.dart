@@ -31,15 +31,23 @@ class AppLocalizations {
       ),
       button: AppLocalizations_Labels_Button(
         more: 'more',
+        close: 'Close',
       ),
       stngs: AppLocalizations_Labels_Stngs(
         title: 'Settings',
         groupAbout: 'About',
+        groupDatabase: 'Database',
         stng: AppLocalizations_Labels_Stngs_Stng(
           appInfo: 'App information',
           appInfoSummary: 'App version & Open source libraries',
           changelog: 'Changelog',
           changelogSummary: 'Timeline of changes in the app',
+          databaseBrowser: 'App database browser',
+          databaseBrowserSummary:
+              'Shows all tables and items in the app\'s database',
+          historyExport: 'Export recognition history',
+          historyExportSummary:
+              'Allows exporting & sharing the artwork recognition history so far',
         ),
       ),
     ),
@@ -49,26 +57,34 @@ class AppLocalizations {
       artworkOfTheWeek: 'Έργο τέχνης της εβδομάδας',
       pointTheCamera: 'Στρέψτε την κάμερα σε ένα έργο τέχνης',
       biography: 'Σύντομο βιογραφικό',
-      artworksBy: 'Έργα τέχνης από',
+      artworksBy: 'Έργα τέχνης του/της',
       description: 'Περιγραφή',
       galleryName: 'Κρατική Πινακοθήκη Σύγχρονης Τέχνης',
       artistDetails: 'Στοιχεία καλλιτέχνη/ιδας',
       artworkDetails: 'Στοιχεία έργου τέχνης',
       nav: AppLocalizations_Labels_Nav(
         explore: 'Εξερευνήστε',
-        identify: 'Αναγνώριση έργου τέχνης',
+        identify: 'Αναγνώριση έργου',
       ),
       button: AppLocalizations_Labels_Button(
         more: 'περισσότερα',
+        close: 'Κλείσιμο',
       ),
       stngs: AppLocalizations_Labels_Stngs(
         title: 'Ρυθμίσεις',
         groupAbout: 'Σχετικά',
+        groupDatabase: 'Βάση δεδομένων',
         stng: AppLocalizations_Labels_Stngs_Stng(
           appInfo: 'Πληροφορίες για την εφαρμογή',
           appInfoSummary: 'Εκδοση εφαρμογής & Βιβλιοθήκες ανοιχτού κώδικα',
           changelog: 'Ιστορικό αλλαγών',
           changelogSummary: 'Ιστορικό αλλαγών στην εφαρμογή',
+          databaseBrowser: 'Περιήγηση βάσης δεδομένων εφαρμογής',
+          databaseBrowserSummary:
+              'Όλοι οι πίνακες και αντικείμενα στην βάση δεδομένων της εφαρμογής',
+          historyExport: 'Εξαγωγή ιστορικού αναγνωρίσεων',
+          historyExportSummary:
+              'Επιτρέπει την εξαγωγή και κοινοποίηση του ιστορικού αναγνωρίσεων έργων τέχνης μέχρι τώρα',
         ),
       ),
     ),
@@ -100,14 +116,18 @@ class AppLocalizations_Labels_Nav {
 }
 
 class AppLocalizations_Labels_Button {
-  const AppLocalizations_Labels_Button({this.more});
+  const AppLocalizations_Labels_Button({this.more, this.close});
 
   final String more;
+
+  final String close;
 
   String getByKey(String key) {
     switch (key) {
       case 'more':
         return more;
+      case 'close':
+        return close;
       default:
         return '';
     }
@@ -119,7 +139,11 @@ class AppLocalizations_Labels_Stngs_Stng {
       {this.appInfo,
       this.appInfoSummary,
       this.changelog,
-      this.changelogSummary});
+      this.changelogSummary,
+      this.databaseBrowser,
+      this.databaseBrowserSummary,
+      this.historyExport,
+      this.historyExportSummary});
 
   final String appInfo;
 
@@ -128,6 +152,14 @@ class AppLocalizations_Labels_Stngs_Stng {
   final String changelog;
 
   final String changelogSummary;
+
+  final String databaseBrowser;
+
+  final String databaseBrowserSummary;
+
+  final String historyExport;
+
+  final String historyExportSummary;
 
   String getByKey(String key) {
     switch (key) {
@@ -139,6 +171,14 @@ class AppLocalizations_Labels_Stngs_Stng {
         return changelog;
       case 'changelogSummary':
         return changelogSummary;
+      case 'databaseBrowser':
+        return databaseBrowser;
+      case 'databaseBrowserSummary':
+        return databaseBrowserSummary;
+      case 'historyExport':
+        return historyExport;
+      case 'historyExportSummary':
+        return historyExportSummary;
       default:
         return '';
     }
@@ -146,11 +186,14 @@ class AppLocalizations_Labels_Stngs_Stng {
 }
 
 class AppLocalizations_Labels_Stngs {
-  const AppLocalizations_Labels_Stngs({this.title, this.groupAbout, this.stng});
+  const AppLocalizations_Labels_Stngs(
+      {this.title, this.groupAbout, this.groupDatabase, this.stng});
 
   final String title;
 
   final String groupAbout;
+
+  final String groupDatabase;
 
   final AppLocalizations_Labels_Stngs_Stng stng;
 
@@ -160,6 +203,8 @@ class AppLocalizations_Labels_Stngs {
         return title;
       case 'groupAbout':
         return groupAbout;
+      case 'groupDatabase':
+        return groupDatabase;
       default:
         return '';
     }
