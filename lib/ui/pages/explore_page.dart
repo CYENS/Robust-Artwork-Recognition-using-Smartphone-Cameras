@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:modern_art_app/data/artists_dao.dart';
 import 'package:modern_art_app/data/artworks_dao.dart';
 import 'package:modern_art_app/ui/widgets/item_featured.dart';
@@ -34,7 +35,10 @@ class ExplorePage extends StatelessWidget {
                   StretchMode.blurBackground,
                   // StretchMode.fadeTitle,
                 ],
-                title: Text(strings.galleryName),
+                title: Text(
+                  strings.galleryName,
+                  style: GoogleFonts.alegreyaSansSc(),
+                ),
                 centerTitle: true,
                 background: Stack(
                   fit: StackFit.expand,
