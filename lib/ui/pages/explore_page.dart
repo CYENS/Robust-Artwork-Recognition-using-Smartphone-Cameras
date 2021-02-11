@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -27,18 +28,18 @@ class ExplorePage extends StatelessWidget {
                 return;
               },
               expandedHeight: size.height * 0.3,
-              // title: Text(strings.galleryName),
               pinned: true,
               flexibleSpace: FlexibleSpaceBar(
                 stretchModes: <StretchMode>[
                   StretchMode.zoomBackground,
                   StretchMode.blurBackground,
-                  // StretchMode.fadeTitle,
                 ],
-                title: Text(
-                  strings.galleryName,
-                  style: GoogleFonts.alegreyaSansSc(),
+                title: AutoSizeText(
+                  strings.galleryName.customToUpperCase(),
+                  style: GoogleFonts.openSansCondensed(fontSize: 28),
                   textAlign: TextAlign.end,
+                  maxFontSize: 30,
+                  maxLines: 2,
                 ),
                 centerTitle: true,
                 background: Stack(
@@ -152,5 +153,5 @@ class HeadlineAndMoreRow extends StatelessWidget {
 
 Widget headline(String text) => Text(
       text.customToUpperCase(),
-      style: Typography.whiteMountainView.headline1.copyWith(fontSize: 20),
+      style: GoogleFonts.openSansCondensed(fontSize: 25),
     );
