@@ -89,9 +89,9 @@ class _MainPageState extends State<MainPage> {
         backgroundColor: ThemeData.dark().primaryColor,
         initialActiveIndex: _currentIndex,
         items: [
-          TabItem(icon: Icon(Icons.home), title: strings.nav.explore),
-          TabItem(icon: Icon(Icons.camera), title: strings.nav.identify),
-          TabItem(icon: Icon(Icons.settings), title: strings.stngs.title),
+          TabItem(icon: Icons.home_rounded, title: strings.nav.explore),
+          TabItem(icon: Icons.camera_rounded, title: strings.nav.identify),
+          TabItem(icon: Icons.settings_rounded, title: strings.stngs.title),
         ],
         onTap: (index) {
           switch (index) {
