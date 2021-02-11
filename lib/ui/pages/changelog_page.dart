@@ -28,7 +28,6 @@ class _ChangeLogPageState extends State<ChangeLogPage> {
 
   @override
   Widget build(BuildContext context) {
-    // todo convert to strings here so it's internationalized
     final strings = context.strings();
     return Scaffold(
       appBar: AppBar(
@@ -40,7 +39,10 @@ class _ChangeLogPageState extends State<ChangeLogPage> {
               child: Stack(
                 children: [
                   Positioned.fill(
-                    child: Markdown(data: _changelog),
+                    child: Markdown(
+                      data: _changelog,
+                      physics: const BouncingScrollPhysics(),
+                    ),
                   ),
                   Align(
                     alignment: Alignment.bottomCenter,
