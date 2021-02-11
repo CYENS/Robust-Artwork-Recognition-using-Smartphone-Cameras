@@ -30,9 +30,9 @@ const Map<String, TfLiteModel> tfLiteModels = {
   // vgg19Quant: TfLiteModel(
   //     modelPath: "cnn224RGB_VGG19_quant.tflite",
   //     labelsPath: "cnn224RGB_VGG19_labels.txt"),
-  vgg19NoArtQuant: TfLiteModel(
-      modelPath: "VGG_with_no_art_quant.tflite",
-      labelsPath: "MobileNet_No_Art_labels.txt"),
+  // vgg19NoArtQuant: TfLiteModel(
+  //     modelPath: "VGG_with_no_art_quant.tflite",
+  //     labelsPath: "MobileNet_No_Art_labels.txt"),
   // vgg19ZeroOneMultiQuant: TfLiteModel(
   //     modelPath: "VGG19ZeroOneMultiple1500Frames_quant.tflite",
   //     labelsPath: "VGG19ZeroOneMultiple1500Frames_labels.txt"),
@@ -51,9 +51,9 @@ const Map<String, TfLiteModel> tfLiteModels = {
   // inceptionV3NoArt500: TfLiteModel(
   //     modelPath: "InceptionV3NoArt500Frames.tflite",
   //     labelsPath: "MobileNet_No_Art_labels.txt"),
-  inceptionV3NoArt500Quant: TfLiteModel(
-      modelPath: "InceptionV3NoArt500Frames_quant.tflite",
-      labelsPath: "MobileNet_No_Art_labels.txt"),
+  // inceptionV3NoArt500Quant: TfLiteModel(
+  //     modelPath: "InceptionV3NoArt500Frames_quant.tflite",
+  //     labelsPath: "MobileNet_No_Art_labels.txt"),
 };
 
 /// Map with tfLiteModels names, used in settings to allow selection of model.

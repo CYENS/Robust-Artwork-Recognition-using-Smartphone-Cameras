@@ -90,9 +90,9 @@ flutter:
     - assets/data/
     - assets/painters/
     - assets/paintings/
-    - assets/tflite/VGG_with_no_art_quant.tflite
+#    - assets/tflite/VGG_with_no_art_quant.tflite
     - assets/tflite/MobNetNoArt500Frames_4.tflite
-    - assets/tflite/InceptionV3NoArt500Frames_quant.tflite
+#    - assets/tflite/InceptionV3NoArt500Frames_quant.tflite
     - assets/tflite/MobileNet_No_Art_labels.txt
 #    - assets/tflite/
     - assets/app_launcher_icons/hadjida_untitled_app_icon_square_android_adaptive.png
