@@ -26,7 +26,7 @@ class ExplorePage extends StatelessWidget {
               onStretchTrigger: () {
                 return;
               },
-              expandedHeight: size.height / 3,
+              expandedHeight: size.height * 0.3,
               // title: Text(strings.galleryName),
               pinned: true,
               flexibleSpace: FlexibleSpaceBar(
@@ -38,6 +38,7 @@ class ExplorePage extends StatelessWidget {
                 title: Text(
                   strings.galleryName,
                   style: GoogleFonts.alegreyaSansSc(),
+                  textAlign: TextAlign.end,
                 ),
                 centerTitle: true,
                 background: Stack(
