@@ -48,7 +48,7 @@ class _ChangeLogPageState extends State<ChangeLogPage> {
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: Text("CLOSE"),
+                      child: Text(strings.button.close.customToUpperCase()),
                     ),
                   )
                 ],
