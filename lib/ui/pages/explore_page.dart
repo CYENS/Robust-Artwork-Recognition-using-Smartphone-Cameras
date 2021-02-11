@@ -1,42 +1,49 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:modern_art_app/data/artists_dao.dart';
 import 'package:modern_art_app/data/artworks_dao.dart';
 import 'package:modern_art_app/ui/widgets/item_featured.dart';
 import 'package:modern_art_app/ui/widgets/item_list.dart';
+import 'package:modern_art_app/utils/extensions.dart';
 import 'package:provider/provider.dart';
-
-import '../../utils/extensions.dart';
 
 class ExplorePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
     ArtworksDao artworksDao = Provider.of<ArtworksDao>(context);
     ArtistsDao artistsDao = Provider.of<ArtistsDao>(context);
+    Size size = MediaQuery.of(context).size;
+    final strings = context.strings();
     return SafeArea(
-      child: SingleChildScrollView(
-        child: Container(
-          color: Colors.black,
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Container(
-                height: size.height * 0.4,
-                width: size.width,
-                child: Stack(
+      child: Container(
+        decoration: BoxDecoration(color: Colors.black),
+        child: CustomScrollView(
+          physics: const BouncingScrollPhysics(),
+          slivers: [
+            SliverAppBar(
+              stretch: true,
+              onStretchTrigger: () {
+                return;
+              },
+              expandedHeight: size.height / 3,
+              // title: Text(strings.galleryName),
+              pinned: true,
+              flexibleSpace: FlexibleSpaceBar(
+                stretchModes: <StretchMode>[
+                  StretchMode.zoomBackground,
+                  StretchMode.blurBackground,
+                  // StretchMode.fadeTitle,
+                ],
+                title: Text(strings.galleryName),
+                centerTitle: true,
+                background: Stack(
+                  fit: StackFit.expand,
                   children: [
-                    Positioned.fill(
-                      child: Image.asset(
-                        "assets/pinakothiki_building.jpg",
-                        fit: BoxFit.fitWidth,
-                      ),
+                    Image.asset(
+                      "assets/pinakothiki_building.jpg",
+                      fit: BoxFit.cover,
                     ),
-                    Container(
-                      // add gradient in front of building photo to make text in
-                      // front of it legible, based on the example provided here
-                      // https://api.flutter.dev/flutter/widgets/Stack-class.html
-                      alignment: Alignment.bottomRight,
+                    DecoratedBox(
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           begin: Alignment.topCenter,
@@ -49,53 +56,50 @@ class ExplorePage extends StatelessWidget {
                           ],
                         ),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 20, horizontal: 8),
-                        child: Text(
-                          context.strings().galleryName,
-                          style: TextStyle(fontSize: 28),
-                          textAlign: TextAlign.end,
-                        ),
-                      ),
                     ),
                   ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: headline(context.strings().artworkOfTheWeek),
+            ),
+            SliverList(
+              delegate: SliverChildListDelegate.fixed(
+                [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: headline(context.strings().artworkOfTheWeek),
+                  ),
+                  FutureBuilder(
+                      future: artworksDao.getArtworkById(
+                          artworkId: "the_cyclist_votsis",
+                          languageCode: context.locale().languageCode),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return FeaturedTile(
+                            artwork: snapshot.data,
+                            tileHeight: size.height * 0.35,
+                            tileWidth: size.width,
+                          );
+                        }
+                        return Container();
+                      }),
+                  HeadlineAndMoreRow(
+                      listType: "Artworks",
+                      itemList: artworksDao.watchAllArtworks(
+                          languageCode: context.locale().languageCode)),
+                  ListHorizontal(
+                      itemList: artworksDao.watchAllArtworks(
+                          languageCode: context.locale().languageCode)),
+                  HeadlineAndMoreRow(
+                      listType: "Artists",
+                      itemList: artistsDao.watchAllArtists(
+                          languageCode: context.locale().languageCode)),
+                  ListHorizontal(
+                      itemList: artistsDao.watchAllArtists(
+                          languageCode: context.locale().languageCode)),
+                ],
               ),
-              FutureBuilder(
-                  future: artworksDao.getArtworkById(
-                      artworkId: "the_cyclist_votsis",
-                      languageCode: context.locale().languageCode),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return FeaturedTile(
-                        artwork: snapshot.data,
-                        tileHeight: size.height * 0.35,
-                        tileWidth: size.width,
-                      );
-                    }
-                    return Container();
-                  }),
-              HeadlineAndMoreRow(
-                  listType: "Artworks",
-                  itemList: artworksDao.watchAllArtworks(
-                      languageCode: context.locale().languageCode)),
-              ListHorizontal(
-                  itemList: artworksDao.watchAllArtworks(
-                      languageCode: context.locale().languageCode)),
-              HeadlineAndMoreRow(
-                  listType: "Artists",
-                  itemList: artistsDao.watchAllArtists(
-                      languageCode: context.locale().languageCode)),
-              ListHorizontal(
-                  itemList: artistsDao.watchAllArtists(
-                      languageCode: context.locale().languageCode)),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -121,17 +125,20 @@ class HeadlineAndMoreRow extends StatelessWidget {
           headline(title),
           Spacer(),
           IconButton(
-              icon: Icon(Icons.arrow_forward),
-              tooltip: strings.button.more,
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Scaffold(
-                              appBar: AppBar(title: Text(title)),
-                              body: ListVertical(itemList: itemList),
-                            )));
-              }),
+            icon: Icon(Icons.arrow_forward),
+            tooltip: strings.button.more,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Scaffold(
+                    appBar: AppBar(title: Text(title)),
+                    body: ListVertical(itemList: itemList),
+                  ),
+                ),
+              );
+            },
+          ),
         ],
       ),
     );
