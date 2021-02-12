@@ -110,7 +110,9 @@ class _ModelSelectionState extends State<ModelSelection> {
   }
 
   setRecognitions(recognitions, imageHeight, imageWidth, inferenceTime) {
-    if (currentAlgorithm.hasResult() && _navigateToDetails) {
+    if (currentAlgorithm.hasResult() &&
+        _navigateToDetails &&
+        currentAlgorithm.topInference != "no_artwork") {
       setState(() {
         _model = "";
       });
