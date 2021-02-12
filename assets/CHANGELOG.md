@@ -1,3 +1,11 @@
+## Version 0.11.0 (2021-02-12)
+- Fixed displaying this changelog
+- Much improved Explore page with animations
+- Added vibration when the app recognises an artwork
+- Only 1 CNN is now included in the app
+- Added library for error reporting
+- More localisations
+
 ## Version 0.10.0 (2021-02-10)
 - App navigation completely redesigned, using a new NavBar with a prominent "Identify artwork" 
   button
