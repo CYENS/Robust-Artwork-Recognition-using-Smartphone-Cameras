@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:modern_art_app/data/database.dart';
-import 'package:modern_art_app/main_page.dart';
+import 'package:modern_art_app/data/sensitive.dart';
+import 'package:modern_art_app/ui/pages/main_page.dart';
 import 'package:provider/provider.dart';
+import 'package:sentry_flutter/sentry_flutter.dart';
 
 import 'lang/localization.dart';
 
@@ -22,7 +24,15 @@ Future<void> main() async {
   }
   // init settings
   await Settings.init();
-  runApp(MyApp());
+  // init Sentry crash monitoring library
+  await SentryFlutter.init(
+    (options) {
+      options.dsn = sentryDsn;
+      // options.useNativeBreadcrumbTracking();
+    },
+    appRunner: () => runApp(MyApp()),
+  );
+  // runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -65,6 +75,7 @@ class MyApp extends StatelessWidget {
           return supportedLocales.first;
         },
         debugShowCheckedModeBanner: false,
+        navigatorObservers: [SentryNavigatorObserver()],
         theme: ThemeData.dark(),
         home: MainPage(cameras: cameras),
       ),

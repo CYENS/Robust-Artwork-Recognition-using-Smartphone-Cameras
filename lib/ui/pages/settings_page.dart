@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
-import 'package:flutter_whatsnew/flutter_whatsnew.dart';
 import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/data/inference_algorithms.dart';
 import 'package:modern_art_app/data/viewings_dao.dart';
 import 'package:modern_art_app/tensorflow/models.dart';
+import 'package:modern_art_app/ui/pages/changelog_page.dart';
 import 'package:modern_art_app/utils/extensions.dart';
 import 'package:modern_art_app/utils/utils.dart';
 import 'package:moor_db_viewer/moor_db_viewer.dart';
@@ -72,7 +72,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 leading: Icon(Icons.adjust),
                 title: "CNN sensitivity",
                 settingKey: keyCnnSensitivity,
-                defaultValue: 99.0,
+                defaultValue: 80.0,
                 min: 0.0,
                 max: 100.0,
                 step: 0.2,
@@ -84,7 +84,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 leading: Icon(Icons.multiline_chart),
                 title: _getCurrentWinThreshPName(),
                 settingKey: keyWinThreshP,
-                defaultValue: 5,
+                defaultValue: 8,
                 min: 5,
                 max: 50,
                 step: 1,
@@ -96,7 +96,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 leading: Icon(Icons.navigation),
                 title: "Navigate to recognised artworks' details",
                 settingKey: keyNavigateToDetails,
-                defaultValue: false,
+                defaultValue: true,
               ),
               SwitchSettingsTile(
                 leading: Icon(Icons.list_alt_outlined),
@@ -107,19 +107,20 @@ class _SettingsPageState extends State<SettingsPage> {
             ],
           ),
           SettingsGroup(
-            title: "Database",
+            title: strings.stngs.groupDatabase.customToUpperCase(),
             children: [
               SimpleSettingsTile(
-                title: "App database browser",
-                subtitle: "Shows all tables and items in the app's database",
-                onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) =>
-                        MoorDbViewer(Provider.of<AppDatabase>(context)))),
+                title: strings.stngs.stng.databaseBrowser,
+                subtitle: strings.stngs.stng.databaseBrowserSummary,
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          MoorDbViewer(Provider.of<AppDatabase>(context))),
+                ),
               ),
               SimpleSettingsTile(
-                title: "Export recognition history",
-                subtitle:
-                    "Allows exporting & sharing the recognition history so far",
+                title: strings.stngs.stng.historyExport,
+                subtitle: strings.stngs.stng.historyExportSummary,
                 onTap: () async {
                   viewingsDao.allViewingEntries.then((viewings) {
                     String viewingsInStr = jsonEncode(viewings);
@@ -136,7 +137,7 @@ class _SettingsPageState extends State<SettingsPage> {
             ],
           ),
           SettingsGroup(
-            title: strings.stngs.groupAbout,
+            title: strings.stngs.groupAbout.customToUpperCase(),
             children: [
               SimpleSettingsTile(
                 title: strings.stngs.stng.appInfo,
@@ -153,29 +154,35 @@ class _SettingsPageState extends State<SettingsPage> {
                                     'assets/app_launcher_icons/hadjida_untitled_app_icon_square_android_adaptive.png'),
                               ),
                             ),
-                            applicationName: packageInfo.appName,
+                            applicationName: strings.galleryName,
                             applicationVersion:
-                                "App version: " + packageInfo.version,
+                                "${strings.stngs.stng.appVersion}: ${packageInfo.version}",
                             children: [
-                              Text(
-                                  "App for the State Gallery of Contemporary Cypriot Art."),
+                              Text(strings.stngs.stng.appDescription),
                               Text(""),
-                              Text("Made by the BIO-SCENT MRG at RISE Ltd."),
+                              Text(strings.stngs.stng.appMadeBy),
                             ],
                           ));
                 },
               ),
-              SimpleSettingsTile(
-                title: strings.stngs.stng.changelog,
-                subtitle: strings.stngs.stng.changelogSummary,
-                onTap: () {
-                  print("tapped");
-                  return WhatsNewPage.changelog(
-                    title: Text("whats new"),
-                    buttonText: Text("null"),
-                    // path: "/assets/CHANGELOG.md",
-                  );
-                },
+              Padding(
+                // padding to account for the convex app bar
+                padding: const EdgeInsets.only(bottom: 30.0),
+                child: SimpleSettingsTile(
+                  title: strings.stngs.stng.changelog,
+                  subtitle: strings.stngs.stng.changelogSummary,
+                  onTap: () {
+                    // here the root navigator is used, so that the changelog is
+                    // displayed on top of the rest of the UI (and the NavBar)
+                    Navigator.of(context, rootNavigator: true).push(
+                      MaterialPageRoute(
+                        builder: (context) => ChangeLogPage(
+                          changelogAssetsPath: "assets/CHANGELOG.md",
+                        ),
+                      ),
+                    );
+                  },
+                ),
               ),
             ],
           )
@@ -197,23 +204,23 @@ void _setDefaultAlgorithmSettings(String algorithmName) {
 Map<String, dynamic> _defaultSettings(String algorithmName) {
   return {
     firstAlgorithm: {
-      keyCnnSensitivity: 99.0,
-      keyWinThreshP: 5.0,
+      keyCnnSensitivity: 80.0,
+      keyWinThreshP: 8.0,
       keyWinThreshPName: "Window length",
     },
     secondAlgorithm: {
-      keyCnnSensitivity: 90.0,
+      keyCnnSensitivity: 80.0,
       keyWinThreshP: 10.0,
       keyWinThreshPName: "Window length",
     },
     thirdAlgorithm: {
-      keyCnnSensitivity: 90.0,
+      keyCnnSensitivity: 80.0,
       keyWinThreshP: 10.0,
       keyWinThreshPName: "Count threshold"
     },
     fourthAlgorithm: {
-      keyCnnSensitivity: 90.0,
-      keyWinThreshP: 20.0,
+      keyCnnSensitivity: 80.0,
+      keyWinThreshP: 15.0,
       keyWinThreshPName: "P",
     },
   }[algorithmName];

@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:modern_art_app/tensorflow/model_selection.dart';
 import 'package:modern_art_app/ui/pages/explore_page.dart';
 import 'package:modern_art_app/ui/pages/settings_page.dart';
-
-import 'utils/extensions.dart';
+import 'package:modern_art_app/utils/extensions.dart';
+import 'package:sentry/sentry.dart';
 
 class MainPage extends StatefulWidget {
   final List<CameraDescription> cameras;
@@ -44,6 +44,11 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     final strings = context.strings();
+    try {
+      throw Exception("Test exception!");
+    } catch (exception, stackTrace) {
+      Sentry.captureException(exception, stackTrace: stackTrace);
+    }
     return Scaffold(
       body: WillPopScope(
         // wrapping the Navigator with a WillPopScope enables the correct
@@ -89,9 +94,9 @@ class _MainPageState extends State<MainPage> {
         backgroundColor: ThemeData.dark().primaryColor,
         initialActiveIndex: _currentIndex,
         items: [
-          TabItem(icon: Icon(Icons.home), title: strings.nav.explore),
-          TabItem(icon: Icon(Icons.camera), title: strings.nav.identify),
-          TabItem(icon: Icon(Icons.settings), title: strings.stngs.title),
+          TabItem(icon: Icons.home_rounded, title: strings.nav.explore),
+          TabItem(icon: Icons.camera_rounded, title: strings.nav.identify),
+          TabItem(icon: Icons.settings_rounded, title: strings.stngs.title),
         ],
         onTap: (index) {
           switch (index) {
@@ -105,7 +110,9 @@ class _MainPageState extends State<MainPage> {
               _navigatorKey.currentState.pushNamed("/identify");
               break;
             case 2:
-              _navigatorKey.currentState.pushNamed("/settings");
+              // also here remove everything else from the stack, apart from "/"
+              _navigatorKey.currentState.pushNamedAndRemoveUntil(
+                  "/settings", ModalRoute.withName("/"));
               break;
           }
           setState(() {

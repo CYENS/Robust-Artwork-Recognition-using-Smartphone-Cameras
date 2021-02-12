@@ -17,7 +17,7 @@ class AppLocalizations {
     Locale.fromSubtags(languageCode: 'en'): AppLocalizations_Labels(
       artworks: 'Artworks',
       artists: 'Artists',
-      artworkOfTheWeek: 'Artwork of the week',
+      featuredArtwork: 'Featured artwork',
       pointTheCamera: 'Point the camera to an artwork',
       biography: 'Short biography',
       artworksBy: 'Artworks by',
@@ -31,44 +31,69 @@ class AppLocalizations {
       ),
       button: AppLocalizations_Labels_Button(
         more: 'more',
+        close: 'Close',
       ),
       stngs: AppLocalizations_Labels_Stngs(
         title: 'Settings',
         groupAbout: 'About',
+        groupDatabase: 'Database',
         stng: AppLocalizations_Labels_Stngs_Stng(
           appInfo: 'App information',
           appInfoSummary: 'App version & Open source libraries',
+          appDescription:
+              'App for the State Gallery of Contemporary Cypriot Art.',
+          appMadeBy: 'Made by the BIO-SCENT MRG at RISE Centre of Excellence.',
+          appVersion: 'App version',
           changelog: 'Changelog',
           changelogSummary: 'Timeline of changes in the app',
+          databaseBrowser: 'App database browser',
+          databaseBrowserSummary:
+              'Shows all tables and items in the app\'s database',
+          historyExport: 'Export recognition history',
+          historyExportSummary:
+              'Allows exporting & sharing the artwork recognition history so far',
         ),
       ),
     ),
     Locale.fromSubtags(languageCode: 'el'): AppLocalizations_Labels(
       artworks: 'Εργα τέχνης',
       artists: 'Καλλιτέχνες',
-      artworkOfTheWeek: 'Έργο τέχνης της εβδομάδας',
+      featuredArtwork: 'Προτεινόμενο έργο τέχνης',
       pointTheCamera: 'Στρέψτε την κάμερα σε ένα έργο τέχνης',
       biography: 'Σύντομο βιογραφικό',
-      artworksBy: 'Έργα τέχνης από',
+      artworksBy: 'Έργα τέχνης του/της',
       description: 'Περιγραφή',
       galleryName: 'Κρατική Πινακοθήκη Σύγχρονης Τέχνης',
       artistDetails: 'Στοιχεία καλλιτέχνη/ιδας',
       artworkDetails: 'Στοιχεία έργου τέχνης',
       nav: AppLocalizations_Labels_Nav(
         explore: 'Εξερευνήστε',
-        identify: 'Αναγνώριση έργου τέχνης',
+        identify: 'Αναγνώριση έργου',
       ),
       button: AppLocalizations_Labels_Button(
         more: 'περισσότερα',
+        close: 'Κλείσιμο',
       ),
       stngs: AppLocalizations_Labels_Stngs(
         title: 'Ρυθμίσεις',
         groupAbout: 'Σχετικά',
+        groupDatabase: 'Βάση δεδομένων',
         stng: AppLocalizations_Labels_Stngs_Stng(
           appInfo: 'Πληροφορίες για την εφαρμογή',
           appInfoSummary: 'Εκδοση εφαρμογής & Βιβλιοθήκες ανοιχτού κώδικα',
+          appDescription:
+              'Εφαρμογή για την Κρατική Πινακοθήκη Σύγχρονης Κυπριακής Τέχνης.',
+          appMadeBy:
+              'Δημιουργία του BIO-SCENT MRG στο RISE Centre of Excellence.',
+          appVersion: 'Έκδοση εφαρμογής',
           changelog: 'Ιστορικό αλλαγών',
           changelogSummary: 'Ιστορικό αλλαγών στην εφαρμογή',
+          databaseBrowser: 'Περιήγηση βάσης δεδομένων εφαρμογής',
+          databaseBrowserSummary:
+              'Όλοι οι πίνακες και αντικείμενα στην βάση δεδομένων της εφαρμογής',
+          historyExport: 'Εξαγωγή ιστορικού αναγνωρίσεων',
+          historyExportSummary:
+              'Επιτρέπει την εξαγωγή και κοινοποίηση του ιστορικού αναγνώρισης έργων τέχνης μέχρι τώρα',
         ),
       ),
     ),
@@ -100,14 +125,18 @@ class AppLocalizations_Labels_Nav {
 }
 
 class AppLocalizations_Labels_Button {
-  const AppLocalizations_Labels_Button({this.more});
+  const AppLocalizations_Labels_Button({this.more, this.close});
 
   final String more;
+
+  final String close;
 
   String getByKey(String key) {
     switch (key) {
       case 'more':
         return more;
+      case 'close':
+        return close;
       default:
         return '';
     }
@@ -118,16 +147,37 @@ class AppLocalizations_Labels_Stngs_Stng {
   const AppLocalizations_Labels_Stngs_Stng(
       {this.appInfo,
       this.appInfoSummary,
+      this.appDescription,
+      this.appMadeBy,
+      this.appVersion,
       this.changelog,
-      this.changelogSummary});
+      this.changelogSummary,
+      this.databaseBrowser,
+      this.databaseBrowserSummary,
+      this.historyExport,
+      this.historyExportSummary});
 
   final String appInfo;
 
   final String appInfoSummary;
 
+  final String appDescription;
+
+  final String appMadeBy;
+
+  final String appVersion;
+
   final String changelog;
 
   final String changelogSummary;
+
+  final String databaseBrowser;
+
+  final String databaseBrowserSummary;
+
+  final String historyExport;
+
+  final String historyExportSummary;
 
   String getByKey(String key) {
     switch (key) {
@@ -135,10 +185,24 @@ class AppLocalizations_Labels_Stngs_Stng {
         return appInfo;
       case 'appInfoSummary':
         return appInfoSummary;
+      case 'appDescription':
+        return appDescription;
+      case 'appMadeBy':
+        return appMadeBy;
+      case 'appVersion':
+        return appVersion;
       case 'changelog':
         return changelog;
       case 'changelogSummary':
         return changelogSummary;
+      case 'databaseBrowser':
+        return databaseBrowser;
+      case 'databaseBrowserSummary':
+        return databaseBrowserSummary;
+      case 'historyExport':
+        return historyExport;
+      case 'historyExportSummary':
+        return historyExportSummary;
       default:
         return '';
     }
@@ -146,11 +210,14 @@ class AppLocalizations_Labels_Stngs_Stng {
 }
 
 class AppLocalizations_Labels_Stngs {
-  const AppLocalizations_Labels_Stngs({this.title, this.groupAbout, this.stng});
+  const AppLocalizations_Labels_Stngs(
+      {this.title, this.groupAbout, this.groupDatabase, this.stng});
 
   final String title;
 
   final String groupAbout;
+
+  final String groupDatabase;
 
   final AppLocalizations_Labels_Stngs_Stng stng;
 
@@ -160,6 +227,8 @@ class AppLocalizations_Labels_Stngs {
         return title;
       case 'groupAbout':
         return groupAbout;
+      case 'groupDatabase':
+        return groupDatabase;
       default:
         return '';
     }
@@ -170,7 +239,7 @@ class AppLocalizations_Labels {
   const AppLocalizations_Labels(
       {this.artworks,
       this.artists,
-      this.artworkOfTheWeek,
+      this.featuredArtwork,
       this.pointTheCamera,
       this.biography,
       this.artworksBy,
@@ -186,7 +255,7 @@ class AppLocalizations_Labels {
 
   final String artists;
 
-  final String artworkOfTheWeek;
+  final String featuredArtwork;
 
   final String pointTheCamera;
 
@@ -214,8 +283,8 @@ class AppLocalizations_Labels {
         return artworks;
       case 'artists':
         return artists;
-      case 'artworkOfTheWeek':
-        return artworkOfTheWeek;
+      case 'featuredArtwork':
+        return featuredArtwork;
       case 'pointTheCamera':
         return pointTheCamera;
       case 'biography':

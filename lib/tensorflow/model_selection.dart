@@ -14,6 +14,7 @@ import 'package:modern_art_app/utils/extensions.dart';
 import 'package:moor/moor.dart' hide Column;
 import 'package:provider/provider.dart';
 import 'package:tflite/tflite.dart';
+import 'package:vibration/vibration.dart';
 
 import 'bbox.dart';
 import 'models.dart';
@@ -43,6 +44,8 @@ class _ModelSelectionState extends State<ModelSelection> {
   String _currentRes = "";
   String _currentAlgo = "";
   ViewingsDao viewingsDao;
+
+  bool _canVibrate = false;
 
   @override
   void setState(VoidCallback fn) {
@@ -96,9 +99,24 @@ class _ModelSelectionState extends State<ModelSelection> {
       labels: model.labelsPath,
     );
     print("$res loading model $_model, as specified in Settings");
+
+    Vibration.hasVibrator().then((canVibrate) {
+      if (canVibrate) {
+        setState(() {
+          _canVibrate = canVibrate;
+        });
+      }
+    });
   }
 
   setRecognitions(recognitions, imageHeight, imageWidth, inferenceTime) {
+    if (currentAlgorithm.hasResult() &&
+        _navigateToDetails &&
+        currentAlgorithm.topInference != "no_artwork") {
+      setState(() {
+        _model = "";
+      });
+    }
     setState(() {
       _recognitions = recognitions;
       _imageHeight = imageHeight;
@@ -113,14 +131,19 @@ class _ModelSelectionState extends State<ModelSelection> {
       if (currentAlgorithm.hasResult() && _navigateToDetails) {
         // && !addedViewing
         if (currentAlgorithm.topInference != "no_artwork") {
-          // get top inference as an object ready to insert in db
           _model = "";
+          if (_canVibrate) {
+            Vibration.vibrate(pattern: [0, 40, 100, 40]);
+          }
+
+          // get top inference as an object ready to insert in db
           ViewingsCompanion vc = currentAlgorithm.resultAsDbObject();
           // add current model to object
           vc = vc.copyWith(cnnModelUsed: Value(_model));
           viewingsDao.insertTask(vc);
           print("Added VIEWING: $vc");
           // addedViewing = true;
+
           if (_navigateToDetails) {
             // navigate to artwork details
             Provider.of<ArtworksDao>(context, listen: false)
