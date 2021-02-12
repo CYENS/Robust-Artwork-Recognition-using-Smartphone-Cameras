@@ -96,7 +96,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 leading: Icon(Icons.navigation),
                 title: "Navigate to recognised artworks' details",
                 settingKey: keyNavigateToDetails,
-                defaultValue: false,
+                defaultValue: true,
               ),
               SwitchSettingsTile(
                 leading: Icon(Icons.list_alt_outlined),
