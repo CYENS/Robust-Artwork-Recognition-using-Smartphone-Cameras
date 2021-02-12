@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:modern_art_app/tensorflow/model_selection.dart';
 import 'package:modern_art_app/ui/pages/explore_page.dart';
 import 'package:modern_art_app/ui/pages/settings_page.dart';
+import 'package:sentry/sentry.dart';
 
 import 'utils/extensions.dart';
 
@@ -44,6 +45,11 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     final strings = context.strings();
+    try {
+      throw Exception("Test exception!");
+    } catch (exception, stackTrace) {
+      Sentry.captureException(exception, stackTrace: stackTrace);
+    }
     return Scaffold(
       body: WillPopScope(
         // wrapping the Navigator with a WillPopScope enables the correct
