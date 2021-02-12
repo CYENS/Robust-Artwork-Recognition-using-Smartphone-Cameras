@@ -134,7 +134,7 @@ class HeadlineAndMoreRow extends StatelessWidget {
           headline(title),
           Spacer(),
           IconButton(
-            icon: Icon(Icons.arrow_forward),
+            icon: Icon(Icons.arrow_forward_rounded),
             tooltip: strings.button.more,
             onPressed: () {
               Navigator.push(
