@@ -112,9 +112,11 @@ class _SettingsPageState extends State<SettingsPage> {
               SimpleSettingsTile(
                 title: strings.stngs.stng.databaseBrowser,
                 subtitle: strings.stngs.stng.databaseBrowserSummary,
-                onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) =>
-                        MoorDbViewer(Provider.of<AppDatabase>(context)))),
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          MoorDbViewer(Provider.of<AppDatabase>(context))),
+                ),
               ),
               SimpleSettingsTile(
                 title: strings.stngs.stng.historyExport,
@@ -163,20 +165,24 @@ class _SettingsPageState extends State<SettingsPage> {
                           ));
                 },
               ),
-              SimpleSettingsTile(
-                title: strings.stngs.stng.changelog,
-                subtitle: strings.stngs.stng.changelogSummary,
-                onTap: () {
-                  // here the root navigator is used, so that the changelog is
-                  // displayed on top of the rest of the UI (and the NavBar)
-                  Navigator.of(context, rootNavigator: true).push(
-                    MaterialPageRoute(
-                      builder: (context) => ChangeLogPage(
-                        changelogAssetsPath: "assets/CHANGELOG.md",
+              Padding(
+                // padding to account for the convex app bar
+                padding: const EdgeInsets.only(bottom: 30.0),
+                child: SimpleSettingsTile(
+                  title: strings.stngs.stng.changelog,
+                  subtitle: strings.stngs.stng.changelogSummary,
+                  onTap: () {
+                    // here the root navigator is used, so that the changelog is
+                    // displayed on top of the rest of the UI (and the NavBar)
+                    Navigator.of(context, rootNavigator: true).push(
+                      MaterialPageRoute(
+                        builder: (context) => ChangeLogPage(
+                          changelogAssetsPath: "assets/CHANGELOG.md",
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ],
           )

@@ -102,9 +102,14 @@ class ExplorePage extends StatelessWidget {
                       listType: "Artists",
                       itemList: artistsDao.watchAllArtists(
                           languageCode: context.locale().languageCode)),
-                  ListHorizontal(
-                      itemList: artistsDao.watchAllArtists(
-                          languageCode: context.locale().languageCode)),
+                  Padding(
+                    // padding to account for the convex app bar
+                    padding: const EdgeInsets.only(bottom: 30.0),
+                    child: ListHorizontal(
+                        itemList: artistsDao.watchAllArtists(
+                            languageCode: context.locale().languageCode)),
+                  ),
+                  // Spacer
                 ],
               ),
             ),

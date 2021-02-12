@@ -21,6 +21,8 @@ class ArtworkDetailsPage extends StatelessWidget {
         title: Text(context.strings().artworkDetails),
       ),
       body: SingleChildScrollView(
+        // padding to account for the convex app bar
+        padding: const EdgeInsets.only(bottom: 30.0),
         physics: const BouncingScrollPhysics(),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

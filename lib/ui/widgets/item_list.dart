@@ -64,6 +64,8 @@ class ListVertical extends StatelessWidget {
           List<dynamic> items = snapshot.data;
           return ListView.builder(
             scrollDirection: Axis.vertical,
+            // padding to account for the convex app bar
+            padding: const EdgeInsets.only(bottom: 30.0),
             physics: const BouncingScrollPhysics(),
             itemCount: items.length,
             itemBuilder: (context, index) {
