@@ -49,7 +49,7 @@ class ExplorePage extends StatelessWidget {
                   fit: StackFit.expand,
                   children: [
                     Image.asset(
-                      "assets/pinakothiki_building.jpg",
+                      "assets/pinakothiki_building.webp",
                       fit: BoxFit.cover,
                     ),
                     DecoratedBox(
