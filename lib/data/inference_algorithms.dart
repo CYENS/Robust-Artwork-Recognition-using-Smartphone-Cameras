@@ -197,7 +197,7 @@ class WindowAverageAlgo extends InferenceAlgorithm {
   @override
   String get topInferenceFormatted {
     if (hasResult()) {
-      return _topInference + " (${(_topMean * 100).toStringAsPrecision(2)}%)";
+      return _topInference + " (${(_topMean * 100).toStringAsFixed(1)}%)";
     } else {
       return noResult;
     }

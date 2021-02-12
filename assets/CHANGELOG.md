@@ -1,9 +1,14 @@
+## Version 0.11.1 (2021-02-12)
+- Rearranged the details presented in camera view, added ability to hide them altogether
+- Fixed issue with app pushing 2 artwork detail pages into navigator
+- Fixed crash on devices with Android version <= 6.0
+
 ## Version 0.11.0 (2021-02-12)
-- Fixed displaying this changelog
 - Much improved Explore page with animations
 - Added vibration when the app recognises an artwork
 - Only 1 CNN is now included in the app
 - Added library for error reporting
+- Fixed displaying this changelog
 - More localisations
 
 ## Version 0.10.0 (2021-02-10)

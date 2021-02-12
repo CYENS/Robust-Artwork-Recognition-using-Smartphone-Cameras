@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:modern_art_app/data/artworks_dao.dart';
 import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/data/inference_algorithms.dart';
@@ -55,6 +56,10 @@ class _ModelSelectionState extends State<ModelSelection> {
     // arrive after user navigated away (setState after dispose)
     // dispose is called in tensorflow_camera
     if (mounted) {
+      // bool hasRes = currentAlgorithm?.hasResult() ?? false;
+      // if (hasRes && _model.isEmpty) {
+      //   return;
+      // }
       super.setState(fn);
     }
   }
@@ -110,69 +115,76 @@ class _ModelSelectionState extends State<ModelSelection> {
   }
 
   setRecognitions(recognitions, imageHeight, imageWidth, inferenceTime) {
-    if (currentAlgorithm.hasResult() &&
-        _navigateToDetails &&
-        currentAlgorithm.topInference != "no_artwork") {
+    if (_model.isNotEmpty) {
+      if (currentAlgorithm.hasResult() &&
+          _navigateToDetails &&
+          currentAlgorithm.topInference != "no_artwork") {
+        setState(() {
+          _model = "";
+        });
+      }
       setState(() {
-        _model = "";
+        _recognitions = recognitions;
+        _imageHeight = imageHeight;
+        _imageWidth = imageWidth;
+        _inferenceTime = inferenceTime;
+
+        // each item in recognitions is a LinkedHashMap in the form of
+        // {confidence: 0.5562283396720886, index: 15, label: untitled_votsis}
+        currentAlgorithm.updateRecognitions(recognitions, inferenceTime);
+        _currentRes = currentAlgorithm.topInferenceFormatted;
+        _fps = currentAlgorithm.fps;
+        if (currentAlgorithm.hasResult() && _navigateToDetails) {
+          // && !addedViewing
+          if (currentAlgorithm.topInference != "no_artwork") {
+            _model = "";
+            if (_canVibrate) {
+              Vibration.vibrate(pattern: [0, 40, 100, 40]);
+            }
+
+            // get top inference as an object ready to insert in db
+            ViewingsCompanion vc = currentAlgorithm.resultAsDbObject();
+            // add current model to object
+            vc = vc.copyWith(cnnModelUsed: Value(_model));
+            viewingsDao.insertTask(vc);
+            print("Added VIEWING: $vc");
+            // addedViewing = true;
+
+            if (_navigateToDetails) {
+              // navigate to artwork details
+              Provider.of<ArtworksDao>(context, listen: false)
+                  .getArtworkById(
+                      artworkId: currentAlgorithm.topInference,
+                      languageCode: context.locale().languageCode)
+                  .then((artwork) {
+                // set model to empty here, so that the camera stream stops
+                _model = "";
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ArtworkDetailsPage(artwork: artwork)),
+                ).then((_) {
+                  // re-initialize model when user is back to this screen
+                  print(
+                      "HAS RESULT: ${currentAlgorithm.hasResult()}!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                  return initModel();
+                });
+              });
+            }
+          } else {
+            print("Not adding VIEWING no_artwork");
+          }
+        }
       });
     }
-    setState(() {
-      _recognitions = recognitions;
-      _imageHeight = imageHeight;
-      _imageWidth = imageWidth;
-      _inferenceTime = inferenceTime;
-
-      // each item in recognitions is a LinkedHashMap in the form of
-      // {confidence: 0.5562283396720886, index: 15, label: untitled_votsis}
-      currentAlgorithm.updateRecognitions(recognitions, inferenceTime);
-      _currentRes = currentAlgorithm.topInferenceFormatted;
-      _fps = currentAlgorithm.fps;
-      if (currentAlgorithm.hasResult() && _navigateToDetails) {
-        // && !addedViewing
-        if (currentAlgorithm.topInference != "no_artwork") {
-          _model = "";
-          if (_canVibrate) {
-            Vibration.vibrate(pattern: [0, 40, 100, 40]);
-          }
-
-          // get top inference as an object ready to insert in db
-          ViewingsCompanion vc = currentAlgorithm.resultAsDbObject();
-          // add current model to object
-          vc = vc.copyWith(cnnModelUsed: Value(_model));
-          viewingsDao.insertTask(vc);
-          print("Added VIEWING: $vc");
-          // addedViewing = true;
-
-          if (_navigateToDetails) {
-            // navigate to artwork details
-            Provider.of<ArtworksDao>(context, listen: false)
-                .getArtworkById(
-                    artworkId: currentAlgorithm.topInference,
-                    languageCode: context.locale().languageCode)
-                .then((artwork) {
-              // set model to empty here, so that the camera stream stops
-              _model = "";
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ArtworkDetailsPage(artwork: artwork)),
-              ).then((_) {
-                // re-initialize model when user is back to this screen
-                return initModel();
-              });
-            });
-          }
-        } else {
-          print("Not adding VIEWING no_artwork");
-        }
-      }
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     Size screen = MediaQuery.of(context).size;
+    // todo why is this printed all the time????
+    print("SIZE======= ${screen.width}");
     viewingsDao = Provider.of<ViewingsDao>(context);
     return Scaffold(
       body: _model == ""
@@ -187,42 +199,52 @@ class _ModelSelectionState extends State<ModelSelection> {
                   setRecognitions,
                   _model,
                 ),
-                SafeArea(
-                  child: BBox(
-                      _recognitions == null ? [] : _recognitions,
-                      math.max(_imageHeight, _imageWidth),
-                      math.min(_imageHeight, _imageWidth),
-                      screen.height,
-                      screen.width,
-                      _model,
-                      _inferenceTime),
-                ),
-                Align(
-                  alignment: Alignment.bottomCenter,
+                Settings.getValue(keyDisplayExtraInfo, true)
+                    ? SafeArea(
+                        child: BBox(
+                            _recognitions == null ? [] : _recognitions,
+                            math.max(_imageHeight, _imageWidth),
+                            math.min(_imageHeight, _imageWidth),
+                            screen.height,
+                            screen.width,
+                            _model,
+                            _inferenceTime),
+                      )
+                    : Container(),
+                Settings.getValue(keyDisplayExtraInfo, true)
+                    ? Align(
+                        alignment: Alignment.topLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(4, 4, 4, 30),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Analysing $_fps",
+                                  style: TextStyle(fontSize: 14)),
+                              Text(
+                                "Current consensus: ${_currentRes.isEmpty ? 'Calculating..' : _currentRes}",
+                                style: TextStyle(fontSize: 12),
+                              ),
+                              Text(
+                                "Algorithm used: $_currentAlgo",
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    : Container(),
+                Positioned.fill(
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.fromLTRB(4, 4, 4, 50),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Settings.getValue(keyDisplayExtraInfo, true)
-                            ? Column(
-                                children: [
-                                  Text(
-                                    "Result: $_currentRes",
-                                    style: TextStyle(fontSize: 18),
-                                  ),
-                                  Text(
-                                    "Current algorithm: $_currentAlgo",
-                                    style: TextStyle(fontSize: 16),
-                                  ),
-                                  Text("Model: $_model"),
-                                  Text("Sensitivity: $_preferredSensitivity"),
-                                ],
-                              )
-                            : Container(),
-                        Text(
-                          _fps,
-                          style: TextStyle(fontSize: 20),
+                        SpinKitPulse(
+                          color: Colors.white,
+                          size: screen.width / 3,
                         ),
                       ],
                     ),
