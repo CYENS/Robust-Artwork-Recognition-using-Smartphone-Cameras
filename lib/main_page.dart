@@ -111,7 +111,9 @@ class _MainPageState extends State<MainPage> {
               _navigatorKey.currentState.pushNamed("/identify");
               break;
             case 2:
-              _navigatorKey.currentState.pushNamed("/settings");
+              // also here remove everything else from the stack, apart from "/"
+              _navigatorKey.currentState.pushNamedAndRemoveUntil(
+                  "/settings", ModalRoute.withName("/"));
               break;
           }
           setState(() {
