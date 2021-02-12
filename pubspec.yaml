@@ -89,6 +89,7 @@ flutter:
     - CHANGELOG.md
     - assets/
     - assets/data/
+    - assets/google_fonts/
     - assets/painters/
     - assets/paintings/
 #    - assets/tflite/VGG_with_no_art_quant.tflite
