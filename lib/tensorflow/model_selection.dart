@@ -55,6 +55,10 @@ class _ModelSelectionState extends State<ModelSelection> {
     // arrive after user navigated away (setState after dispose)
     // dispose is called in tensorflow_camera
     if (mounted) {
+      // bool hasRes = currentAlgorithm?.hasResult() ?? false;
+      // if (hasRes && _model.isEmpty) {
+      //   return;
+      // }
       super.setState(fn);
     }
   }
@@ -110,64 +114,69 @@ class _ModelSelectionState extends State<ModelSelection> {
   }
 
   setRecognitions(recognitions, imageHeight, imageWidth, inferenceTime) {
-    if (currentAlgorithm.hasResult() &&
-        _navigateToDetails &&
-        currentAlgorithm.topInference != "no_artwork") {
+    if (_model.isNotEmpty) {
+      if (currentAlgorithm.hasResult() &&
+          _navigateToDetails &&
+          currentAlgorithm.topInference != "no_artwork") {
+        setState(() {
+          _model = "";
+        });
+      }
       setState(() {
-        _model = "";
+        _recognitions = recognitions;
+        _imageHeight = imageHeight;
+        _imageWidth = imageWidth;
+        _inferenceTime = inferenceTime;
+
+        // each item in recognitions is a LinkedHashMap in the form of
+        // {confidence: 0.5562283396720886, index: 15, label: untitled_votsis}
+        currentAlgorithm.updateRecognitions(recognitions, inferenceTime);
+        _currentRes = currentAlgorithm.topInferenceFormatted;
+        _fps = currentAlgorithm.fps;
+        if (currentAlgorithm.hasResult() && _navigateToDetails) {
+          // && !addedViewing
+          if (currentAlgorithm.topInference != "no_artwork") {
+            _model = "";
+            if (_canVibrate) {
+              Vibration.vibrate(pattern: [0, 40, 100, 40]);
+            }
+
+            // get top inference as an object ready to insert in db
+            ViewingsCompanion vc = currentAlgorithm.resultAsDbObject();
+            // add current model to object
+            vc = vc.copyWith(cnnModelUsed: Value(_model));
+            viewingsDao.insertTask(vc);
+            print("Added VIEWING: $vc");
+            // addedViewing = true;
+
+            if (_navigateToDetails) {
+              // navigate to artwork details
+              Provider.of<ArtworksDao>(context, listen: false)
+                  .getArtworkById(
+                      artworkId: currentAlgorithm.topInference,
+                      languageCode: context.locale().languageCode)
+                  .then((artwork) {
+                // set model to empty here, so that the camera stream stops
+                _model = "";
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          ArtworkDetailsPage(artwork: artwork)),
+                ).then((_) {
+                  // re-initialize model when user is back to this screen
+                  print(
+                      "HAS RESULT: ${currentAlgorithm.hasResult()}!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                  return initModel();
+                });
+              });
+            }
+          } else {
+            print("Not adding VIEWING no_artwork");
+          }
+        }
       });
     }
-    setState(() {
-      _recognitions = recognitions;
-      _imageHeight = imageHeight;
-      _imageWidth = imageWidth;
-      _inferenceTime = inferenceTime;
-
-      // each item in recognitions is a LinkedHashMap in the form of
-      // {confidence: 0.5562283396720886, index: 15, label: untitled_votsis}
-      currentAlgorithm.updateRecognitions(recognitions, inferenceTime);
-      _currentRes = currentAlgorithm.topInferenceFormatted;
-      _fps = currentAlgorithm.fps;
-      if (currentAlgorithm.hasResult() && _navigateToDetails) {
-        // && !addedViewing
-        if (currentAlgorithm.topInference != "no_artwork") {
-          _model = "";
-          if (_canVibrate) {
-            Vibration.vibrate(pattern: [0, 40, 100, 40]);
-          }
-
-          // get top inference as an object ready to insert in db
-          ViewingsCompanion vc = currentAlgorithm.resultAsDbObject();
-          // add current model to object
-          vc = vc.copyWith(cnnModelUsed: Value(_model));
-          viewingsDao.insertTask(vc);
-          print("Added VIEWING: $vc");
-          // addedViewing = true;
-
-          if (_navigateToDetails) {
-            // navigate to artwork details
-            Provider.of<ArtworksDao>(context, listen: false)
-                .getArtworkById(
-                    artworkId: currentAlgorithm.topInference,
-                    languageCode: context.locale().languageCode)
-                .then((artwork) {
-              // set model to empty here, so that the camera stream stops
-              _model = "";
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => ArtworkDetailsPage(artwork: artwork)),
-              ).then((_) {
-                // re-initialize model when user is back to this screen
-                return initModel();
-              });
-            });
-          }
-        } else {
-          print("Not adding VIEWING no_artwork");
-        }
-      }
-    });
   }
 
   @override
