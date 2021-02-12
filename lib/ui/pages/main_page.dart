@@ -4,9 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:modern_art_app/tensorflow/model_selection.dart';
 import 'package:modern_art_app/ui/pages/explore_page.dart';
 import 'package:modern_art_app/ui/pages/settings_page.dart';
+import 'package:modern_art_app/utils/extensions.dart';
 import 'package:sentry/sentry.dart';
-
-import 'utils/extensions.dart';
 
 class MainPage extends StatefulWidget {
   final List<CameraDescription> cameras;

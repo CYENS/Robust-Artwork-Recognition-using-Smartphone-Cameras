@@ -6,7 +6,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
 import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/data/sensitive.dart';
-import 'package:modern_art_app/main_page.dart';
+import 'package:modern_art_app/ui/pages/main_page.dart';
 import 'package:provider/provider.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
 
