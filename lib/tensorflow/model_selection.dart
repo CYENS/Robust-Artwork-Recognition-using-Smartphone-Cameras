@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:modern_art_app/data/artworks_dao.dart';
 import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/data/inference_algorithms.dart';
@@ -182,6 +183,8 @@ class _ModelSelectionState extends State<ModelSelection> {
   @override
   Widget build(BuildContext context) {
     Size screen = MediaQuery.of(context).size;
+    // todo why is this printed all the time????
+    print("SIZE======= ${screen.width}");
     viewingsDao = Provider.of<ViewingsDao>(context);
     return Scaffold(
       body: _model == ""
@@ -196,42 +199,52 @@ class _ModelSelectionState extends State<ModelSelection> {
                   setRecognitions,
                   _model,
                 ),
-                SafeArea(
-                  child: BBox(
-                      _recognitions == null ? [] : _recognitions,
-                      math.max(_imageHeight, _imageWidth),
-                      math.min(_imageHeight, _imageWidth),
-                      screen.height,
-                      screen.width,
-                      _model,
-                      _inferenceTime),
-                ),
-                Align(
-                  alignment: Alignment.bottomCenter,
+                Settings.getValue(keyDisplayExtraInfo, true)
+                    ? SafeArea(
+                        child: BBox(
+                            _recognitions == null ? [] : _recognitions,
+                            math.max(_imageHeight, _imageWidth),
+                            math.min(_imageHeight, _imageWidth),
+                            screen.height,
+                            screen.width,
+                            _model,
+                            _inferenceTime),
+                      )
+                    : Container(),
+                Settings.getValue(keyDisplayExtraInfo, true)
+                    ? Align(
+                        alignment: Alignment.topLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(4, 4, 4, 30),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Analysing $_fps",
+                                  style: TextStyle(fontSize: 14)),
+                              Text(
+                                "Current consensus: ${_currentRes.isEmpty ? 'Calculating..' : _currentRes}",
+                                style: TextStyle(fontSize: 12),
+                              ),
+                              Text(
+                                "Algorithm used: $_currentAlgo",
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    : Container(),
+                Positioned.fill(
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.fromLTRB(4, 4, 4, 50),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Settings.getValue(keyDisplayExtraInfo, true)
-                            ? Column(
-                                children: [
-                                  Text(
-                                    "Result: $_currentRes",
-                                    style: TextStyle(fontSize: 18),
-                                  ),
-                                  Text(
-                                    "Current algorithm: $_currentAlgo",
-                                    style: TextStyle(fontSize: 16),
-                                  ),
-                                  Text("Model: $_model"),
-                                  Text("Sensitivity: $_preferredSensitivity"),
-                                ],
-                              )
-                            : Container(),
-                        Text(
-                          _fps,
-                          style: TextStyle(fontSize: 20),
+                        SpinKitPulse(
+                          color: Colors.white,
+                          size: screen.width / 3,
                         ),
                       ],
                     ),
