@@ -17,7 +17,7 @@ class AppLocalizations {
     Locale.fromSubtags(languageCode: 'en'): AppLocalizations_Labels(
       artworks: 'Artworks',
       artists: 'Artists',
-      artworkOfTheWeek: 'Artwork of the week',
+      featuredArtwork: 'Featured artwork',
       pointTheCamera: 'Point the camera to an artwork',
       biography: 'Short biography',
       artworksBy: 'Artworks by',
@@ -58,7 +58,7 @@ class AppLocalizations {
     Locale.fromSubtags(languageCode: 'el'): AppLocalizations_Labels(
       artworks: 'Εργα τέχνης',
       artists: 'Καλλιτέχνες',
-      artworkOfTheWeek: 'Έργο τέχνης της εβδομάδας',
+      featuredArtwork: 'Προτεινόμενο έργο τέχνης',
       pointTheCamera: 'Στρέψτε την κάμερα σε ένα έργο τέχνης',
       biography: 'Σύντομο βιογραφικό',
       artworksBy: 'Έργα τέχνης του/της',
@@ -239,7 +239,7 @@ class AppLocalizations_Labels {
   const AppLocalizations_Labels(
       {this.artworks,
       this.artists,
-      this.artworkOfTheWeek,
+      this.featuredArtwork,
       this.pointTheCamera,
       this.biography,
       this.artworksBy,
@@ -255,7 +255,7 @@ class AppLocalizations_Labels {
 
   final String artists;
 
-  final String artworkOfTheWeek;
+  final String featuredArtwork;
 
   final String pointTheCamera;
 
@@ -283,8 +283,8 @@ class AppLocalizations_Labels {
         return artworks;
       case 'artists':
         return artists;
-      case 'artworkOfTheWeek':
-        return artworkOfTheWeek;
+      case 'featuredArtwork':
+        return featuredArtwork;
       case 'pointTheCamera':
         return pointTheCamera;
       case 'biography':

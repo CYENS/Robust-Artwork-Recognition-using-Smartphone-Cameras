@@ -75,7 +75,7 @@ class ExplorePage extends StatelessWidget {
                 [
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: headline(context.strings().artworkOfTheWeek),
+                    child: headline(context.strings().featuredArtwork),
                   ),
                   FutureBuilder(
                       future: artworksDao.getArtworkById(
