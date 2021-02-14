@@ -40,6 +40,82 @@ class _SettingsPageState extends State<SettingsPage> {
         title: strings.stngs.title,
         children: [
           SettingsGroup(
+            title: strings.stngs.groupAbout.customToUpperCase(),
+            children: [
+              SimpleSettingsTile(
+                title: strings.stngs.stng.appInfo,
+                subtitle: strings.stngs.stng.appInfoSummary,
+                onTap: () {
+                  PackageInfo.fromPlatform()
+                      .then((packageInfo) => showAboutDialog(
+                            context: context,
+                            applicationIcon: const SizedBox(
+                              width: 80,
+                              height: 80,
+                              child: Image(
+                                image: AssetImage(
+                                    'assets/app_launcher_icons/hadjida_untitled_app_icon_square_android_adaptive.png'),
+                              ),
+                            ),
+                            applicationName: strings.galleryName,
+                            applicationVersion:
+                                "${strings.stngs.stng.appVersion}: ${packageInfo.version}",
+                            children: [
+                              Text(strings.stngs.stng.appDescription),
+                              Text(""),
+                              Text(strings.stngs.stng.appMadeBy),
+                            ],
+                          ));
+                },
+              ),
+              SimpleSettingsTile(
+                title: strings.stngs.stng.changelog,
+                subtitle: strings.stngs.stng.changelogSummary,
+                onTap: () {
+                  // here the root navigator is used, so that the changelog is
+                  // displayed on top of the rest of the UI (and the NavBar)
+                  Navigator.of(context, rootNavigator: true).push(
+                    MaterialPageRoute(
+                      builder: (context) => ChangeLogPage(
+                        changelogAssetsPath: "assets/CHANGELOG.md",
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+          SettingsGroup(
+            title: strings.stngs.groupDatabase.customToUpperCase(),
+            children: [
+              SimpleSettingsTile(
+                title: strings.stngs.stng.databaseBrowser,
+                subtitle: strings.stngs.stng.databaseBrowserSummary,
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          MoorDbViewer(Provider.of<AppDatabase>(context))),
+                ),
+              ),
+              SimpleSettingsTile(
+                title: strings.stngs.stng.historyExport,
+                subtitle: strings.stngs.stng.historyExportSummary,
+                onTap: () async {
+                  viewingsDao.allViewingEntries.then((viewings) {
+                    String viewingsInStr = jsonEncode(viewings);
+                    print(viewingsInStr);
+                    // write to file
+                    saveToJsonFile(viewingsInStr).then((jsonFile) {
+                      print(jsonFile);
+                      // share saved json file via share dialog
+                      Share.shareFiles([jsonFile], subject: "Viewings history");
+                    });
+                  });
+                },
+              ),
+            ],
+          ),
+          SettingsGroup(
             title: "Computer Vision options",
             children: [
               RadioModalSettingsTile<String>(
@@ -81,7 +157,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 },
               ),
               SliderSettingsTile(
-                leading: Icon(Icons.multiline_chart),
+                leading: Icon(Icons.space_bar),
                 title: _getCurrentWinThreshPName(),
                 settingKey: keyWinThreshP,
                 defaultValue: 8,
@@ -98,94 +174,18 @@ class _SettingsPageState extends State<SettingsPage> {
                 settingKey: keyNavigateToDetails,
                 defaultValue: true,
               ),
-              SwitchSettingsTile(
-                leading: Icon(Icons.list_alt_outlined),
-                title: "Display model & algorithm information in camera view",
-                settingKey: keyDisplayExtraInfo,
-                defaultValue: false,
-              ),
-            ],
-          ),
-          SettingsGroup(
-            title: strings.stngs.groupDatabase.customToUpperCase(),
-            children: [
-              SimpleSettingsTile(
-                title: strings.stngs.stng.databaseBrowser,
-                subtitle: strings.stngs.stng.databaseBrowserSummary,
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          MoorDbViewer(Provider.of<AppDatabase>(context))),
-                ),
-              ),
-              SimpleSettingsTile(
-                title: strings.stngs.stng.historyExport,
-                subtitle: strings.stngs.stng.historyExportSummary,
-                onTap: () async {
-                  viewingsDao.allViewingEntries.then((viewings) {
-                    String viewingsInStr = jsonEncode(viewings);
-                    print(viewingsInStr);
-                    // write to file
-                    saveToJsonFile(viewingsInStr).then((jsonFile) {
-                      print(jsonFile);
-                      // share saved json file via share dialog
-                      Share.shareFiles([jsonFile], subject: "Viewings history");
-                    });
-                  });
-                },
-              ),
-            ],
-          ),
-          SettingsGroup(
-            title: strings.stngs.groupAbout.customToUpperCase(),
-            children: [
-              SimpleSettingsTile(
-                title: strings.stngs.stng.appInfo,
-                subtitle: strings.stngs.stng.appInfoSummary,
-                onTap: () {
-                  PackageInfo.fromPlatform()
-                      .then((packageInfo) => showAboutDialog(
-                            context: context,
-                            applicationIcon: const SizedBox(
-                              width: 80,
-                              height: 80,
-                              child: Image(
-                                image: AssetImage(
-                                    'assets/app_launcher_icons/hadjida_untitled_app_icon_square_android_adaptive.png'),
-                              ),
-                            ),
-                            applicationName: strings.galleryName,
-                            applicationVersion:
-                                "${strings.stngs.stng.appVersion}: ${packageInfo.version}",
-                            children: [
-                              Text(strings.stngs.stng.appDescription),
-                              Text(""),
-                              Text(strings.stngs.stng.appMadeBy),
-                            ],
-                          ));
-                },
-              ),
               Padding(
                 // padding to account for the convex app bar
                 padding: const EdgeInsets.only(bottom: 30.0),
-                child: SimpleSettingsTile(
-                  title: strings.stngs.stng.changelog,
-                  subtitle: strings.stngs.stng.changelogSummary,
-                  onTap: () {
-                    // here the root navigator is used, so that the changelog is
-                    // displayed on top of the rest of the UI (and the NavBar)
-                    Navigator.of(context, rootNavigator: true).push(
-                      MaterialPageRoute(
-                        builder: (context) => ChangeLogPage(
-                          changelogAssetsPath: "assets/CHANGELOG.md",
-                        ),
-                      ),
-                    );
-                  },
+                child: SwitchSettingsTile(
+                  leading: Icon(Icons.list_alt_outlined),
+                  title: "Display model & algorithm information in camera view",
+                  settingKey: keyDisplayExtraInfo,
+                  defaultValue: false,
                 ),
               ),
             ],
-          )
+          ),
         ],
       ),
     );
