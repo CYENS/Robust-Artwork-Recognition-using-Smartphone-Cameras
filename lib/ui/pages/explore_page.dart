@@ -157,6 +157,7 @@ void _goToMore(BuildContext ctx, String title, Stream<List<dynamic>> list) =>
       ctx,
       MaterialPageRoute(
         builder: (context) => Scaffold(
+          backgroundColor: Colors.black,
           appBar: AppBar(title: Text(title)),
           body: ListVertical(itemList: list),
         ),

@@ -18,6 +18,7 @@ class ArtistDetailsPage extends StatelessWidget {
     // to change appbar color according to image, use below with futurebuilder
     // PaletteGenerator.fromImageProvider(AssetImage(artist.fileName));
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
         title: Text(context.strings().artistDetails),
       ),
