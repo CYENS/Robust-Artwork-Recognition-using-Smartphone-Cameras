@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
@@ -187,11 +188,16 @@ class _ModelSelectionState extends State<ModelSelection> {
 
   @override
   Widget build(BuildContext context) {
+    var strings = context.strings();
     Size screen = MediaQuery.of(context).size;
     // todo why is this printed all the time????
     print("SIZE======= ${screen.width}");
     viewingsDao = Provider.of<ViewingsDao>(context);
     return Scaffold(
+      appBar: AppBar(
+        title: AutoSizeText(strings.pointTheCamera, maxLines: 2),
+        backgroundColor: ThemeData.dark().primaryColor.withOpacity(0.2),
+      ),
       body: _model == ""
           // here check if model was loaded properly (see res in loadFrom...())
           // instead of checking if _model is empty; if loading fails show an
