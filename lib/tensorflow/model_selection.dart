@@ -71,16 +71,23 @@ class _ModelSelectionState extends State<ModelSelection> {
   }
 
   initModel() {
-    // get preferred model, algorithm, sensitivity and winThreshP from settings
-    // and load model and algorithm
+    // get preferred algorithm from settings
     String preferredModel = Settings.getValue(keyCnnModel, mobNetNoArt500_4);
-    double sensitivity = Settings.getValue(keyCnnSensitivity, 80.0);
+
+    // get preferred algorithm, sensitivity and winThreshP from settings
     String preferredAlgorithm =
         Settings.getValue(keyRecognitionAlgo, firstAlgorithm);
 
-    // keyWinThreshP's value is stored as double, have to make sure it is
-    // converted to int here
-    int winThreshP = Settings.getValue(keyWinThreshP, 8.0).round();
+    double sensitivity = Settings.getValue(
+      keyCnnSensitivity,
+      defaultSettings(preferredAlgorithm)[keyCnnSensitivity],
+    );
+
+    // keyWinThreshP's value is stored as double, converted to int here
+    int winThreshP = Settings.getValue(
+      keyWinThreshP,
+      defaultSettings(preferredAlgorithm)[keyWinThreshP],
+    ).round();
 
     // determine from settings whether to automatically navigate to an artwork's
     // details when a recognition occurs
@@ -166,9 +173,7 @@ class _ModelSelectionState extends State<ModelSelection> {
                           ArtworkDetailsPage(artwork: artwork)),
                 ).then((_) {
                   // re-initialize model when user is back to this screen
-                  print(
-                      "HAS RESULT: ${currentAlgorithm.hasResult()}!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                  return initModel();
+                  initModel();
                 });
               });
             }
