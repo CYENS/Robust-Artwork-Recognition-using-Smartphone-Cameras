@@ -195,13 +195,13 @@ class _SettingsPageState extends State<SettingsPage> {
 /// (Re)Sets the default values for the algorithms' settings each time a
 /// new algorithm is chosen in settings.
 void _setDefaultAlgorithmSettings(String algorithmName) {
-  var defValues = _defaultSettings(algorithmName);
+  var defValues = defaultSettings(algorithmName);
   Settings.setValue<double>(keyCnnSensitivity, defValues[keyCnnSensitivity]);
   Settings.setValue<double>(keyWinThreshP, defValues[keyWinThreshP]);
 }
 
 /// Returns the default values for the settings of each algorithm used.
-Map<String, dynamic> _defaultSettings(String algorithmName) {
+Map<String, dynamic> defaultSettings(String algorithmName) {
   return {
     firstAlgorithm: {
       keyCnnSensitivity: 80.0,
@@ -231,5 +231,5 @@ Map<String, dynamic> _defaultSettings(String algorithmName) {
 String _getCurrentWinThreshPName() {
   var currentAlgo =
       Settings.getValue<String>(keyRecognitionAlgo, firstAlgorithm);
-  return _defaultSettings(currentAlgo)[keyWinThreshPName];
+  return defaultSettings(currentAlgo)[keyWinThreshPName];
 }
