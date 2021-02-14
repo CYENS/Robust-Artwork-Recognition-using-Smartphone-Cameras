@@ -132,32 +132,36 @@ class HeadlineAndMoreRow extends StatelessWidget {
     var strings = context.strings();
     // TODO: fix this
     String title = listType == "Artists" ? strings.artists : strings.artworks;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 12, 8, 0),
-      child: Row(
-        children: [
-          headline(title),
-          Spacer(),
-          IconButton(
-            icon: Icon(Icons.arrow_forward_rounded),
-            tooltip: strings.button.more,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Scaffold(
-                    appBar: AppBar(title: Text(title)),
-                    body: ListVertical(itemList: itemList),
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
+    return InkWell(
+      onTap: () => _goToMore(context, title, itemList),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(8, 12, 8, 0),
+        child: Row(
+          children: [
+            headline(title),
+            Spacer(),
+            IconButton(
+              icon: Icon(Icons.arrow_forward_rounded),
+              tooltip: strings.button.more,
+              onPressed: () => _goToMore(context, title, itemList),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
+
+void _goToMore(BuildContext ctx, String title, Stream<List<dynamic>> list) =>
+    Navigator.push(
+      ctx,
+      MaterialPageRoute(
+        builder: (context) => Scaffold(
+          appBar: AppBar(title: Text(title)),
+          body: ListVertical(itemList: list),
+        ),
+      ),
+    );
 
 Widget headline(String text) => Text(
       text.customToUpperCase(),
