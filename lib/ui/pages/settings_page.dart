@@ -116,76 +116,82 @@ class _SettingsPageState extends State<SettingsPage> {
             ],
           ),
           SettingsGroup(
-            title: "Computer Vision options",
+            title: "Other settings",
             children: [
-              RadioModalSettingsTile<String>(
-                title: "CNN type used",
-                settingKey: keyCnnModel,
-                values: tfLiteModelNames,
-                selected: mobNetNoArt500_4,
-                onChange: (value) {
-                  debugPrint("$keyCnnModel: $value");
-                },
-              ),
-              RadioModalSettingsTile<String>(
-                title: "Recognition algorithm",
-                settingKey: keyRecognitionAlgo,
-                values: Map<String, String>.fromIterable(
-                  allAlgorithms.keys,
-                  key: (key) => key,
-                  value: (key) => key,
-                ),
-                selected: firstAlgorithm,
-                onChange: (value) {
-                  debugPrint("$keyRecognitionAlgo: $value");
-                  // reset values for algorithm settings every time a new
-                  // algorithm is chosen
-                  _setDefaultAlgorithmSettings(value);
-                  setState(() {});
-                },
-              ),
-              SliderSettingsTile(
-                leading: Icon(Icons.adjust),
-                title: "CNN sensitivity",
-                settingKey: keyCnnSensitivity,
-                defaultValue: 80.0,
-                min: 0.0,
-                max: 100.0,
-                step: 0.2,
-                onChange: (value) {
-                  debugPrint("$keyCnnSensitivity: $value");
-                },
-              ),
-              SliderSettingsTile(
-                leading: Icon(Icons.space_bar),
-                title: _getCurrentWinThreshPName(),
-                settingKey: keyWinThreshP,
-                defaultValue: 8,
-                min: 5,
-                max: 50,
-                step: 1,
-                onChange: (value) {
-                  debugPrint("$keyWinThreshP: $value");
-                },
-              ),
-              SwitchSettingsTile(
-                leading: Icon(Icons.navigation),
-                title: "Navigate to recognised artworks' details",
-                settingKey: keyNavigateToDetails,
-                defaultValue: true,
-              ),
-              Padding(
-                // padding to account for the convex app bar
-                padding: const EdgeInsets.only(bottom: 30.0),
-                child: SwitchSettingsTile(
-                  leading: Icon(Icons.list_alt_outlined),
-                  title: "Display model & algorithm information in camera view",
-                  settingKey: keyDisplayExtraInfo,
-                  defaultValue: false,
-                ),
-              ),
+              ExpandableSettingsTile(
+                title: "Computer vision options",
+                children: [
+                  RadioModalSettingsTile<String>(
+                    title: "CNN type used",
+                    settingKey: keyCnnModel,
+                    values: tfLiteModelNames,
+                    selected: mobNetNoArt500_4,
+                    onChange: (value) {
+                      debugPrint("$keyCnnModel: $value");
+                    },
+                  ),
+                  RadioModalSettingsTile<String>(
+                    title: "Recognition algorithm",
+                    settingKey: keyRecognitionAlgo,
+                    values: Map<String, String>.fromIterable(
+                      allAlgorithms.keys,
+                      key: (key) => key,
+                      value: (key) => key,
+                    ),
+                    selected: firstAlgorithm,
+                    onChange: (value) {
+                      debugPrint("$keyRecognitionAlgo: $value");
+                      // reset values for algorithm settings every time a new
+                      // algorithm is chosen
+                      _setDefaultAlgorithmSettings(value);
+                      setState(() {});
+                    },
+                  ),
+                  SliderSettingsTile(
+                    leading: Icon(Icons.adjust),
+                    title: "CNN sensitivity",
+                    settingKey: keyCnnSensitivity,
+                    defaultValue: 80.0,
+                    min: 0.0,
+                    max: 100.0,
+                    step: 0.2,
+                    onChange: (value) {
+                      debugPrint("$keyCnnSensitivity: $value");
+                    },
+                  ),
+                  SliderSettingsTile(
+                    leading: Icon(Icons.space_bar),
+                    title: _getCurrentWinThreshPName(),
+                    settingKey: keyWinThreshP,
+                    defaultValue: 8,
+                    min: 5,
+                    max: 50,
+                    step: 1,
+                    onChange: (value) {
+                      debugPrint("$keyWinThreshP: $value");
+                    },
+                  ),
+                  SwitchSettingsTile(
+                    leading: Icon(Icons.navigation),
+                    title: "Navigate to recognised artworks' details",
+                    settingKey: keyNavigateToDetails,
+                    defaultValue: true,
+                  ),
+                  Padding(
+                    // padding to account for the convex app bar
+                    padding: const EdgeInsets.only(bottom: 30.0),
+                    child: SwitchSettingsTile(
+                      leading: Icon(Icons.list_alt_outlined),
+                      title:
+                          "Display model & algorithm information in camera view",
+                      settingKey: keyDisplayExtraInfo,
+                      defaultValue: false,
+                    ),
+                  ),
+                ],
+              )
             ],
-          ),
+          )
         ],
       ),
     );
