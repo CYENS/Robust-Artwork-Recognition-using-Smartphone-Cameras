@@ -102,7 +102,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 leading: Icon(Icons.list_alt_outlined),
                 title: "Display model & algorithm information in camera view",
                 settingKey: keyDisplayExtraInfo,
-                defaultValue: true,
+                defaultValue: false,
               ),
             ],
           ),

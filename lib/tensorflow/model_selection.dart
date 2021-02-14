@@ -204,7 +204,7 @@ class _ModelSelectionState extends State<ModelSelection> {
                   setRecognitions,
                   _model,
                 ),
-                Settings.getValue(keyDisplayExtraInfo, true)
+                Settings.getValue(keyDisplayExtraInfo, false)
                     ? SafeArea(
                         child: BBox(
                             _recognitions == null ? [] : _recognitions,
@@ -216,7 +216,7 @@ class _ModelSelectionState extends State<ModelSelection> {
                             _inferenceTime),
                       )
                     : Container(),
-                Settings.getValue(keyDisplayExtraInfo, true)
+                Settings.getValue(keyDisplayExtraInfo, false)
                     ? Align(
                         alignment: Alignment.topLeft,
                         child: Padding(
