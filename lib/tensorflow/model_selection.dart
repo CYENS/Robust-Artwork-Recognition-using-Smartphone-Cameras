@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +16,6 @@ import 'package:provider/provider.dart';
 import 'package:tflite/tflite.dart';
 import 'package:vibration/vibration.dart';
 
-import 'bbox.dart';
 import 'models.dart';
 
 class ModelSelection extends StatefulWidget {
@@ -196,9 +193,9 @@ class _ModelSelectionState extends State<ModelSelection>
                 _model = "";
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          ArtworkDetailsPage(artwork: artwork)),
+                  MaterialPageRoute(builder: (context) {
+                    return ArtworkDetailsPage(artwork: artwork);
+                  }),
                 ).then((_) {
                   // re-initialize model when user is back to this screen
                   initModel();
@@ -217,8 +214,6 @@ class _ModelSelectionState extends State<ModelSelection>
   Widget build(BuildContext context) {
     var strings = context.strings();
     Size screen = MediaQuery.of(context).size;
-    // todo why is this printed all the time????
-    print("SIZE======= ${screen.width}");
     viewingsDao = Provider.of<ViewingsDao>(context);
     return Scaffold(
       appBar: AppBar(
@@ -226,7 +221,7 @@ class _ModelSelectionState extends State<ModelSelection>
         backgroundColor: ThemeData.dark().primaryColor.withOpacity(0.2),
       ),
       body: _model == ""
-          // here check if model was loaded properly (see res in loadFrom...())
+          // todo here check if model was loaded properly (see res in loadFrom...())
           // instead of checking if _model is empty; if loading fails show an
           // appropriate msg
           ? Center(child: CircularProgressIndicator())
@@ -237,42 +232,43 @@ class _ModelSelectionState extends State<ModelSelection>
                   setRecognitions,
                   _model,
                 ),
-                Settings.getValue(keyDisplayExtraInfo, false)
-                    ? SafeArea(
-                        child: BBox(
-                            _recognitions == null ? [] : _recognitions,
-                            math.max(_imageHeight, _imageWidth),
-                            math.min(_imageHeight, _imageWidth),
-                            screen.height,
-                            screen.width,
-                            _model,
-                            _inferenceTime),
-                      )
-                    : Container(),
-                Settings.getValue(keyDisplayExtraInfo, false)
-                    ? Align(
-                        alignment: Alignment.topLeft,
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(4, 4, 4, 30),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Analysing $_fps",
-                                  style: TextStyle(fontSize: 14)),
-                              Text(
-                                "Current consensus: ${_currentRes.isEmpty ? 'Calculating..' : _currentRes}",
-                                style: TextStyle(fontSize: 12),
-                              ),
-                              Text(
-                                "Algorithm used: $_currentAlgo",
-                                style: TextStyle(fontSize: 12),
-                              ),
-                            ],
+                if (_recognitions != null &&
+                    Settings.getValue(keyDisplayExtraInfo, false))
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(4, 4, 4, 30),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text("Analysing $_fps",
+                              style: TextStyle(fontSize: 14)),
+                          Text(
+                            "Current consensus: ${_currentRes.isEmpty ? 'Calculating...' : _currentRes}",
+                            style: TextStyle(fontSize: 12),
                           ),
-                        ),
-                      )
-                    : Container(),
+                          Text(
+                            "Algorithm used: $_currentAlgo",
+                            style: TextStyle(fontSize: 12),
+                          ),
+                          Text(""),
+                          Text(
+                            "Latest: ${_recognitions?.last['label']} ${(_recognitions?.last["confidence"] * 100).toStringAsFixed(0)}%, $_inferenceTime ms",
+                            style: TextStyle(fontSize: 12),
+                          ),
+                          if (!["no_artwork", ""]
+                              .contains(currentAlgorithm.topInference))
+                            Image.asset(
+                              "assets/paintings/${currentAlgorithm.topInference}.webp",
+                              width: screen.width / 5,
+                              height: screen.width / 5,
+                            ),
+                          Expanded(child: Container()),
+                        ],
+                      ),
+                    ),
+                  ),
                 Positioned.fill(
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(4, 4, 4, 50),
@@ -288,7 +284,7 @@ class _ModelSelectionState extends State<ModelSelection>
                       ],
                     ),
                   ),
-                )
+                ),
               ],
             ),
     );
