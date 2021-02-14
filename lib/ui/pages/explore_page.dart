@@ -29,19 +29,17 @@ class ExplorePage extends StatelessWidget {
               expandedHeight: size.height * 0.3,
               pinned: true,
               flexibleSpace: FlexibleSpaceBar(
+                titlePadding: const EdgeInsets.all(8.0),
                 stretchModes: <StretchMode>[
                   StretchMode.zoomBackground,
                   StretchMode.blurBackground,
                 ],
-                title: Padding(
-                  padding: const EdgeInsets.all(2.0),
-                  child: AutoSizeText(
-                    strings.galleryName.customToUpperCase(),
-                    style: GoogleFonts.openSansCondensed(fontSize: 28),
-                    textAlign: TextAlign.end,
-                    maxFontSize: 30,
-                    maxLines: 2,
-                  ),
+                title: AutoSizeText(
+                  strings.galleryName.customToUpperCase(),
+                  style: GoogleFonts.openSansCondensed(fontSize: 28),
+                  textAlign: TextAlign.end,
+                  maxFontSize: 30,
+                  maxLines: 2,
                 ),
                 centerTitle: true,
                 background: Stack(
