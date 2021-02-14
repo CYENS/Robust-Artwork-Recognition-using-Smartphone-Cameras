@@ -30,7 +30,8 @@ class ModelSelection extends StatefulWidget {
   _ModelSelectionState createState() => new _ModelSelectionState();
 }
 
-class _ModelSelectionState extends State<ModelSelection> {
+class _ModelSelectionState extends State<ModelSelection>
+    with WidgetsBindingObserver {
   List<dynamic> _recognitions;
   int _imageHeight = 0;
   int _imageWidth = 0;
@@ -68,7 +69,33 @@ class _ModelSelectionState extends State<ModelSelection> {
   @override
   void initState() {
     super.initState();
+    // observe for AppLifecycleState changes, to pause CNN if app state changes
+    // https://api.flutter.dev/flutter/widgets/WidgetsBindingObserver-class.html
+    WidgetsBinding.instance.addObserver(this);
+    // initialize model
     initModel();
+  }
+
+  @override
+  void dispose() {
+    // remove AppLifecycleState observer
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print("CHANGE STATE $state");
+    if ([AppLifecycleState.inactive, AppLifecycleState.paused]
+        .contains(state)) {
+      // pause the CNN if user puts app in the background
+      setState(() {
+        _model = "";
+      });
+    } else if (state == AppLifecycleState.resumed) {
+      // resume the CNN when user comes back
+      initModel();
+    }
   }
 
   initModel() {
