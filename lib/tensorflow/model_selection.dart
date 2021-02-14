@@ -195,7 +195,7 @@ class _ModelSelectionState extends State<ModelSelection> {
     viewingsDao = Provider.of<ViewingsDao>(context);
     return Scaffold(
       appBar: AppBar(
-        title: AutoSizeText(strings.pointTheCamera, maxLines: 2),
+        title: AutoSizeText(strings.msg.pointTheCamera, maxLines: 1),
         backgroundColor: ThemeData.dark().primaryColor.withOpacity(0.2),
       ),
       body: _model == ""
@@ -251,12 +251,13 @@ class _ModelSelectionState extends State<ModelSelection> {
                     padding: const EdgeInsets.fromLTRB(4, 4, 4, 50),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         SpinKitThreeBounce(
                           color: Colors.white,
-                          size: screen.width / 4.5,
+                          size: screen.width / 6,
                         ),
+                        Text(_msgForUser(currentAlgorithm.topInference)),
                       ],
                     ),
                   ),
@@ -264,5 +265,22 @@ class _ModelSelectionState extends State<ModelSelection> {
               ],
             ),
     );
+  }
+
+  String _msgForUser(String topInference) {
+    String current = "";
+    switch (topInference) {
+      case "no_artwork":
+        current = context.strings().msg.noneIdentified;
+        break;
+      case "":
+        break;
+      default:
+        current = topInference
+            .split("_")
+            .map((String e) => e[0].toUpperCase() + e.substring(1))
+            .join(" ");
+    }
+    return "${context.strings().msg.analysing} $current";
   }
 }
