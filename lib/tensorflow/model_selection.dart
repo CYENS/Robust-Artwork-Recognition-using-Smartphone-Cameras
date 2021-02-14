@@ -247,9 +247,9 @@ class _ModelSelectionState extends State<ModelSelection> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SpinKitPulse(
+                        SpinKitThreeBounce(
                           color: Colors.white,
-                          size: screen.width / 3,
+                          size: screen.width / 4.5,
                         ),
                       ],
                     ),
