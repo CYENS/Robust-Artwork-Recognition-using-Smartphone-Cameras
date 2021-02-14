@@ -116,7 +116,7 @@ class _SettingsPageState extends State<SettingsPage> {
             ],
           ),
           SettingsGroup(
-            title: "Other settings",
+            title: strings.stngs.groupOther.customToUpperCase(),
             children: [
               ExpandableSettingsTile(
                 title: "Computer vision options",
