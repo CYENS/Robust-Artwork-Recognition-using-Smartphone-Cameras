@@ -73,14 +73,14 @@ class _ModelSelectionState extends State<ModelSelection> {
   initModel() {
     // get preferred model, algorithm, sensitivity and winThreshP from settings
     // and load model and algorithm
-    String preferredModel = Settings.getValue(keyCnnModel, mobileNetNoArt);
-    double sensitivity = Settings.getValue(keyCnnSensitivity, 99.0);
+    String preferredModel = Settings.getValue(keyCnnModel, mobNetNoArt500_4);
+    double sensitivity = Settings.getValue(keyCnnSensitivity, 80.0);
     String preferredAlgorithm =
         Settings.getValue(keyRecognitionAlgo, firstAlgorithm);
 
     // keyWinThreshP's value is stored as double, have to make sure it is
     // converted to int here
-    int winThreshP = Settings.getValue(keyWinThreshP, 5.0).round();
+    int winThreshP = Settings.getValue(keyWinThreshP, 8.0).round();
 
     // determine from settings whether to automatically navigate to an artwork's
     // details when a recognition occurs
