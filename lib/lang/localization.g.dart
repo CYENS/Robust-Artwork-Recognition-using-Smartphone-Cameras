@@ -37,6 +37,7 @@ class AppLocalizations {
         title: 'Settings',
         groupAbout: 'About',
         groupDatabase: 'Database',
+        groupOther: 'Other settings',
         stng: AppLocalizations_Labels_Stngs_Stng(
           appInfo: 'App information',
           appInfoSummary: 'App version & Open source libraries',
@@ -78,6 +79,7 @@ class AppLocalizations {
         title: 'Ρυθμίσεις',
         groupAbout: 'Σχετικά',
         groupDatabase: 'Βάση δεδομένων',
+        groupOther: 'Πρόσθετες ρυθμίσεις',
         stng: AppLocalizations_Labels_Stngs_Stng(
           appInfo: 'Πληροφορίες για την εφαρμογή',
           appInfoSummary: 'Εκδοση εφαρμογής & Βιβλιοθήκες ανοιχτού κώδικα',
@@ -211,13 +213,19 @@ class AppLocalizations_Labels_Stngs_Stng {
 
 class AppLocalizations_Labels_Stngs {
   const AppLocalizations_Labels_Stngs(
-      {this.title, this.groupAbout, this.groupDatabase, this.stng});
+      {this.title,
+      this.groupAbout,
+      this.groupDatabase,
+      this.groupOther,
+      this.stng});
 
   final String title;
 
   final String groupAbout;
 
   final String groupDatabase;
+
+  final String groupOther;
 
   final AppLocalizations_Labels_Stngs_Stng stng;
 
@@ -229,6 +237,8 @@ class AppLocalizations_Labels_Stngs {
         return groupAbout;
       case 'groupDatabase':
         return groupDatabase;
+      case 'groupOther':
+        return groupOther;
       default:
         return '';
     }
