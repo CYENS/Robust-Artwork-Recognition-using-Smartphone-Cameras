@@ -90,10 +90,26 @@ class ArtworkDetailsPage extends StatelessWidget {
               },
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16.0, 0.0, 8.0, 8.0),
-                child: Text(
-                  "${artwork.artist}" +
-                      (artwork.year.isNotEmpty ? ", ${artwork.year}" : ""),
-                  style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+                child: RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: artwork.artist,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontStyle: FontStyle.italic,
+                          color: Theme.of(context).accentColor,
+                        ),
+                      ),
+                      TextSpan(
+                        text: " (${artwork.year})",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -144,3 +160,9 @@ class ItemZoomPage extends StatelessWidget {
     );
   }
 }
+
+// Text(
+// "${artwork.artist}" +
+// (artwork.year.isNotEmpty ? ", ${artwork.year}" : ""),
+// style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+// )
