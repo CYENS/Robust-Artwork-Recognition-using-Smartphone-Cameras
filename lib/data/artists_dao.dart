@@ -25,4 +25,27 @@ class ArtistsDao extends DatabaseAccessor<AppDatabase> with _$ArtistsDaoMixin {
             name: e.readTable(artistTranslations).name,
             biography: e.readTable(artistTranslations).biography);
       }).watch();
+
+  /// Get artist by id.
+  Future<Artist> getArtistById({
+    @required String artistId,
+    String languageCode = "en",
+  }) {
+    return ((select(artists)..where((tbl) => tbl.id.equals(artistId))).join(
+      [
+        leftOuterJoin(
+            artistTranslations, artistTranslations.id.equalsExp(artists.id))
+      ],
+    )..where(artistTranslations.languageCode.equals(languageCode)))
+        .map(
+      (e) {
+        Artist artist = e.readTable(artists);
+        ArtistTranslation translation = e.readTable(artistTranslations);
+        return artist.copyWith(
+          name: translation.name,
+          biography: translation.biography,
+        );
+      },
+    ).getSingle();
+  }
 }
