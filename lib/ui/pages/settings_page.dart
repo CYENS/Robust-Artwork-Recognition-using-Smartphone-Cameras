@@ -40,69 +40,48 @@ class _SettingsPageState extends State<SettingsPage> {
         title: strings.stngs.title,
         children: [
           SettingsGroup(
-            title: "Computer Vision options",
+            title: strings.stngs.groupAbout.customToUpperCase(),
             children: [
-              RadioModalSettingsTile<String>(
-                title: "CNN type used",
-                settingKey: keyCnnModel,
-                values: tfLiteModelNames,
-                selected: mobNetNoArt500_4,
-                onChange: (value) {
-                  debugPrint("$keyCnnModel: $value");
+              SimpleSettingsTile(
+                title: strings.stngs.stng.appInfo,
+                subtitle: strings.stngs.stng.appInfoSummary,
+                onTap: () {
+                  PackageInfo.fromPlatform()
+                      .then((packageInfo) => showAboutDialog(
+                            context: context,
+                            applicationIcon: const SizedBox(
+                              width: 80,
+                              height: 80,
+                              child: Image(
+                                image: AssetImage(
+                                    'assets/app_launcher_icons/hadjida_untitled_app_icon_square_android_adaptive.png'),
+                              ),
+                            ),
+                            applicationName: strings.galleryName,
+                            applicationVersion:
+                                "${strings.stngs.stng.appVersion}: ${packageInfo.version}",
+                            children: [
+                              Text(strings.stngs.stng.appDescription),
+                              Text(""),
+                              Text(strings.stngs.stng.appMadeBy),
+                            ],
+                          ));
                 },
               ),
-              RadioModalSettingsTile<String>(
-                title: "Recognition algorithm",
-                settingKey: keyRecognitionAlgo,
-                values: Map<String, String>.fromIterable(
-                  allAlgorithms.keys,
-                  key: (key) => key,
-                  value: (key) => key,
-                ),
-                selected: firstAlgorithm,
-                onChange: (value) {
-                  debugPrint("$keyRecognitionAlgo: $value");
-                  // reset values for algorithm settings every time a new
-                  // algorithm is chosen
-                  _setDefaultAlgorithmSettings(value);
-                  setState(() {});
+              SimpleSettingsTile(
+                title: strings.stngs.stng.changelog,
+                subtitle: strings.stngs.stng.changelogSummary,
+                onTap: () {
+                  // here the root navigator is used, so that the changelog is
+                  // displayed on top of the rest of the UI (and the NavBar)
+                  Navigator.of(context, rootNavigator: true).push(
+                    MaterialPageRoute(
+                      builder: (context) => ChangeLogPage(
+                        changelogAssetsPath: "assets/CHANGELOG.md",
+                      ),
+                    ),
+                  );
                 },
-              ),
-              SliderSettingsTile(
-                leading: Icon(Icons.adjust),
-                title: "CNN sensitivity",
-                settingKey: keyCnnSensitivity,
-                defaultValue: 80.0,
-                min: 0.0,
-                max: 100.0,
-                step: 0.2,
-                onChange: (value) {
-                  debugPrint("$keyCnnSensitivity: $value");
-                },
-              ),
-              SliderSettingsTile(
-                leading: Icon(Icons.multiline_chart),
-                title: _getCurrentWinThreshPName(),
-                settingKey: keyWinThreshP,
-                defaultValue: 8,
-                min: 5,
-                max: 50,
-                step: 1,
-                onChange: (value) {
-                  debugPrint("$keyWinThreshP: $value");
-                },
-              ),
-              SwitchSettingsTile(
-                leading: Icon(Icons.navigation),
-                title: "Navigate to recognised artworks' details",
-                settingKey: keyNavigateToDetails,
-                defaultValue: true,
-              ),
-              SwitchSettingsTile(
-                leading: Icon(Icons.list_alt_outlined),
-                title: "Display model & algorithm information in camera view",
-                settingKey: keyDisplayExtraInfo,
-                defaultValue: true,
               ),
             ],
           ),
@@ -137,53 +116,80 @@ class _SettingsPageState extends State<SettingsPage> {
             ],
           ),
           SettingsGroup(
-            title: strings.stngs.groupAbout.customToUpperCase(),
+            title: strings.stngs.groupOther.customToUpperCase(),
             children: [
-              SimpleSettingsTile(
-                title: strings.stngs.stng.appInfo,
-                subtitle: strings.stngs.stng.appInfoSummary,
-                onTap: () {
-                  PackageInfo.fromPlatform()
-                      .then((packageInfo) => showAboutDialog(
-                            context: context,
-                            applicationIcon: const SizedBox(
-                              width: 80,
-                              height: 80,
-                              child: Image(
-                                image: AssetImage(
-                                    'assets/app_launcher_icons/hadjida_untitled_app_icon_square_android_adaptive.png'),
-                              ),
-                            ),
-                            applicationName: strings.galleryName,
-                            applicationVersion:
-                                "${strings.stngs.stng.appVersion}: ${packageInfo.version}",
-                            children: [
-                              Text(strings.stngs.stng.appDescription),
-                              Text(""),
-                              Text(strings.stngs.stng.appMadeBy),
-                            ],
-                          ));
-                },
-              ),
-              Padding(
-                // padding to account for the convex app bar
-                padding: const EdgeInsets.only(bottom: 30.0),
-                child: SimpleSettingsTile(
-                  title: strings.stngs.stng.changelog,
-                  subtitle: strings.stngs.stng.changelogSummary,
-                  onTap: () {
-                    // here the root navigator is used, so that the changelog is
-                    // displayed on top of the rest of the UI (and the NavBar)
-                    Navigator.of(context, rootNavigator: true).push(
-                      MaterialPageRoute(
-                        builder: (context) => ChangeLogPage(
-                          changelogAssetsPath: "assets/CHANGELOG.md",
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
+              ExpandableSettingsTile(
+                title: "Computer vision options",
+                children: [
+                  RadioModalSettingsTile<String>(
+                    title: "CNN type used",
+                    settingKey: keyCnnModel,
+                    values: tfLiteModelNames,
+                    selected: mobNetNoArt500_4,
+                    onChange: (value) {
+                      debugPrint("$keyCnnModel: $value");
+                    },
+                  ),
+                  RadioModalSettingsTile<String>(
+                    title: "Recognition algorithm",
+                    settingKey: keyRecognitionAlgo,
+                    values: Map<String, String>.fromIterable(
+                      allAlgorithms.keys,
+                      key: (key) => key,
+                      value: (key) => key,
+                    ),
+                    selected: firstAlgorithm,
+                    onChange: (value) {
+                      debugPrint("$keyRecognitionAlgo: $value");
+                      // reset values for algorithm settings every time a new
+                      // algorithm is chosen
+                      _setDefaultAlgorithmSettings(value);
+                      setState(() {});
+                    },
+                  ),
+                  SliderSettingsTile(
+                    leading: Icon(Icons.adjust),
+                    title: "CNN sensitivity",
+                    settingKey: keyCnnSensitivity,
+                    defaultValue: 80.0,
+                    min: 0.0,
+                    max: 100.0,
+                    step: 0.2,
+                    onChange: (value) {
+                      debugPrint("$keyCnnSensitivity: $value");
+                    },
+                  ),
+                  SliderSettingsTile(
+                    leading: Icon(Icons.space_bar),
+                    title: _getCurrentWinThreshPName(),
+                    settingKey: keyWinThreshP,
+                    defaultValue: 8,
+                    min: 5,
+                    max: 50,
+                    step: 1,
+                    onChange: (value) {
+                      debugPrint("$keyWinThreshP: $value");
+                    },
+                  ),
+                  SwitchSettingsTile(
+                    leading: Icon(Icons.navigation),
+                    title: "Navigate to recognised artworks' details",
+                    settingKey: keyNavigateToDetails,
+                    defaultValue: true,
+                  ),
+                  Padding(
+                    // padding to account for the convex app bar
+                    padding: const EdgeInsets.only(bottom: 30.0),
+                    child: SwitchSettingsTile(
+                      leading: Icon(Icons.list_alt_outlined),
+                      title:
+                          "Display model & algorithm information in camera view",
+                      settingKey: keyDisplayExtraInfo,
+                      defaultValue: false,
+                    ),
+                  ),
+                ],
+              )
             ],
           )
         ],
@@ -195,13 +201,13 @@ class _SettingsPageState extends State<SettingsPage> {
 /// (Re)Sets the default values for the algorithms' settings each time a
 /// new algorithm is chosen in settings.
 void _setDefaultAlgorithmSettings(String algorithmName) {
-  var defValues = _defaultSettings(algorithmName);
+  var defValues = defaultSettings(algorithmName);
   Settings.setValue<double>(keyCnnSensitivity, defValues[keyCnnSensitivity]);
   Settings.setValue<double>(keyWinThreshP, defValues[keyWinThreshP]);
 }
 
 /// Returns the default values for the settings of each algorithm used.
-Map<String, dynamic> _defaultSettings(String algorithmName) {
+Map<String, dynamic> defaultSettings(String algorithmName) {
   return {
     firstAlgorithm: {
       keyCnnSensitivity: 80.0,
@@ -231,5 +237,5 @@ Map<String, dynamic> _defaultSettings(String algorithmName) {
 String _getCurrentWinThreshPName() {
   var currentAlgo =
       Settings.getValue<String>(keyRecognitionAlgo, firstAlgorithm);
-  return _defaultSettings(currentAlgo)[keyWinThreshPName];
+  return defaultSettings(currentAlgo)[keyWinThreshPName];
 }

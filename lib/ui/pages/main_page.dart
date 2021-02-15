@@ -107,12 +107,16 @@ class _MainPageState extends State<MainPage> {
                   .pushNamedAndRemoveUntil("/", (_) => false);
               break;
             case 1:
-              _navigatorKey.currentState.pushNamed("/identify");
+              _navigatorKey.currentState.pushNamedAndRemoveUntil(
+                  "/identify", ModalRoute.withName("/"));
               break;
             case 2:
-              // also here remove everything else from the stack, apart from "/"
-              _navigatorKey.currentState.pushNamedAndRemoveUntil(
-                  "/settings", ModalRoute.withName("/"));
+              // prevent multiple pushes of settings page
+              if (_currentIndex != 2) {
+                // here also remove everything else apart from "/"
+                _navigatorKey.currentState.pushNamedAndRemoveUntil(
+                    "/settings", ModalRoute.withName("/"));
+              }
               break;
           }
           setState(() {

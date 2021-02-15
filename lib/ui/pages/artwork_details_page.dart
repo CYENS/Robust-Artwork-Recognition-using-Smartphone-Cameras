@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lorem/flutter_lorem.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/utils/extensions.dart';
 import 'package:modern_art_app/utils/utils.dart';
@@ -17,6 +18,7 @@ class ArtworkDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
+      backgroundColor: Colors.black,
       appBar: AppBar(
         title: Text(context.strings().artworkDetails),
       ),
@@ -29,25 +31,27 @@ class ArtworkDetailsPage extends StatelessWidget {
           children: [
             GestureDetector(
               onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => Scaffold(
-                            appBar: AppBar(
-                              // empty app bar so the back button is shown in
-                              // the zoom page
-                              backgroundColor: ThemeData.dark()
-                                  .primaryColor
-                                  .withOpacity(0.2),
-                            ),
-                            body: ItemZoomPage(
-                              fileName: getArtworkFilename(artwork),
-                              heroTag: customHeroTag ?? artwork.name,
-                            ),
-                          ))),
+                context,
+                MaterialPageRoute(
+                  builder: (context) => Scaffold(
+                    // todo move the setup of Scaffold to ItemZoomPage below
+                    appBar: AppBar(
+                      // empty app bar so the back button is shown in
+                      // the zoom page
+                      backgroundColor:
+                          ThemeData.dark().primaryColor.withOpacity(0.2),
+                    ),
+                    body: ItemZoomPage(
+                      fileName: getArtworkFilename(artwork),
+                      heroTag: customHeroTag ?? artwork.id,
+                    ),
+                  ),
+                ),
+              ),
               child: Hero(
-                tag: customHeroTag ?? artwork.name,
+                tag: customHeroTag ?? artwork.id,
                 child: Container(
-                  height: size.height * 0.6,
+                  height: size.height * 0.55,
                   width: size.width,
                   decoration: BoxDecoration(
                       image: DecorationImage(
@@ -58,22 +62,34 @@ class ArtworkDetailsPage extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text(artwork.name, style: TextStyle(fontSize: 30)),
+              child: Text(
+                artwork.name,
+                style: GoogleFonts.openSansCondensed(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16.0, 0.0, 8.0, 8.0),
+              child: Text(
+                "${artwork.artist}" +
+                    (artwork.year.isNotEmpty ? ", ${artwork.year}" : ""),
+                style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+              ),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                  "${artwork.artist}" +
-                      (artwork.year.isNotEmpty ? ", ${artwork.year}" : ""),
-                  style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic)),
+                context.strings().description,
+                style: GoogleFonts.openSansCondensed(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Text(context.strings().description,
-                  style: TextStyle(fontSize: 20)),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.fromLTRB(16.0, 0.0, 8.0, 8.0),
               child: Text(
                 artwork.description.isNotEmpty
                     ? artwork.description

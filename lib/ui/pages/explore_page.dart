@@ -1,5 +1,4 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:modern_art_app/data/artists_dao.dart';
@@ -30,19 +29,17 @@ class ExplorePage extends StatelessWidget {
               expandedHeight: size.height * 0.3,
               pinned: true,
               flexibleSpace: FlexibleSpaceBar(
+                titlePadding: const EdgeInsets.all(8.0),
                 stretchModes: <StretchMode>[
                   StretchMode.zoomBackground,
                   StretchMode.blurBackground,
                 ],
-                title: Padding(
-                  padding: const EdgeInsets.all(2.0),
-                  child: AutoSizeText(
-                    strings.galleryName.customToUpperCase(),
-                    style: GoogleFonts.openSansCondensed(fontSize: 28),
-                    textAlign: TextAlign.end,
-                    maxFontSize: 30,
-                    maxLines: 2,
-                  ),
+                title: AutoSizeText(
+                  strings.galleryName.customToUpperCase(),
+                  style: GoogleFonts.openSansCondensed(fontSize: 28),
+                  textAlign: TextAlign.end,
+                  maxFontSize: 30,
+                  maxLines: 2,
                 ),
                 centerTitle: true,
                 background: Stack(
@@ -132,32 +129,37 @@ class HeadlineAndMoreRow extends StatelessWidget {
     var strings = context.strings();
     // TODO: fix this
     String title = listType == "Artists" ? strings.artists : strings.artworks;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 12, 8, 0),
-      child: Row(
-        children: [
-          headline(title),
-          Spacer(),
-          IconButton(
-            icon: Icon(Icons.arrow_forward_rounded),
-            tooltip: strings.button.more,
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Scaffold(
-                    appBar: AppBar(title: Text(title)),
-                    body: ListVertical(itemList: itemList),
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
+    return InkWell(
+      onTap: () => _goToMore(context, title, itemList),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(8, 12, 8, 0),
+        child: Row(
+          children: [
+            headline(title),
+            Spacer(),
+            IconButton(
+              icon: Icon(Icons.arrow_forward_rounded),
+              tooltip: strings.button.more,
+              onPressed: () => _goToMore(context, title, itemList),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
+
+void _goToMore(BuildContext ctx, String title, Stream<List<dynamic>> list) =>
+    Navigator.push(
+      ctx,
+      MaterialPageRoute(
+        builder: (context) => Scaffold(
+          backgroundColor: Colors.black,
+          appBar: AppBar(title: Text(title)),
+          body: ListVertical(itemList: list),
+        ),
+      ),
+    );
 
 Widget headline(String text) => Text(
       text.customToUpperCase(),

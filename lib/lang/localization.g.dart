@@ -18,7 +18,6 @@ class AppLocalizations {
       artworks: 'Artworks',
       artists: 'Artists',
       featuredArtwork: 'Featured artwork',
-      pointTheCamera: 'Point the camera to an artwork',
       biography: 'Short biography',
       artworksBy: 'Artworks by',
       description: 'Description',
@@ -33,10 +32,16 @@ class AppLocalizations {
         more: 'more',
         close: 'Close',
       ),
+      msg: AppLocalizations_Labels_Msg(
+        analysing: 'Analysing...',
+        noneIdentified: 'No artworks identified',
+        pointTheCamera: 'Point the camera to an artwork',
+      ),
       stngs: AppLocalizations_Labels_Stngs(
         title: 'Settings',
         groupAbout: 'About',
         groupDatabase: 'Database',
+        groupOther: 'Other settings',
         stng: AppLocalizations_Labels_Stngs_Stng(
           appInfo: 'App information',
           appInfoSummary: 'App version & Open source libraries',
@@ -59,7 +64,6 @@ class AppLocalizations {
       artworks: 'Εργα τέχνης',
       artists: 'Καλλιτέχνες',
       featuredArtwork: 'Προτεινόμενο έργο τέχνης',
-      pointTheCamera: 'Στρέψτε την κάμερα σε ένα έργο τέχνης',
       biography: 'Σύντομο βιογραφικό',
       artworksBy: 'Έργα τέχνης του/της',
       description: 'Περιγραφή',
@@ -74,10 +78,16 @@ class AppLocalizations {
         more: 'περισσότερα',
         close: 'Κλείσιμο',
       ),
+      msg: AppLocalizations_Labels_Msg(
+        analysing: 'Ανάλυση εικόνας...',
+        noneIdentified: 'Καμία αναγνώριση',
+        pointTheCamera: 'Στρέψτε την κάμερα σε ένα έργο τέχνης',
+      ),
       stngs: AppLocalizations_Labels_Stngs(
         title: 'Ρυθμίσεις',
         groupAbout: 'Σχετικά',
         groupDatabase: 'Βάση δεδομένων',
+        groupOther: 'Πρόσθετες ρυθμίσεις',
         stng: AppLocalizations_Labels_Stngs_Stng(
           appInfo: 'Πληροφορίες για την εφαρμογή',
           appInfoSummary: 'Εκδοση εφαρμογής & Βιβλιοθήκες ανοιχτού κώδικα',
@@ -137,6 +147,30 @@ class AppLocalizations_Labels_Button {
         return more;
       case 'close':
         return close;
+      default:
+        return '';
+    }
+  }
+}
+
+class AppLocalizations_Labels_Msg {
+  const AppLocalizations_Labels_Msg(
+      {this.analysing, this.noneIdentified, this.pointTheCamera});
+
+  final String analysing;
+
+  final String noneIdentified;
+
+  final String pointTheCamera;
+
+  String getByKey(String key) {
+    switch (key) {
+      case 'analysing':
+        return analysing;
+      case 'noneIdentified':
+        return noneIdentified;
+      case 'pointTheCamera':
+        return pointTheCamera;
       default:
         return '';
     }
@@ -211,13 +245,19 @@ class AppLocalizations_Labels_Stngs_Stng {
 
 class AppLocalizations_Labels_Stngs {
   const AppLocalizations_Labels_Stngs(
-      {this.title, this.groupAbout, this.groupDatabase, this.stng});
+      {this.title,
+      this.groupAbout,
+      this.groupDatabase,
+      this.groupOther,
+      this.stng});
 
   final String title;
 
   final String groupAbout;
 
   final String groupDatabase;
+
+  final String groupOther;
 
   final AppLocalizations_Labels_Stngs_Stng stng;
 
@@ -229,6 +269,8 @@ class AppLocalizations_Labels_Stngs {
         return groupAbout;
       case 'groupDatabase':
         return groupDatabase;
+      case 'groupOther':
+        return groupOther;
       default:
         return '';
     }
@@ -240,7 +282,6 @@ class AppLocalizations_Labels {
       {this.artworks,
       this.artists,
       this.featuredArtwork,
-      this.pointTheCamera,
       this.biography,
       this.artworksBy,
       this.description,
@@ -249,6 +290,7 @@ class AppLocalizations_Labels {
       this.artworkDetails,
       this.nav,
       this.button,
+      this.msg,
       this.stngs});
 
   final String artworks;
@@ -256,8 +298,6 @@ class AppLocalizations_Labels {
   final String artists;
 
   final String featuredArtwork;
-
-  final String pointTheCamera;
 
   final String biography;
 
@@ -275,6 +315,8 @@ class AppLocalizations_Labels {
 
   final AppLocalizations_Labels_Button button;
 
+  final AppLocalizations_Labels_Msg msg;
+
   final AppLocalizations_Labels_Stngs stngs;
 
   String getByKey(String key) {
@@ -285,8 +327,6 @@ class AppLocalizations_Labels {
         return artists;
       case 'featuredArtwork':
         return featuredArtwork;
-      case 'pointTheCamera':
-        return pointTheCamera;
       case 'biography':
         return biography;
       case 'artworksBy':

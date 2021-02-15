@@ -1,5 +1,4 @@
-import 'dart:math' as math;
-
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
@@ -17,7 +16,6 @@ import 'package:provider/provider.dart';
 import 'package:tflite/tflite.dart';
 import 'package:vibration/vibration.dart';
 
-import 'bbox.dart';
 import 'models.dart';
 
 class ModelSelection extends StatefulWidget {
@@ -29,7 +27,8 @@ class ModelSelection extends StatefulWidget {
   _ModelSelectionState createState() => new _ModelSelectionState();
 }
 
-class _ModelSelectionState extends State<ModelSelection> {
+class _ModelSelectionState extends State<ModelSelection>
+    with WidgetsBindingObserver {
   List<dynamic> _recognitions;
   int _imageHeight = 0;
   int _imageWidth = 0;
@@ -67,20 +66,53 @@ class _ModelSelectionState extends State<ModelSelection> {
   @override
   void initState() {
     super.initState();
+    // observe for AppLifecycleState changes, to pause CNN if app state changes
+    // https://api.flutter.dev/flutter/widgets/WidgetsBindingObserver-class.html
+    WidgetsBinding.instance.addObserver(this);
+    // initialize model
     initModel();
   }
 
+  @override
+  void dispose() {
+    // remove AppLifecycleState observer
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    print("CHANGE STATE $state");
+    if ([AppLifecycleState.inactive, AppLifecycleState.paused]
+        .contains(state)) {
+      // pause the CNN if user puts app in the background
+      setState(() {
+        _model = "";
+      });
+    } else if (state == AppLifecycleState.resumed) {
+      // resume the CNN when user comes back
+      initModel();
+    }
+  }
+
   initModel() {
-    // get preferred model, algorithm, sensitivity and winThreshP from settings
-    // and load model and algorithm
-    String preferredModel = Settings.getValue(keyCnnModel, mobileNetNoArt);
-    double sensitivity = Settings.getValue(keyCnnSensitivity, 99.0);
+    // get preferred algorithm from settings
+    String preferredModel = Settings.getValue(keyCnnModel, mobNetNoArt500_4);
+
+    // get preferred algorithm, sensitivity and winThreshP from settings
     String preferredAlgorithm =
         Settings.getValue(keyRecognitionAlgo, firstAlgorithm);
 
-    // keyWinThreshP's value is stored as double, have to make sure it is
-    // converted to int here
-    int winThreshP = Settings.getValue(keyWinThreshP, 5.0).round();
+    double sensitivity = Settings.getValue(
+      keyCnnSensitivity,
+      defaultSettings(preferredAlgorithm)[keyCnnSensitivity],
+    );
+
+    // keyWinThreshP's value is stored as double, converted to int here
+    int winThreshP = Settings.getValue(
+      keyWinThreshP,
+      defaultSettings(preferredAlgorithm)[keyWinThreshP],
+    ).round();
 
     // determine from settings whether to automatically navigate to an artwork's
     // details when a recognition occurs
@@ -161,14 +193,12 @@ class _ModelSelectionState extends State<ModelSelection> {
                 _model = "";
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          ArtworkDetailsPage(artwork: artwork)),
+                  MaterialPageRoute(builder: (context) {
+                    return ArtworkDetailsPage(artwork: artwork);
+                  }),
                 ).then((_) {
                   // re-initialize model when user is back to this screen
-                  print(
-                      "HAS RESULT: ${currentAlgorithm.hasResult()}!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                  return initModel();
+                  initModel();
                 });
               });
             }
@@ -182,13 +212,16 @@ class _ModelSelectionState extends State<ModelSelection> {
 
   @override
   Widget build(BuildContext context) {
+    var strings = context.strings();
     Size screen = MediaQuery.of(context).size;
-    // todo why is this printed all the time????
-    print("SIZE======= ${screen.width}");
     viewingsDao = Provider.of<ViewingsDao>(context);
     return Scaffold(
+      appBar: AppBar(
+        title: AutoSizeText(strings.msg.pointTheCamera, maxLines: 1),
+        backgroundColor: ThemeData.dark().primaryColor.withOpacity(0.2),
+      ),
       body: _model == ""
-          // here check if model was loaded properly (see res in loadFrom...())
+          // todo here check if model was loaded properly (see res in loadFrom...())
           // instead of checking if _model is empty; if loading fails show an
           // appropriate msg
           ? Center(child: CircularProgressIndicator())
@@ -199,59 +232,78 @@ class _ModelSelectionState extends State<ModelSelection> {
                   setRecognitions,
                   _model,
                 ),
-                Settings.getValue(keyDisplayExtraInfo, true)
-                    ? SafeArea(
-                        child: BBox(
-                            _recognitions == null ? [] : _recognitions,
-                            math.max(_imageHeight, _imageWidth),
-                            math.min(_imageHeight, _imageWidth),
-                            screen.height,
-                            screen.width,
-                            _model,
-                            _inferenceTime),
-                      )
-                    : Container(),
-                Settings.getValue(keyDisplayExtraInfo, true)
-                    ? Align(
-                        alignment: Alignment.topLeft,
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(4, 4, 4, 30),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text("Analysing $_fps",
-                                  style: TextStyle(fontSize: 14)),
-                              Text(
-                                "Current consensus: ${_currentRes.isEmpty ? 'Calculating..' : _currentRes}",
-                                style: TextStyle(fontSize: 12),
-                              ),
-                              Text(
-                                "Algorithm used: $_currentAlgo",
-                                style: TextStyle(fontSize: 12),
-                              ),
-                            ],
+                if (_recognitions != null &&
+                    Settings.getValue(keyDisplayExtraInfo, false))
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(4, 4, 4, 30),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text("Analysing $_fps",
+                              style: TextStyle(fontSize: 14)),
+                          Text(
+                            "Current consensus: ${_currentRes.isEmpty ? 'Calculating...' : _currentRes}",
+                            style: TextStyle(fontSize: 12),
                           ),
-                        ),
-                      )
-                    : Container(),
+                          Text(
+                            "Algorithm used: $_currentAlgo",
+                            style: TextStyle(fontSize: 12),
+                          ),
+                          Text(""),
+                          Text(
+                            "Latest: ${_recognitions?.last['label']} ${(_recognitions?.last["confidence"] * 100).toStringAsFixed(0)}%, $_inferenceTime ms",
+                            style: TextStyle(fontSize: 12),
+                          ),
+                          if (!["no_artwork", ""]
+                              .contains(currentAlgorithm.topInference))
+                            Image.asset(
+                              "assets/paintings/${currentAlgorithm.topInference}.webp",
+                              width: screen.width / 5,
+                              height: screen.width / 5,
+                            ),
+                          Expanded(child: Container()),
+                        ],
+                      ),
+                    ),
+                  ),
                 Positioned.fill(
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(4, 4, 4, 50),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        SpinKitPulse(
+                        Text(_msgForUser(currentAlgorithm.topInference)),
+                        SpinKitThreeBounce(
                           color: Colors.white,
-                          size: screen.width / 3,
+                          size: screen.width / 6,
                         ),
                       ],
                     ),
                   ),
-                )
+                ),
               ],
             ),
     );
+  }
+
+  String _msgForUser(String topInference) {
+    String current = "";
+    switch (topInference) {
+      case "no_artwork":
+        current = context.strings().msg.noneIdentified;
+        break;
+      case "":
+        break;
+      default:
+        current = topInference
+            .split("_")
+            .map((String e) => e[0].toUpperCase() + e.substring(1))
+            .join(" ");
+    }
+    return "${context.strings().msg.analysing} $current";
   }
 }
