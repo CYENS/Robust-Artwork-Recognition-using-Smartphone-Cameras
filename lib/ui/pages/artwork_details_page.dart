@@ -70,7 +70,7 @@ class ArtworkDetailsPage extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(16.0, 8.0, 8.0, 8.0),
+              padding: const EdgeInsets.fromLTRB(16.0, 0.0, 8.0, 8.0),
               child: Text(
                 "${artwork.artist}" +
                     (artwork.year.isNotEmpty ? ", ${artwork.year}" : ""),
@@ -88,7 +88,7 @@ class ArtworkDetailsPage extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(16.0, 8.0, 8.0, 8.0),
+              padding: const EdgeInsets.fromLTRB(16.0, 0.0, 8.0, 8.0),
               child: Text(
                 artwork.description.isNotEmpty
                     ? artwork.description

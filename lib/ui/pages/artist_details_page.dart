@@ -54,7 +54,7 @@ class ArtistDetailsPage extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(16.0, 8.0, 8.0, 8.0),
+              padding: const EdgeInsets.fromLTRB(16.0, 0.0, 8.0, 8.0),
               child: Text(
                 lifespan(artist),
                 style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
@@ -71,7 +71,7 @@ class ArtistDetailsPage extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(16.0, 8.0, 8.0, 8.0),
+              padding: const EdgeInsets.fromLTRB(16.0, 0.0, 8.0, 8.0),
               child: Text(
                 artist.biography.isNotEmpty
                     ? artist.biography
