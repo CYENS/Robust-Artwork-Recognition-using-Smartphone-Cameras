@@ -276,11 +276,11 @@ class _ModelSelectionState extends State<ModelSelection>
                       mainAxisAlignment: MainAxisAlignment.end,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+                        Text(_msgForUser(currentAlgorithm.topInference)),
                         SpinKitThreeBounce(
                           color: Colors.white,
                           size: screen.width / 6,
                         ),
-                        Text(_msgForUser(currentAlgorithm.topInference)),
                       ],
                     ),
                   ),
