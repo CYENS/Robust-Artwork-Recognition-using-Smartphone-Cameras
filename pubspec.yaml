@@ -48,7 +48,7 @@ dependencies:
   sensors: '>=0.4.2+4 <2.0.0'
   sentry_flutter: ^4.0.4
   share: '>=0.6.5+4 <2.0.0'
-  sqlite3_flutter_libs:
+  sqlite3_flutter_libs: ^0.3.0
   # adding tflite from Github for now, since the pub version contains a bug for Android
   # versions <= 6.0, see https://github.com/shaqian/flutter_tflite/issues/165, could be reverted
   # once the new version is available officially
