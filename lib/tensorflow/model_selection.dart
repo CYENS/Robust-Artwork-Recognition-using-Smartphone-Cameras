@@ -37,7 +37,7 @@ class _ModelSelectionState extends State<ModelSelection>
   String _fps = "";
   String _model = "";
   double _preferredSensitivity = 0.0;
-  bool _navigateToDetails = false;
+  bool _navigateToDetails = true;
 
   // bool addedViewing = false;
   var currentAlgorithm;
@@ -116,7 +116,7 @@ class _ModelSelectionState extends State<ModelSelection>
 
     // determine from settings whether to automatically navigate to an artwork's
     // details when a recognition occurs
-    bool navigateToDetails = Settings.getValue(keyNavigateToDetails, false);
+    bool navigateToDetails = Settings.getValue(keyNavigateToDetails, true);
 
     setState(() {
       _model = preferredModel;
@@ -193,9 +193,11 @@ class _ModelSelectionState extends State<ModelSelection>
                 _model = "";
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) {
-                    return ArtworkDetailsPage(artwork: artwork);
-                  }),
+                  MaterialPageRoute(
+                    builder: (context) {
+                      return ArtworkDetailsPage(artwork: artwork);
+                    },
+                  ),
                 ).then((_) {
                   // re-initialize model when user is back to this screen
                   initModel();

@@ -1,3 +1,6 @@
+## Version 0.12.1 (2021-02-15)
+- Bug fixes
+
 ## Version 0.12.0 (2021-02-15)
 - Preparations for app evaluation
 - Added message in camera view informing the user if no artworks are identified
