@@ -1,3 +1,13 @@
+## Version 0.12.0 (2021-02-15)
+- Preparations for app evaluation
+- Added message in camera view informing the user if no artworks are identified
+- CNN inferences are paused properly if the app is closed or put in the background, and resume once 
+  the user returns to the app
+- More consistent use of fonts, font sizes and paddings throughout the app 
+- Complete localization of app UI to Greek
+- Moved non-user related settings to expandable tile
+- Many bug fixes
+
 ## Version 0.11.1 (2021-02-12)
 - Rearranged the details presented in camera view, added ability to hide them altogether
 - Fixed issue with app pushing 2 artwork detail pages into navigator
