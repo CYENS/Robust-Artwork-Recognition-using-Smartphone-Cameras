@@ -42,11 +42,11 @@ class ArtworkDetailsPage extends StatelessWidget {
                             ),
                             body: ItemZoomPage(
                               fileName: getArtworkFilename(artwork),
-                              heroTag: customHeroTag ?? artwork.name,
+                              heroTag: customHeroTag ?? artwork.id,
                             ),
                           ))),
               child: Hero(
-                tag: customHeroTag ?? artwork.name,
+                tag: customHeroTag ?? artwork.id,
                 child: Container(
                   height: size.height * 0.6,
                   width: size.width,
