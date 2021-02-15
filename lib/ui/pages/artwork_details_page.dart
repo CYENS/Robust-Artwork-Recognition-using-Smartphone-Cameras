@@ -34,6 +34,7 @@ class ArtworkDetailsPage extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => Scaffold(
+                    // todo move the setup of Scaffold to ItemZoomPage below
                     appBar: AppBar(
                       // empty app bar so the back button is shown in
                       // the zoom page
@@ -50,7 +51,7 @@ class ArtworkDetailsPage extends StatelessWidget {
               child: Hero(
                 tag: customHeroTag ?? artwork.id,
                 child: Container(
-                  height: size.height * 0.6,
+                  height: size.height * 0.55,
                   width: size.width,
                   decoration: BoxDecoration(
                       image: DecorationImage(
