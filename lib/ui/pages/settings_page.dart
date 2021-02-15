@@ -151,7 +151,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     leading: Icon(Icons.adjust),
                     title: "CNN sensitivity",
                     settingKey: keyCnnSensitivity,
-                    defaultValue: 70.0,
+                    defaultValue: 75.0,
                     min: 0.0,
                     max: 100.0,
                     step: 0.2,
@@ -210,22 +210,22 @@ void _setDefaultAlgorithmSettings(String algorithmName) {
 Map<String, dynamic> defaultSettings(String algorithmName) {
   return {
     firstAlgorithm: {
-      keyCnnSensitivity: 70.0,
+      keyCnnSensitivity: 75.0,
       keyWinThreshP: 6.0,
       keyWinThreshPName: "Window length",
     },
     secondAlgorithm: {
-      keyCnnSensitivity: 70.0,
+      keyCnnSensitivity: 75.0,
       keyWinThreshP: 10.0,
       keyWinThreshPName: "Window length",
     },
     thirdAlgorithm: {
-      keyCnnSensitivity: 70.0,
+      keyCnnSensitivity: 75.0,
       keyWinThreshP: 10.0,
       keyWinThreshPName: "Count threshold"
     },
     fourthAlgorithm: {
-      keyCnnSensitivity: 70.0,
+      keyCnnSensitivity: 75.0,
       keyWinThreshP: 15.0,
       keyWinThreshPName: "P",
     },
