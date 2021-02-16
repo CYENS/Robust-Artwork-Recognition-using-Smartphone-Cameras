@@ -91,7 +91,9 @@ class _MainPageState extends State<MainPage> {
       ),
       bottomNavigationBar: ConvexAppBar(
         style: TabStyle.fixed,
-        backgroundColor: ThemeData.dark().primaryColor,
+        backgroundColor: Colors.grey.shade800,
+        activeColor: Theme.of(context).accentColor,
+        elevation: 20,
         initialActiveIndex: _currentIndex,
         items: [
           TabItem(icon: Icons.home_rounded, title: strings.nav.explore),
