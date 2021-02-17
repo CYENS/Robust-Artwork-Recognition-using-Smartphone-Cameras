@@ -1,3 +1,8 @@
+## Version 0.12.2 (2021-02-17)
+- Minor UI improvements
+- New tile in settings with link to the Gallery's website
+- More bug fixes
+
 ## Version 0.12.1 (2021-02-15)
 - Bug fixes
 

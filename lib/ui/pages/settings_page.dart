@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/data/inference_algorithms.dart';
 import 'package:modern_art_app/data/viewings_dao.dart';
@@ -13,6 +14,7 @@ import 'package:moor_db_viewer/moor_db_viewer.dart';
 import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // All settings keys are specified here, to avoid mistakes typing them
 // manually every time.
@@ -43,8 +45,25 @@ class _SettingsPageState extends State<SettingsPage> {
             title: strings.stngs.groupAbout.customToUpperCase(),
             children: [
               SimpleSettingsTile(
+                // launch the Gallery's url in external browser
+                title: strings.galleryName,
+                subtitle: strings.stngs.stng.galleryWebsiteSummary,
+                leading: Icon(Icons.web),
+                onTap: () async {
+                  String url = "https://www.nicosia.org.cy/"
+                      "${context.locale().languageCode == "en" ? 'en-GB' : 'el-GR'}"
+                      "/discover/picture-galleries/state-gallery-of-contemporary-art/";
+                  if (await canLaunch(url)) {
+                    launch(url);
+                  } else {
+                    Fluttertoast.showToast(msg: strings.msg.unableToLanchUrl);
+                  }
+                },
+              ),
+              SimpleSettingsTile(
                 title: strings.stngs.stng.appInfo,
                 subtitle: strings.stngs.stng.appInfoSummary,
+                leading: Icon(Icons.info_outline_rounded),
                 onTap: () {
                   PackageInfo.fromPlatform()
                       .then((packageInfo) => showAboutDialog(
@@ -71,6 +90,7 @@ class _SettingsPageState extends State<SettingsPage> {
               SimpleSettingsTile(
                 title: strings.stngs.stng.changelog,
                 subtitle: strings.stngs.stng.changelogSummary,
+                leading: Icon(Icons.history_rounded),
                 onTap: () {
                   // here the root navigator is used, so that the changelog is
                   // displayed on top of the rest of the UI (and the NavBar)
@@ -89,17 +109,9 @@ class _SettingsPageState extends State<SettingsPage> {
             title: strings.stngs.groupDatabase.customToUpperCase(),
             children: [
               SimpleSettingsTile(
-                title: strings.stngs.stng.databaseBrowser,
-                subtitle: strings.stngs.stng.databaseBrowserSummary,
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          MoorDbViewer(Provider.of<AppDatabase>(context))),
-                ),
-              ),
-              SimpleSettingsTile(
                 title: strings.stngs.stng.historyExport,
                 subtitle: strings.stngs.stng.historyExportSummary,
+                leading: Icon(Icons.share_rounded),
                 onTap: () async {
                   viewingsDao.allViewingEntries.then((viewings) {
                     String viewingsInStr = jsonEncode(viewings);
@@ -119,7 +131,8 @@ class _SettingsPageState extends State<SettingsPage> {
             title: strings.stngs.groupOther.customToUpperCase(),
             children: [
               ExpandableSettingsTile(
-                title: "Computer vision options",
+                title: strings.stngs.expandableOther,
+                leading: Icon(Icons.settings_applications_rounded),
                 children: [
                   RadioModalSettingsTile<String>(
                     title: "CNN type used",
@@ -177,15 +190,25 @@ class _SettingsPageState extends State<SettingsPage> {
                     settingKey: keyNavigateToDetails,
                     defaultValue: true,
                   ),
+                  SwitchSettingsTile(
+                    leading: Icon(Icons.list_alt_outlined),
+                    title:
+                        "Display model & algorithm information in camera view",
+                    settingKey: keyDisplayExtraInfo,
+                    defaultValue: false,
+                  ),
                   Padding(
                     // padding to account for the convex app bar
                     padding: const EdgeInsets.only(bottom: 30.0),
-                    child: SwitchSettingsTile(
-                      leading: Icon(Icons.list_alt_outlined),
-                      title:
-                          "Display model & algorithm information in camera view",
-                      settingKey: keyDisplayExtraInfo,
-                      defaultValue: false,
+                    child: SimpleSettingsTile(
+                      title: strings.stngs.stng.databaseBrowser,
+                      subtitle: strings.stngs.stng.databaseBrowserSummary,
+                      leading: Icon(Icons.table_rows),
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) => MoorDbViewer(
+                                Provider.of<AppDatabase>(context))),
+                      ),
                     ),
                   ),
                 ],

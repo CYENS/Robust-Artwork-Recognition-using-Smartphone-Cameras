@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lorem/flutter_lorem.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:modern_art_app/data/artists_dao.dart';
 import 'package:modern_art_app/data/database.dart';
+import 'package:modern_art_app/ui/pages/artist_details_page.dart';
 import 'package:modern_art_app/utils/extensions.dart';
 import 'package:modern_art_app/utils/utils.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:provider/provider.dart';
 
 class ArtworkDetailsPage extends StatelessWidget {
   const ArtworkDetailsPage(
@@ -70,12 +73,44 @@ class ArtworkDetailsPage extends StatelessWidget {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16.0, 0.0, 8.0, 8.0),
-              child: Text(
-                "${artwork.artist}" +
-                    (artwork.year.isNotEmpty ? ", ${artwork.year}" : ""),
-                style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+            InkWell(
+              onTap: () {
+                // navigate to artist's details
+                Provider.of<ArtistsDao>(context, listen: false)
+                    .getArtistById(
+                      artistId: artwork.artistId,
+                      languageCode: context.locale().languageCode,
+                    )
+                    .then((artist) => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  ArtistDetailsPage(artist: artist)),
+                        ));
+              },
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16.0, 0.0, 8.0, 8.0),
+                child: RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: artwork.artist,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontStyle: FontStyle.italic,
+                          color: Theme.of(context).accentColor,
+                        ),
+                      ),
+                      TextSpan(
+                        text: " (${artwork.year})",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontStyle: FontStyle.italic,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
             Padding(
@@ -125,3 +160,9 @@ class ItemZoomPage extends StatelessWidget {
     );
   }
 }
+
+// Text(
+// "${artwork.artist}" +
+// (artwork.year.isNotEmpty ? ", ${artwork.year}" : ""),
+// style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+// )

@@ -28,6 +28,8 @@ class _MainPageState extends State<MainPage> {
   /// Navigator.of(context) methods.
   final _navigatorKey = GlobalKey<NavigatorState>();
 
+  GlobalKey<ConvexAppBarState> _appBarKey = GlobalKey<ConvexAppBarState>();
+
   int _currentIndex = 0;
 
   @override
@@ -55,7 +57,12 @@ class _MainPageState extends State<MainPage> {
         // handling of the back button on Android
         onWillPop: () async {
           if (_navigatorKey.currentState.canPop()) {
+            print("CAN POP");
             _navigatorKey.currentState.pop();
+            setState(() {
+              _appBarKey.currentState.animateTo(0);
+              _currentIndex = 0;
+            });
             return false;
           }
           return true;
@@ -63,35 +70,33 @@ class _MainPageState extends State<MainPage> {
         child: Navigator(
           key: _navigatorKey,
           observers: [_heroController],
-          initialRoute: "/",
+          initialRoute: Routes.explorePage,
           onGenerateRoute: (RouteSettings settings) {
-            WidgetBuilder builder;
-            // route names
-            // todo move route names into a list? map?
+            // navigator routes
+            WidgetBuilder bldr;
             switch (settings.name) {
-              case "/":
-                builder = (BuildContext context) => ExplorePage();
+              case Routes.explorePage:
+                bldr = (BuildContext context) => ExplorePage();
                 break;
-              case "/identify":
-                builder =
-                    (BuildContext context) => ModelSelection(widget.cameras);
+              case Routes.identifyPage:
+                bldr = (BuildContext context) => ModelSelection(widget.cameras);
                 break;
-              case "/settings":
-                builder = (BuildContext context) => SettingsPage();
+              case Routes.settingsPage:
+                bldr = (BuildContext context) => SettingsPage();
                 break;
               default:
                 throw Exception("Invalid route: ${settings.name}");
             }
-            return MaterialPageRoute(
-              builder: builder,
-              settings: settings,
-            );
+            return MaterialPageRoute(builder: bldr, settings: settings);
           },
         ),
       ),
       bottomNavigationBar: ConvexAppBar(
+        key: _appBarKey,
         style: TabStyle.fixed,
-        backgroundColor: ThemeData.dark().primaryColor,
+        backgroundColor: Colors.grey.shade800,
+        activeColor: Theme.of(context).accentColor,
+        elevation: 20,
         initialActiveIndex: _currentIndex,
         items: [
           TabItem(icon: Icons.home_rounded, title: strings.nav.explore),
@@ -104,19 +109,23 @@ class _MainPageState extends State<MainPage> {
               // when the Explore tab is selected, remove everything else from
               // the navigator's stack
               _navigatorKey.currentState
-                  .pushNamedAndRemoveUntil("/", (_) => false);
+                  .pushNamedAndRemoveUntil(Routes.explorePage, (_) => false);
               break;
             case 1:
               _navigatorKey.currentState.pushNamedAndRemoveUntil(
-                  "/identify", ModalRoute.withName("/"));
+                Routes.identifyPage,
+                ModalRoute.withName(Routes.explorePage),
+              );
               break;
             case 2:
-              // prevent multiple pushes of settings page
-              if (_currentIndex != 2) {
-                // here also remove everything else apart from "/"
-                _navigatorKey.currentState.pushNamedAndRemoveUntil(
-                    "/settings", ModalRoute.withName("/"));
-              }
+              // prevent multiple pushes of Settings page
+              // if (_currentIndex != 2) {
+              // here also remove everything else apart from "/"
+              _navigatorKey.currentState.pushNamedAndRemoveUntil(
+                Routes.settingsPage,
+                ModalRoute.withName(Routes.explorePage),
+              );
+              // }
               break;
           }
           setState(() {
@@ -126,4 +135,10 @@ class _MainPageState extends State<MainPage> {
       ),
     );
   }
+}
+
+class Routes {
+  static const String explorePage = "/";
+  static const String identifyPage = "/identify";
+  static const String settingsPage = "/settings";
 }

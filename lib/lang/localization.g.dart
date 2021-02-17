@@ -36,24 +36,28 @@ class AppLocalizations {
         analysing: 'Analysing...',
         noneIdentified: 'No artworks identified',
         pointTheCamera: 'Point the camera to an artwork',
+        unableToLanchUrl: 'Unable to launch url',
       ),
       stngs: AppLocalizations_Labels_Stngs(
         title: 'Settings',
         groupAbout: 'About',
         groupDatabase: 'Database',
-        groupOther: 'Other settings',
+        groupOther: 'Other',
+        expandableOther: 'Other settings',
         stng: AppLocalizations_Labels_Stngs_Stng(
           appInfo: 'App information',
           appInfoSummary: 'App version & Open source libraries',
           appDescription:
               'App for the State Gallery of Contemporary Cypriot Art.',
-          appMadeBy: 'Made by the BIO-SCENT MRG at RISE Centre of Excellence.',
+          appMadeBy:
+              'Made by the BIO-SCENT MRG at CYENS (RISE) Centre of Excellence.',
           appVersion: 'App version',
           changelog: 'Changelog',
           changelogSummary: 'Timeline of changes in the app',
           databaseBrowser: 'App database browser',
           databaseBrowserSummary:
               'Shows all tables and items in the app\'s database',
+          galleryWebsiteSummary: 'Website for the Gallery',
           historyExport: 'Export recognition history',
           historyExportSummary:
               'Allows exporting & sharing the artwork recognition history so far',
@@ -82,25 +86,28 @@ class AppLocalizations {
         analysing: 'Ανάλυση εικόνας...',
         noneIdentified: 'Καμία αναγνώριση',
         pointTheCamera: 'Στρέψτε την κάμερα σε ένα έργο τέχνης',
+        unableToLanchUrl: 'Δεν είναι δυνατή η εκκίνηση του url',
       ),
       stngs: AppLocalizations_Labels_Stngs(
         title: 'Ρυθμίσεις',
         groupAbout: 'Σχετικά',
         groupDatabase: 'Βάση δεδομένων',
-        groupOther: 'Πρόσθετες ρυθμίσεις',
+        groupOther: 'Πρόσθετα',
+        expandableOther: 'Άλλες ρυθμίσεις',
         stng: AppLocalizations_Labels_Stngs_Stng(
           appInfo: 'Πληροφορίες για την εφαρμογή',
           appInfoSummary: 'Εκδοση εφαρμογής & Βιβλιοθήκες ανοιχτού κώδικα',
           appDescription:
               'Εφαρμογή για την Κρατική Πινακοθήκη Σύγχρονης Κυπριακής Τέχνης.',
           appMadeBy:
-              'Δημιουργία του BIO-SCENT MRG στο RISE Centre of Excellence.',
+              'Δημιουργία του BIO-SCENT MRG στο CYENS (RISE) Centre of Excellence.',
           appVersion: 'Έκδοση εφαρμογής',
           changelog: 'Ιστορικό αλλαγών',
           changelogSummary: 'Ιστορικό αλλαγών στην εφαρμογή',
           databaseBrowser: 'Περιήγηση βάσης δεδομένων εφαρμογής',
           databaseBrowserSummary:
               'Όλοι οι πίνακες και αντικείμενα στην βάση δεδομένων της εφαρμογής',
+          galleryWebsiteSummary: 'Ιστοσελίδα της Πινακοθήκης',
           historyExport: 'Εξαγωγή ιστορικού αναγνωρίσεων',
           historyExportSummary:
               'Επιτρέπει την εξαγωγή και κοινοποίηση του ιστορικού αναγνώρισης έργων τέχνης μέχρι τώρα',
@@ -155,13 +162,18 @@ class AppLocalizations_Labels_Button {
 
 class AppLocalizations_Labels_Msg {
   const AppLocalizations_Labels_Msg(
-      {this.analysing, this.noneIdentified, this.pointTheCamera});
+      {this.analysing,
+      this.noneIdentified,
+      this.pointTheCamera,
+      this.unableToLanchUrl});
 
   final String analysing;
 
   final String noneIdentified;
 
   final String pointTheCamera;
+
+  final String unableToLanchUrl;
 
   String getByKey(String key) {
     switch (key) {
@@ -171,6 +183,8 @@ class AppLocalizations_Labels_Msg {
         return noneIdentified;
       case 'pointTheCamera':
         return pointTheCamera;
+      case 'unableToLanchUrl':
+        return unableToLanchUrl;
       default:
         return '';
     }
@@ -188,6 +202,7 @@ class AppLocalizations_Labels_Stngs_Stng {
       this.changelogSummary,
       this.databaseBrowser,
       this.databaseBrowserSummary,
+      this.galleryWebsiteSummary,
       this.historyExport,
       this.historyExportSummary});
 
@@ -208,6 +223,8 @@ class AppLocalizations_Labels_Stngs_Stng {
   final String databaseBrowser;
 
   final String databaseBrowserSummary;
+
+  final String galleryWebsiteSummary;
 
   final String historyExport;
 
@@ -233,6 +250,8 @@ class AppLocalizations_Labels_Stngs_Stng {
         return databaseBrowser;
       case 'databaseBrowserSummary':
         return databaseBrowserSummary;
+      case 'galleryWebsiteSummary':
+        return galleryWebsiteSummary;
       case 'historyExport':
         return historyExport;
       case 'historyExportSummary':
@@ -249,6 +268,7 @@ class AppLocalizations_Labels_Stngs {
       this.groupAbout,
       this.groupDatabase,
       this.groupOther,
+      this.expandableOther,
       this.stng});
 
   final String title;
@@ -258,6 +278,8 @@ class AppLocalizations_Labels_Stngs {
   final String groupDatabase;
 
   final String groupOther;
+
+  final String expandableOther;
 
   final AppLocalizations_Labels_Stngs_Stng stng;
 
@@ -271,6 +293,8 @@ class AppLocalizations_Labels_Stngs {
         return groupDatabase;
       case 'groupOther':
         return groupOther;
+      case 'expandableOther':
+        return expandableOther;
       default:
         return '';
     }
