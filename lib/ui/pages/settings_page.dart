@@ -48,6 +48,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 // launch the Gallery's url in external browser
                 title: strings.galleryName,
                 subtitle: strings.stngs.stng.galleryWebsiteSummary,
+                leading: Icon(Icons.web),
                 onTap: () async {
                   String url = "https://www.nicosia.org.cy/"
                       "${context.locale().languageCode == "en" ? 'en-GB' : 'el-GR'}"
@@ -62,6 +63,7 @@ class _SettingsPageState extends State<SettingsPage> {
               SimpleSettingsTile(
                 title: strings.stngs.stng.appInfo,
                 subtitle: strings.stngs.stng.appInfoSummary,
+                leading: Icon(Icons.info_outline_rounded),
                 onTap: () {
                   PackageInfo.fromPlatform()
                       .then((packageInfo) => showAboutDialog(
@@ -88,6 +90,7 @@ class _SettingsPageState extends State<SettingsPage> {
               SimpleSettingsTile(
                 title: strings.stngs.stng.changelog,
                 subtitle: strings.stngs.stng.changelogSummary,
+                leading: Icon(Icons.history_rounded),
                 onTap: () {
                   // here the root navigator is used, so that the changelog is
                   // displayed on top of the rest of the UI (and the NavBar)
@@ -108,6 +111,7 @@ class _SettingsPageState extends State<SettingsPage> {
               SimpleSettingsTile(
                 title: strings.stngs.stng.historyExport,
                 subtitle: strings.stngs.stng.historyExportSummary,
+                leading: Icon(Icons.share_rounded),
                 onTap: () async {
                   viewingsDao.allViewingEntries.then((viewings) {
                     String viewingsInStr = jsonEncode(viewings);
@@ -128,6 +132,7 @@ class _SettingsPageState extends State<SettingsPage> {
             children: [
               ExpandableSettingsTile(
                 title: strings.stngs.expandableOther,
+                leading: Icon(Icons.settings_applications_rounded),
                 children: [
                   RadioModalSettingsTile<String>(
                     title: "CNN type used",
@@ -198,6 +203,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     child: SimpleSettingsTile(
                       title: strings.stngs.stng.databaseBrowser,
                       subtitle: strings.stngs.stng.databaseBrowserSummary,
+                      leading: Icon(Icons.table_rows),
                       onTap: () => Navigator.of(context).push(
                         MaterialPageRoute(
                             builder: (context) => MoorDbViewer(
