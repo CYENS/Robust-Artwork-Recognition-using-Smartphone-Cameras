@@ -106,15 +106,6 @@ class _SettingsPageState extends State<SettingsPage> {
             title: strings.stngs.groupDatabase.customToUpperCase(),
             children: [
               SimpleSettingsTile(
-                title: strings.stngs.stng.databaseBrowser,
-                subtitle: strings.stngs.stng.databaseBrowserSummary,
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          MoorDbViewer(Provider.of<AppDatabase>(context))),
-                ),
-              ),
-              SimpleSettingsTile(
                 title: strings.stngs.stng.historyExport,
                 subtitle: strings.stngs.stng.historyExportSummary,
                 onTap: () async {
@@ -194,15 +185,24 @@ class _SettingsPageState extends State<SettingsPage> {
                     settingKey: keyNavigateToDetails,
                     defaultValue: true,
                   ),
+                  SwitchSettingsTile(
+                    leading: Icon(Icons.list_alt_outlined),
+                    title:
+                        "Display model & algorithm information in camera view",
+                    settingKey: keyDisplayExtraInfo,
+                    defaultValue: false,
+                  ),
                   Padding(
                     // padding to account for the convex app bar
                     padding: const EdgeInsets.only(bottom: 30.0),
-                    child: SwitchSettingsTile(
-                      leading: Icon(Icons.list_alt_outlined),
-                      title:
-                          "Display model & algorithm information in camera view",
-                      settingKey: keyDisplayExtraInfo,
-                      defaultValue: false,
+                    child: SimpleSettingsTile(
+                      title: strings.stngs.stng.databaseBrowser,
+                      subtitle: strings.stngs.stng.databaseBrowserSummary,
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) => MoorDbViewer(
+                                Provider.of<AppDatabase>(context))),
+                      ),
                     ),
                   ),
                 ],
