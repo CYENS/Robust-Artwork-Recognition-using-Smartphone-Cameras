@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/data/inference_algorithms.dart';
 import 'package:modern_art_app/data/viewings_dao.dart';
@@ -13,6 +14,7 @@ import 'package:moor_db_viewer/moor_db_viewer.dart';
 import 'package:package_info/package_info.dart';
 import 'package:provider/provider.dart';
 import 'package:share/share.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 // All settings keys are specified here, to avoid mistakes typing them
 // manually every time.
@@ -42,6 +44,20 @@ class _SettingsPageState extends State<SettingsPage> {
           SettingsGroup(
             title: strings.stngs.groupAbout.customToUpperCase(),
             children: [
+              SimpleSettingsTile(
+                // launch the Gallery's url in external browser
+                title: strings.galleryName,
+                subtitle: "Website for the Gallery",
+                onTap: () async {
+                  String url =
+                      "https://www.nicosia.org.cy/${context.locale().languageCode == "en" ? 'en-GB' : 'el-GR'}/discover/picture-galleries/state-gallery-of-contemporary-art/";
+                  if (await canLaunch(url)) {
+                    launch(url);
+                  } else {
+                    Fluttertoast.showToast(msg: "Unable to launch url");
+                  }
+                },
+              ),
               SimpleSettingsTile(
                 title: strings.stngs.stng.appInfo,
                 subtitle: strings.stngs.stng.appInfoSummary,
@@ -119,7 +135,7 @@ class _SettingsPageState extends State<SettingsPage> {
             title: strings.stngs.groupOther.customToUpperCase(),
             children: [
               ExpandableSettingsTile(
-                title: "Computer vision options",
+                title: "Other settings",
                 children: [
                   RadioModalSettingsTile<String>(
                     title: "CNN type used",
