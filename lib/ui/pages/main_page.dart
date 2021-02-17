@@ -28,6 +28,8 @@ class _MainPageState extends State<MainPage> {
   /// Navigator.of(context) methods.
   final _navigatorKey = GlobalKey<NavigatorState>();
 
+  GlobalKey<ConvexAppBarState> _appBarKey = GlobalKey<ConvexAppBarState>();
+
   int _currentIndex = 0;
 
   @override
@@ -55,7 +57,12 @@ class _MainPageState extends State<MainPage> {
         // handling of the back button on Android
         onWillPop: () async {
           if (_navigatorKey.currentState.canPop()) {
+            print("CAN POP");
             _navigatorKey.currentState.pop();
+            setState(() {
+              _appBarKey.currentState.animateTo(0);
+              _currentIndex = 0;
+            });
             return false;
           }
           return true;
@@ -85,6 +92,7 @@ class _MainPageState extends State<MainPage> {
         ),
       ),
       bottomNavigationBar: ConvexAppBar(
+        key: _appBarKey,
         style: TabStyle.fixed,
         backgroundColor: Colors.grey.shade800,
         activeColor: Theme.of(context).accentColor,
@@ -111,13 +119,13 @@ class _MainPageState extends State<MainPage> {
               break;
             case 2:
               // prevent multiple pushes of Settings page
-              if (_currentIndex != 2) {
-                // here also remove everything else apart from "/"
-                _navigatorKey.currentState.pushNamedAndRemoveUntil(
-                  Routes.settingsPage,
-                  ModalRoute.withName(Routes.explorePage),
-                );
-              }
+              // if (_currentIndex != 2) {
+              // here also remove everything else apart from "/"
+              _navigatorKey.currentState.pushNamedAndRemoveUntil(
+                Routes.settingsPage,
+                ModalRoute.withName(Routes.explorePage),
+              );
+              // }
               break;
           }
           setState(() {
