@@ -47,14 +47,15 @@ class _SettingsPageState extends State<SettingsPage> {
               SimpleSettingsTile(
                 // launch the Gallery's url in external browser
                 title: strings.galleryName,
-                subtitle: "Website for the Gallery",
+                subtitle: strings.stngs.stng.galleryWebsiteSummary,
                 onTap: () async {
-                  String url =
-                      "https://www.nicosia.org.cy/${context.locale().languageCode == "en" ? 'en-GB' : 'el-GR'}/discover/picture-galleries/state-gallery-of-contemporary-art/";
+                  String url = "https://www.nicosia.org.cy/"
+                      "${context.locale().languageCode == "en" ? 'en-GB' : 'el-GR'}"
+                      "/discover/picture-galleries/state-gallery-of-contemporary-art/";
                   if (await canLaunch(url)) {
                     launch(url);
                   } else {
-                    Fluttertoast.showToast(msg: "Unable to launch url");
+                    Fluttertoast.showToast(msg: strings.msg.unableToLanchUrl);
                   }
                 },
               ),
@@ -135,7 +136,7 @@ class _SettingsPageState extends State<SettingsPage> {
             title: strings.stngs.groupOther.customToUpperCase(),
             children: [
               ExpandableSettingsTile(
-                title: "Other settings",
+                title: strings.stngs.expandableOther,
                 children: [
                   RadioModalSettingsTile<String>(
                     title: "CNN type used",
