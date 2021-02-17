@@ -32,6 +32,9 @@ class AppLocalizations {
         more: 'more',
         close: 'Close',
       ),
+      error: AppLocalizations_Labels_Error(
+        unableToLanchUrl: 'Unable to launch url',
+      ),
       msg: AppLocalizations_Labels_Msg(
         analysing: 'Analysing...',
         noneIdentified: 'No artworks identified',
@@ -41,7 +44,8 @@ class AppLocalizations {
         title: 'Settings',
         groupAbout: 'About',
         groupDatabase: 'Database',
-        groupOther: 'Other settings',
+        groupOther: 'Other',
+        expandableOther: 'Other settings',
         stng: AppLocalizations_Labels_Stngs_Stng(
           appInfo: 'App information',
           appInfoSummary: 'App version & Open source libraries',
@@ -78,6 +82,9 @@ class AppLocalizations {
         more: 'περισσότερα',
         close: 'Κλείσιμο',
       ),
+      error: AppLocalizations_Labels_Error(
+        unableToLanchUrl: 'Δεν είναι δυνατή η εκκίνηση του url',
+      ),
       msg: AppLocalizations_Labels_Msg(
         analysing: 'Ανάλυση εικόνας...',
         noneIdentified: 'Καμία αναγνώριση',
@@ -87,7 +94,8 @@ class AppLocalizations {
         title: 'Ρυθμίσεις',
         groupAbout: 'Σχετικά',
         groupDatabase: 'Βάση δεδομένων',
-        groupOther: 'Πρόσθετες ρυθμίσεις',
+        groupOther: 'Πρόσθετα',
+        expandableOther: 'Πρόσθετες ρυθμίσεις',
         stng: AppLocalizations_Labels_Stngs_Stng(
           appInfo: 'Πληροφορίες για την εφαρμογή',
           appInfoSummary: 'Εκδοση εφαρμογής & Βιβλιοθήκες ανοιχτού κώδικα',
@@ -147,6 +155,21 @@ class AppLocalizations_Labels_Button {
         return more;
       case 'close':
         return close;
+      default:
+        return '';
+    }
+  }
+}
+
+class AppLocalizations_Labels_Error {
+  const AppLocalizations_Labels_Error({this.unableToLanchUrl});
+
+  final String unableToLanchUrl;
+
+  String getByKey(String key) {
+    switch (key) {
+      case 'unableToLanchUrl':
+        return unableToLanchUrl;
       default:
         return '';
     }
@@ -249,6 +272,7 @@ class AppLocalizations_Labels_Stngs {
       this.groupAbout,
       this.groupDatabase,
       this.groupOther,
+      this.expandableOther,
       this.stng});
 
   final String title;
@@ -258,6 +282,8 @@ class AppLocalizations_Labels_Stngs {
   final String groupDatabase;
 
   final String groupOther;
+
+  final String expandableOther;
 
   final AppLocalizations_Labels_Stngs_Stng stng;
 
@@ -271,6 +297,8 @@ class AppLocalizations_Labels_Stngs {
         return groupDatabase;
       case 'groupOther':
         return groupOther;
+      case 'expandableOther':
+        return expandableOther;
       default:
         return '';
     }
@@ -290,6 +318,7 @@ class AppLocalizations_Labels {
       this.artworkDetails,
       this.nav,
       this.button,
+      this.error,
       this.msg,
       this.stngs});
 
@@ -314,6 +343,8 @@ class AppLocalizations_Labels {
   final AppLocalizations_Labels_Nav nav;
 
   final AppLocalizations_Labels_Button button;
+
+  final AppLocalizations_Labels_Error error;
 
   final AppLocalizations_Labels_Msg msg;
 
