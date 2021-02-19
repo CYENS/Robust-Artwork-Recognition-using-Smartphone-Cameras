@@ -52,7 +52,7 @@ class _SettingsPageState extends State<SettingsPage> {
               if (await canLaunch(url)) {
                 launch(url);
               } else {
-                Fluttertoast.showToast(msg: strings.msg.unableToLanchUrl);
+                Fluttertoast.showToast(msg: strings.msg.unableToLaunchUrl);
               }
             },
           ),

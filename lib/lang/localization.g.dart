@@ -36,7 +36,7 @@ class AppLocalizations {
         analysing: 'Analysing...',
         noneIdentified: 'No artworks identified',
         pointTheCamera: 'Point the camera to an artwork',
-        unableToLanchUrl: 'Unable to launch url',
+        unableToLaunchUrl: 'Unable to launch url',
       ),
       stngs: AppLocalizations_Labels_Stngs(
         title: 'Settings',
@@ -86,7 +86,7 @@ class AppLocalizations {
         analysing: 'Ανάλυση εικόνας...',
         noneIdentified: 'Καμία αναγνώριση',
         pointTheCamera: 'Στρέψτε την κάμερα σε ένα έργο τέχνης',
-        unableToLanchUrl: 'Δεν είναι δυνατή η εκκίνηση του url',
+        unableToLaunchUrl: 'Δεν είναι δυνατή η εκκίνηση του url',
       ),
       stngs: AppLocalizations_Labels_Stngs(
         title: 'Ρυθμίσεις',
@@ -165,7 +165,7 @@ class AppLocalizations_Labels_Msg {
       {this.analysing,
       this.noneIdentified,
       this.pointTheCamera,
-      this.unableToLanchUrl});
+      this.unableToLaunchUrl});
 
   final String analysing;
 
@@ -173,7 +173,7 @@ class AppLocalizations_Labels_Msg {
 
   final String pointTheCamera;
 
-  final String unableToLanchUrl;
+  final String unableToLaunchUrl;
 
   String getByKey(String key) {
     switch (key) {
@@ -183,8 +183,8 @@ class AppLocalizations_Labels_Msg {
         return noneIdentified;
       case 'pointTheCamera':
         return pointTheCamera;
-      case 'unableToLanchUrl':
-        return unableToLanchUrl;
+      case 'unableToLaunchUrl':
+        return unableToLaunchUrl;
       default:
         return '';
     }
