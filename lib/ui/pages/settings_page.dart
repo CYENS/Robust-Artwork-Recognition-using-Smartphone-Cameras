@@ -36,186 +36,191 @@ class _SettingsPageState extends State<SettingsPage> {
     // TODO check if settings are set on first launch
     final strings = context.strings();
     ViewingsDao viewingsDao = Provider.of<ViewingsDao>(context);
-    return Container(
-      key: UniqueKey(),
-      child: SettingsScreen(
-        title: strings.stngs.title,
+    List<SettingsGroup> _settingsList = [
+      SettingsGroup(
+        title: strings.stngs.groupAbout.customToUpperCase(),
         children: [
-          SettingsGroup(
-            title: strings.stngs.groupAbout.customToUpperCase(),
+          SimpleSettingsTile(
+            // launch the Gallery's url in external browser
+            title: strings.galleryName,
+            subtitle: strings.stngs.stng.galleryWebsiteSummary,
+            leading: Icon(Icons.web),
+            onTap: () async {
+              String url = "https://www.nicosia.org.cy/"
+                  "${context.locale().languageCode == "en" ? 'en-GB' : 'el-GR'}"
+                  "/discover/picture-galleries/state-gallery-of-contemporary-art/";
+              if (await canLaunch(url)) {
+                launch(url);
+              } else {
+                Fluttertoast.showToast(msg: strings.msg.unableToLanchUrl);
+              }
+            },
+          ),
+          SimpleSettingsTile(
+            title: strings.stngs.stng.appInfo,
+            subtitle: strings.stngs.stng.appInfoSummary,
+            leading: Icon(Icons.info_outline_rounded),
+            onTap: () {
+              PackageInfo.fromPlatform().then((packageInfo) => showAboutDialog(
+                    context: context,
+                    applicationIcon: const SizedBox(
+                      width: 80,
+                      height: 80,
+                      child: Image(
+                        image: AssetImage(
+                            'assets/app_launcher_icons/hadjida_untitled_app_icon_square_android_adaptive.png'),
+                      ),
+                    ),
+                    applicationName: strings.galleryName,
+                    applicationVersion:
+                        "${strings.stngs.stng.appVersion}: ${packageInfo.version}",
+                    children: [
+                      Text(strings.stngs.stng.appDescription),
+                      Text(""),
+                      Text(strings.stngs.stng.appMadeBy),
+                    ],
+                  ));
+            },
+          ),
+          SimpleSettingsTile(
+            title: strings.stngs.stng.changelog,
+            subtitle: strings.stngs.stng.changelogSummary,
+            leading: Icon(Icons.history_rounded),
+            onTap: () {
+              // here the root navigator is used, so that the changelog is
+              // displayed on top of the rest of the UI (and the NavBar)
+              Navigator.of(context, rootNavigator: true).push(
+                MaterialPageRoute(
+                  builder: (context) => ChangeLogPage(
+                    changelogAssetsPath: "assets/CHANGELOG.md",
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+      SettingsGroup(
+        title: strings.stngs.groupDatabase.customToUpperCase(),
+        children: [
+          SimpleSettingsTile(
+            title: strings.stngs.stng.historyExport,
+            subtitle: strings.stngs.stng.historyExportSummary,
+            leading: Icon(Icons.share_rounded),
+            onTap: () async {
+              viewingsDao.allViewingEntries.then((viewings) {
+                String viewingsInStr = jsonEncode(viewings);
+                print(viewingsInStr);
+                // write to file
+                saveToJsonFile(viewingsInStr).then((jsonFile) {
+                  print(jsonFile);
+                  // share saved json file via share dialog
+                  Share.shareFiles([jsonFile], subject: "Viewings history");
+                });
+              });
+            },
+          ),
+        ],
+      ),
+      SettingsGroup(
+        title: strings.stngs.groupOther.customToUpperCase(),
+        children: [
+          ExpandableSettingsTile(
+            title: strings.stngs.expandableOther,
+            leading: Icon(Icons.settings_applications_rounded),
             children: [
-              SimpleSettingsTile(
-                // launch the Gallery's url in external browser
-                title: strings.galleryName,
-                subtitle: strings.stngs.stng.galleryWebsiteSummary,
-                leading: Icon(Icons.web),
-                onTap: () async {
-                  String url = "https://www.nicosia.org.cy/"
-                      "${context.locale().languageCode == "en" ? 'en-GB' : 'el-GR'}"
-                      "/discover/picture-galleries/state-gallery-of-contemporary-art/";
-                  if (await canLaunch(url)) {
-                    launch(url);
-                  } else {
-                    Fluttertoast.showToast(msg: strings.msg.unableToLanchUrl);
-                  }
+              RadioModalSettingsTile<String>(
+                title: "CNN type used",
+                settingKey: keyCnnModel,
+                values: tfLiteModelNames,
+                selected: mobNetNoArt500_4,
+                onChange: (value) {
+                  debugPrint("$keyCnnModel: $value");
                 },
               ),
-              SimpleSettingsTile(
-                title: strings.stngs.stng.appInfo,
-                subtitle: strings.stngs.stng.appInfoSummary,
-                leading: Icon(Icons.info_outline_rounded),
-                onTap: () {
-                  PackageInfo.fromPlatform()
-                      .then((packageInfo) => showAboutDialog(
-                            context: context,
-                            applicationIcon: const SizedBox(
-                              width: 80,
-                              height: 80,
-                              child: Image(
-                                image: AssetImage(
-                                    'assets/app_launcher_icons/hadjida_untitled_app_icon_square_android_adaptive.png'),
-                              ),
-                            ),
-                            applicationName: strings.galleryName,
-                            applicationVersion:
-                                "${strings.stngs.stng.appVersion}: ${packageInfo.version}",
-                            children: [
-                              Text(strings.stngs.stng.appDescription),
-                              Text(""),
-                              Text(strings.stngs.stng.appMadeBy),
-                            ],
-                          ));
+              RadioModalSettingsTile<String>(
+                title: "Recognition algorithm",
+                settingKey: keyRecognitionAlgo,
+                values: Map<String, String>.fromIterable(
+                  allAlgorithms.keys,
+                  key: (key) => key,
+                  value: (key) => key,
+                ),
+                selected: firstAlgorithm,
+                onChange: (value) {
+                  debugPrint("$keyRecognitionAlgo: $value");
+                  // reset values for algorithm settings every time a new
+                  // algorithm is chosen
+                  _setDefaultAlgorithmSettings(value);
+                  setState(() {});
                 },
               ),
-              SimpleSettingsTile(
-                title: strings.stngs.stng.changelog,
-                subtitle: strings.stngs.stng.changelogSummary,
-                leading: Icon(Icons.history_rounded),
-                onTap: () {
-                  // here the root navigator is used, so that the changelog is
-                  // displayed on top of the rest of the UI (and the NavBar)
-                  Navigator.of(context, rootNavigator: true).push(
+              SliderSettingsTile(
+                leading: Icon(Icons.adjust),
+                title: "CNN sensitivity",
+                settingKey: keyCnnSensitivity,
+                defaultValue: 75.0,
+                min: 0.0,
+                max: 100.0,
+                step: 0.2,
+                onChange: (value) {
+                  debugPrint("$keyCnnSensitivity: $value");
+                },
+              ),
+              SliderSettingsTile(
+                leading: Icon(Icons.space_bar),
+                title: _getCurrentWinThreshPName(),
+                settingKey: keyWinThreshP,
+                defaultValue: 6,
+                min: 5,
+                max: 50,
+                step: 1,
+                onChange: (value) {
+                  debugPrint("$keyWinThreshP: $value");
+                },
+              ),
+              SwitchSettingsTile(
+                leading: Icon(Icons.navigation),
+                title: "Navigate to recognised artworks' details",
+                settingKey: keyNavigateToDetails,
+                defaultValue: true,
+              ),
+              SwitchSettingsTile(
+                leading: Icon(Icons.list_alt_outlined),
+                title: "Display model & algorithm information in camera view",
+                settingKey: keyDisplayExtraInfo,
+                defaultValue: false,
+              ),
+              Padding(
+                // padding to account for the convex app bar
+                padding: const EdgeInsets.only(bottom: 30.0),
+                child: SimpleSettingsTile(
+                  title: strings.stngs.stng.databaseBrowser,
+                  subtitle: strings.stngs.stng.databaseBrowserSummary,
+                  leading: Icon(Icons.table_rows),
+                  onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => ChangeLogPage(
-                        changelogAssetsPath: "assets/CHANGELOG.md",
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ],
-          ),
-          SettingsGroup(
-            title: strings.stngs.groupDatabase.customToUpperCase(),
-            children: [
-              SimpleSettingsTile(
-                title: strings.stngs.stng.historyExport,
-                subtitle: strings.stngs.stng.historyExportSummary,
-                leading: Icon(Icons.share_rounded),
-                onTap: () async {
-                  viewingsDao.allViewingEntries.then((viewings) {
-                    String viewingsInStr = jsonEncode(viewings);
-                    print(viewingsInStr);
-                    // write to file
-                    saveToJsonFile(viewingsInStr).then((jsonFile) {
-                      print(jsonFile);
-                      // share saved json file via share dialog
-                      Share.shareFiles([jsonFile], subject: "Viewings history");
-                    });
-                  });
-                },
-              ),
-            ],
-          ),
-          SettingsGroup(
-            title: strings.stngs.groupOther.customToUpperCase(),
-            children: [
-              ExpandableSettingsTile(
-                title: strings.stngs.expandableOther,
-                leading: Icon(Icons.settings_applications_rounded),
-                children: [
-                  RadioModalSettingsTile<String>(
-                    title: "CNN type used",
-                    settingKey: keyCnnModel,
-                    values: tfLiteModelNames,
-                    selected: mobNetNoArt500_4,
-                    onChange: (value) {
-                      debugPrint("$keyCnnModel: $value");
-                    },
+                        builder: (context) =>
+                            MoorDbViewer(Provider.of<AppDatabase>(context))),
                   ),
-                  RadioModalSettingsTile<String>(
-                    title: "Recognition algorithm",
-                    settingKey: keyRecognitionAlgo,
-                    values: Map<String, String>.fromIterable(
-                      allAlgorithms.keys,
-                      key: (key) => key,
-                      value: (key) => key,
-                    ),
-                    selected: firstAlgorithm,
-                    onChange: (value) {
-                      debugPrint("$keyRecognitionAlgo: $value");
-                      // reset values for algorithm settings every time a new
-                      // algorithm is chosen
-                      _setDefaultAlgorithmSettings(value);
-                      setState(() {});
-                    },
-                  ),
-                  SliderSettingsTile(
-                    leading: Icon(Icons.adjust),
-                    title: "CNN sensitivity",
-                    settingKey: keyCnnSensitivity,
-                    defaultValue: 75.0,
-                    min: 0.0,
-                    max: 100.0,
-                    step: 0.2,
-                    onChange: (value) {
-                      debugPrint("$keyCnnSensitivity: $value");
-                    },
-                  ),
-                  SliderSettingsTile(
-                    leading: Icon(Icons.space_bar),
-                    title: _getCurrentWinThreshPName(),
-                    settingKey: keyWinThreshP,
-                    defaultValue: 6,
-                    min: 5,
-                    max: 50,
-                    step: 1,
-                    onChange: (value) {
-                      debugPrint("$keyWinThreshP: $value");
-                    },
-                  ),
-                  SwitchSettingsTile(
-                    leading: Icon(Icons.navigation),
-                    title: "Navigate to recognised artworks' details",
-                    settingKey: keyNavigateToDetails,
-                    defaultValue: true,
-                  ),
-                  SwitchSettingsTile(
-                    leading: Icon(Icons.list_alt_outlined),
-                    title:
-                        "Display model & algorithm information in camera view",
-                    settingKey: keyDisplayExtraInfo,
-                    defaultValue: false,
-                  ),
-                  Padding(
-                    // padding to account for the convex app bar
-                    padding: const EdgeInsets.only(bottom: 30.0),
-                    child: SimpleSettingsTile(
-                      title: strings.stngs.stng.databaseBrowser,
-                      subtitle: strings.stngs.stng.databaseBrowserSummary,
-                      leading: Icon(Icons.table_rows),
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                            builder: (context) => MoorDbViewer(
-                                Provider.of<AppDatabase>(context))),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ],
           ),
         ],
+      ),
+    ];
+    return Scaffold(
+      key: UniqueKey(),
+      appBar: AppBar(
+        title: Text(strings.stngs.title),
+      ),
+      body: ListView.builder(
+        shrinkWrap: true,
+        itemCount: _settingsList.length,
+        itemBuilder: (BuildContext context, int index) {
+          return _settingsList[index];
+        },
       ),
     );
   }
