@@ -211,12 +211,18 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
     ];
     return Scaffold(
+      // by giving the scaffold a unique key, it's rebuild every time a setting
+      // changes, so that the screen is updated with the new setting values
       key: UniqueKey(),
       appBar: AppBar(
+        // todo override up button's default behaviour to fix nav bar issue
         title: Text(strings.stngs.title),
       ),
+      // here a custom ListView is used instead of the SettingsScreen widget
+      // provided by the library, to allow customizing the AppBar above and to
+      // set BouncingScrollPhysics below
       body: ListView.builder(
-        shrinkWrap: true,
+        physics: const BouncingScrollPhysics(),
         itemCount: _settingsList.length,
         itemBuilder: (BuildContext context, int index) {
           return _settingsList[index];
