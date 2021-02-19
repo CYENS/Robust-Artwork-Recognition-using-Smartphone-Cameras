@@ -133,6 +133,8 @@ class _MainPageState extends State<MainPage> {
   }
 }
 
+/// The [Routes] class is used to specify the navigator route names in a
+/// centralized fashion.
 class Routes {
   static const String explorePage = "/";
   static const String identifyPage = "/identify";
