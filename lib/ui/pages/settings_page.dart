@@ -8,6 +8,7 @@ import 'package:modern_art_app/data/inference_algorithms.dart';
 import 'package:modern_art_app/data/viewings_dao.dart';
 import 'package:modern_art_app/tensorflow/models.dart';
 import 'package:modern_art_app/ui/pages/changelog_page.dart';
+import 'package:modern_art_app/ui/pages/demo_identify_page.dart';
 import 'package:modern_art_app/utils/extensions.dart';
 import 'package:modern_art_app/utils/utils.dart';
 import 'package:moor_db_viewer/moor_db_viewer.dart';
@@ -190,6 +191,18 @@ class _SettingsPageState extends State<SettingsPage> {
                 title: "Display model & algorithm information in camera view",
                 settingKey: keyDisplayExtraInfo,
                 defaultValue: false,
+              ),
+              SimpleSettingsTile(
+                title: "Navigate to demo Identify page",
+                subtitle: "Used only for demo purposes",
+                leading: Icon(Icons.history_rounded),
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => DemoIdentifyPage(),
+                    ),
+                  );
+                },
               ),
               Padding(
                 // padding to account for the convex app bar
