@@ -20,19 +20,19 @@ part 'localization.g.dart';
 ///
 /// In case the commands above report conflicts, append
 /// `--delete-conflicting-outputs` and re-run.
-@SheetLocalization(docId, i18nSheetID, 23)
+@SheetLocalization(docId, i18nSheetID, 29)
 // The number is the generated version, and must be incremented each time the
 // GSheet is updated, to regenerate a new version of the labels.
-class AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
+class AppLocalizationsDelegate
+    extends LocalizationsDelegate<AppLocalizationsData> {
   const AppLocalizationsDelegate();
 
   @override
-  bool isSupported(Locale locale) =>
-      AppLocalizations.languages.containsKey(locale);
+  bool isSupported(Locale locale) => localizedLabels.containsKey(locale);
 
   @override
-  Future<AppLocalizations> load(Locale locale) =>
-      SynchronousFuture<AppLocalizations>(AppLocalizations(locale));
+  Future<AppLocalizationsData> load(Locale locale) =>
+      SynchronousFuture<AppLocalizationsData>(localizedLabels[locale]!);
 
   @override
   bool shouldReload(AppLocalizationsDelegate old) => false;

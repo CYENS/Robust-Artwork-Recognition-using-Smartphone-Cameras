@@ -176,45 +176,59 @@ class AppDatabase extends _$AppDatabase {
           /// When db is first created, populate it from cached json asset files.
           if (details.wasCreated) {
             // determine supported locales
-            var languageCodes = AppLocalizations.languages.keys
+            var languageCodes = localizedLabels.keys
                 .toList()
                 .map((locale) => locale.languageCode)
                 .toList();
 
             // TODO make logic into function that accepts generics, since it's the same code repeated twice
             // populate artists and artistTranslations tables
-            await getLocalJsonItemList(artistsJsonPath)
-                .then((artistEntries) => artistEntries.forEach((entry) {
-                      var parsedEntry = parseItemMap(entry);
-                      var artist = Artist.fromJson(parsedEntry);
-                      into(artists).insertOnConflictUpdate(artist);
-                      print("Created entry for artist with id ${artist.id}");
-                      languageCodes.forEach((languageCode) {
-                        var translatedEntry = ArtistTranslation.fromJson(
-                            parseItemTranslations(parsedEntry, languageCode));
-                        into(artistTranslations)
-                            .insertOnConflictUpdate(translatedEntry);
-                        print("Created entry for language $languageCode for "
-                            "artist with id ${artist.id}");
-                      });
-                    }));
+            await getLocalJsonItemList(artistsJsonPath).then(
+              (artistEntries) => artistEntries.forEach(
+                (entry) {
+                  var parsedEntry = parseItemMap(entry);
+                  var artist = Artist.fromJson(parsedEntry);
+                  into(artists).insertOnConflictUpdate(artist);
+                  print("Created entry for artist with id ${artist.id}");
+                  languageCodes.forEach(
+                    (languageCode) {
+                      var translatedEntry = ArtistTranslation.fromJson(
+                        parseItemTranslations(parsedEntry, languageCode),
+                      );
+                      into(artistTranslations).insertOnConflictUpdate(
+                        translatedEntry,
+                      );
+                      print("Created entry for language $languageCode for "
+                          "artist with id ${artist.id}");
+                    },
+                  );
+                },
+              ),
+            );
 
             // populate artworks and artworkTranslations tables
-            await getLocalJsonItemList(artworksJsonPath)
-                .then((artworkEntries) => artworkEntries.forEach((entry) {
-                      var parsedEntry = parseItemMap(entry);
-                      var artwork = Artwork.fromJson(parsedEntry);
-                      into(artworks).insertOnConflictUpdate(artwork);
-                      print("Created entry for artwork with id ${artwork.id}");
-                      languageCodes.forEach((languageCode) {
-                        var translatedEntry = ArtworkTranslation.fromJson(
-                            parseItemTranslations(parsedEntry, languageCode));
-                        into(artworkTranslations)
-                            .insertOnConflictUpdate(translatedEntry);
-                        print("Created entry for language $languageCode for "
-                            "artwork with id ${artwork.id}");
-                      });
-                    }));
+            await getLocalJsonItemList(artworksJsonPath).then(
+              (artworkEntries) => artworkEntries.forEach(
+                (entry) {
+                  var parsedEntry = parseItemMap(entry);
+                  var artwork = Artwork.fromJson(parsedEntry);
+                  into(artworks).insertOnConflictUpdate(artwork);
+                  print("Created entry for artwork with id ${artwork.id}");
+                  languageCodes.forEach(
+                    (languageCode) {
+                      var translatedEntry = ArtworkTranslation.fromJson(
+                        parseItemTranslations(parsedEntry, languageCode),
+                      );
+                      into(artworkTranslations).insertOnConflictUpdate(
+                        translatedEntry,
+                      );
+                      print("Created entry for language $languageCode for "
+                          "artwork with id ${artwork.id}");
+                    },
+                  );
+                },
+              ),
+            );
           }
         },
       );

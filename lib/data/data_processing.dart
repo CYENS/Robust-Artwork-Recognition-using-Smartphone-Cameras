@@ -33,7 +33,7 @@ Future<List<Map>> getLocalJsonItemList(String assetsPath) async {
 /// list of map item entries (the entries must be processed with [parseItemMap]
 /// first to be valid db entities).
 Future<List<Map>> getRemoteJsonItemList(String url) async {
-  var itemsJson = await http.get(url);
+  var itemsJson = await http.get(Uri.parse(url));
   if (itemsJson.statusCode == 200) {
     Map body = json.decode(itemsJson.body);
     return List<Map>.from(body["feed"]["entry"]);

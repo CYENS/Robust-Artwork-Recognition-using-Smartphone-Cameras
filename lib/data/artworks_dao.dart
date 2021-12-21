@@ -31,7 +31,7 @@ class ArtworksDao extends DatabaseAccessor<AppDatabase>
 
   /// Gets a list of all [Artwork]s for a given [Artist].
   Stream<List<Artwork>> watchArtworksByArtist({
-    @required String artistId,
+    required String artistId,
     String languageCode = "en",
   }) =>
       ((select(artworks)..where((artwork) => artwork.artistId.equals(artistId)))
@@ -41,8 +41,8 @@ class ArtworksDao extends DatabaseAccessor<AppDatabase>
         leftOuterJoin(artistTranslations,
             artistTranslations.id.equalsExp(artworks.artistId))
       ])
-                ..where(artworkTranslations.languageCode.equals(languageCode) &
-                    artistTranslations.languageCode.equals(languageCode)))
+            ..where(artworkTranslations.languageCode.equals(languageCode) &
+                artistTranslations.languageCode.equals(languageCode)))
           .map((e) => composeTranslatedArtwork(
               artwork: e.readTable(artworks),
               artworkTranslation: e.readTable(artworkTranslations),
@@ -51,7 +51,7 @@ class ArtworksDao extends DatabaseAccessor<AppDatabase>
 
   /// Get artwork by id.
   Future<Artwork> getArtworkById({
-    @required String artworkId,
+    required String artworkId,
     String languageCode = "en",
   }) =>
       ((select(artworks)..where((tbl) => tbl.id.equals(artworkId))).join([
@@ -80,9 +80,9 @@ class ArtworksDao extends DatabaseAccessor<AppDatabase>
 }
 
 Artwork composeTranslatedArtwork({
-  Artwork artwork,
-  ArtworkTranslation artworkTranslation,
-  ArtistTranslation artistTranslation,
+  required Artwork artwork,
+  required ArtworkTranslation artworkTranslation,
+  required ArtistTranslation artistTranslation,
 }) =>
     artwork.copyWith(
         name: artworkTranslation.name,

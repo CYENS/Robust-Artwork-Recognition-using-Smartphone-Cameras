@@ -8,12 +8,9 @@ import 'package:path_provider/path_provider.dart';
 /// Formats an [Artist]'s lifespan properly, returning only year of birth if
 /// they are alive, or their lifespan otherwise.
 ///
-/// TODO implement this in [ArtistTranslated] class perhaps
-///
-/// TODO return e.g. "b. 2000" in the first case, if [ArtistTranslated] is used as an input argument, the locale will be available, and can adjust accordingly for language
-String lifespan(Artist artist) => artist.yearDeath.isNotEmpty
-    ? "${artist.yearBirth}–${artist.yearDeath}"
-    : artist.yearBirth;
+String lifespan(Artist artist) => artist.yearDeath != null
+    ? "${artist.yearBirth!}–${artist.yearDeath!}"
+    : artist.yearBirth!;
 
 String getArtistFilename(Artist artist) => "assets/painters/${artist.id}.webp";
 
@@ -35,7 +32,7 @@ class DefaultDict<K, V> extends MapBase<K, V> {
   DefaultDict(this._ifAbsent);
 
   @override
-  V operator [](Object key) => _map.putIfAbsent(key as K, _ifAbsent);
+  V operator [](Object? key) => _map.putIfAbsent(key as K, _ifAbsent);
 
   @override
   void operator []=(K key, V value) => _map[key] = value;
@@ -47,7 +44,7 @@ class DefaultDict<K, V> extends MapBase<K, V> {
   Iterable<K> get keys => _map.keys;
 
   @override
-  V remove(Object key) => _map.remove(key);
+  V? remove(Object? key) => _map.remove(key);
 }
 
 /// Returns a file path for a json file to be saved in the temporary directory.

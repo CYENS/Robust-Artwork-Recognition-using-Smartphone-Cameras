@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_lorem/flutter_lorem.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:modern_art_app/data/artworks_dao.dart';
 import 'package:modern_art_app/data/database.dart';
@@ -9,7 +8,7 @@ import 'package:modern_art_app/utils/utils.dart';
 import 'package:provider/provider.dart';
 
 class ArtistDetailsPage extends StatelessWidget {
-  const ArtistDetailsPage({Key key, this.artist}) : super(key: key);
+  const ArtistDetailsPage({Key? key, required this.artist}) : super(key: key);
 
   final Artist artist;
 
@@ -31,7 +30,7 @@ class ArtistDetailsPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Hero(
-              tag: artist.name,
+              tag: artist.name!,
               child: Container(
                 height: size.height * 0.4,
                 width: size.width,
@@ -46,7 +45,7 @@ class ArtistDetailsPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                artist.name,
+                artist.name!,
                 style: GoogleFonts.openSansCondensed(
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
@@ -73,9 +72,7 @@ class ArtistDetailsPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(16.0, 0.0, 8.0, 8.0),
               child: Text(
-                artist.biography.isNotEmpty
-                    ? artist.biography
-                    : lorem(paragraphs: 1, words: 150),
+                artist.biography ?? '',
                 style: TextStyle(fontSize: 16),
               ),
             ),

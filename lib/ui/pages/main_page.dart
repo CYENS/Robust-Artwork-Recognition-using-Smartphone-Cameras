@@ -5,12 +5,11 @@ import 'package:modern_art_app/tensorflow/model_selection.dart';
 import 'package:modern_art_app/ui/pages/explore_page.dart';
 import 'package:modern_art_app/ui/pages/settings_page.dart';
 import 'package:modern_art_app/utils/extensions.dart';
-import 'package:sentry/sentry.dart';
 
 class MainPage extends StatefulWidget {
   final List<CameraDescription> cameras;
 
-  const MainPage({Key key, @required this.cameras}) : super(key: key);
+  const MainPage({Key? key, required this.cameras}) : super(key: key);
 
   @override
   _MainPageState createState() => _MainPageState();
@@ -19,7 +18,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   /// The HeroController is needed for enabling Hero animations in the custom
   /// Navigator below, see this post https://stackoverflow.com/a/60729122
-  HeroController _heroController;
+  late HeroController _heroController;
 
   /// The global [_navigatorKey] is necessary so that the nav bar can push
   /// routes to the navigator (the nav bar is located above/in another branch
@@ -39,31 +38,28 @@ class _MainPageState extends State<MainPage> {
   }
 
   /// Used for enabling Hero animations in the custom Navigator.
-  RectTween _createRectTween(Rect begin, Rect end) {
+  Tween<Rect?> _createRectTween(Rect? begin, Rect? end) {
     return MaterialRectArcTween(begin: begin, end: end);
   }
 
   @override
   Widget build(BuildContext context) {
     final strings = context.strings();
-    try {
-      throw Exception("Test exception!");
-    } catch (exception, stackTrace) {
-      Sentry.captureException(exception, stackTrace: stackTrace);
-    }
     return Scaffold(
       body: WillPopScope(
         // wrapping the Navigator with a WillPopScope enables the correct
         // handling of the back button on Android
         onWillPop: () async {
-          if (_navigatorKey.currentState.canPop()) {
-            print("CAN POP");
-            _navigatorKey.currentState.pop();
-            setState(() {
-              _appBarKey.currentState.animateTo(0);
-              _currentIndex = 0;
-            });
-            return false;
+          if (_navigatorKey.currentState != null) {
+            if (_navigatorKey.currentState!.canPop()) {
+              print("CAN POP");
+              _navigatorKey.currentState!.pop();
+              setState(() {
+                _appBarKey.currentState!.animateTo(0);
+                _currentIndex = 0;
+              });
+              return false;
+            }
           }
           return true;
         },
@@ -95,7 +91,7 @@ class _MainPageState extends State<MainPage> {
         key: _appBarKey,
         style: TabStyle.fixed,
         backgroundColor: Colors.grey.shade800,
-        activeColor: Theme.of(context).accentColor,
+        activeColor: Theme.of(context).colorScheme.secondary,
         elevation: 20,
         initialActiveIndex: _currentIndex,
         items: [
@@ -108,11 +104,13 @@ class _MainPageState extends State<MainPage> {
             case 0:
               // when the Explore tab is selected, remove everything else from
               // the navigator's stack
-              _navigatorKey.currentState
-                  .pushNamedAndRemoveUntil(Routes.explorePage, (_) => false);
+              _navigatorKey.currentState?.pushNamedAndRemoveUntil(
+                Routes.explorePage,
+                (_) => false,
+              );
               break;
             case 1:
-              _navigatorKey.currentState.pushNamedAndRemoveUntil(
+              _navigatorKey.currentState?.pushNamedAndRemoveUntil(
                 Routes.identifyPage,
                 ModalRoute.withName(Routes.explorePage),
               );
@@ -121,16 +119,14 @@ class _MainPageState extends State<MainPage> {
               // prevent multiple pushes of Settings page
               // if (_currentIndex != 2) {
               // here also remove everything else apart from "/"
-              _navigatorKey.currentState.pushNamedAndRemoveUntil(
+              _navigatorKey.currentState?.pushNamedAndRemoveUntil(
                 Routes.settingsPage,
                 ModalRoute.withName(Routes.explorePage),
               );
               // }
               break;
           }
-          setState(() {
-            _currentIndex = index;
-          });
+          setState(() => _currentIndex = index);
         },
       ),
     );

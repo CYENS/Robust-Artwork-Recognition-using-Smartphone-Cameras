@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_lorem/flutter_lorem.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:modern_art_app/data/artists_dao.dart';
 import 'package:modern_art_app/data/database.dart';
@@ -10,12 +9,14 @@ import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
 
 class ArtworkDetailsPage extends StatelessWidget {
-  const ArtworkDetailsPage(
-      {Key key, @required this.artwork, this.customHeroTag})
-      : super(key: key);
+  const ArtworkDetailsPage({
+    Key? key,
+    required this.artwork,
+    this.customHeroTag,
+  }) : super(key: key);
 
   final Artwork artwork;
-  final String customHeroTag;
+  final String? customHeroTag;
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +67,7 @@ class ArtworkDetailsPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                artwork.name,
+                artwork.name!,
                 style: GoogleFonts.openSansCondensed(
                   fontSize: 30,
                   fontWeight: FontWeight.bold,
@@ -98,7 +99,7 @@ class ArtworkDetailsPage extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16,
                           fontStyle: FontStyle.italic,
-                          color: Theme.of(context).accentColor,
+                          color: Theme.of(context).colorScheme.secondary,
                         ),
                       ),
                       TextSpan(
@@ -126,9 +127,7 @@ class ArtworkDetailsPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(16.0, 0.0, 8.0, 8.0),
               child: Text(
-                artwork.description.isNotEmpty
-                    ? artwork.description
-                    : lorem(paragraphs: 2, words: 50),
+                artwork.description ?? '',
                 style: TextStyle(fontSize: 16),
               ),
             ),
@@ -143,7 +142,7 @@ class ItemZoomPage extends StatelessWidget {
   final String fileName;
   final String heroTag;
 
-  const ItemZoomPage({Key key, @required this.fileName, this.heroTag})
+  const ItemZoomPage({Key? key, required this.fileName, required this.heroTag})
       : super(key: key);
 
   @override

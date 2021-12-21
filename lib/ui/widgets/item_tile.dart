@@ -12,9 +12,9 @@ class Tile extends StatelessWidget {
   /// is not specified, it will be set to equal to [tileWidth], i.e. a square
   /// tile will be created.
   const Tile({
-    Key key,
-    @required this.imagePath,
-    @required this.tileWidth,
+    Key? key,
+    required this.imagePath,
+    required this.tileWidth,
     this.tileHeight,
     this.heroTag,
   }) : super(key: key);
@@ -26,10 +26,10 @@ class Tile extends StatelessWidget {
   final double tileWidth;
 
   /// Desired height of the tile.
-  final double tileHeight;
+  final double? tileHeight;
 
   /// Desired hero tag for the image displayed in the tile.
-  final String heroTag;
+  final String? heroTag;
 
   @override
   Widget build(BuildContext context) {
@@ -62,27 +62,27 @@ class Tile extends StatelessWidget {
 class ItemTile extends StatelessWidget {
   /// Creates a tile with rounded corners displaying the provided [Artist].
   ItemTile.artist({
-    Key key,
-    @required Artist artist,
+    Key? key,
+    required Artist artist,
     this.tileWidth,
     this.tileHeight,
-    String customHeroTag, // Optional custom hero tag
-  })  : _title = artist.name,
-        _subtitle = artist.yearBirth,
+    String? customHeroTag, // Optional custom hero tag
+  })  : _title = artist.name!,
+        _subtitle = artist.yearBirth!,
         _imgFileName = getArtistFilename(artist),
-        _customHeroTag = customHeroTag ?? artist.name,
+        _customHeroTag = customHeroTag ?? artist.name!,
         _detailsPage = ArtistDetailsPage(artist: artist),
         super(key: key);
 
   /// Creates a tile with rounded corners displaying the provided [Artwork].
   ItemTile.artwork({
-    Key key,
-    @required Artwork artwork,
+    Key? key,
+    required Artwork artwork,
     this.tileWidth,
     this.tileHeight,
-    String customHeroTag, // Optional custom hero tag
-  })  : _title = artwork.name,
-        _subtitle = artwork.year,
+    String? customHeroTag, // Optional custom hero tag
+  })  : _title = artwork.name!,
+        _subtitle = artwork.year!,
         _imgFileName = getArtworkFilename(artwork),
         _customHeroTag = customHeroTag ?? artwork.id,
         _detailsPage = ArtworkDetailsPage(
@@ -98,10 +98,10 @@ class ItemTile extends StatelessWidget {
   final dynamic _detailsPage;
 
   /// Desired width of the tile.
-  final double tileWidth;
+  final double? tileWidth;
 
   /// Desired height of the tile.
-  final double tileHeight;
+  final double? tileHeight;
 
   final String _customHeroTag;
 

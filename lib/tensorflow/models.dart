@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+
 
 // older example models
 // TODO remove these
@@ -75,7 +75,7 @@ class TfLiteModel {
 
   final String _labelsPath;
 
-  const TfLiteModel({@required String modelPath, @required String labelsPath})
+  const TfLiteModel({required String modelPath, required String labelsPath})
       : _modelPath = modelPath,
         _labelsPath = labelsPath;
 

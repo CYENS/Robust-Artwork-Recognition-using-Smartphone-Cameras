@@ -143,7 +143,7 @@ class WindowAverageAlgo extends InferenceAlgorithm {
   double _topMean = 0.0;
   var _probsByID = DefaultDict<String, List<double>>(() => []);
 
-  WindowAverageAlgo({this.sensitivity, this.windowLength});
+  WindowAverageAlgo({required this.sensitivity, required this.windowLength});
 
   @override
   void updateRecognitions(List<dynamic> recognitions, int inferenceTime) {
@@ -151,14 +151,16 @@ class WindowAverageAlgo extends InferenceAlgorithm {
 
     if (history.length >= windowLength) {
       // sort probabilities of the last windowLength recognitions by artworkId
-      history.sublist(history.length - windowLength).forEach((recognition) {
-        _probsByID[recognition["label"]].add(recognition["confidence"]);
-      });
+      history.sublist(history.length - windowLength).forEach(
+        (recognition) {
+          _probsByID[recognition["label"]].add(recognition["confidence"]);
+        },
+      );
 
       // get mean probability for each artworkId
       var meansByID = <String, double>{
         for (var id in _probsByID.entries)
-          id.key: id.value.reduce((a, b) => a + b) / id.value.length
+          id.key: id.value.reduce((a, b) => a + b) / id.value.length,
       };
 
       // sort artworkIds by mean, largest to smallest
@@ -189,7 +191,6 @@ class WindowAverageAlgo extends InferenceAlgorithm {
         // no winner yet
         resetTopInference();
       }
-
       _probsByID.clear();
     }
   }
@@ -224,7 +225,10 @@ class WindowHighestCountAlgo extends InferenceAlgorithm {
   final int windowLength;
   var _countsByID = DefaultDict<String, int>(() => 0);
 
-  WindowHighestCountAlgo({this.windowLength, this.sensitivitySetting = 0.0});
+  WindowHighestCountAlgo({
+    required this.windowLength,
+    this.sensitivitySetting = 0.0,
+  });
 
   @override
   void updateRecognitions(List recognitions, int inferenceTime) {
@@ -256,7 +260,6 @@ class WindowHighestCountAlgo extends InferenceAlgorithm {
         // in case of a tie, wait for next round to decide
         resetTopInference();
       }
-
       _countsByID.clear();
     }
   }
@@ -291,7 +294,7 @@ class FirstPastThePostAlgo extends InferenceAlgorithm {
   final int countThreshold;
   var _countsByID = DefaultDict<String, int>(() => 0);
 
-  FirstPastThePostAlgo({this.countThreshold, this.sensitivity = 0.0});
+  FirstPastThePostAlgo({required this.countThreshold, this.sensitivity = 0.0});
 
   @override
   void updateRecognitions(List recognitions, int inferenceTime) {
@@ -369,7 +372,7 @@ class SeidenaryAlgo extends InferenceAlgorithm {
   final double sensitivity;
   var _counters = DefaultDict<String, int>(() => 0);
 
-  SeidenaryAlgo({this.P, this.sensitivity = 0.0});
+  SeidenaryAlgo({required this.P, this.sensitivity = 0.0});
 
   @override
   void updateRecognitions(List recognitions, int inferenceTime) {
@@ -460,5 +463,5 @@ final allAlgorithms = <String, Function(double sensitivity, int winThreshP)>{
   fourthAlgorithm: (double sensitivity, int winThreshP) => SeidenaryAlgo(
         sensitivity: sensitivity,
         P: winThreshP,
-      )
+      ),
 };

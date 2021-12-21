@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/ui/widgets/item_row.dart';
@@ -7,14 +6,14 @@ import 'package:modern_art_app/ui/widgets/item_tile.dart';
 
 class ListHorizontal extends StatelessWidget {
   const ListHorizontal({
-    Key key,
-    @required this.itemList,
+    Key? key,
+    required this.itemList,
     this.listHeight,
   }) : super(key: key);
 
   // todo make input argument simple List
   final Stream<List<dynamic>> itemList;
-  final double listHeight;
+  final double? listHeight;
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +24,9 @@ class ListHorizontal extends StatelessWidget {
         height: height,
         child: StreamBuilder(
           stream: itemList,
-          builder: (context, snapshot) {
+          builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
             if (snapshot.hasData) {
-              List<dynamic> items = snapshot.data;
+              List<dynamic> items = snapshot.data!;
               return ListView.builder(
                 scrollDirection: Axis.horizontal,
                 physics: const BouncingScrollPhysics(),
@@ -40,8 +39,9 @@ class ListHorizontal extends StatelessWidget {
                 },
               );
             }
-            return const Center(
-                child: SpinKitRotatingPlain(color: Colors.white, size: 50.0));
+            return Center(
+              child: SpinKitRotatingPlain(color: Colors.white, size: 50.0),
+            );
           },
         ),
       ),
@@ -50,7 +50,7 @@ class ListHorizontal extends StatelessWidget {
 }
 
 class ListVertical extends StatelessWidget {
-  const ListVertical({Key key, @required this.itemList}) : super(key: key);
+  const ListVertical({Key? key, required this.itemList}) : super(key: key);
 
   // todo make input argument simple List
   final Stream<List<dynamic>> itemList;
@@ -59,9 +59,9 @@ class ListVertical extends StatelessWidget {
   Widget build(BuildContext context) {
     return StreamBuilder(
       stream: itemList,
-      builder: (context, snapshot) {
+      builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
         if (snapshot.hasData) {
-          List<dynamic> items = snapshot.data;
+          List<dynamic> items = snapshot.data!;
           return ListView.builder(
             scrollDirection: Axis.vertical,
             // padding to account for the convex app bar

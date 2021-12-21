@@ -6,7 +6,7 @@ import 'package:modern_art_app/utils/extensions.dart';
 class ChangeLogPage extends StatefulWidget {
   final String changelogAssetsPath;
 
-  const ChangeLogPage({Key key, @required this.changelogAssetsPath})
+  const ChangeLogPage({Key? key, required this.changelogAssetsPath})
       : super(key: key);
 
   @override
@@ -46,13 +46,11 @@ class _ChangeLogPageState extends State<ChangeLogPage> {
                   ),
                   Align(
                     alignment: Alignment.bottomCenter,
-                    child: RaisedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
                       child: Text(strings.button.close.customToUpperCase()),
                     ),
-                  )
+                  ),
                 ],
               ),
             ),

@@ -10,20 +10,20 @@ class ItemRow extends StatelessWidget {
   final String title;
   final String subtitle;
   final String imgFileName;
-  final double rowHeight;
+  final double? rowHeight;
   final dynamic detailsPage;
   final String _heroTag;
 
-  ItemRow.artist({Key key, @required Artist artist, this.rowHeight})
-      : title = artist.name,
+  ItemRow.artist({Key? key, required Artist artist, this.rowHeight})
+      : title = artist.name!,
         subtitle = lifespan(artist),
         imgFileName = getArtistFilename(artist),
-        _heroTag = artist.name,
+        _heroTag = artist.name!,
         detailsPage = ArtistDetailsPage(artist: artist),
         super(key: key);
 
-  ItemRow.artwork({Key key, @required Artwork artwork, this.rowHeight})
-      : title = artwork.name,
+  ItemRow.artwork({Key? key, required Artwork artwork, this.rowHeight})
+      : title = artwork.name!,
         subtitle = "${artwork.artist}" +
             (artwork.year != "" ? ", ${artwork.year}" : ""),
         imgFileName = getArtworkFilename(artwork),

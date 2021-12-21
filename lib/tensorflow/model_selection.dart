@@ -29,7 +29,7 @@ class ModelSelection extends StatefulWidget {
 
 class _ModelSelectionState extends State<ModelSelection>
     with WidgetsBindingObserver {
-  List<dynamic> _recognitions;
+  List<dynamic> _recognitions = [];
   int _imageHeight = 0;
   int _imageWidth = 0;
   int _inferenceTime = 0;
@@ -43,7 +43,6 @@ class _ModelSelectionState extends State<ModelSelection>
   var currentAlgorithm;
   String _currentRes = "";
   String _currentAlgo = "";
-  ViewingsDao viewingsDao;
 
   bool _canVibrate = false;
 
@@ -68,7 +67,7 @@ class _ModelSelectionState extends State<ModelSelection>
     super.initState();
     // observe for AppLifecycleState changes, to pause CNN if app state changes
     // https://api.flutter.dev/flutter/widgets/WidgetsBindingObserver-class.html
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance?.addObserver(this);
     // initialize model
     initModel();
   }
@@ -76,7 +75,7 @@ class _ModelSelectionState extends State<ModelSelection>
   @override
   void dispose() {
     // remove AppLifecycleState observer
-    WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance?.removeObserver(this);
     super.dispose();
   }
 
@@ -86,9 +85,7 @@ class _ModelSelectionState extends State<ModelSelection>
     if ([AppLifecycleState.inactive, AppLifecycleState.paused]
         .contains(state)) {
       // pause the CNN if user puts app in the background
-      setState(() {
-        _model = "";
-      });
+      setState(() => _model = "");
     } else if (state == AppLifecycleState.resumed) {
       // resume the CNN when user comes back
       initModel();
@@ -105,13 +102,13 @@ class _ModelSelectionState extends State<ModelSelection>
 
     double sensitivity = Settings.getValue(
       keyCnnSensitivity,
-      defaultSettings(preferredAlgorithm)[keyCnnSensitivity],
+      defaultSettings(preferredAlgorithm)![keyCnnSensitivity],
     );
 
     // keyWinThreshP's value is stored as double, converted to int here
     int winThreshP = Settings.getValue(
       keyWinThreshP,
-      defaultSettings(preferredAlgorithm)[keyWinThreshP],
+      defaultSettings(preferredAlgorithm)![keyWinThreshP],
     ).round();
 
     // determine from settings whether to automatically navigate to an artwork's
@@ -122,7 +119,7 @@ class _ModelSelectionState extends State<ModelSelection>
       _model = preferredModel;
       _preferredSensitivity = sensitivity;
       currentAlgorithm =
-          allAlgorithms[preferredAlgorithm](sensitivity, winThreshP);
+          allAlgorithms[preferredAlgorithm]!(sensitivity, winThreshP);
       _currentAlgo = preferredAlgorithm;
       _navigateToDetails = navigateToDetails;
     });
@@ -130,15 +127,15 @@ class _ModelSelectionState extends State<ModelSelection>
   }
 
   loadModelFromSettings() async {
-    TfLiteModel model = tfLiteModels[_model];
-    String res = await Tflite.loadModel(
+    TfLiteModel model = tfLiteModels[_model]!;
+    String? res = await Tflite.loadModel(
       model: model.modelPath,
       labels: model.labelsPath,
     );
     print("$res loading model $_model, as specified in Settings");
 
     Vibration.hasVibrator().then((canVibrate) {
-      if (canVibrate) {
+      if (canVibrate != null) {
         setState(() {
           _canVibrate = canVibrate;
         });
@@ -151,64 +148,64 @@ class _ModelSelectionState extends State<ModelSelection>
       if (currentAlgorithm.hasResult() &&
           _navigateToDetails &&
           currentAlgorithm.topInference != "no_artwork") {
-        setState(() {
-          _model = "";
-        });
+        setState(() => _model = "");
       }
-      setState(() {
-        _recognitions = recognitions;
-        _imageHeight = imageHeight;
-        _imageWidth = imageWidth;
-        _inferenceTime = inferenceTime;
+      setState(
+        () {
+          _recognitions = recognitions;
+          _imageHeight = imageHeight;
+          _imageWidth = imageWidth;
+          _inferenceTime = inferenceTime;
 
-        // each item in recognitions is a LinkedHashMap in the form of
-        // {confidence: 0.5562283396720886, index: 15, label: untitled_votsis}
-        currentAlgorithm.updateRecognitions(recognitions, inferenceTime);
-        _currentRes = currentAlgorithm.topInferenceFormatted;
-        _fps = currentAlgorithm.fps;
-        if (currentAlgorithm.hasResult() && _navigateToDetails) {
-          // && !addedViewing
-          if (currentAlgorithm.topInference != "no_artwork") {
-            _model = "";
-            if (_canVibrate) {
-              Vibration.vibrate(pattern: [0, 40, 100, 40]);
-            }
+          // each item in recognitions is a LinkedHashMap in the form of
+          // {confidence: 0.5562283396720886, index: 15, label: untitled_votsis}
+          currentAlgorithm.updateRecognitions(recognitions, inferenceTime);
+          _currentRes = currentAlgorithm.topInferenceFormatted;
+          _fps = currentAlgorithm.fps;
+          if (currentAlgorithm.hasResult() && _navigateToDetails) {
+            // && !addedViewing
+            if (currentAlgorithm.topInference != "no_artwork") {
+              _model = "";
+              if (_canVibrate) {
+                Vibration.vibrate(pattern: [0, 40, 100, 40]);
+              }
 
-            // get top inference as an object ready to insert in db
-            ViewingsCompanion vc = currentAlgorithm.resultAsDbObject();
-            // add current model to object
-            vc = vc.copyWith(cnnModelUsed: Value(_model));
-            viewingsDao.insertTask(vc);
-            print("Added VIEWING: $vc");
-            // addedViewing = true;
+              // get top inference as an object ready to insert in db
+              ViewingsCompanion vc = currentAlgorithm.resultAsDbObject();
+              // add current model to object
+              vc = vc.copyWith(cnnModelUsed: Value(_model));
+              Provider.of<ViewingsDao>(context, listen: false).insertTask(vc);
+              print("Added VIEWING: $vc");
+              // addedViewing = true;
 
-            if (_navigateToDetails) {
-              // navigate to artwork details
-              Provider.of<ArtworksDao>(context, listen: false)
-                  .getArtworkById(
-                      artworkId: currentAlgorithm.topInference,
-                      languageCode: context.locale().languageCode)
-                  .then((artwork) {
-                // set model to empty here, so that the camera stream stops
-                _model = "";
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return ArtworkDetailsPage(artwork: artwork);
-                    },
-                  ),
-                ).then((_) {
-                  // re-initialize model when user is back to this screen
-                  initModel();
+              if (_navigateToDetails) {
+                // navigate to artwork details
+                Provider.of<ArtworksDao>(context, listen: false)
+                    .getArtworkById(
+                        artworkId: currentAlgorithm.topInference,
+                        languageCode: context.locale().languageCode)
+                    .then((artwork) {
+                  // set model to empty here, so that the camera stream stops
+                  _model = "";
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return ArtworkDetailsPage(artwork: artwork);
+                      },
+                    ),
+                  ).then((_) {
+                    // re-initialize model when user is back to this screen
+                    initModel();
+                  });
                 });
-              });
+              }
+            } else {
+              print("Not adding VIEWING no_artwork");
             }
-          } else {
-            print("Not adding VIEWING no_artwork");
           }
-        }
-      });
+        },
+      );
     }
   }
 
@@ -216,7 +213,6 @@ class _ModelSelectionState extends State<ModelSelection>
   Widget build(BuildContext context) {
     var strings = context.strings();
     Size screen = MediaQuery.of(context).size;
-    viewingsDao = Provider.of<ViewingsDao>(context);
     return Scaffold(
       appBar: AppBar(
         title: AutoSizeText(strings.msg.pointTheCamera, maxLines: 1),
@@ -230,12 +226,12 @@ class _ModelSelectionState extends State<ModelSelection>
           : Stack(
               children: [
                 TensorFlowCamera(
-                  widget.cameras,
-                  setRecognitions,
-                  _model,
+                  cameras: widget.cameras,
+                  setRecognitions: setRecognitions,
+                  model: _model,
                 ),
-                if (_recognitions != null &&
-                    Settings.getValue(keyDisplayExtraInfo, false))
+                if (Settings.getValue(keyDisplayExtraInfo, false) &&
+                    _recognitions.isNotEmpty)
                   Align(
                     alignment: Alignment.topLeft,
                     child: Padding(
@@ -256,7 +252,7 @@ class _ModelSelectionState extends State<ModelSelection>
                           ),
                           Text(""),
                           Text(
-                            "Latest: ${_recognitions?.last['label']} ${(_recognitions?.last["confidence"] * 100).toStringAsFixed(0)}%, $_inferenceTime ms",
+                            "Latest: ${_recognitions.last['label']} ${(_recognitions.last["confidence"] * 100).toStringAsFixed(0)}%, $_inferenceTime ms",
                             style: TextStyle(fontSize: 12),
                           ),
                           if (!["no_artwork", ""]

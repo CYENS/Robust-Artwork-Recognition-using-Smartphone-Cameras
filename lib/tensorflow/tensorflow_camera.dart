@@ -13,24 +13,28 @@ class TensorFlowCamera extends StatefulWidget {
   final Callback setRecognitions;
   final String model;
 
-  TensorFlowCamera(this.cameras, this.setRecognitions, this.model);
+  TensorFlowCamera({
+    required this.cameras,
+    required this.setRecognitions,
+    required this.model,
+  });
 
   @override
-  _TensorFlowCameraState createState() => new _TensorFlowCameraState();
+  _TensorFlowCameraState createState() => _TensorFlowCameraState();
 }
 
 class _TensorFlowCameraState extends State<TensorFlowCamera> {
-  CameraController controller;
+  late CameraController controller;
   bool isDetecting = false;
 
   @override
   void initState() {
     super.initState();
 
-    if (widget.cameras == null || widget.cameras.length < 1) {
+    if (widget.cameras.length < 1) {
       print('No camera is found');
     } else {
-      controller = new CameraController(
+      controller = CameraController(
         widget.cameras[0],
         ResolutionPreset.high,
         // we don't need audio in the app, so by passing false below, the
@@ -45,119 +49,143 @@ class _TensorFlowCameraState extends State<TensorFlowCamera> {
         }
         setState(() {});
 
-        controller.startImageStream((CameraImage img) {
-          if (!isDetecting) {
-            isDetecting = true;
+        controller.startImageStream(
+          (CameraImage img) {
+            if (!isDetecting) {
+              isDetecting = true;
 
-            int startTime = new DateTime.now().millisecondsSinceEpoch;
+              int startTime = DateTime.now().millisecondsSinceEpoch;
 
-            if ([vgg19, vgg19Quant, vgg19NoArtQuant, vgg19ZeroOneMultiQuant]
-                .contains(widget.model)) {
-              print("calculating with ${widget.model}");
-              Tflite.runModelOnFrame(
-                bytesList: img.planes.map((plane) {
-                  return plane.bytes;
-                }).toList(),
-                imageHeight: img.height,
-                imageWidth: img.width,
-                imageMean: 0,
-                imageStd: 255.0,
-                numResults: 1,
-              ).then((recognitions) {
-                int endTime = new DateTime.now().millisecondsSinceEpoch;
-                var inferenceTime = endTime - startTime;
-                print("Detection took $inferenceTime ms");
-                widget.setRecognitions(
-                    recognitions, img.height, img.width, inferenceTime);
-
-                isDetecting = false;
-              });
-            } else if ([
-              mobilenet,
-              mobileNetNoArt,
-              mobileNetNoArtQuant,
-              inceptionV3NoArt500,
-              mobNetNoArt500Quant_4,
-              inceptionV3NoArt500Quant,
-              mobNetNoArt500_4,
-            ].contains(widget.model)) {
-              Tflite.runModelOnFrame(
-                bytesList: img.planes.map((plane) {
-                  return plane.bytes;
-                }).toList(),
-                imageHeight: img.height,
-                imageWidth: img.width,
-                numResults: 1,
-              ).then((recognitions) {
-                int endTime = new DateTime.now().millisecondsSinceEpoch;
-                var inferenceTime = endTime - startTime;
-                print("Detection took $inferenceTime ms");
-                widget.setRecognitions(
-                    recognitions, img.height, img.width, inferenceTime);
-
-                isDetecting = false;
-              });
-            } else if (widget.model == posenet) {
-              Tflite.runPoseNetOnFrame(
-                bytesList: img.planes.map((plane) {
-                  return plane.bytes;
-                }).toList(),
-                imageHeight: img.height,
-                imageWidth: img.width,
-                numResults: 1,
-              ).then((recognitions) {
-                int endTime = new DateTime.now().millisecondsSinceEpoch;
-                var inferenceTime = endTime - startTime;
-                print("Detection took $inferenceTime ms");
-                widget.setRecognitions(
-                    recognitions, img.height, img.width, inferenceTime);
-
-                isDetecting = false;
-              });
-            } else {
-              Tflite.detectObjectOnFrame(
-                bytesList: img.planes.map((plane) {
-                  return plane.bytes;
-                }).toList(),
-                model: widget.model == yolo ? "YOLO" : "SSDMobileNet",
-                imageHeight: img.height,
-                imageWidth: img.width,
-                imageMean: widget.model == yolo ? 0 : 127.5,
-                imageStd: widget.model == yolo ? 255.0 : 127.5,
-                numResultsPerClass: 1,
-                threshold: widget.model == yolo ? 0.2 : 0.4,
-              ).then((recognitions) {
-                int endTime = new DateTime.now().millisecondsSinceEpoch;
-                var inferenceTime = endTime - startTime;
-                print("Detection took $inferenceTime ms");
-                widget.setRecognitions(
-                    recognitions, img.height, img.width, inferenceTime);
-
-                isDetecting = false;
-              });
+              if ([vgg19, vgg19Quant, vgg19NoArtQuant, vgg19ZeroOneMultiQuant]
+                  .contains(widget.model)) {
+                print("calculating with ${widget.model}");
+                Tflite.runModelOnFrame(
+                  bytesList: img.planes.map((plane) {
+                    return plane.bytes;
+                  }).toList(),
+                  imageHeight: img.height,
+                  imageWidth: img.width,
+                  imageMean: 0,
+                  imageStd: 255.0,
+                  numResults: 1,
+                ).then((recognitions) {
+                  if (recognitions != null) {
+                    var inferenceTime =
+                        DateTime.now().millisecondsSinceEpoch - startTime;
+                    print("Detection took $inferenceTime ms");
+                    widget.setRecognitions(
+                      recognitions,
+                      img.height,
+                      img.width,
+                      inferenceTime,
+                    );
+                  }
+                  isDetecting = false;
+                });
+              } else if ([
+                mobilenet,
+                mobileNetNoArt,
+                mobileNetNoArtQuant,
+                inceptionV3NoArt500,
+                mobNetNoArt500Quant_4,
+                inceptionV3NoArt500Quant,
+                mobNetNoArt500_4,
+              ].contains(widget.model)) {
+                Tflite.runModelOnFrame(
+                  bytesList: img.planes.map((plane) {
+                    return plane.bytes;
+                  }).toList(),
+                  imageHeight: img.height,
+                  imageWidth: img.width,
+                  numResults: 1,
+                ).then((recognitions) {
+                  if (recognitions != null) {
+                    var inferenceTime =
+                        DateTime.now().millisecondsSinceEpoch - startTime;
+                    print("Detection took $inferenceTime ms");
+                    widget.setRecognitions(
+                      recognitions,
+                      img.height,
+                      img.width,
+                      inferenceTime,
+                    );
+                  }
+                  isDetecting = false;
+                });
+              } else if (widget.model == posenet) {
+                Tflite.runPoseNetOnFrame(
+                  bytesList: img.planes.map((plane) {
+                    return plane.bytes;
+                  }).toList(),
+                  imageHeight: img.height,
+                  imageWidth: img.width,
+                  numResults: 1,
+                ).then((recognitions) {
+                  if (recognitions != null) {
+                    var inferenceTime =
+                        DateTime.now().millisecondsSinceEpoch - startTime;
+                    print("Detection took $inferenceTime ms");
+                    widget.setRecognitions(
+                      recognitions,
+                      img.height,
+                      img.width,
+                      inferenceTime,
+                    );
+                  }
+                  isDetecting = false;
+                });
+              } else {
+                Tflite.detectObjectOnFrame(
+                  bytesList: img.planes.map((plane) {
+                    return plane.bytes;
+                  }).toList(),
+                  model: widget.model == yolo ? "YOLO" : "SSDMobileNet",
+                  imageHeight: img.height,
+                  imageWidth: img.width,
+                  imageMean: widget.model == yolo ? 0 : 127.5,
+                  imageStd: widget.model == yolo ? 255.0 : 127.5,
+                  numResultsPerClass: 1,
+                  threshold: widget.model == yolo ? 0.2 : 0.4,
+                ).then(
+                  (recognitions) {
+                    if (recognitions != null) {
+                      var inferenceTime =
+                          DateTime.now().millisecondsSinceEpoch - startTime;
+                      print("Detection took $inferenceTime ms");
+                      widget.setRecognitions(
+                        recognitions,
+                        img.height,
+                        img.width,
+                        inferenceTime,
+                      );
+                    }
+                    isDetecting = false;
+                  },
+                );
+              }
             }
-          }
-        });
+          },
+        );
       });
     }
   }
 
   @override
   void dispose() {
-    controller?.dispose();
+    controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (controller == null || !controller.value.isInitialized) {
+    if (!controller.value.isInitialized) {
       return Container();
     }
 
     var tmp = MediaQuery.of(context).size;
     var screenH = math.max(tmp.height, tmp.width);
     var screenW = math.min(tmp.height, tmp.width);
-    tmp = controller.value.previewSize;
+    tmp = controller.value.previewSize!;
     var previewH = math.max(tmp.height, tmp.width);
     var previewW = math.min(tmp.height, tmp.width);
     var screenRatio = screenH / screenW;

@@ -56,7 +56,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   if (await canLaunch(url)) {
                     launch(url);
                   } else {
-                    Fluttertoast.showToast(msg: strings.msg.unableToLanchUrl);
+                    Fluttertoast.showToast(msg: strings.msg.unableToLaunchUrl);
                   }
                 },
               ),
@@ -225,12 +225,12 @@ class _SettingsPageState extends State<SettingsPage> {
 /// new algorithm is chosen in settings.
 void _setDefaultAlgorithmSettings(String algorithmName) {
   var defValues = defaultSettings(algorithmName);
-  Settings.setValue<double>(keyCnnSensitivity, defValues[keyCnnSensitivity]);
+  Settings.setValue<double>(keyCnnSensitivity, defValues![keyCnnSensitivity]);
   Settings.setValue<double>(keyWinThreshP, defValues[keyWinThreshP]);
 }
 
 /// Returns the default values for the settings of each algorithm used.
-Map<String, dynamic> defaultSettings(String algorithmName) {
+Map<String, dynamic>? defaultSettings(String algorithmName) {
   return {
     firstAlgorithm: {
       keyCnnSensitivity: 75.0,
@@ -260,5 +260,5 @@ Map<String, dynamic> defaultSettings(String algorithmName) {
 String _getCurrentWinThreshPName() {
   var currentAlgo =
       Settings.getValue<String>(keyRecognitionAlgo, firstAlgorithm);
-  return defaultSettings(currentAlgo)[keyWinThreshPName];
+  return defaultSettings(currentAlgo)![keyWinThreshPName];
 }

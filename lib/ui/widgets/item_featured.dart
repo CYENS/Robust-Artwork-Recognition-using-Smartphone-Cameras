@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/ui/widgets/item_tile.dart';
 
 class FeaturedTile extends StatelessWidget {
-  const FeaturedTile({Key key, this.artwork, this.tileWidth, this.tileHeight})
-      : super(key: key);
+  const FeaturedTile({
+    Key? key,
+    required this.artwork,
+    required this.tileWidth,
+    required this.tileHeight,
+  }) : super(key: key);
 
   final Artwork artwork;
 
@@ -24,7 +27,7 @@ class FeaturedTile extends StatelessWidget {
           artwork: artwork,
           tileWidth: tileWidth,
           tileHeight: tileHeight,
-          customHeroTag: artwork.name + "_featured",
+          customHeroTag: artwork.name! + "_featured",
         ),
         Container(
           color: Colors.black45,

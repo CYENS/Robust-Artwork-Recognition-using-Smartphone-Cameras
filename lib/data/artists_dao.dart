@@ -28,7 +28,7 @@ class ArtistsDao extends DatabaseAccessor<AppDatabase> with _$ArtistsDaoMixin {
 
   /// Get artist by id.
   Future<Artist> getArtistById({
-    @required String artistId,
+    required String artistId,
     String languageCode = "en",
   }) {
     return ((select(artists)..where((tbl) => tbl.id.equals(artistId))).join(
