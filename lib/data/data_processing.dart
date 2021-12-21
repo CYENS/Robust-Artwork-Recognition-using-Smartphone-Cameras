@@ -14,7 +14,6 @@ import 'package:modern_art_app/data/url_data_sources.dart';
 Future<List<String>> getAllAssets({String assetType = "assets"}) async {
   final assetManifest = await rootBundle.loadString("AssetManifest.json");
   final Map<String, dynamic> assetMap = json.decode(assetManifest);
-//  await Future.delayed(Duration(seconds: 1));
   return assetMap.keys
       .where((String key) => key.contains(assetType.toLowerCase()))
       .toList();
@@ -23,11 +22,9 @@ Future<List<String>> getAllAssets({String assetType = "assets"}) async {
 /// Reads the provided json file at [assetsPath] and returns a future list of map
 /// item entries (the entries must be processed with [parseItemMap] first to be
 /// valid db entities).
-Future<List<Map>> getLocalJsonItemList(String assetsPath) async {
-  return rootBundle
-      .loadString(assetsPath)
-      .then((jsonStr) => List<Map>.from(json.decode(jsonStr)["feed"]["entry"]));
-}
+Future<List<Map>> getLocalJsonItemList(String assetsPath) async => rootBundle
+    .loadString(assetsPath)
+    .then((jsonStr) => List<Map>.from(json.decode(jsonStr)["feed"]["entry"]));
 
 /// Gets and parses the json entry at the provided [url] and returns a future
 /// list of map item entries (the entries must be processed with [parseItemMap]
@@ -39,26 +36,33 @@ Future<List<Map>> getRemoteJsonItemList(String url) async {
     return List<Map>.from(body["feed"]["entry"]);
   } else {
     throw HttpException(
-        "Error getting remote json: statusCode ${itemsJson.statusCode}");
+      "Error getting remote json: statusCode ${itemsJson.statusCode}",
+    );
   }
 }
 
 /// Updates the app's db from the remote Google spreadsheet.
 void updateDbFromGSheets(ArtworksDao artworksDao, ArtistsDao artistsDao) async {
   // first update artists
-  getRemoteJsonItemList(gSheetUrlArtists)
-      .then((artists) => artists.forEach((entry) {
-            var artist = Artist.fromJson(parseItemMap(entry));
-            artistsDao.upsertArtist(artist);
-            print("Updated artist ${artist.name}");
-          }));
+  getRemoteJsonItemList(gSheetUrlArtists).then(
+    (artists) => artists.forEach(
+      (entry) {
+        var artist = Artist.fromJson(parseItemMap(entry));
+        artistsDao.upsertArtist(artist);
+        print("Updated artist ${artist.name}");
+      },
+    ),
+  );
   // then update artworks
-  getRemoteJsonItemList(gSheetUrlArtworks)
-      .then((artworks) => artworks.forEach((entry) {
-            var artwork = Artwork.fromJson(parseItemMap(entry));
-            artworksDao.upsertArtwork(artwork);
-            print("Updated artwork ${artwork.name}");
-          }));
+  getRemoteJsonItemList(gSheetUrlArtworks).then(
+    (artworks) => artworks.forEach(
+      (entry) {
+        var artwork = Artwork.fromJson(parseItemMap(entry));
+        artworksDao.upsertArtwork(artwork);
+        print("Updated artwork ${artwork.name}");
+      },
+    ),
+  );
 }
 
 /// Extracts the necessary fields from each [mapItem] and discards the excess
@@ -77,7 +81,9 @@ Map<String, dynamic> parseItemMap(Map mapItem) =>
     );
 
 Map<String, dynamic> parseItemTranslations(
-        Map<String, dynamic> item, String languageCode) =>
+  Map<String, dynamic> item,
+  String languageCode,
+) =>
     Map<String, dynamic>.fromIterable(
       // add languageCode here as additional key, so it's included in translations
       item.keys.toList()..add("languageCode"),

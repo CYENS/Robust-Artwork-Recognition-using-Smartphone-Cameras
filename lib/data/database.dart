@@ -37,24 +37,23 @@ class Artworks extends Table {
   Set<Column> get primaryKey => {id};
 
   // GSheets returns columns keys in all lowercase, so it's necessary to specify
-  // the JsonKey below. Setting the column title in the spreadsheet as "artist_id",
-  // for example, does not help either, since GSheets removes the underscore in json
+  // the JsonKey below. Setting the column title in the spreadsheet as
+  // "artist_id", for example, does not help either, since GSheets removes the
+  // underscore in json
   @JsonKey("artistid")
   TextColumn get artistId =>
       text().customConstraint("NULL REFERENCES artists(id)")();
 
   TextColumn get year => text().nullable()();
 
-  // the fields below are specified so they are included in the generated Artwork
-  // class, but will remain null in the table, and only filled on demand from
-  // the ArtworkTranslations table, according to the desired locale
+  // the fields below are specified so they are included in the generated
+  // Artwork class, but will remain null in the table, and only filled on demand
+  // from the ArtworkTranslations table, according to the desired locale
   TextColumn get name => text().nullable()();
 
   TextColumn get description => text().nullable()();
 
   TextColumn get artist => text().nullable()();
-
-// TODO add current locale
 }
 
 /// Table for [ArtworkTranslation]s in database. Each [ArtworkTranslation]
@@ -134,30 +133,31 @@ class Viewings extends Table {
 
 LazyDatabase _openConnection() {
   // the LazyDatabase util lets us find the right location for the file async.
-  return LazyDatabase(() async {
-    // put the database file, called db.sqlite here, into the documents folder
-    // for your app.
-    final dbFolder = await getApplicationDocumentsDirectory();
-    final file = File(p.join(dbFolder.path, 'db.sqlite'));
-    return VmDatabase(file, logStatements: false);
-  });
+  return LazyDatabase(
+    () async {
+      // put the database file, called db.sqlite here, into the documents folder
+      // for your app.
+      final dbFolder = await getApplicationDocumentsDirectory();
+      final file = File(p.join(dbFolder.path, 'db.sqlite'));
+      return VmDatabase(file, logStatements: false);
+    },
+  );
 }
 
 /// Creates an instance of [AppDatabase] (lazily).
 ///
 /// During the first use of [AppDatabase], it is automatically populated from a
 /// Json file with the necessary information in assets.
-@UseMoor(tables: [
-  Artworks,
-  ArtworkTranslations,
-  Artists,
-  ArtistTranslations,
-  Viewings,
-], daos: [
-  ArtworksDao,
-  ArtistsDao,
-  ViewingsDao,
-])
+@UseMoor(
+  tables: [
+    Artworks,
+    ArtworkTranslations,
+    Artists,
+    ArtistTranslations,
+    Viewings,
+  ],
+  daos: [ArtworksDao, ArtistsDao, ViewingsDao],
+)
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
@@ -181,7 +181,6 @@ class AppDatabase extends _$AppDatabase {
                 .map((locale) => locale.languageCode)
                 .toList();
 
-            // TODO make logic into function that accepts generics, since it's the same code repeated twice
             // populate artists and artistTranslations tables
             await getLocalJsonItemList(artistsJsonPath).then(
               (artistEntries) => artistEntries.forEach(

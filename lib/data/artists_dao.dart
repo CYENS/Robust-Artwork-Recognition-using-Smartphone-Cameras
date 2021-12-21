@@ -14,17 +14,23 @@ class ArtistsDao extends DatabaseAccessor<AppDatabase> with _$ArtistsDaoMixin {
 
   /// Gets a stream of all artists in the db.
   Stream<List<Artist>> watchAllArtists({String languageCode = "en"}) =>
-      (select(artists).join([
-        leftOuterJoin(
-            artistTranslations, artistTranslations.id.equalsExp(artists.id))
-      ])
-            ..where(artistTranslations.languageCode.equals(languageCode)))
-          .map((e) {
-        Artist artist = e.readTable(artists);
-        return artist.copyWith(
+      (select(artists).join(
+        [
+          leftOuterJoin(
+            artistTranslations,
+            artistTranslations.id.equalsExp(artists.id),
+          )
+        ],
+      )..where(artistTranslations.languageCode.equals(languageCode)))
+          .map(
+        (e) {
+          Artist artist = e.readTable(artists);
+          return artist.copyWith(
             name: e.readTable(artistTranslations).name,
-            biography: e.readTable(artistTranslations).biography);
-      }).watch();
+            biography: e.readTable(artistTranslations).biography,
+          );
+        },
+      ).watch();
 
   /// Get artist by id.
   Future<Artist> getArtistById({
@@ -34,7 +40,9 @@ class ArtistsDao extends DatabaseAccessor<AppDatabase> with _$ArtistsDaoMixin {
     return ((select(artists)..where((tbl) => tbl.id.equals(artistId))).join(
       [
         leftOuterJoin(
-            artistTranslations, artistTranslations.id.equalsExp(artists.id))
+          artistTranslations,
+          artistTranslations.id.equalsExp(artists.id),
+        )
       ],
     )..where(artistTranslations.languageCode.equals(languageCode)))
         .map(

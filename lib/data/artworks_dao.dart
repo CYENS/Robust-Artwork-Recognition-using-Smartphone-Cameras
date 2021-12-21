@@ -35,18 +35,26 @@ class ArtworksDao extends DatabaseAccessor<AppDatabase>
     String languageCode = "en",
   }) =>
       ((select(artworks)..where((artwork) => artwork.artistId.equals(artistId)))
-              .join([
-        leftOuterJoin(
-            artworkTranslations, artworkTranslations.id.equalsExp(artworks.id)),
-        leftOuterJoin(artistTranslations,
-            artistTranslations.id.equalsExp(artworks.artistId))
-      ])
-            ..where(artworkTranslations.languageCode.equals(languageCode) &
-                artistTranslations.languageCode.equals(languageCode)))
-          .map((e) => composeTranslatedArtwork(
+              .join(
+        [
+          leftOuterJoin(
+            artworkTranslations,
+            artworkTranslations.id.equalsExp(artworks.id),
+          ),
+          leftOuterJoin(
+            artistTranslations,
+            artistTranslations.id.equalsExp(artworks.artistId),
+          )
+        ],
+      )..where(artworkTranslations.languageCode.equals(languageCode) &
+              artistTranslations.languageCode.equals(languageCode)))
+          .map(
+            (e) => composeTranslatedArtwork(
               artwork: e.readTable(artworks),
               artworkTranslation: e.readTable(artworkTranslations),
-              artistTranslation: e.readTable(artistTranslations)))
+              artistTranslation: e.readTable(artistTranslations),
+            ),
+          )
           .watch();
 
   /// Get artwork by id.
@@ -54,18 +62,26 @@ class ArtworksDao extends DatabaseAccessor<AppDatabase>
     required String artworkId,
     String languageCode = "en",
   }) =>
-      ((select(artworks)..where((tbl) => tbl.id.equals(artworkId))).join([
-        leftOuterJoin(
-            artworkTranslations, artworkTranslations.id.equalsExp(artworks.id)),
-        leftOuterJoin(artistTranslations,
-            artistTranslations.id.equalsExp(artworks.artistId))
-      ])
-            ..where(artworkTranslations.languageCode.equals(languageCode) &
-                artistTranslations.languageCode.equals(languageCode)))
-          .map((e) => composeTranslatedArtwork(
+      ((select(artworks)..where((tbl) => tbl.id.equals(artworkId))).join(
+        [
+          leftOuterJoin(
+            artworkTranslations,
+            artworkTranslations.id.equalsExp(artworks.id),
+          ),
+          leftOuterJoin(
+            artistTranslations,
+            artistTranslations.id.equalsExp(artworks.artistId),
+          ),
+        ],
+      )..where(artworkTranslations.languageCode.equals(languageCode) &
+              artistTranslations.languageCode.equals(languageCode)))
+          .map(
+            (e) => composeTranslatedArtwork(
               artwork: e.readTable(artworks),
               artworkTranslation: e.readTable(artworkTranslations),
-              artistTranslation: e.readTable(artistTranslations)))
+              artistTranslation: e.readTable(artistTranslations),
+            ),
+          )
           .getSingle();
 
   /// Safely insert an [Artwork] into db, with the use of an [ArtworksCompanion].
@@ -85,6 +101,7 @@ Artwork composeTranslatedArtwork({
   required ArtistTranslation artistTranslation,
 }) =>
     artwork.copyWith(
-        name: artworkTranslation.name,
-        description: artworkTranslation.description,
-        artist: artistTranslation.name);
+      name: artworkTranslation.name,
+      description: artworkTranslation.description,
+      artist: artistTranslation.name,
+    );
