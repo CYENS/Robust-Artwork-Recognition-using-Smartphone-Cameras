@@ -45,6 +45,3 @@ app.*.map.json
 
 # Exclude sensitive information
 lib/data/sensitive.dart
-
-# Exclude tensorflow lite model files
-*.tflite
