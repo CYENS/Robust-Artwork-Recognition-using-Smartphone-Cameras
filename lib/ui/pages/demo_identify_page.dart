@@ -6,8 +6,8 @@ import 'package:modern_art_app/utils/extensions.dart';
 class DemoIdentifyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    var strings = context.strings();
-    Size screen = MediaQuery.of(context).size;
+    final strings = context.strings();
+    final Size screen = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         title: AutoSizeText(strings.msg.pointTheCamera, maxLines: 1),
@@ -19,18 +19,14 @@ class DemoIdentifyPage extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            Image.asset("assets/example_frame.webp", fit: BoxFit.fitHeight),
+            Image.asset('assets/example_frame.webp', fit: BoxFit.fitHeight),
             Positioned.fill(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(4, 4, 4, 100),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
-                      "Analysing...",
-                      style: TextStyle(fontSize: 16),
-                    ),
+                    const Text('Analysing...', style: TextStyle(fontSize: 16)),
                     SpinKitThreeBounce(
                       color: Colors.white,
                       size: screen.width / 6,

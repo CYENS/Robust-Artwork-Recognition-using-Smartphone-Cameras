@@ -12,13 +12,13 @@ import 'package:provider/provider.dart';
 class ExplorePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    ArtworksDao artworksDao = Provider.of<ArtworksDao>(context);
-    ArtistsDao artistsDao = Provider.of<ArtistsDao>(context);
-    Size size = MediaQuery.of(context).size;
+    final ArtworksDao artworksDao = Provider.of<ArtworksDao>(context);
+    final ArtistsDao artistsDao = Provider.of<ArtistsDao>(context);
+    final Size size = MediaQuery.of(context).size;
     final strings = context.strings();
     return SafeArea(
       child: Container(
-        decoration: BoxDecoration(color: Colors.black),
+        decoration: const BoxDecoration(color: Colors.black),
         child: CustomScrollView(
           physics: const BouncingScrollPhysics(),
           slivers: [
@@ -29,7 +29,7 @@ class ExplorePage extends StatelessWidget {
               pinned: true,
               flexibleSpace: FlexibleSpaceBar(
                 titlePadding: const EdgeInsets.all(8.0),
-                stretchModes: <StretchMode>[
+                stretchModes: const <StretchMode>[
                   StretchMode.zoomBackground,
                   StretchMode.blurBackground,
                 ],
@@ -45,7 +45,7 @@ class ExplorePage extends StatelessWidget {
                   fit: StackFit.expand,
                   children: [
                     Image.asset(
-                      "assets/pinakothiki_building.webp",
+                      'assets/pinakothiki_building.webp',
                       fit: BoxFit.cover,
                     ),
                     DecoratedBox(
@@ -74,36 +74,46 @@ class ExplorePage extends StatelessWidget {
                     child: headline(context.strings().featuredArtwork),
                   ),
                   FutureBuilder(
-                      future: artworksDao.getArtworkById(
-                          artworkId: "the_cyclist_votsis",
-                          languageCode: context.locale().languageCode),
-                      builder: (context, AsyncSnapshot<Artwork> snapshot) {
-                        if (snapshot.hasData) {
-                          return FeaturedTile(
-                            artwork: snapshot.data!,
-                            tileHeight: size.height * 0.35,
-                            tileWidth: size.width,
-                          );
-                        }
-                        return Container();
-                      }),
+                    future: artworksDao.getArtworkById(
+                      artworkId: 'the_cyclist_votsis',
+                      languageCode: context.locale().languageCode,
+                    ),
+                    builder: (context, AsyncSnapshot<Artwork> snapshot) {
+                      if (snapshot.hasData) {
+                        return FeaturedTile(
+                          artwork: snapshot.data!,
+                          tileHeight: size.height * 0.35,
+                          tileWidth: size.width,
+                        );
+                      }
+                      return Container();
+                    },
+                  ),
                   HeadlineAndMoreRow(
-                      listType: "Artworks",
-                      itemList: artworksDao.watchAllArtworks(
-                          languageCode: context.locale().languageCode)),
+                    listType: 'Artworks',
+                    itemList: artworksDao.watchAllArtworks(
+                      languageCode: context.locale().languageCode,
+                    ),
+                  ),
                   ListHorizontal(
-                      itemList: artworksDao.watchAllArtworks(
-                          languageCode: context.locale().languageCode)),
+                    itemList: artworksDao.watchAllArtworks(
+                      languageCode: context.locale().languageCode,
+                    ),
+                  ),
                   HeadlineAndMoreRow(
-                      listType: "Artists",
-                      itemList: artistsDao.watchAllArtists(
-                          languageCode: context.locale().languageCode)),
+                    listType: 'Artists',
+                    itemList: artistsDao.watchAllArtists(
+                      languageCode: context.locale().languageCode,
+                    ),
+                  ),
                   Padding(
                     // padding to account for the convex app bar
                     padding: const EdgeInsets.only(bottom: 30.0),
                     child: ListHorizontal(
-                        itemList: artistsDao.watchAllArtists(
-                            languageCode: context.locale().languageCode)),
+                      itemList: artistsDao.watchAllArtists(
+                        languageCode: context.locale().languageCode,
+                      ),
+                    ),
                   ),
                   // Spacer
                 ],
@@ -117,20 +127,21 @@ class ExplorePage extends StatelessWidget {
 }
 
 class HeadlineAndMoreRow extends StatelessWidget {
-  final String listType;
-  final Stream<List<dynamic>> itemList;
-
   const HeadlineAndMoreRow({
     Key? key,
     required this.listType,
     required this.itemList,
   }) : super(key: key);
 
+  final String listType;
+  final Stream<List<dynamic>> itemList;
+
   @override
   Widget build(BuildContext context) {
-    var strings = context.strings();
+    final strings = context.strings();
     // TODO: fix this
-    String title = listType == "Artists" ? strings.artists : strings.artworks;
+    final String title =
+        listType == 'Artists' ? strings.artists : strings.artworks;
     return InkWell(
       onTap: () => _goToMore(context, title, itemList),
       child: Padding(
@@ -138,9 +149,9 @@ class HeadlineAndMoreRow extends StatelessWidget {
         child: Row(
           children: [
             headline(title),
-            Spacer(),
+            const Spacer(),
             IconButton(
-              icon: Icon(Icons.arrow_forward_rounded),
+              icon: const Icon(Icons.arrow_forward_rounded),
               tooltip: strings.button.more,
               onPressed: () => _goToMore(context, title, itemList),
             ),

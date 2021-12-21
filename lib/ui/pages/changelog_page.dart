@@ -4,24 +4,22 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:modern_art_app/utils/extensions.dart';
 
 class ChangeLogPage extends StatefulWidget {
-  final String changelogAssetsPath;
-
   const ChangeLogPage({Key? key, required this.changelogAssetsPath})
       : super(key: key);
+
+  final String changelogAssetsPath;
 
   @override
   _ChangeLogPageState createState() => _ChangeLogPageState();
 }
 
 class _ChangeLogPageState extends State<ChangeLogPage> {
-  String _changelog = "";
+  String _changelog = '';
 
   @override
   void initState() {
     rootBundle.loadString(widget.changelogAssetsPath).then((data) {
-      setState(() {
-        _changelog = data;
-      });
+      setState(() => _changelog = data);
     });
     super.initState();
   }
@@ -30,11 +28,9 @@ class _ChangeLogPageState extends State<ChangeLogPage> {
   Widget build(BuildContext context) {
     final strings = context.strings();
     return Scaffold(
-      appBar: AppBar(
-        title: Text(strings.stngs.stng.changelog),
-      ),
+      appBar: AppBar(title: Text(strings.stngs.stng.changelog)),
       body: _changelog.isEmpty
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : SafeArea(
               child: Stack(
                 children: [

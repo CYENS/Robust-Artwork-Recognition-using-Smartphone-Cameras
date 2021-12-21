@@ -13,7 +13,7 @@ class ArtistsDao extends DatabaseAccessor<AppDatabase> with _$ArtistsDaoMixin {
       into(artists).insertOnConflictUpdate(artist);
 
   /// Gets a stream of all artists in the db.
-  Stream<List<Artist>> watchAllArtists({String languageCode = "en"}) =>
+  Stream<List<Artist>> watchAllArtists({String languageCode = 'en'}) =>
       (select(artists).join(
         [
           leftOuterJoin(
@@ -24,7 +24,7 @@ class ArtistsDao extends DatabaseAccessor<AppDatabase> with _$ArtistsDaoMixin {
       )..where(artistTranslations.languageCode.equals(languageCode)))
           .map(
         (e) {
-          Artist artist = e.readTable(artists);
+          final Artist artist = e.readTable(artists);
           return artist.copyWith(
             name: e.readTable(artistTranslations).name,
             biography: e.readTable(artistTranslations).biography,
@@ -35,7 +35,7 @@ class ArtistsDao extends DatabaseAccessor<AppDatabase> with _$ArtistsDaoMixin {
   /// Get artist by id.
   Future<Artist> getArtistById({
     required String artistId,
-    String languageCode = "en",
+    String languageCode = 'en',
   }) {
     return ((select(artists)..where((tbl) => tbl.id.equals(artistId))).join(
       [
@@ -47,8 +47,8 @@ class ArtistsDao extends DatabaseAccessor<AppDatabase> with _$ArtistsDaoMixin {
     )..where(artistTranslations.languageCode.equals(languageCode)))
         .map(
       (e) {
-        Artist artist = e.readTable(artists);
-        ArtistTranslation translation = e.readTable(artistTranslations);
+        final Artist artist = e.readTable(artists);
+        final ArtistTranslation translation = e.readTable(artistTranslations);
         return artist.copyWith(
           name: translation.name,
           biography: translation.biography,

@@ -17,30 +17,38 @@ class ListHorizontal extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double height = listHeight ?? MediaQuery.of(context).size.height * 0.2;
+    final double height =
+        listHeight ?? MediaQuery.of(context).size.height * 0.2;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4.0),
-      child: Container(
+      child: SizedBox(
         height: height,
         child: StreamBuilder(
           stream: itemList,
           builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
             if (snapshot.hasData) {
-              List<dynamic> items = snapshot.data!;
+              final List<dynamic> items = snapshot.data!;
               return ListView.builder(
                 scrollDirection: Axis.horizontal,
                 physics: const BouncingScrollPhysics(),
                 itemCount: items.length,
                 itemBuilder: (context, index) {
-                  return items[0].runtimeType == Artist
-                      ? ItemTile.artist(artist: items[index], tileWidth: height)
-                      : ItemTile.artwork(
-                          artwork: items[index], tileWidth: height);
+                  if (items[0].runtimeType == Artist) {
+                    return ItemTile.artist(
+                      artist: items[index] as Artist,
+                      tileWidth: height,
+                    );
+                  } else {
+                    return ItemTile.artwork(
+                      artwork: items[index] as Artwork,
+                      tileWidth: height,
+                    );
+                  }
                 },
               );
             }
-            return Center(
-              child: SpinKitRotatingPlain(color: Colors.white, size: 50.0),
+            return const Center(
+              child: SpinKitRotatingPlain(color: Colors.white),
             );
           },
         ),
@@ -61,17 +69,18 @@ class ListVertical extends StatelessWidget {
       stream: itemList,
       builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
         if (snapshot.hasData) {
-          List<dynamic> items = snapshot.data!;
+          final List<dynamic> items = snapshot.data!;
           return ListView.builder(
-            scrollDirection: Axis.vertical,
             // padding to account for the convex app bar
             padding: const EdgeInsets.only(bottom: 30.0),
             physics: const BouncingScrollPhysics(),
             itemCount: items.length,
             itemBuilder: (context, index) {
-              return items[0].runtimeType == Artist
-                  ? ItemRow.artist(artist: items[index])
-                  : ItemRow.artwork(artwork: items[index]);
+              if (items[0].runtimeType == Artist) {
+                return ItemRow.artist(artist: items[index] as Artist);
+              } else {
+                return ItemRow.artwork(artwork: items[index] as Artwork);
+              }
             },
           );
         }

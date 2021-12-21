@@ -14,14 +14,12 @@ class ArtistDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    final Size size = MediaQuery.of(context).size;
     // to change appbar color according to image, use below with futurebuilder
     // PaletteGenerator.fromImageProvider(AssetImage(artist.fileName));
     return Scaffold(
       backgroundColor: Colors.black,
-      appBar: AppBar(
-        title: Text(context.strings().artistDetails),
-      ),
+      appBar: AppBar(title: Text(context.strings().artistDetails)),
       body: SingleChildScrollView(
         // padding to account for the convex app bar
         padding: const EdgeInsets.only(bottom: 30.0),
@@ -56,7 +54,10 @@ class ArtistDetailsPage extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(16.0, 0.0, 8.0, 8.0),
               child: Text(
                 lifespan(artist),
-                style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontStyle: FontStyle.italic,
+                ),
               ),
             ),
             Padding(
@@ -73,13 +74,13 @@ class ArtistDetailsPage extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(16.0, 0.0, 8.0, 8.0),
               child: Text(
                 artist.biography ?? '',
-                style: TextStyle(fontSize: 16),
+                style: const TextStyle(fontSize: 16),
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                "${context.strings().artworksBy} ${artist.name}",
+                '${context.strings().artworksBy} ${artist.name}',
                 style: GoogleFonts.openSansCondensed(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -89,10 +90,12 @@ class ArtistDetailsPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(left: 12, top: 4.0),
               child: ListHorizontal(
-                itemList: Provider.of<ArtworksDao>(context)
-                    .watchArtworksByArtist(
-                        artistId: artist.id,
-                        languageCode: context.locale().languageCode),
+                itemList: Provider.of<ArtworksDao>(
+                  context,
+                ).watchArtworksByArtist(
+                  artistId: artist.id,
+                  languageCode: context.locale().languageCode,
+                ),
               ),
             ),
           ],

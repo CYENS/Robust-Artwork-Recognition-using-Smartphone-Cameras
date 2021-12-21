@@ -20,7 +20,7 @@ class ArtworkDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
+    final Size size = MediaQuery.of(context).size;
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -58,9 +58,11 @@ class ArtworkDetailsPage extends StatelessWidget {
                   height: size.height * 0.55,
                   width: size.width,
                   decoration: BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage(getArtworkFilename(artwork)),
-                          fit: BoxFit.contain)),
+                    image: DecorationImage(
+                      image: AssetImage(getArtworkFilename(artwork)),
+                      fit: BoxFit.contain,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -82,12 +84,15 @@ class ArtworkDetailsPage extends StatelessWidget {
                       artistId: artwork.artistId,
                       languageCode: context.locale().languageCode,
                     )
-                    .then((artist) => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  ArtistDetailsPage(artist: artist)),
-                        ));
+                    .then(
+                      (artist) => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              ArtistDetailsPage(artist: artist),
+                        ),
+                      ),
+                    );
               },
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(16.0, 0.0, 8.0, 8.0),
@@ -103,8 +108,8 @@ class ArtworkDetailsPage extends StatelessWidget {
                         ),
                       ),
                       TextSpan(
-                        text: " (${artwork.year})",
-                        style: TextStyle(
+                        text: ' (${artwork.year})',
+                        style: const TextStyle(
                           fontSize: 16,
                           fontStyle: FontStyle.italic,
                         ),
@@ -128,7 +133,7 @@ class ArtworkDetailsPage extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(16.0, 0.0, 8.0, 8.0),
               child: Text(
                 artwork.description ?? '',
-                style: TextStyle(fontSize: 16),
+                style: const TextStyle(fontSize: 16),
               ),
             ),
           ],
@@ -139,11 +144,11 @@ class ArtworkDetailsPage extends StatelessWidget {
 }
 
 class ItemZoomPage extends StatelessWidget {
-  final String fileName;
-  final String heroTag;
-
   const ItemZoomPage({Key? key, required this.fileName, required this.heroTag})
       : super(key: key);
+
+  final String fileName;
+  final String heroTag;
 
   @override
   Widget build(BuildContext context) {
@@ -159,9 +164,3 @@ class ItemZoomPage extends StatelessWidget {
     );
   }
 }
-
-// Text(
-// "${artwork.artist}" +
-// (artwork.year.isNotEmpty ? ", ${artwork.year}" : ""),
-// style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic),
-// )

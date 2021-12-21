@@ -7,9 +7,9 @@ import 'package:modern_art_app/ui/pages/settings_page.dart';
 import 'package:modern_art_app/utils/extensions.dart';
 
 class MainPage extends StatefulWidget {
-  final List<CameraDescription> cameras;
-
   const MainPage({Key? key, required this.cameras}) : super(key: key);
+
+  final List<CameraDescription> cameras;
 
   @override
   _MainPageState createState() => _MainPageState();
@@ -27,7 +27,8 @@ class _MainPageState extends State<MainPage> {
   /// Navigator.of(context) methods.
   final _navigatorKey = GlobalKey<NavigatorState>();
 
-  GlobalKey<ConvexAppBarState> _appBarKey = GlobalKey<ConvexAppBarState>();
+  final GlobalKey<ConvexAppBarState> _appBarKey =
+      GlobalKey<ConvexAppBarState>();
 
   int _currentIndex = 0;
 
@@ -52,7 +53,7 @@ class _MainPageState extends State<MainPage> {
         onWillPop: () async {
           if (_navigatorKey.currentState != null) {
             if (_navigatorKey.currentState!.canPop()) {
-              print("CAN POP");
+              debugPrint('CAN POP');
               _navigatorKey.currentState!.pop();
               setState(() {
                 _appBarKey.currentState!.animateTo(0);
@@ -81,7 +82,7 @@ class _MainPageState extends State<MainPage> {
                 bldr = (BuildContext context) => SettingsPage();
                 break;
               default:
-                throw Exception("Invalid route: ${settings.name}");
+                throw Exception('Invalid route: ${settings.name}');
             }
             return MaterialPageRoute(builder: bldr, settings: settings);
           },
@@ -136,7 +137,7 @@ class _MainPageState extends State<MainPage> {
 /// The [Routes] class is used to specify the navigator route names in a
 /// centralized fashion.
 class Routes {
-  static const String explorePage = "/";
-  static const String identifyPage = "/identify";
-  static const String settingsPage = "/settings";
+  static const String explorePage = '/';
+  static const String identifyPage = '/identify';
+  static const String settingsPage = '/settings';
 }

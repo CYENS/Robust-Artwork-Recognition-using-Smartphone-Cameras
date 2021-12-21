@@ -19,13 +19,13 @@ import 'package:url_launcher/url_launcher.dart';
 
 // All settings keys are specified here, to avoid mistakes typing them
 // manually every time.
-const String keyCnnModel = "keyCnnModel";
-const String keyRecognitionAlgo = "recognitionAlgorithm";
-const String keyCnnSensitivity = "keyCnnSensitivity";
-const String keyWinThreshP = "keyWinThreshP";
-const String keyWinThreshPName = "keyWinThreshPName";
-const String keyNavigateToDetails = "keyNavigateToDetails";
-const String keyDisplayExtraInfo = "keyDisplayExtraInfo";
+const String keyCnnModel = 'keyCnnModel';
+const String keyRecognitionAlgo = 'recognitionAlgorithm';
+const String keyCnnSensitivity = 'keyCnnSensitivity';
+const String keyWinThreshP = 'keyWinThreshP';
+const String keyWinThreshPName = 'keyWinThreshPName';
+const String keyNavigateToDetails = 'keyNavigateToDetails';
+const String keyDisplayExtraInfo = 'keyDisplayExtraInfo';
 
 class SettingsPage extends StatefulWidget {
   @override
@@ -33,11 +33,12 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
+  @override
   Widget build(BuildContext context) {
     // TODO check if settings are set on first launch
     final strings = context.strings();
-    ViewingsDao viewingsDao = Provider.of<ViewingsDao>(context);
-    List<SettingsGroup> _settingsList = [
+    final ViewingsDao viewingsDao = Provider.of<ViewingsDao>(context);
+    final List<SettingsGroup> _settingsList = [
       SettingsGroup(
         title: strings.stngs.groupAbout.customToUpperCase(),
         children: [
@@ -45,11 +46,11 @@ class _SettingsPageState extends State<SettingsPage> {
             // launch the Gallery's url in external browser
             title: strings.galleryName,
             subtitle: strings.stngs.stng.galleryWebsiteSummary,
-            leading: Icon(Icons.web),
+            leading: const Icon(Icons.web),
             onTap: () async {
-              String url = "https://www.nicosia.org.cy/"
+              final String url = 'https://www.nicosia.org.cy/'
                   "${context.locale().languageCode == "en" ? 'en-GB' : 'el-GR'}"
-                  "/discover/picture-galleries/state-gallery-of-contemporary-art/";
+                  '/discover/picture-galleries/state-gallery-of-contemporary-art/';
               if (await canLaunch(url)) {
                 launch(url);
               } else {
@@ -60,7 +61,7 @@ class _SettingsPageState extends State<SettingsPage> {
           SimpleSettingsTile(
             title: strings.stngs.stng.appInfo,
             subtitle: strings.stngs.stng.appInfoSummary,
-            leading: Icon(Icons.info_outline_rounded),
+            leading: const Icon(Icons.info_outline_rounded),
             onTap: () {
               PackageInfo.fromPlatform().then(
                 (packageInfo) => showAboutDialog(
@@ -76,11 +77,11 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                   ),
                   applicationName: strings.galleryName,
-                  applicationVersion: "${strings.stngs.stng.appVersion}: "
-                      "${packageInfo.version}",
+                  applicationVersion: '${strings.stngs.stng.appVersion}: '
+                      '${packageInfo.version}',
                   children: [
                     Text(strings.stngs.stng.appDescription),
-                    Text(""),
+                    const Text(''),
                     Text(strings.stngs.stng.appMadeBy),
                   ],
                 ),
@@ -90,14 +91,14 @@ class _SettingsPageState extends State<SettingsPage> {
           SimpleSettingsTile(
             title: strings.stngs.stng.changelog,
             subtitle: strings.stngs.stng.changelogSummary,
-            leading: Icon(Icons.history_rounded),
+            leading: const Icon(Icons.history_rounded),
             onTap: () {
               // here the root navigator is used, so that the changelog is
               // displayed on top of the rest of the UI (and the NavBar)
               Navigator.of(context, rootNavigator: true).push(
                 MaterialPageRoute(
-                  builder: (context) => ChangeLogPage(
-                    changelogAssetsPath: "assets/CHANGELOG.md",
+                  builder: (context) => const ChangeLogPage(
+                    changelogAssetsPath: 'assets/CHANGELOG.md',
                   ),
                 ),
               );
@@ -111,18 +112,18 @@ class _SettingsPageState extends State<SettingsPage> {
           SimpleSettingsTile(
             title: strings.stngs.stng.historyExport,
             subtitle: strings.stngs.stng.historyExportSummary,
-            leading: Icon(Icons.share_rounded),
+            leading: const Icon(Icons.share_rounded),
             onTap: () async {
               viewingsDao.allViewingEntries.then(
                 (viewings) {
-                  String viewingsInStr = jsonEncode(viewings);
-                  print(viewingsInStr);
+                  final String viewingsInStr = jsonEncode(viewings);
+                  debugPrint(viewingsInStr);
                   // write to file
                   saveToJsonFile(viewingsInStr).then(
                     (jsonFile) {
-                      print(jsonFile);
+                      debugPrint(jsonFile);
                       // share saved json file via share dialog
-                      Share.shareFiles([jsonFile], subject: "Viewings history");
+                      Share.shareFiles([jsonFile], subject: 'Viewings history');
                     },
                   );
                 },
@@ -136,26 +137,22 @@ class _SettingsPageState extends State<SettingsPage> {
         children: [
           ExpandableSettingsTile(
             title: strings.stngs.expandableOther,
-            leading: Icon(Icons.settings_applications_rounded),
+            leading: const Icon(Icons.settings_applications_rounded),
             children: [
               RadioModalSettingsTile<String>(
-                title: "CNN type used",
+                title: 'CNN type used',
                 settingKey: keyCnnModel,
                 values: tfLiteModelNames,
                 selected: mobNetNoArt500_4,
-                onChange: (value) => debugPrint("$keyCnnModel: $value"),
+                onChange: (value) => debugPrint('$keyCnnModel: $value'),
               ),
               RadioModalSettingsTile<String>(
-                title: "Recognition algorithm",
+                title: 'Recognition algorithm',
                 settingKey: keyRecognitionAlgo,
-                values: Map<String, String>.fromIterable(
-                  allAlgorithms.keys,
-                  key: (key) => key,
-                  value: (key) => key,
-                ),
+                values: {for (var key in allAlgorithms.keys) key: key},
                 selected: firstAlgorithm,
                 onChange: (value) {
-                  debugPrint("$keyRecognitionAlgo: $value");
+                  debugPrint('$keyRecognitionAlgo: $value');
                   // reset values for algorithm settings every time a new
                   // algorithm is chosen
                   _setDefaultAlgorithmSettings(value);
@@ -163,41 +160,39 @@ class _SettingsPageState extends State<SettingsPage> {
                 },
               ),
               SliderSettingsTile(
-                leading: Icon(Icons.adjust),
-                title: "CNN sensitivity",
+                leading: const Icon(Icons.adjust),
+                title: 'CNN sensitivity',
                 settingKey: keyCnnSensitivity,
                 defaultValue: 75.0,
                 min: 0.0,
                 max: 100.0,
                 step: 0.2,
-                onChange: (value) => debugPrint("$keyCnnSensitivity: $value"),
+                onChange: (value) => debugPrint('$keyCnnSensitivity: $value'),
               ),
               SliderSettingsTile(
-                leading: Icon(Icons.space_bar),
+                leading: const Icon(Icons.space_bar),
                 title: _getCurrentWinThreshPName(),
                 settingKey: keyWinThreshP,
                 defaultValue: 6,
                 min: 5,
                 max: 50,
-                step: 1,
-                onChange: (value) => debugPrint("$keyWinThreshP: $value"),
+                onChange: (value) => debugPrint('$keyWinThreshP: $value'),
               ),
               SwitchSettingsTile(
-                leading: Icon(Icons.navigation),
+                leading: const Icon(Icons.navigation),
                 title: "Navigate to recognised artworks' details",
                 settingKey: keyNavigateToDetails,
                 defaultValue: true,
               ),
               SwitchSettingsTile(
-                leading: Icon(Icons.list_alt_outlined),
-                title: "Display model & algorithm information in camera view",
+                leading: const Icon(Icons.list_alt_outlined),
+                title: 'Display model & algorithm information in camera view',
                 settingKey: keyDisplayExtraInfo,
-                defaultValue: false,
               ),
               SimpleSettingsTile(
-                title: "Navigate to demo Identify page",
-                subtitle: "Used only for demo purposes",
-                leading: Icon(Icons.history_rounded),
+                title: 'Navigate to demo Identify page',
+                subtitle: 'Used only for demo purposes',
+                leading: const Icon(Icons.history_rounded),
                 onTap: () {
                   Navigator.of(context).push(
                     MaterialPageRoute(
@@ -212,7 +207,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 child: SimpleSettingsTile(
                   title: strings.stngs.stng.databaseBrowser,
                   subtitle: strings.stngs.stng.databaseBrowserSummary,
-                  leading: Icon(Icons.table_rows),
+                  leading: const Icon(Icons.table_rows),
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => MoorDbViewer(
@@ -250,9 +245,12 @@ class _SettingsPageState extends State<SettingsPage> {
 /// (Re)Sets the default values for the algorithms' settings each time a
 /// new algorithm is chosen in settings.
 void _setDefaultAlgorithmSettings(String algorithmName) {
-  var defValues = defaultSettings(algorithmName);
-  Settings.setValue<double>(keyCnnSensitivity, defValues![keyCnnSensitivity]);
-  Settings.setValue<double>(keyWinThreshP, defValues[keyWinThreshP]);
+  final defValues = defaultSettings(algorithmName);
+  Settings.setValue<double>(
+    keyCnnSensitivity,
+    defValues![keyCnnSensitivity] as double,
+  );
+  Settings.setValue<double>(keyWinThreshP, defValues[keyWinThreshP] as double);
 }
 
 /// Returns the default values for the settings of each algorithm used.
@@ -261,22 +259,22 @@ Map<String, dynamic>? defaultSettings(String algorithmName) {
     firstAlgorithm: {
       keyCnnSensitivity: 75.0,
       keyWinThreshP: 6.0,
-      keyWinThreshPName: "Window length",
+      keyWinThreshPName: 'Window length',
     },
     secondAlgorithm: {
       keyCnnSensitivity: 75.0,
       keyWinThreshP: 10.0,
-      keyWinThreshPName: "Window length",
+      keyWinThreshPName: 'Window length',
     },
     thirdAlgorithm: {
       keyCnnSensitivity: 75.0,
       keyWinThreshP: 10.0,
-      keyWinThreshPName: "Count threshold"
+      keyWinThreshPName: 'Count threshold'
     },
     fourthAlgorithm: {
       keyCnnSensitivity: 75.0,
       keyWinThreshP: 15.0,
-      keyWinThreshPName: "P",
+      keyWinThreshPName: 'P',
     },
   }[algorithmName];
 }
@@ -284,7 +282,7 @@ Map<String, dynamic>? defaultSettings(String algorithmName) {
 /// Returns the actual name for the 2nd setting (besides sensitivity) of each
 /// of the recognition algorithms.
 String _getCurrentWinThreshPName() {
-  var currentAlgo =
+  final currentAlgo =
       Settings.getValue<String>(keyRecognitionAlgo, firstAlgorithm);
-  return defaultSettings(currentAlgo)![keyWinThreshPName];
+  return defaultSettings(currentAlgo)![keyWinThreshPName] as String;
 }

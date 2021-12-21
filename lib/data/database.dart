@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:modern_art_app/data/artists_dao.dart';
 import 'package:modern_art_app/data/artworks_dao.dart';
 import 'package:modern_art_app/data/data_processing.dart';
@@ -12,18 +13,16 @@ import 'package:path_provider/path_provider.dart';
 
 part 'database.g.dart';
 
-// TODO add supported locales table
-
 // To auto-generate the necessary moor-related code, run the following in the terminal:
 // 'flutter packages pub run build_runner build'
 // or the following to continuously regenerate code when code changes
 // 'flutter packages pub run build_runner watch'
 
 /// Path of locally cached json file with artists info.
-const String artistsJsonPath = "assets/data/artists.json";
+const String artistsJsonPath = 'assets/data/artists.json';
 
 /// Path of locally cached json file with artworks info.
-const String artworksJsonPath = "assets/data/artworks.json";
+const String artworksJsonPath = 'assets/data/artworks.json';
 
 /// Table for [Artwork]s in database.
 ///
@@ -40,9 +39,9 @@ class Artworks extends Table {
   // the JsonKey below. Setting the column title in the spreadsheet as
   // "artist_id", for example, does not help either, since GSheets removes the
   // underscore in json
-  @JsonKey("artistid")
+  @JsonKey('artistid')
   TextColumn get artistId =>
-      text().customConstraint("NULL REFERENCES artists(id)")();
+      text().customConstraint('NULL REFERENCES artists(id)')();
 
   TextColumn get year => text().nullable()();
 
@@ -62,7 +61,7 @@ class Artworks extends Table {
 /// translated artwork objects.
 class ArtworkTranslations extends Table {
   TextColumn get id =>
-      text().customConstraint("NULL REFERENCES artworks(id)")();
+      text().customConstraint('NULL REFERENCES artworks(id)')();
 
   TextColumn get languageCode => text()();
 
@@ -81,10 +80,10 @@ class Artists extends Table {
   @override
   Set<Column> get primaryKey => {id};
 
-  @JsonKey("yearbirth")
+  @JsonKey('yearbirth')
   TextColumn get yearBirth => text().nullable()();
 
-  @JsonKey("yeardeath")
+  @JsonKey('yeardeath')
   TextColumn get yearDeath => text().nullable()();
 
   // the fields below are specified so they are included in the generated Artist
@@ -100,7 +99,7 @@ class Artists extends Table {
 /// locale; these are then joined in database queries to produce fully
 /// translated artwork objects.
 class ArtistTranslations extends Table {
-  TextColumn get id => text().customConstraint("NULL REFERENCES artists(id)")();
+  TextColumn get id => text().customConstraint('NULL REFERENCES artists(id)')();
 
   TextColumn get languageCode => text()();
 
@@ -115,8 +114,9 @@ class ArtistTranslations extends Table {
 class Viewings extends Table {
   IntColumn get id => integer().autoIncrement()();
 
-  TextColumn get artworkId =>
-      text().customConstraint("NULL REFERENCES artworks(id)")();
+  TextColumn get artworkId => text().customConstraint(
+        'NULL REFERENCES artworks(id)',
+      )();
 
   TextColumn get cnnModelUsed => text().nullable()();
 
@@ -139,7 +139,7 @@ LazyDatabase _openConnection() {
       // for your app.
       final dbFolder = await getApplicationDocumentsDirectory();
       final file = File(p.join(dbFolder.path, 'db.sqlite'));
-      return VmDatabase(file, logStatements: false);
+      return VmDatabase(file);
     },
   );
 }
@@ -171,12 +171,12 @@ class AppDatabase extends _$AppDatabase {
   MigrationStrategy get migration => MigrationStrategy(
         beforeOpen: (details) async {
           /// Enables foreign keys in the db.
-          await customStatement("PRAGMA foreign_keys = ON");
+          await customStatement('PRAGMA foreign_keys = ON');
 
           /// When db is first created, populate it from cached json asset files.
           if (details.wasCreated) {
             // determine supported locales
-            var languageCodes = localizedLabels.keys
+            final languageCodes = localizedLabels.keys
                 .toList()
                 .map((locale) => locale.languageCode)
                 .toList();
@@ -185,22 +185,21 @@ class AppDatabase extends _$AppDatabase {
             await getLocalJsonItemList(artistsJsonPath).then(
               (artistEntries) => artistEntries.forEach(
                 (entry) {
-                  var parsedEntry = parseItemMap(entry);
-                  var artist = Artist.fromJson(parsedEntry);
+                  final parsedEntry = parseItemMap(entry);
+                  final artist = Artist.fromJson(parsedEntry);
                   into(artists).insertOnConflictUpdate(artist);
-                  print("Created entry for artist with id ${artist.id}");
-                  languageCodes.forEach(
-                    (languageCode) {
-                      var translatedEntry = ArtistTranslation.fromJson(
+                  debugPrint('Created entry for artist with id ${artist.id}');
+                  for (final languageCode in languageCodes) {
+                    into(artistTranslations).insertOnConflictUpdate(
+                      ArtistTranslation.fromJson(
                         parseItemTranslations(parsedEntry, languageCode),
-                      );
-                      into(artistTranslations).insertOnConflictUpdate(
-                        translatedEntry,
-                      );
-                      print("Created entry for language $languageCode for "
-                          "artist with id ${artist.id}");
-                    },
-                  );
+                      ),
+                    );
+                    debugPrint(
+                      'Created entry for language $languageCode for '
+                      'artist with id ${artist.id}',
+                    );
+                  }
                 },
               ),
             );
@@ -209,22 +208,21 @@ class AppDatabase extends _$AppDatabase {
             await getLocalJsonItemList(artworksJsonPath).then(
               (artworkEntries) => artworkEntries.forEach(
                 (entry) {
-                  var parsedEntry = parseItemMap(entry);
-                  var artwork = Artwork.fromJson(parsedEntry);
+                  final parsedEntry = parseItemMap(entry);
+                  final artwork = Artwork.fromJson(parsedEntry);
                   into(artworks).insertOnConflictUpdate(artwork);
-                  print("Created entry for artwork with id ${artwork.id}");
-                  languageCodes.forEach(
-                    (languageCode) {
-                      var translatedEntry = ArtworkTranslation.fromJson(
+                  debugPrint('Created entry for artwork with id ${artwork.id}');
+                  for (final languageCode in languageCodes) {
+                    into(artworkTranslations).insertOnConflictUpdate(
+                      ArtworkTranslation.fromJson(
                         parseItemTranslations(parsedEntry, languageCode),
-                      );
-                      into(artworkTranslations).insertOnConflictUpdate(
-                        translatedEntry,
-                      );
-                      print("Created entry for language $languageCode for "
-                          "artwork with id ${artwork.id}");
-                    },
-                  );
+                      ),
+                    );
+                    debugPrint(
+                      'Created entry for language $languageCode for '
+                      'artwork with id ${artwork.id}',
+                    );
+                  }
                 },
               ),
             );

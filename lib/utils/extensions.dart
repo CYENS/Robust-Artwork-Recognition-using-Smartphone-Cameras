@@ -42,27 +42,30 @@ extension CustomStringMethods on String {
   /// achieve this functionality (one disadvantage is that it replaces spaces
   /// with "_").
   String customToUpperCase() {
-    RegExp greek = RegExp(r'[α-ωΑ-Ω]');
-    if (this.contains(greek)) {
-      Map<String, String> greekAccentMap = Map.fromIterables(
-        ["ά", "έ", "ή", "ί", "ό", "ύ", "ώ"],
-        ["α", "ε", "η", "ι", "ο", "υ", "ω"],
+    final RegExp greek = RegExp('[α-ωΑ-Ω]');
+    if (contains(greek)) {
+      final Map<String, String> greekAccentMap = Map.fromIterables(
+        ['ά', 'έ', 'ή', 'ί', 'ό', 'ύ', 'ώ'],
+        ['α', 'ε', 'η', 'ι', 'ο', 'υ', 'ω'],
       );
 
       return greekAccentMap.entries
           .fold(
-            this.toLowerCase(),
+            toLowerCase(),
             (String prev, MapEntry<String, String> vowelToReplace) =>
                 prev.replaceAll(vowelToReplace.key, vowelToReplace.value),
           )
           .toUpperCase();
     }
-    return this.toUpperCase();
+    return toUpperCase();
   }
 }
 
 extension MapExt<T, U> on Map<T, U> {
-  Map<T, U> sortedByValue(Comparable value(U u), {Order order = Order.asc}) {
+  Map<T, U> sortedByValue(
+    Comparable Function(U u) value, {
+    Order order = Order.asc,
+  }) {
     final entries = this.entries.toList();
 
     if (order == Order.asc) {
