@@ -62,25 +62,29 @@ class _SettingsPageState extends State<SettingsPage> {
             subtitle: strings.stngs.stng.appInfoSummary,
             leading: Icon(Icons.info_outline_rounded),
             onTap: () {
-              PackageInfo.fromPlatform().then((packageInfo) => showAboutDialog(
-                    context: context,
-                    applicationIcon: const SizedBox(
-                      width: 80,
-                      height: 80,
-                      child: Image(
-                        image: AssetImage(
-                            'assets/app_launcher_icons/hadjida_untitled_app_icon_square_android_adaptive.png'),
+              PackageInfo.fromPlatform().then(
+                (packageInfo) => showAboutDialog(
+                  context: context,
+                  applicationIcon: const SizedBox(
+                    width: 80,
+                    height: 80,
+                    child: Image(
+                      image: AssetImage(
+                        'assets/app_launcher_icons/hadjida_untitled_app'
+                        '_icon_square_android_adaptive.png',
                       ),
                     ),
-                    applicationName: strings.galleryName,
-                    applicationVersion:
-                        "${strings.stngs.stng.appVersion}: ${packageInfo.version}",
-                    children: [
-                      Text(strings.stngs.stng.appDescription),
-                      Text(""),
-                      Text(strings.stngs.stng.appMadeBy),
-                    ],
-                  ));
+                  ),
+                  applicationName: strings.galleryName,
+                  applicationVersion: "${strings.stngs.stng.appVersion}: "
+                      "${packageInfo.version}",
+                  children: [
+                    Text(strings.stngs.stng.appDescription),
+                    Text(""),
+                    Text(strings.stngs.stng.appMadeBy),
+                  ],
+                ),
+              );
             },
           ),
           SimpleSettingsTile(
@@ -109,16 +113,20 @@ class _SettingsPageState extends State<SettingsPage> {
             subtitle: strings.stngs.stng.historyExportSummary,
             leading: Icon(Icons.share_rounded),
             onTap: () async {
-              viewingsDao.allViewingEntries.then((viewings) {
-                String viewingsInStr = jsonEncode(viewings);
-                print(viewingsInStr);
-                // write to file
-                saveToJsonFile(viewingsInStr).then((jsonFile) {
-                  print(jsonFile);
-                  // share saved json file via share dialog
-                  Share.shareFiles([jsonFile], subject: "Viewings history");
-                });
-              });
+              viewingsDao.allViewingEntries.then(
+                (viewings) {
+                  String viewingsInStr = jsonEncode(viewings);
+                  print(viewingsInStr);
+                  // write to file
+                  saveToJsonFile(viewingsInStr).then(
+                    (jsonFile) {
+                      print(jsonFile);
+                      // share saved json file via share dialog
+                      Share.shareFiles([jsonFile], subject: "Viewings history");
+                    },
+                  );
+                },
+              );
             },
           ),
         ],
@@ -135,9 +143,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 settingKey: keyCnnModel,
                 values: tfLiteModelNames,
                 selected: mobNetNoArt500_4,
-                onChange: (value) {
-                  debugPrint("$keyCnnModel: $value");
-                },
+                onChange: (value) => debugPrint("$keyCnnModel: $value"),
               ),
               RadioModalSettingsTile<String>(
                 title: "Recognition algorithm",
@@ -164,9 +170,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 min: 0.0,
                 max: 100.0,
                 step: 0.2,
-                onChange: (value) {
-                  debugPrint("$keyCnnSensitivity: $value");
-                },
+                onChange: (value) => debugPrint("$keyCnnSensitivity: $value"),
               ),
               SliderSettingsTile(
                 leading: Icon(Icons.space_bar),
@@ -176,9 +180,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 min: 5,
                 max: 50,
                 step: 1,
-                onChange: (value) {
-                  debugPrint("$keyWinThreshP: $value");
-                },
+                onChange: (value) => debugPrint("$keyWinThreshP: $value"),
               ),
               SwitchSettingsTile(
                 leading: Icon(Icons.navigation),
@@ -213,8 +215,10 @@ class _SettingsPageState extends State<SettingsPage> {
                   leading: Icon(Icons.table_rows),
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(
-                        builder: (context) =>
-                            MoorDbViewer(Provider.of<AppDatabase>(context))),
+                      builder: (context) => MoorDbViewer(
+                        Provider.of<AppDatabase>(context),
+                      ),
+                    ),
                   ),
                 ),
               ),
@@ -237,9 +241,7 @@ class _SettingsPageState extends State<SettingsPage> {
       body: ListView.builder(
         physics: const BouncingScrollPhysics(),
         itemCount: _settingsList.length,
-        itemBuilder: (BuildContext context, int index) {
-          return _settingsList[index];
-        },
+        itemBuilder: (BuildContext context, int index) => _settingsList[index],
       ),
     );
   }
