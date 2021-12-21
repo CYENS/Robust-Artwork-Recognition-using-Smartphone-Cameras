@@ -73,6 +73,7 @@ dev_dependencies:
       ref: master
   flutter_test:
     sdk: flutter
+  lint: ^1.8.1
   moor_generator: ^4.6.0+1
 
 flutter_icons:
