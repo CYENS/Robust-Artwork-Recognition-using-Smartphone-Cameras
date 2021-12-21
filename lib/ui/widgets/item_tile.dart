@@ -12,9 +12,9 @@ class Tile extends StatelessWidget {
   /// is not specified, it will be set to equal to [tileWidth], i.e. a square
   /// tile will be created.
   const Tile({
-    Key key,
-    @required this.imagePath,
-    @required this.tileWidth,
+    Key? key,
+    required this.imagePath,
+    required this.tileWidth,
     this.tileHeight,
     this.heroTag,
   }) : super(key: key);
@@ -26,25 +26,23 @@ class Tile extends StatelessWidget {
   final double tileWidth;
 
   /// Desired height of the tile.
-  final double tileHeight;
+  final double? tileHeight;
 
   /// Desired hero tag for the image displayed in the tile.
-  final String heroTag;
+  final String? heroTag;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: SizedBox(
-        width: tileWidth,
-        height: tileHeight ?? tileWidth,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(10),
-          child: Hero(
-            tag: heroTag ?? imagePath,
-            child: Image.asset(
-              imagePath,
-              fit: BoxFit.cover,
-            ),
+    return SizedBox(
+      width: tileWidth,
+      height: tileHeight ?? tileWidth,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10),
+        child: Hero(
+          tag: heroTag ?? imagePath,
+          child: Image.asset(
+            imagePath,
+            fit: BoxFit.cover,
           ),
         ),
       ),
@@ -62,27 +60,27 @@ class Tile extends StatelessWidget {
 class ItemTile extends StatelessWidget {
   /// Creates a tile with rounded corners displaying the provided [Artist].
   ItemTile.artist({
-    Key key,
-    @required Artist artist,
+    Key? key,
+    required Artist artist,
     this.tileWidth,
     this.tileHeight,
-    String customHeroTag, // Optional custom hero tag
-  })  : _title = artist.name,
-        _subtitle = artist.yearBirth,
+    String? customHeroTag, // Optional custom hero tag
+  })  : _title = artist.name!,
+        _subtitle = artist.yearBirth!,
         _imgFileName = getArtistFilename(artist),
-        _customHeroTag = customHeroTag ?? artist.name,
+        _customHeroTag = customHeroTag ?? artist.name!,
         _detailsPage = ArtistDetailsPage(artist: artist),
         super(key: key);
 
   /// Creates a tile with rounded corners displaying the provided [Artwork].
   ItemTile.artwork({
-    Key key,
-    @required Artwork artwork,
+    Key? key,
+    required Artwork artwork,
     this.tileWidth,
     this.tileHeight,
-    String customHeroTag, // Optional custom hero tag
-  })  : _title = artwork.name,
-        _subtitle = artwork.year,
+    String? customHeroTag, // Optional custom hero tag
+  })  : _title = artwork.name!,
+        _subtitle = artwork.year!,
         _imgFileName = getArtworkFilename(artwork),
         _customHeroTag = customHeroTag ?? artwork.id,
         _detailsPage = ArtworkDetailsPage(
@@ -95,13 +93,13 @@ class ItemTile extends StatelessWidget {
   final String _title;
   final String _subtitle;
   final String _imgFileName;
-  final dynamic _detailsPage;
+  final Widget _detailsPage;
 
   /// Desired width of the tile.
-  final double tileWidth;
+  final double? tileWidth;
 
   /// Desired height of the tile.
-  final double tileHeight;
+  final double? tileHeight;
 
   final String _customHeroTag;
 
@@ -109,18 +107,17 @@ class ItemTile extends StatelessWidget {
   Widget build(BuildContext context) => InkWell(
         onTap: () {
           Navigator.push(
-              context, MaterialPageRoute(builder: (context) => _detailsPage));
+            context,
+            MaterialPageRoute(builder: (context) => _detailsPage),
+          );
         },
-        child: Container(
-          child: Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: Tile(
-              imagePath: _imgFileName,
-              heroTag: _customHeroTag,
-              tileWidth: tileWidth ?? MediaQuery.of(context).size.height * 0.2,
-              tileHeight:
-                  tileHeight ?? MediaQuery.of(context).size.height * 0.2,
-            ),
+        child: Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: Tile(
+            imagePath: _imgFileName,
+            heroTag: _customHeroTag,
+            tileWidth: tileWidth ?? MediaQuery.of(context).size.height * 0.2,
+            tileHeight: tileHeight ?? MediaQuery.of(context).size.height * 0.2,
           ),
         ),
       );

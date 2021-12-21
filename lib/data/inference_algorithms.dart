@@ -10,7 +10,7 @@ abstract class InferenceAlgorithm {
   final startTime = DateTime.now();
 
   /// Variable that indicates that no result is available yet.
-  final noResult = "";
+  final noResult = '';
 
   /// List that holds a history of all model inferences so far.
   List history = [];
@@ -24,7 +24,7 @@ abstract class InferenceAlgorithm {
   double _fps = 0.0;
 
   /// Current artwork picked by the algorithm as the most likely inference.
-  String _topInference = "";
+  String _topInference = '';
 
   /// All classes extending [InferenceAlgorithm] must implement this method and
   /// provide the logic of how the identity of the most likely artwork should
@@ -56,11 +56,11 @@ abstract class InferenceAlgorithm {
 
   /// Returns the number of frames analysed by the algorithm per second, as a
   /// formatted string.
-  String get fps => "${_fps.toStringAsPrecision(2)} fps";
+  String get fps => '${_fps.toStringAsPrecision(2)} fps';
 
   /// Indicates whether the algorithm reached a decision about the current
   /// artwork identity or not.
-  bool hasResult() => _topInference != "";
+  bool hasResult() => _topInference != '';
 
   /// Sets the current [value] of the top inference by the algorithm.
   void setTopInference(String value) => _topInference = value;
@@ -87,7 +87,7 @@ abstract class InferenceAlgorithm {
   /// [inferenceTimeHistory] list.
   void _updateFps() {
     if (inferenceTimeHistory.length >= 5) {
-      double meanInferenceTime = inferenceTimeHistory
+      final double meanInferenceTime = inferenceTimeHistory
               .sublist(inferenceTimeHistory.length - 5)
               .reduce((a, b) => a + b) /
           5;
@@ -112,14 +112,14 @@ abstract class InferenceAlgorithm {
   /// library.
   ViewingsCompanion resultAsDbObject() {
     // TODO throw when _topInference is "no_artwork", or maybe make an entry in db with it and restart inferring
-    var endTime = DateTime.now();
+    final endTime = DateTime.now();
     return ViewingsCompanion.insert(
       artworkId: _topInference,
       startTime: startTime,
       endTime: endTime,
       totalTime:
           endTime.millisecondsSinceEpoch - startTime.millisecondsSinceEpoch,
-      algorithmUsed: this.runtimeType.toString(),
+      algorithmUsed: runtimeType.toString(),
       additionalInfo: _additionalDetailsToSave(),
     );
   }
@@ -138,12 +138,12 @@ abstract class InferenceAlgorithm {
 /// threshold, it is chosen as the "winner". In case of ties in artwork top
 /// means, no winner is chosen and the algorithm proceeds to the next window.
 class WindowAverageAlgo extends InferenceAlgorithm {
+  WindowAverageAlgo({required this.sensitivity, required this.windowLength});
+
   final double sensitivity;
   final int windowLength;
   double _topMean = 0.0;
-  var _probsByID = DefaultDict<String, List<double>>(() => []);
-
-  WindowAverageAlgo({this.sensitivity, this.windowLength});
+  final _probsByID = DefaultDict<String, List<double>>(() => []);
 
   @override
   void updateRecognitions(List<dynamic> recognitions, int inferenceTime) {
@@ -151,14 +151,17 @@ class WindowAverageAlgo extends InferenceAlgorithm {
 
     if (history.length >= windowLength) {
       // sort probabilities of the last windowLength recognitions by artworkId
-      history.sublist(history.length - windowLength).forEach((recognition) {
-        _probsByID[recognition["label"]].add(recognition["confidence"]);
-      });
+      history.sublist(history.length - windowLength).forEach(
+        (recognition) {
+          _probsByID[recognition['label']]
+              .add(recognition['confidence'] as double);
+        },
+      );
 
       // get mean probability for each artworkId
       var meansByID = <String, double>{
         for (var id in _probsByID.entries)
-          id.key: id.value.reduce((a, b) => a + b) / id.value.length
+          id.key: id.value.reduce((a, b) => a + b) / id.value.length,
       };
 
       // sort artworkIds by mean, largest to smallest
@@ -168,7 +171,7 @@ class WindowAverageAlgo extends InferenceAlgorithm {
 
       _topMean = 0.0;
 
-      var entries = meansByID.entries.toList();
+      final entries = meansByID.entries.toList();
 
       // check if the first artwork's probability exceeds the sensitivity
       if (entries[0].value >= sensitivity / 100) {
@@ -189,7 +192,6 @@ class WindowAverageAlgo extends InferenceAlgorithm {
         // no winner yet
         resetTopInference();
       }
-
       _probsByID.clear();
     }
   }
@@ -197,7 +199,7 @@ class WindowAverageAlgo extends InferenceAlgorithm {
   @override
   String get topInferenceFormatted {
     if (hasResult()) {
-      return _topInference + " (${(_topMean * 100).toStringAsFixed(1)}%)";
+      return '$_topInference (${(_topMean * 100).toStringAsFixed(1)}%)';
     } else {
       return noResult;
     }
@@ -205,9 +207,9 @@ class WindowAverageAlgo extends InferenceAlgorithm {
 
   @override
   String _additionalDetailsToSave() => {
-        "topMean": _topMean,
-        "sensitivity": sensitivity,
-        "windowLength": windowLength,
+        'topMean': _topMean,
+        'sensitivity': sensitivity,
+        'windowLength': windowLength,
       }.toString();
 }
 
@@ -220,11 +222,14 @@ class WindowAverageAlgo extends InferenceAlgorithm {
 /// We could improve this algorithm by only accepting as winner the artwork
 /// that has a majority count, i.e. more than half, in the window.
 class WindowHighestCountAlgo extends InferenceAlgorithm {
+  WindowHighestCountAlgo({
+    required this.windowLength,
+    this.sensitivitySetting = 0.0,
+  });
+
   final double sensitivitySetting;
   final int windowLength;
-  var _countsByID = DefaultDict<String, int>(() => 0);
-
-  WindowHighestCountAlgo({this.windowLength, this.sensitivitySetting = 0.0});
+  final _countsByID = DefaultDict<String, int>(() => 0);
 
   @override
   void updateRecognitions(List recognitions, int inferenceTime) {
@@ -235,16 +240,16 @@ class WindowHighestCountAlgo extends InferenceAlgorithm {
     if (history.length >= windowLength) {
       // count the occurrences of the last windowLength recognitions by artworkId
       history.sublist(history.length - windowLength).forEach((recognition) {
-        _countsByID[recognition["label"]] += 1;
+        _countsByID[recognition['label'] as String] += 1;
       });
 
       // sort artworkIds by their counts, largest to smallest
       // sortedCounts is of type LinkedHashMap, that guarantees preserving key
       // insertion order
-      var sortedCounts =
+      final sortedCounts =
           _countsByID.sortedByValue((count) => count, order: Order.desc);
 
-      var topEntry = sortedCounts.entries.toList()[0];
+      final topEntry = sortedCounts.entries.toList()[0];
 
       if (sortedCounts.length == 1) {
         // if there is only one artwork in map, set it as top
@@ -256,7 +261,6 @@ class WindowHighestCountAlgo extends InferenceAlgorithm {
         // in case of a tie, wait for next round to decide
         resetTopInference();
       }
-
       _countsByID.clear();
     }
   }
@@ -264,9 +268,7 @@ class WindowHighestCountAlgo extends InferenceAlgorithm {
   @override
   String get topInferenceFormatted {
     if (hasResult()) {
-      return _topInference +
-          " (count of ${_countsByID[_topInference]} in last "
-              "$windowLength inferences)";
+      return '$_topInference (count of ${_countsByID[_topInference]} in last $windowLength inferences)';
     } else {
       return noResult;
     }
@@ -274,9 +276,9 @@ class WindowHighestCountAlgo extends InferenceAlgorithm {
 
   @override
   String _additionalDetailsToSave() => {
-        "topCount": _countsByID[_topInference],
-        "sensitivity": sensitivitySetting,
-        "windowLength": windowLength,
+        'topCount': _countsByID[_topInference],
+        'sensitivity': sensitivitySetting,
+        'windowLength': windowLength,
       }.toString();
 }
 
@@ -287,33 +289,33 @@ class WindowHighestCountAlgo extends InferenceAlgorithm {
 /// Resembles [First-past-the-post voting](https://en.wikipedia.org/wiki/First-past-the-post_voting),
 /// hence the name.
 class FirstPastThePostAlgo extends InferenceAlgorithm {
+  FirstPastThePostAlgo({required this.countThreshold, this.sensitivity = 0.0});
+
   final double sensitivity;
   final int countThreshold;
-  var _countsByID = DefaultDict<String, int>(() => 0);
-
-  FirstPastThePostAlgo({this.countThreshold, this.sensitivity = 0.0});
+  final _countsByID = DefaultDict<String, int>(() => 0);
 
   @override
   void updateRecognitions(List recognitions, int inferenceTime) {
     _updateHistories(recognitions, inferenceTime);
 
     // keep count of each inference per artworkId
-    recognitions.forEach((recognition) {
-      double recProbability = recognition["confidence"];
+    for (final recognition in recognitions) {
+      final double recProbability = recognition['confidence'] as double;
       // here if sensitivitySetting is not specified, every inference counts,
       // otherwise inferences with lower values are not counted
       if (recProbability >= (sensitivity / 100)) {
-        _countsByID[recognition["label"]] += 1;
+        _countsByID[recognition['label'] as String] += 1;
       }
-    });
+    }
 
     // sort artworkIds by their counts, largest to smallest
     // sortedCounts is of type LinkedHashMap, that guarantees preserving key
     // insertion order
-    var sortedCounts =
+    final sortedCounts =
         _countsByID.sortedByValue((count) => count, order: Order.desc);
 
-    var entries = sortedCounts.entries.toList();
+    final entries = sortedCounts.entries.toList();
 
     if (entries.isNotEmpty) {
       // check the first artwork's count exceeds the count threshold
@@ -342,9 +344,7 @@ class FirstPastThePostAlgo extends InferenceAlgorithm {
       // top inference may change, and the return value below will no longer be
       // "correct", but in normal circumstances the app will not reach such a
       // scenario, since it will pick the first result and stop counting
-      return _topInference +
-          " (First to reach count of $countThreshold - current "
-              "count ${_countsByID[_topInference]})";
+      return '$_topInference (First to reach count of $countThreshold - current count ${_countsByID[_topInference]})';
     } else {
       return noResult;
     }
@@ -352,9 +352,9 @@ class FirstPastThePostAlgo extends InferenceAlgorithm {
 
   @override
   String _additionalDetailsToSave() => {
-        "topCount": _countsByID[_topInference],
-        "sensitivity": sensitivity,
-        "countThreshold": countThreshold,
+        'topCount': _countsByID[_topInference],
+        'sensitivity': sensitivity,
+        'countThreshold': countThreshold,
       }.toString();
 }
 
@@ -365,29 +365,29 @@ class FirstPastThePostAlgo extends InferenceAlgorithm {
 /// predictions when a new prediction is different. If [sensitivity] is
 /// specified, only those predictions that equal or exceed it are counted.
 class SeidenaryAlgo extends InferenceAlgorithm {
+  SeidenaryAlgo({required this.P, this.sensitivity = 0.0});
+
   final int P;
   final double sensitivity;
-  var _counters = DefaultDict<String, int>(() => 0);
-
-  SeidenaryAlgo({this.P, this.sensitivity = 0.0});
+  final _counters = DefaultDict<String, int>(() => 0);
 
   @override
   void updateRecognitions(List recognitions, int inferenceTime) {
     _updateHistories(recognitions, inferenceTime);
 
-    if (recognitions.length > 0) {
+    if (recognitions.isNotEmpty) {
       // here if sensitivitySetting is not specified, every inference counts,
       // otherwise inferences with lower values are not counted
-      if (recognitions.first["confidence"] * 100 >= sensitivity) {
+      if ((recognitions.first['confidence'] as double) * 100 >= sensitivity) {
         // add 1 to the top inference of this round
-        var topArtwork = recognitions.first["label"];
+        final topArtwork = recognitions.first['label'] as String;
         _counters[topArtwork] += 1;
         // subtract 1 from all other previous inferences
-        _counters.keys.forEach((key) {
+        for (final key in _counters.keys) {
           if (key != topArtwork) {
             _counters[key] -= 1;
           }
-        });
+        }
       }
     }
 
@@ -395,9 +395,9 @@ class SeidenaryAlgo extends InferenceAlgorithm {
       // sort artwork counters by their counts, largest to smallest
       // sortedCounters is converted to LinkedHashMap here, that guarantees
       // preserving key insertion order
-      var sortedCounters = _counters.sortedByValue((count) => count);
+      final sortedCounters = _counters.sortedByValue((count) => count);
 
-      var entries = sortedCounters.entries.toList();
+      final entries = sortedCounters.entries.toList();
 
       // check if the first counter exceeds P
       if (entries[0].value >= P) {
@@ -421,7 +421,7 @@ class SeidenaryAlgo extends InferenceAlgorithm {
   @override
   String get topInferenceFormatted {
     if (hasResult()) {
-      return _topInference + " (p=${_counters[_topInference]})";
+      return '$_topInference (p=${_counters[_topInference]})';
     } else {
       return noResult;
     }
@@ -429,17 +429,17 @@ class SeidenaryAlgo extends InferenceAlgorithm {
 
   @override
   String _additionalDetailsToSave() => {
-        "topCount (p)": _counters[_topInference],
-        "sensitivity": sensitivity,
-        "P": P,
+        'topCount (p)': _counters[_topInference],
+        'sensitivity': sensitivity,
+        'P': P,
       }.toString();
 }
 
 // Variables with descriptions of algorithms, to be used elsewhere in the app
-const firstAlgorithm = "1 - Window average probability";
-const secondAlgorithm = "2 - Window highest count";
-const thirdAlgorithm = "3 - First past the post";
-const fourthAlgorithm = "4 - Seidenary et al. 2017 Persistence";
+const firstAlgorithm = '1 - Window average probability';
+const secondAlgorithm = '2 - Window highest count';
+const thirdAlgorithm = '3 - First past the post';
+const fourthAlgorithm = '4 - Seidenary et al. 2017 Persistence';
 
 /// All algorithms mapped as functions, so they can be easily initialised
 /// without may if-else statements.
@@ -460,5 +460,5 @@ final allAlgorithms = <String, Function(double sensitivity, int winThreshP)>{
   fourthAlgorithm: (double sensitivity, int winThreshP) => SeidenaryAlgo(
         sensitivity: sensitivity,
         P: winThreshP,
-      )
+      ),
 };

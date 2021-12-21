@@ -7,6 +7,7 @@ import 'package:modern_art_app/data/artworks_dao.dart';
 import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/data/inference_algorithms.dart';
 import 'package:modern_art_app/data/viewings_dao.dart';
+import 'package:modern_art_app/tensorflow/models.dart';
 import 'package:modern_art_app/tensorflow/tensorflow_camera.dart';
 import 'package:modern_art_app/ui/pages/artwork_details_page.dart';
 import 'package:modern_art_app/ui/pages/settings_page.dart';
@@ -16,34 +17,31 @@ import 'package:provider/provider.dart';
 import 'package:tflite/tflite.dart';
 import 'package:vibration/vibration.dart';
 
-import 'models.dart';
-
 class ModelSelection extends StatefulWidget {
+  const ModelSelection(this.cameras);
+
   final List<CameraDescription> cameras;
 
-  ModelSelection(this.cameras);
-
   @override
-  _ModelSelectionState createState() => new _ModelSelectionState();
+  _ModelSelectionState createState() => _ModelSelectionState();
 }
 
 class _ModelSelectionState extends State<ModelSelection>
     with WidgetsBindingObserver {
-  List<dynamic> _recognitions;
+  List<dynamic> _recognitions = [];
   int _imageHeight = 0;
   int _imageWidth = 0;
   int _inferenceTime = 0;
 
-  String _fps = "";
-  String _model = "";
+  String _fps = '';
+  String _model = '';
   double _preferredSensitivity = 0.0;
   bool _navigateToDetails = true;
 
   // bool addedViewing = false;
-  var currentAlgorithm;
-  String _currentRes = "";
-  String _currentAlgo = "";
-  ViewingsDao viewingsDao;
+  late InferenceAlgorithm currentAlgorithm;
+  String _currentRes = '';
+  String _currentAlgo = '';
 
   bool _canVibrate = false;
 
@@ -68,7 +66,7 @@ class _ModelSelectionState extends State<ModelSelection>
     super.initState();
     // observe for AppLifecycleState changes, to pause CNN if app state changes
     // https://api.flutter.dev/flutter/widgets/WidgetsBindingObserver-class.html
-    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance?.addObserver(this);
     // initialize model
     initModel();
   }
@@ -76,193 +74,205 @@ class _ModelSelectionState extends State<ModelSelection>
   @override
   void dispose() {
     // remove AppLifecycleState observer
-    WidgetsBinding.instance.removeObserver(this);
+    WidgetsBinding.instance?.removeObserver(this);
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    print("CHANGE STATE $state");
+    debugPrint('CHANGE STATE $state');
     if ([AppLifecycleState.inactive, AppLifecycleState.paused]
         .contains(state)) {
       // pause the CNN if user puts app in the background
-      setState(() {
-        _model = "";
-      });
+      setState(() => _model = '');
     } else if (state == AppLifecycleState.resumed) {
       // resume the CNN when user comes back
       initModel();
     }
   }
 
-  initModel() {
+  void initModel() {
     // get preferred algorithm from settings
-    String preferredModel = Settings.getValue(keyCnnModel, mobNetNoArt500_4);
+    final String preferredModel =
+        Settings.getValue(keyCnnModel, mobNetNoArt500_4);
 
     // get preferred algorithm, sensitivity and winThreshP from settings
-    String preferredAlgorithm =
+    final String preferredAlgorithm =
         Settings.getValue(keyRecognitionAlgo, firstAlgorithm);
 
-    double sensitivity = Settings.getValue(
+    final double sensitivity = Settings.getValue(
       keyCnnSensitivity,
-      defaultSettings(preferredAlgorithm)[keyCnnSensitivity],
+      defaultSettings(preferredAlgorithm)![keyCnnSensitivity] as double,
     );
 
     // keyWinThreshP's value is stored as double, converted to int here
-    int winThreshP = Settings.getValue(
+    final int winThreshP = Settings.getValue<double>(
       keyWinThreshP,
-      defaultSettings(preferredAlgorithm)[keyWinThreshP],
+      defaultSettings(preferredAlgorithm)![keyWinThreshP] as double,
     ).round();
 
     // determine from settings whether to automatically navigate to an artwork's
     // details when a recognition occurs
-    bool navigateToDetails = Settings.getValue(keyNavigateToDetails, true);
+    final bool navigateToDetails =
+        Settings.getValue(keyNavigateToDetails, true);
 
-    setState(() {
-      _model = preferredModel;
-      _preferredSensitivity = sensitivity;
-      currentAlgorithm =
-          allAlgorithms[preferredAlgorithm](sensitivity, winThreshP);
-      _currentAlgo = preferredAlgorithm;
-      _navigateToDetails = navigateToDetails;
-    });
+    setState(
+      () {
+        _model = preferredModel;
+        _preferredSensitivity = sensitivity;
+        currentAlgorithm = allAlgorithms[preferredAlgorithm]!(
+          sensitivity,
+          winThreshP,
+        ) as InferenceAlgorithm;
+        _currentAlgo = preferredAlgorithm;
+        _navigateToDetails = navigateToDetails;
+      },
+    );
     loadModelFromSettings();
   }
 
-  loadModelFromSettings() async {
-    TfLiteModel model = tfLiteModels[_model];
-    String res = await Tflite.loadModel(
+  Future<void> loadModelFromSettings() async {
+    final TfLiteModel model = tfLiteModels[_model]!;
+    final String? res = await Tflite.loadModel(
       model: model.modelPath,
       labels: model.labelsPath,
     );
-    print("$res loading model $_model, as specified in Settings");
+    debugPrint('$res loading model $_model, as specified in Settings');
 
-    Vibration.hasVibrator().then((canVibrate) {
-      if (canVibrate) {
-        setState(() {
-          _canVibrate = canVibrate;
-        });
-      }
-    });
+    Vibration.hasVibrator().then(
+      (canVibrate) {
+        if (canVibrate != null) {
+          setState(() => _canVibrate = canVibrate);
+        }
+      },
+    );
   }
 
-  setRecognitions(recognitions, imageHeight, imageWidth, inferenceTime) {
+  void setRecognitions(
+    List<dynamic> recognitions,
+    int imageHeight,
+    int imageWidth,
+    int inferenceTime,
+  ) {
     if (_model.isNotEmpty) {
       if (currentAlgorithm.hasResult() &&
           _navigateToDetails &&
-          currentAlgorithm.topInference != "no_artwork") {
-        setState(() {
-          _model = "";
-        });
+          currentAlgorithm.topInference != 'no_artwork') {
+        setState(() => _model = '');
       }
-      setState(() {
-        _recognitions = recognitions;
-        _imageHeight = imageHeight;
-        _imageWidth = imageWidth;
-        _inferenceTime = inferenceTime;
+      setState(
+        () {
+          _recognitions = recognitions;
+          _imageHeight = imageHeight;
+          _imageWidth = imageWidth;
+          _inferenceTime = inferenceTime;
 
-        // each item in recognitions is a LinkedHashMap in the form of
-        // {confidence: 0.5562283396720886, index: 15, label: untitled_votsis}
-        currentAlgorithm.updateRecognitions(recognitions, inferenceTime);
-        _currentRes = currentAlgorithm.topInferenceFormatted;
-        _fps = currentAlgorithm.fps;
-        if (currentAlgorithm.hasResult() && _navigateToDetails) {
-          // && !addedViewing
-          if (currentAlgorithm.topInference != "no_artwork") {
-            _model = "";
-            if (_canVibrate) {
-              Vibration.vibrate(pattern: [0, 40, 100, 40]);
-            }
+          // each item in recognitions is a LinkedHashMap in the form of
+          // {confidence: 0.5562283396720886, index: 15, label: untitled_votsis}
+          currentAlgorithm.updateRecognitions(recognitions, inferenceTime);
+          _currentRes = currentAlgorithm.topInferenceFormatted;
+          _fps = currentAlgorithm.fps;
+          if (currentAlgorithm.hasResult() && _navigateToDetails) {
+            // && !addedViewing
+            if (currentAlgorithm.topInference != 'no_artwork') {
+              _model = '';
+              if (_canVibrate) {
+                Vibration.vibrate(pattern: [0, 40, 100, 40]);
+              }
 
-            // get top inference as an object ready to insert in db
-            ViewingsCompanion vc = currentAlgorithm.resultAsDbObject();
-            // add current model to object
-            vc = vc.copyWith(cnnModelUsed: Value(_model));
-            viewingsDao.insertTask(vc);
-            print("Added VIEWING: $vc");
-            // addedViewing = true;
+              // get top inference as an object ready to insert in db
+              ViewingsCompanion vc = currentAlgorithm.resultAsDbObject();
+              // add current model to object
+              vc = vc.copyWith(cnnModelUsed: Value(_model));
+              Provider.of<ViewingsDao>(context, listen: false).insertTask(vc);
+              debugPrint('Added VIEWING: $vc');
+              // addedViewing = true;
 
-            if (_navigateToDetails) {
-              // navigate to artwork details
-              Provider.of<ArtworksDao>(context, listen: false)
-                  .getArtworkById(
-                      artworkId: currentAlgorithm.topInference,
-                      languageCode: context.locale().languageCode)
-                  .then((artwork) {
-                // set model to empty here, so that the camera stream stops
-                _model = "";
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) {
-                      return ArtworkDetailsPage(artwork: artwork);
-                    },
-                  ),
-                ).then((_) {
-                  // re-initialize model when user is back to this screen
-                  initModel();
+              if (_navigateToDetails) {
+                // navigate to artwork details
+                Provider.of<ArtworksDao>(context, listen: false)
+                    .getArtworkById(
+                  artworkId: currentAlgorithm.topInference,
+                  languageCode: context.locale().languageCode,
+                )
+                    .then((artwork) {
+                  // set model to empty here, so that the camera stream stops
+                  _model = '';
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          ArtworkDetailsPage(artwork: artwork),
+                    ),
+                  ).then((_) {
+                    // re-initialize model when user is back to this screen
+                    initModel();
+                  });
                 });
-              });
+              }
+            } else {
+              debugPrint('Not adding VIEWING no_artwork');
             }
-          } else {
-            print("Not adding VIEWING no_artwork");
           }
-        }
-      });
+        },
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    var strings = context.strings();
-    Size screen = MediaQuery.of(context).size;
-    viewingsDao = Provider.of<ViewingsDao>(context);
+    final strings = context.strings();
+    final Size screen = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         title: AutoSizeText(strings.msg.pointTheCamera, maxLines: 1),
         backgroundColor: ThemeData.dark().primaryColor.withOpacity(0.2),
       ),
-      body: _model == ""
+      body: _model == ''
           // todo here check if model was loaded properly (see res in loadFrom...())
           // instead of checking if _model is empty; if loading fails show an
           // appropriate msg
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : Stack(
               children: [
                 TensorFlowCamera(
-                  widget.cameras,
-                  setRecognitions,
-                  _model,
+                  cameras: widget.cameras,
+                  setRecognitions: setRecognitions,
+                  model: _model,
                 ),
-                if (_recognitions != null &&
-                    Settings.getValue(keyDisplayExtraInfo, false))
+                if (Settings.getValue(keyDisplayExtraInfo, false) &&
+                    _recognitions.isNotEmpty)
                   Align(
                     alignment: Alignment.topLeft,
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(4, 4, 4, 30),
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text("Analysing $_fps",
-                              style: TextStyle(fontSize: 14)),
                           Text(
-                            "Current consensus: ${_currentRes.isEmpty ? 'Calculating...' : _currentRes}",
-                            style: TextStyle(fontSize: 12),
+                            'Analysing $_fps',
+                            style: const TextStyle(fontSize: 14),
                           ),
                           Text(
-                            "Algorithm used: $_currentAlgo",
-                            style: TextStyle(fontSize: 12),
+                            'Current consensus: '
+                            "${_currentRes.isEmpty ? 'Calculating...' : _currentRes}",
+                            style: const TextStyle(fontSize: 12),
                           ),
-                          Text(""),
                           Text(
-                            "Latest: ${_recognitions?.last['label']} ${(_recognitions?.last["confidence"] * 100).toStringAsFixed(0)}%, $_inferenceTime ms",
-                            style: TextStyle(fontSize: 12),
+                            'Algorithm used: $_currentAlgo',
+                            style: const TextStyle(fontSize: 12),
                           ),
-                          if (!["no_artwork", ""]
+                          const Text(''),
+                          Text(
+                            "Latest: ${_recognitions.last['label']} "
+                            "${(_recognitions.last["confidence"] * 100).toStringAsFixed(0)}%, "
+                            '$_inferenceTime ms',
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                          if (!['no_artwork', '']
                               .contains(currentAlgorithm.topInference))
                             Image.asset(
-                              "assets/paintings/${currentAlgorithm.topInference}.webp",
+                              'assets/paintings/'
+                              '${currentAlgorithm.topInference}.webp',
                               width: screen.width / 5,
                               height: screen.width / 5,
                             ),
@@ -276,7 +286,6 @@ class _ModelSelectionState extends State<ModelSelection>
                     padding: const EdgeInsets.fromLTRB(4, 4, 4, 50),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(_msgForUser(currentAlgorithm.topInference)),
                         SpinKitThreeBounce(
@@ -293,19 +302,19 @@ class _ModelSelectionState extends State<ModelSelection>
   }
 
   String _msgForUser(String topInference) {
-    String current = "";
+    String current = '';
     switch (topInference) {
-      case "no_artwork":
+      case 'no_artwork':
         current = context.strings().msg.noneIdentified;
         break;
-      case "":
+      case '':
         break;
       default:
         current = topInference
-            .split("_")
+            .split('_')
             .map((String e) => e[0].toUpperCase() + e.substring(1))
-            .join(" ");
+            .join(' ');
     }
-    return "${context.strings().msg.analysing} $current";
+    return '${context.strings().msg.analysing} $current';
   }
 }

@@ -1,3 +1,7 @@
+## Version 1.0.0 (2021-12-21)
+- App migrated to null-safety
+- Many UI improvements and bug fixes
+
 ## Version 0.12.2 (2021-02-17)
 - Minor UI improvements
 - New tile in settings with link to the Gallery's website

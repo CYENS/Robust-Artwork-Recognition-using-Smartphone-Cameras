@@ -13,34 +13,42 @@ class ArtistsDao extends DatabaseAccessor<AppDatabase> with _$ArtistsDaoMixin {
       into(artists).insertOnConflictUpdate(artist);
 
   /// Gets a stream of all artists in the db.
-  Stream<List<Artist>> watchAllArtists({String languageCode = "en"}) =>
-      (select(artists).join([
-        leftOuterJoin(
-            artistTranslations, artistTranslations.id.equalsExp(artists.id))
-      ])
-            ..where(artistTranslations.languageCode.equals(languageCode)))
-          .map((e) {
-        Artist artist = e.readTable(artists);
-        return artist.copyWith(
+  Stream<List<Artist>> watchAllArtists({String languageCode = 'en'}) =>
+      (select(artists).join(
+        [
+          leftOuterJoin(
+            artistTranslations,
+            artistTranslations.id.equalsExp(artists.id),
+          )
+        ],
+      )..where(artistTranslations.languageCode.equals(languageCode)))
+          .map(
+        (e) {
+          final Artist artist = e.readTable(artists);
+          return artist.copyWith(
             name: e.readTable(artistTranslations).name,
-            biography: e.readTable(artistTranslations).biography);
-      }).watch();
+            biography: e.readTable(artistTranslations).biography,
+          );
+        },
+      ).watch();
 
   /// Get artist by id.
   Future<Artist> getArtistById({
-    @required String artistId,
-    String languageCode = "en",
+    required String artistId,
+    String languageCode = 'en',
   }) {
     return ((select(artists)..where((tbl) => tbl.id.equals(artistId))).join(
       [
         leftOuterJoin(
-            artistTranslations, artistTranslations.id.equalsExp(artists.id))
+          artistTranslations,
+          artistTranslations.id.equalsExp(artists.id),
+        )
       ],
     )..where(artistTranslations.languageCode.equals(languageCode)))
         .map(
       (e) {
-        Artist artist = e.readTable(artists);
-        ArtistTranslation translation = e.readTable(artistTranslations);
+        final Artist artist = e.readTable(artists);
+        final ArtistTranslation translation = e.readTable(artistTranslations);
         return artist.copyWith(
           name: translation.name,
           biography: translation.biography,
