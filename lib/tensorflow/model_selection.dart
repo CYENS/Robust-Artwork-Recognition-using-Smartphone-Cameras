@@ -28,7 +28,7 @@ class ModelSelection extends StatefulWidget {
 
 class _ModelSelectionState extends State<ModelSelection>
     with WidgetsBindingObserver {
-  List<dynamic> _recognitions = [];
+  List<Map<String, dynamic>> _recognitions = [];
   int _imageHeight = 0;
   int _imageWidth = 0;
   int _inferenceTime = 0;
@@ -149,7 +149,7 @@ class _ModelSelectionState extends State<ModelSelection>
   }
 
   void setRecognitions(
-    List<dynamic> recognitions,
+    List<Map<String, dynamic>> recognitions,
     int imageHeight,
     int imageWidth,
     int inferenceTime,
@@ -195,20 +195,25 @@ class _ModelSelectionState extends State<ModelSelection>
                   artworkId: currentAlgorithm.topInference,
                   languageCode: context.locale().languageCode,
                 )
-                    .then((artwork) {
-                  // set model to empty here, so that the camera stream stops
-                  _model = '';
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) =>
-                          ArtworkDetailsPage(artwork: artwork),
-                    ),
-                  ).then((_) {
-                    // re-initialize model when user is back to this screen
-                    initModel();
-                  });
-                });
+                    .then(
+                  (artwork) {
+                    // set model to empty here, so that the camera stream stops
+                    _model = '';
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ArtworkDetailsPage(
+                          artwork: artwork,
+                        ),
+                      ),
+                    ).then(
+                      (_) {
+                        // re-initialize model when user is back to this screen
+                        initModel();
+                      },
+                    );
+                  },
+                );
               }
             } else {
               debugPrint('Not adding VIEWING no_artwork');
@@ -261,11 +266,11 @@ class _ModelSelectionState extends State<ModelSelection>
                             'Algorithm used: $_currentAlgo',
                             style: const TextStyle(fontSize: 12),
                           ),
-                          const Text(''),
+                          const SizedBox(height: 10.0),
                           Text(
                             "Latest: ${_recognitions.last['label']} "
-                            "${(_recognitions.last["confidence"] * 100).toStringAsFixed(0)}%, "
-                            '$_inferenceTime ms',
+                            "${((_recognitions.last['confidence'] as double) * 100).toStringAsFixed(0)}"
+                            '%, $_inferenceTime ms',
                             style: const TextStyle(fontSize: 12),
                           ),
                           if (!['no_artwork', '']

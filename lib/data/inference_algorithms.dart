@@ -13,7 +13,7 @@ abstract class InferenceAlgorithm {
   final noResult = '';
 
   /// List that holds a history of all model inferences so far.
-  List history = [];
+  List<Map<String, dynamic>> history = [];
 
   /// List that holds a history of all inference durations so far, in
   /// milliseconds; used mostly for calculating how many frames are analysed
@@ -38,7 +38,10 @@ abstract class InferenceAlgorithm {
   ///
   /// When the provided logic reaches a decision, the [_topInference] should be
   /// set using [setTopInference] or [resetTopInference].
-  void updateRecognitions(List<dynamic> recognitions, int inferenceTime);
+  void updateRecognitions(
+    List<Map<String, dynamic>> recognitions,
+    int inferenceTime,
+  );
 
   /// Returns the artwork picked by the algorithm as the most likely inference;
   /// if the algorithm has not decided yet this will be an empty string.
@@ -71,7 +74,10 @@ abstract class InferenceAlgorithm {
   /// Convenience method that automatically adds the provided [recognitions]
   /// and [inferenceTime]s into the lists [history] and [inferenceTimeHistory]
   /// respectively.
-  void _updateHistories(List<dynamic> recognitions, int inferenceTime) {
+  void _updateHistories(
+    List<Map<String, dynamic>> recognitions,
+    int inferenceTime,
+  ) {
     // for now recognitions will only contain 1 element (1 inference from CNN,
     // this is specified in tensorflow_camera), could change this in the future
     // if necessary
@@ -146,14 +152,17 @@ class WindowAverageAlgo extends InferenceAlgorithm {
   final _probsByID = DefaultDict<String, List<double>>(() => []);
 
   @override
-  void updateRecognitions(List<dynamic> recognitions, int inferenceTime) {
+  void updateRecognitions(
+    List<Map<String, dynamic>> recognitions,
+    int inferenceTime,
+  ) {
     _updateHistories(recognitions, inferenceTime);
 
     if (history.length >= windowLength) {
       // sort probabilities of the last windowLength recognitions by artworkId
       history.sublist(history.length - windowLength).forEach(
         (recognition) {
-          _probsByID[recognition['label']]
+          _probsByID[recognition['label'] as String]
               .add(recognition['confidence'] as double);
         },
       );
@@ -232,7 +241,10 @@ class WindowHighestCountAlgo extends InferenceAlgorithm {
   final _countsByID = DefaultDict<String, int>(() => 0);
 
   @override
-  void updateRecognitions(List recognitions, int inferenceTime) {
+  void updateRecognitions(
+    List<Map<String, dynamic>> recognitions,
+    int inferenceTime,
+  ) {
     _updateHistories(recognitions, inferenceTime);
 
     // here the sensitivity setting is not taken into account as is
@@ -296,7 +308,10 @@ class FirstPastThePostAlgo extends InferenceAlgorithm {
   final _countsByID = DefaultDict<String, int>(() => 0);
 
   @override
-  void updateRecognitions(List recognitions, int inferenceTime) {
+  void updateRecognitions(
+    List<Map<String, dynamic>> recognitions,
+    int inferenceTime,
+  ) {
     _updateHistories(recognitions, inferenceTime);
 
     // keep count of each inference per artworkId
@@ -372,7 +387,10 @@ class SeidenaryAlgo extends InferenceAlgorithm {
   final _counters = DefaultDict<String, int>(() => 0);
 
   @override
-  void updateRecognitions(List recognitions, int inferenceTime) {
+  void updateRecognitions(
+    List<Map<String, dynamic>> recognitions,
+    int inferenceTime,
+  ) {
     _updateHistories(recognitions, inferenceTime);
 
     if (recognitions.isNotEmpty) {

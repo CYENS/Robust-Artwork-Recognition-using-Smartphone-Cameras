@@ -3,10 +3,11 @@ import 'dart:math' as math;
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:modern_art_app/tensorflow/models.dart';
+import 'package:modern_art_app/utils/utils.dart';
 import 'package:tflite/tflite.dart';
 
 typedef Callback = void Function(
-  List<dynamic> list,
+  List<Map<String, dynamic>> list,
   int h,
   int w,
   int inferenceTime,
@@ -78,7 +79,7 @@ class _TensorFlowCameraState extends State<TensorFlowCamera> {
                             DateTime.now().millisecondsSinceEpoch - startTime;
                         debugPrint('Detection took $inferenceTime ms');
                         widget.setRecognitions(
-                          recognitions,
+                          convertRecognitions(recognitions),
                           img.height,
                           img.width,
                           inferenceTime,
@@ -108,7 +109,7 @@ class _TensorFlowCameraState extends State<TensorFlowCamera> {
                             DateTime.now().millisecondsSinceEpoch - startTime;
                         debugPrint('Detection took $inferenceTime ms');
                         widget.setRecognitions(
-                          recognitions,
+                          convertRecognitions(recognitions),
                           img.height,
                           img.width,
                           inferenceTime,
@@ -130,7 +131,7 @@ class _TensorFlowCameraState extends State<TensorFlowCamera> {
                             DateTime.now().millisecondsSinceEpoch - startTime;
                         debugPrint('Detection took $inferenceTime ms');
                         widget.setRecognitions(
-                          recognitions,
+                          convertRecognitions(recognitions),
                           img.height,
                           img.width,
                           inferenceTime,
@@ -156,7 +157,7 @@ class _TensorFlowCameraState extends State<TensorFlowCamera> {
                             DateTime.now().millisecondsSinceEpoch - startTime;
                         debugPrint('Detection took $inferenceTime ms');
                         widget.setRecognitions(
-                          recognitions,
+                          convertRecognitions(recognitions),
                           img.height,
                           img.width,
                           inferenceTime,
