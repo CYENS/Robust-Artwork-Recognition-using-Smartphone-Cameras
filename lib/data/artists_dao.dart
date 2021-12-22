@@ -36,24 +36,23 @@ class ArtistsDao extends DatabaseAccessor<AppDatabase> with _$ArtistsDaoMixin {
   Future<Artist> getArtistById({
     required String artistId,
     String languageCode = 'en',
-  }) {
-    return ((select(artists)..where((tbl) => tbl.id.equals(artistId))).join(
-      [
-        leftOuterJoin(
-          artistTranslations,
-          artistTranslations.id.equalsExp(artists.id),
-        )
-      ],
-    )..where(artistTranslations.languageCode.equals(languageCode)))
-        .map(
-      (e) {
-        final Artist artist = e.readTable(artists);
-        final ArtistTranslation translation = e.readTable(artistTranslations);
-        return artist.copyWith(
-          name: translation.name,
-          biography: translation.biography,
-        );
-      },
-    ).getSingle();
-  }
+  }) =>
+      ((select(artists)..where((tbl) => tbl.id.equals(artistId))).join(
+        [
+          leftOuterJoin(
+            artistTranslations,
+            artistTranslations.id.equalsExp(artists.id),
+          )
+        ],
+      )..where(artistTranslations.languageCode.equals(languageCode)))
+          .map(
+        (e) {
+          final Artist artist = e.readTable(artists);
+          final ArtistTranslation translation = e.readTable(artistTranslations);
+          return artist.copyWith(
+            name: translation.name,
+            biography: translation.biography,
+          );
+        },
+      ).getSingle();
 }
