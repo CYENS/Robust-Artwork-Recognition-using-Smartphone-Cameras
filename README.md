@@ -14,4 +14,4 @@ computer vision, and display details about them to the user. The artwork identif
 on-device, using a Convolutional Neural Network (CNN) that trained using transfer learning on
 MobileNet V2.
 
-![App screenshots](assets/app_screenshots.png)
+![App screenshots](smartphone_app/assets/app_screenshots.png)
