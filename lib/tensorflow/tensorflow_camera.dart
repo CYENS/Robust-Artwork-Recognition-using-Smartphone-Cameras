@@ -3,10 +3,11 @@ import 'dart:math' as math;
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:modern_art_app/tensorflow/models.dart';
+import 'package:modern_art_app/utils/utils.dart';
 import 'package:tflite/tflite.dart';
 
 typedef Callback = void Function(
-  List<dynamic> list,
+  List<Map<String, dynamic>> list,
   int h,
   int w,
   int inferenceTime,
@@ -78,7 +79,7 @@ class _TensorFlowCameraState extends State<TensorFlowCamera> {
                             DateTime.now().millisecondsSinceEpoch - startTime;
                         debugPrint('Detection took $inferenceTime ms');
                         widget.setRecognitions(
-                          recognitions,
+                          convertRecognitions(recognitions),
                           img.height,
                           img.width,
                           inferenceTime,
@@ -108,7 +109,7 @@ class _TensorFlowCameraState extends State<TensorFlowCamera> {
                             DateTime.now().millisecondsSinceEpoch - startTime;
                         debugPrint('Detection took $inferenceTime ms');
                         widget.setRecognitions(
-                          recognitions,
+                          convertRecognitions(recognitions),
                           img.height,
                           img.width,
                           inferenceTime,
@@ -130,7 +131,7 @@ class _TensorFlowCameraState extends State<TensorFlowCamera> {
                             DateTime.now().millisecondsSinceEpoch - startTime;
                         debugPrint('Detection took $inferenceTime ms');
                         widget.setRecognitions(
-                          recognitions,
+                          convertRecognitions(recognitions),
                           img.height,
                           img.width,
                           inferenceTime,
@@ -156,7 +157,7 @@ class _TensorFlowCameraState extends State<TensorFlowCamera> {
                             DateTime.now().millisecondsSinceEpoch - startTime;
                         debugPrint('Detection took $inferenceTime ms');
                         widget.setRecognitions(
-                          recognitions,
+                          convertRecognitions(recognitions),
                           img.height,
                           img.width,
                           inferenceTime,
@@ -194,6 +195,46 @@ class _TensorFlowCameraState extends State<TensorFlowCamera> {
     final previewW = math.min(tmp.height, tmp.width);
     final screenRatio = screenH / screenW;
     final previewRatio = previewH / previewW;
+
+    // The way the CameraPreview widget is shown here is not ideal when in
+    // landscape mode. The links and commented code blocks below show potential
+    // alternative ways that could be used:
+
+    // https://stackoverflow.com/questions/51348166/
+    // https://stackoverflow.com/questions/57090322/
+    // https://pub.dev/packages/camera/example
+    // https://stackoverflow.com/questions/66836498/
+
+    // var previewAspectRatio = controller.value.aspectRatio;
+    // var previewAspectRatio = 0.7;
+    // return AspectRatio(
+    //   aspectRatio: 1 / previewAspectRatio,
+    //   child: ClipRect(
+    //     child: Transform.scale(
+    //       scale: controller.value.aspectRatio * previewAspectRatio,
+    //       // scale: previewAspectRatio / controller.value.aspectRatio,
+    //       child: Center(
+    //         child: CameraPreview(controller),
+    //       ),
+    //     ),
+    //   ),
+    // );
+
+    //   return AspectRatio(
+    //     aspectRatio: 1,
+    //     child: ClipRect(
+    //       child: Transform.scale(
+    //         scale: 1 / controller.value.aspectRatio,
+    //         child: Center(
+    //           child: AspectRatio(
+    //             aspectRatio: controller.value.aspectRatio,
+    //             child: CameraPreview(controller),
+    //           ),
+    //         ),
+    //       ),
+    //     ),
+    //   );
+    // }
 
     return OverflowBox(
       maxHeight:

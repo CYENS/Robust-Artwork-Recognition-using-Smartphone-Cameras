@@ -62,3 +62,19 @@ Future<String> saveToJsonFile(String text) async {
   file.writeAsString(text);
   return file.path;
 }
+
+/// Converts the List of [recognitions] provided by the tflite library to the
+/// more accurate List<Map<String, dynamic>>.
+List<Map<String, dynamic>> convertRecognitions(List<dynamic> recognitions) {
+  return [
+    for (final rec in recognitions)
+      {
+        // ignore: avoid_dynamic_calls
+        'confidence': rec['confidence'] as double,
+        // ignore: avoid_dynamic_calls
+        'index': rec['index'] as int,
+        // ignore: avoid_dynamic_calls
+        'label': rec['label'] as String,
+      },
+  ];
+}

@@ -1,3 +1,7 @@
+## Version 1.0.1 (2021-12-24)
+- Added new viewfinder animation
+- Performance optimisations
+
 ## Version 1.0.0 (2021-12-21)
 - App migrated to null-safety
 - Many UI improvements and bug fixes
