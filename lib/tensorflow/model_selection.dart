@@ -2,7 +2,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_settings_screens/flutter_settings_screens.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:modern_art_app/data/artworks_dao.dart';
 import 'package:modern_art_app/data/database.dart';
 import 'package:modern_art_app/data/inference_algorithms.dart';
@@ -11,6 +10,7 @@ import 'package:modern_art_app/tensorflow/models.dart';
 import 'package:modern_art_app/tensorflow/tensorflow_camera.dart';
 import 'package:modern_art_app/ui/pages/artwork_details_page.dart';
 import 'package:modern_art_app/ui/pages/settings_page.dart';
+import 'package:modern_art_app/ui/widgets/viewfinder_animation.dart';
 import 'package:modern_art_app/utils/extensions.dart';
 import 'package:moor/moor.dart' hide Column;
 import 'package:provider/provider.dart';
@@ -240,15 +240,17 @@ class _ModelSelectionState extends State<ModelSelection>
           ? const Center(child: CircularProgressIndicator())
           : Stack(
               children: [
-                TensorFlowCamera(
-                  cameras: widget.cameras,
-                  setRecognitions: setRecognitions,
-                  model: _model,
+                Positioned.fill(
+                  child: TensorFlowCamera(
+                    cameras: widget.cameras,
+                    setRecognitions: setRecognitions,
+                    model: _model,
+                  ),
                 ),
                 if (Settings.getValue(keyDisplayExtraInfo, false) &&
                     _recognitions.isNotEmpty)
                   Align(
-                    alignment: Alignment.topLeft,
+                    alignment: Alignment.topCenter,
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(4, 4, 4, 30),
                       child: Column(
@@ -278,29 +280,22 @@ class _ModelSelectionState extends State<ModelSelection>
                             Image.asset(
                               'assets/paintings/'
                               '${currentAlgorithm.topInference}.webp',
-                              width: screen.width / 5,
-                              height: screen.width / 5,
+                              width: screen.shortestSide / 6,
+                              height: screen.shortestSide / 6,
                             ),
-                          Expanded(child: Container()),
+                          const Spacer(),
                         ],
                       ),
                     ),
                   ),
-                Positioned.fill(
+                Align(
+                  alignment: Alignment.bottomCenter,
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(4, 4, 4, 50),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(_msgForUser(currentAlgorithm.topInference)),
-                        SpinKitThreeBounce(
-                          color: Colors.white,
-                          size: screen.width / 6,
-                        ),
-                      ],
-                    ),
+                    padding: const EdgeInsets.fromLTRB(4, 4, 4, 60),
+                    child: Text(_msgForUser(currentAlgorithm.topInference)),
                   ),
                 ),
+                Center(child: ViewfinderAnimation(size: screen)),
               ],
             ),
     );
