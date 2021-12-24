@@ -196,6 +196,46 @@ class _TensorFlowCameraState extends State<TensorFlowCamera> {
     final screenRatio = screenH / screenW;
     final previewRatio = previewH / previewW;
 
+    // The way the CameraPreview widget is shown here is not ideal when in
+    // landscape mode. The links and commented code blocks below show potential
+    // alternative ways that could be used:
+
+    // https://stackoverflow.com/questions/51348166/
+    // https://stackoverflow.com/questions/57090322/
+    // https://pub.dev/packages/camera/example
+    // https://stackoverflow.com/questions/66836498/
+
+    // var previewAspectRatio = controller.value.aspectRatio;
+    // var previewAspectRatio = 0.7;
+    // return AspectRatio(
+    //   aspectRatio: 1 / previewAspectRatio,
+    //   child: ClipRect(
+    //     child: Transform.scale(
+    //       scale: controller.value.aspectRatio * previewAspectRatio,
+    //       // scale: previewAspectRatio / controller.value.aspectRatio,
+    //       child: Center(
+    //         child: CameraPreview(controller),
+    //       ),
+    //     ),
+    //   ),
+    // );
+
+    //   return AspectRatio(
+    //     aspectRatio: 1,
+    //     child: ClipRect(
+    //       child: Transform.scale(
+    //         scale: 1 / controller.value.aspectRatio,
+    //         child: Center(
+    //           child: AspectRatio(
+    //             aspectRatio: controller.value.aspectRatio,
+    //             child: CameraPreview(controller),
+    //           ),
+    //         ),
+    //       ),
+    //     ),
+    //   );
+    // }
+
     return OverflowBox(
       maxHeight:
           screenRatio > previewRatio ? screenH : screenW / previewW * previewH,
