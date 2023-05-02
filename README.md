@@ -13,4 +13,17 @@ Computer Vision, and display details about them to the user. The artwork identif
 on-device, using a Convolutional Neural Network (CNN) that trained using transfer learning on
 MobileNet V2.
 
+## Repository contents
+
+The repository is split into 2 parts:
+
+- The [source code](/smartphone_app) for the app demo, built using Flutter, and
+- The [source code](/machine_learning_models) used to train and validate the neural networks, in Python.
+
+## App demo
+
+Pre-built `.apk` files for the app can be downloaded and run on any Android device from the Releases section on the sidebar.
+
+## App screenshots
+
 ![App screenshots](smartphone_app/assets/app_screenshots.png)
