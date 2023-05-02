@@ -6,7 +6,7 @@ in Nicosia, Cyprus.
 
 The app was built by the [BIO-SCENT](https://bioscent.cyens.org.cy/) research group at 
 [CYENS Centre of Excellence](https://www.cyens.org.cy), as part of the published study Theodosiou et al. (2022) [_"A Systematic Approach for 
-Developing a Robust Artwork Recognition Framework Using Smartphone Cameras "_](https://doi.org/10.3390/a15090305).
+Developing a Robust Artwork Recognition Framework Using Smartphone Cameras"_](https://doi.org/10.3390/a15090305).
 
 The app is able to automatically identify a number of artworks at the Gallery through the use of
 Computer Vision, and display details about them to the user. The artwork identification is performed live
